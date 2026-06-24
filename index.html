@@ -2727,7 +2727,9 @@ function openWaterWeekPanel(habitId) {
   }
 
   html += '</div>';
-  showPanel('💧 饮水周统计', html);
+  document.getElementById('checkinPanelTitle').textContent = '💧 饮水周统计';
+  document.getElementById('checkinPanelBody').innerHTML = html;
+  openPanel('checkinPanel');
 }
 
 // ===================== WATER SETTINGS PANEL =====================
@@ -2825,8 +2827,7 @@ function saveWaterSettings() {
   render();
 }
 
-function openWaterSettingsPanel(habitId) {
-  pendingCheckinHabitId = habitId;function openRefPanel(e) {
+function openRefPanel(e) {
   if (e) e.stopPropagation();
   renderRefPanel();
   openPanel('refPanel');
@@ -2945,7 +2946,7 @@ function selectEmotion(emotionId) {
   const todayStr = today();
   if (!checkinRecords[todayStr]) checkinRecords[todayStr] = {};
   checkinRecords[todayStr]['emotion_check'] = {value: emo.name, timestamp: Date.now()};
-  saveData();
+  saveRecords();
   renderEmotionPanel();
   render();
 }
@@ -3008,7 +3009,6 @@ if ('serviceWorker' in navigator) {
 
 loadData();
 render();
-requestNotificationPermission();
 </script>
 </body>
 </html>
