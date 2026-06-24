@@ -350,6 +350,61 @@ img{max-width:100%;display:block}
 .wulao-card .wl-scene{font-size:12px;color:var(--muted);margin-bottom:4px}
 .wulao-card .wl-action{font-size:13px;color:var(--accent);font-weight:600;margin-bottom:2px}
 .wulao-card .wl-tip{font-size:12px;color:var(--ink);line-height:1.5}
+
+/* ========== Pack Management ========== */
+.pack-card{background:#fff;border-radius:var(--radius);margin:0 16px 12px;box-shadow:var(--shadow);overflow:hidden}
+.pack-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;transition:background .2s}
+.pack-header:active{background:var(--bg2)}
+.pack-header-left{display:flex;align-items:center;gap:10px;flex:1}
+.pack-emoji{font-size:24px}
+.pack-title{font-size:15px;font-weight:700}
+.pack-subtitle{font-size:12px;color:var(--muted);margin-top:2px}
+.pack-toggle{font-size:18px;color:var(--muted);transition:transform .3s}
+.pack-toggle.expanded{transform:rotate(180deg)}
+.pack-body{display:none;padding:0 16px 16px}
+.pack-body.expanded{display:block}
+.pack-quote{font-size:12px;color:var(--muted);font-style:italic;background:var(--bg2);padding:10px 12px;border-radius:10px;margin-bottom:12px;line-height:1.6}
+.pack-tip{font-size:13px;color:var(--ink);margin-bottom:12px;line-height:1.5}
+.pack-habit-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border-radius:10px;margin-bottom:6px}
+.pack-habit-item .ph-icon{font-size:20px}
+.pack-habit-item .ph-info{flex:1;min-width:0}
+.pack-habit-item .ph-name{font-size:14px;font-weight:600}
+.pack-habit-item .ph-meta{font-size:11px;color:var(--muted)}
+.pack-habit-item .ph-status{font-size:12px;font-weight:600;padding:4px 10px;border-radius:10px;white-space:nowrap}
+.pack-habit-item .ph-status.added{background:var(--accent-light);color:var(--accent)}
+.pack-habit-item .ph-status.add{background:var(--accent);color:#fff}
+.pack-actions{display:flex;gap:8px;margin-top:12px}
+.pack-actions button{flex:1;padding:12px;border-radius:12px;font-size:13px;font-weight:600}
+.pack-actions .import-all{background:var(--accent);color:#fff}
+.pack-actions .import-all:active{background:#6aa88a}
+.pack-actions .custom-import{background:var(--bg2);color:var(--ink)}
+.pack-actions .custom-import:active{background:var(--rule)}
+.my-pack .pack-header{background:linear-gradient(135deg,var(--accent-light),var(--accent2-light))}
+.my-pack .pack-title{color:var(--ink)}
+.pack-search{width:calc(100% - 32px);margin:0 16px 12px;padding:10px 14px;border:2px solid var(--rule);border-radius:12px;font-size:14px;background:#fff;outline:none}
+.pack-search:focus{border-color:var(--accent)}
+.pack-filter{display:flex;gap:6px;margin:0 16px 12px;overflow-x:auto;padding-bottom:4px}
+.pack-filter-btn{padding:6px 12px;border-radius:10px;font-size:12px;font-weight:600;background:var(--bg2);white-space:nowrap;transition:all .2s}
+.pack-filter-btn.active{background:var(--accent);color:#fff}
+.my-habit-item{display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg);border-radius:12px;margin-bottom:8px}
+.my-habit-item .mh-icon{font-size:22px}
+.my-habit-item .mh-info{flex:1;min-width:0}
+.my-habit-item .mh-name{font-size:14px;font-weight:600;margin-bottom:2px}
+.my-habit-item .mh-meta{font-size:11px;color:var(--muted);display:flex;gap:8px;align-items:center}
+.my-habit-item .mh-toggle{width:44px;height:24px;border-radius:12px;background:var(--rule);position:relative;transition:background .2s;flex-shrink:0;cursor:pointer}
+.my-habit-item .mh-toggle.on{background:var(--accent)}
+.my-habit-item .mh-toggle::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.my-habit-item .mh-toggle.on::after{transform:translateX(20px)}
+.my-habit-item .mh-actions{display:flex;gap:6px;flex-shrink:0}
+.my-habit-item .mh-actions button{padding:6px 10px;border-radius:8px;font-size:11px;font-weight:600;background:var(--bg2)}
+.my-habit-item .mh-actions button:active{background:var(--rule)}
+.my-habit-item .mh-delete{color:#e74c3c}
+.pack-empty{text-align:center;padding:30px 20px;color:var(--muted);font-size:14px}
+.add-habit-btn{width:calc(100% - 32px);margin:8px 16px 0;padding:12px;border-radius:12px;background:var(--bg2);color:var(--ink);font-size:14px;font-weight:600;text-align:center;cursor:pointer;transition:all .2s}
+.add-habit-btn:active{background:var(--rule)}
+.manage-helpers{display:flex;gap:8px;margin:16px;padding:0 16px}
+.manage-helpers button{flex:1;padding:10px;border-radius:10px;font-size:12px;font-weight:600;background:var(--bg2);color:var(--muted)}
+.manage-helpers button:active{background:var(--rule)}
 </style>
 </head>
 <body>
@@ -424,18 +479,35 @@ img{max-width:100%;display:block}
 
 <!-- Manage Section -->
 <div class="section" id="sec-manage">
-  <div class="edit-bar">
-    <span class="label">管理我的习惯</span>
-    <button id="editToggle" class="edit-off" onclick="toggleEditMode()">编辑</button>
+  <div class="pack-card my-pack" id="myPackCard">
+    <div class="pack-header" onclick="togglePack('myPack')">
+      <div class="pack-header-left">
+        <span class="pack-emoji">📦</span>
+        <div>
+          <div class="pack-title">我的习惯包</div>
+          <div class="pack-subtitle" id="myPackSubtitle">当前 0 个习惯</div>
+        </div>
+      </div>
+      <span class="pack-toggle" id="myPackToggle">▼</span>
+    </div>
+    <div class="pack-body" id="myPackBody">
+      <input type="text" class="pack-search" id="myPackSearch" placeholder="🔍 搜索习惯..." oninput="renderMyPack()">
+      <div class="pack-filter" id="myPackFilter">
+        <button class="pack-filter-btn active" data-filter="all" onclick="setPackFilter('all')">全部</button>
+        <button class="pack-filter-btn" data-filter="morning" onclick="setPackFilter('morning')">🌅 早晨</button>
+        <button class="pack-filter-btn" data-filter="forenoon" onclick="setPackFilter('forenoon')">🌤️ 上午</button>
+        <button class="pack-filter-btn" data-filter="afternoon" onclick="setPackFilter('afternoon')">☀️ 下午</button>
+        <button class="pack-filter-btn" data-filter="evening" onclick="setPackFilter('evening')">🌙 晚上</button>
+      </div>
+      <div id="myPackContent"></div>
+      <div class="add-habit-btn" onclick="openLibraryPanel()">+ 添加新习惯</div>
+    </div>
   </div>
-  <div id="manageContent"></div>
-  <button class="export-btn" style="margin-top:12px;background:linear-gradient(135deg,var(--accent-light),var(--accent2-light));color:var(--ink);font-weight:700" onclick="addHealthPack()">💚 一键添加健康生活建议包</button>
-  <button class="export-btn" style="margin-top:8px;background:linear-gradient(135deg,#d4edda,#fff3cd);color:var(--ink);font-weight:700" onclick="openLibraryPanel()">🌿 四季养生（黄帝内经）</button>
-  <button class="export-btn" style="margin-top:8px;background:linear-gradient(135deg,#e8f4f8,#d4edda);color:var(--ink);font-weight:700" onclick="openClockPanel()">⏳ 子午流注 · 十二时辰</button>
-  <button class="export-btn" style="margin-top:8px;background:linear-gradient(135deg,#FFE5E5,#E5F0FF);color:var(--ink);font-weight:700" onclick="openEmotionPanel()">💭 情志养生 · 情绪记录</button>
-  <button class="export-btn" style="margin-top:8px;background:linear-gradient(135deg,#FFF8E5,#E5FFE5);color:var(--ink);font-weight:700" onclick="openWulaoPanel()">🛡️ 五劳防护 · 久坐久视</button>
-  <button class="export-btn" style="margin-top:12px;background:linear-gradient(135deg,#F4A683,#7CB69D);color:#fff;font-weight:700;font-size:15px;padding:14px" onclick="openRefPanel(event)">📚 养生参考文献（14部经典）</button>
-  <button class="export-btn" style="margin-top:12px" onclick="openLibraryPanel()">➕ 从习惯库添加</button>
+  <div id="systemPacks"></div>
+  <div class="manage-helpers">
+    <button onclick="openClockPanel()">⏳ 子午流注</button>
+    <button onclick="openRefPanel(event)">📚 参考文献</button>
+  </div>
 </div>
 
 <!-- FAB -->
@@ -1142,11 +1214,11 @@ function getMonthRate() {
 
 function getTodayDone() {
   const rec = checkinRecords[today()] || {};
-  return habitsConfig.filter(h => rec[h.id] && rec[h.id].done).length;
+  return habitsConfig.filter(h => h.enabled !== false && rec[h.id] && rec[h.id].done).length;
 }
 
 function getTodayTotal() {
-  return habitsConfig.length;
+  return habitsConfig.filter(h => h.enabled !== false).length;
 }
 
 // ===================== RENDER =====================
@@ -1224,15 +1296,10 @@ function renderCheckin() {
   const container = document.getElementById('checkinContent');
   const rec = checkinRecords[today()] || {};
 
-  // Check for weekly report (Sunday)
-  const dow = new Date().getDay();
-  if (dow === 0) {
-    container.innerHTML = '<div class="report-card" style="cursor:pointer" onclick="openReportPanel()"><div class="report-title">📋 点击查看本周总结</div></div>';
-  }
-
   // Group habits by time period
   const groups = {morning:[], forenoon:[], afternoon:[], evening:[]};
   habitsConfig.forEach(h => {
+    if (h.enabled === false) return;
     const tp = TIME_PERIOD_MAP[CATEGORY_MAP[h.category]?.timePeriod || 'daytime'];
     if (tp) {
       const key = tp.order === 0 ? 'morning' : tp.order === 1 ? 'forenoon' : tp.order === 2 ? 'afternoon' : 'evening';
@@ -1240,7 +1307,13 @@ function renderCheckin() {
     }
   });
 
+  // Check for weekly report (Sunday)
+  const dow = new Date().getDay();
   let html = '';
+  if (dow === 0) {
+    html += '<div class="report-card" style="cursor:pointer" onclick="openReportPanel()"><div class="report-title">📋 点击查看本周总结</div></div>';
+  }
+
   for (const period of ['morning','forenoon','afternoon','evening']) {
     const habits = groups[period];
     if (habits.length === 0) continue;
@@ -1317,7 +1390,7 @@ function renderCheckin() {
     html = '<div style="text-align:center;padding:40px 20px;color:var(--muted);font-size:14px;">还没有添加习惯<br>点击下方 + 按钮开始添加</div>';
   }
 
-  container.innerHTML += html;
+  container.innerHTML = html;
 }
 
 function renderWaterTracker(h, rec) {
@@ -1557,65 +1630,200 @@ function renderAchievements() {
   }).join('');
 }
 
-function renderManage() {
-  const container = document.getElementById('manageContent');
-  const groups = {morning:[], forenoon:[], afternoon:[], evening:[]};
-  habitsConfig.forEach(h => {
-    const tp = TIME_PERIOD_MAP[CATEGORY_MAP[h.category]?.timePeriod || 'daytime'];
-    if (tp) {
-      const key = tp.order === 0 ? 'morning' : tp.order === 1 ? 'forenoon' : tp.order === 2 ? 'afternoon' : 'evening';
-      groups[key].push(h);
-    }
+// ===================== PACK MANAGEMENT =====================
+
+let packFilter = 'all';
+let packExpanded = {myPack: false};
+
+function togglePack(packId) {
+  packExpanded[packId] = !packExpanded[packId];
+  const body = document.getElementById(packId + 'Body');
+  const toggle = document.getElementById(packId + 'Toggle');
+  if (body) body.classList.toggle('expanded', packExpanded[packId]);
+  if (toggle) toggle.classList.toggle('expanded', packExpanded[packId]);
+}
+
+function setPackFilter(filter) {
+  packFilter = filter;
+  document.querySelectorAll('#myPackFilter .pack-filter-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.filter === filter);
   });
+  renderMyPack();
+}
+
+function renderMyPack() {
+  const container = document.getElementById('myPackContent');
+  const search = document.getElementById('myPackSearch')?.value.toLowerCase() || '';
+  const enabledCount = habitsConfig.filter(h => h.enabled !== false).length;
+  document.getElementById('myPackSubtitle').textContent = `当前 ${habitsConfig.length} 个习惯 · ${enabledCount} 个启用`;
+
+  let filtered = habitsConfig;
+  if (packFilter !== 'all') {
+    filtered = filtered.filter(h => CATEGORY_MAP[h.category]?.timePeriod === packFilter);
+  }
+  if (search) {
+    filtered = filtered.filter(h => h.name.toLowerCase().includes(search));
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="pack-empty">没有找到习惯<br>点击上方"+ 添加新习惯"</div>';
+    return;
+  }
 
   let html = '';
-  for (const period of ['morning','forenoon','afternoon','evening']) {
-    const habits = groups[period];
-    if (habits.length === 0) continue;
-    const tp = TIME_PERIOD_MAP[period];
-    html += `<div class="time-group"><div class="time-group-label">${tp.emoji} ${tp.label}</div>`;
-    habits.forEach(h => {
-      const reminder = h.reminder;
-      if (h.type === 'water') {
-        const wc = h.waterConfig || {dailyGoal:2000, perCup:250, schedule:[]};
-        html += `
-          <div class="habit-card ${editMode ? 'show-delete' : ''}" id="manage-${h.id}">
-            <span class="icon">${h.icon}</span>
-            <div class="info">
-              <div class="name">${h.name}</div>
-              <div class="meta">
-                <span>每日目标：${wc.dailyGoal || 2000}ml</span>
-                <span>每次：${wc.perCup || 250}ml</span>
-                <span>提醒：${(wc.schedule || []).length}次</span>
-              </div>
-            </div>
-            <button class="checkin-btn pending" style="font-size:12px;padding:6px 12px" onclick="openWaterSettingsPanel('${h.id}')">设置</button>
-            <div class="delete-btn" onclick="deleteHabit('${h.id}')">删除此习惯</div>
-          </div>`;
-      } else {
-      html += `
-        <div class="habit-card ${editMode ? 'show-delete' : ''}" id="manage-${h.id}">
-          <span class="icon">${h.icon}</span>
-          <div class="info">
-            <div class="name">${h.name}</div>
-            <div class="meta">
-              <span>${h.type === 'boolean' ? '打卡' : h.type === 'count' ? `计数(${h.unit})` : `计时(${h.unit})`}</span>
-              ${reminder && reminder.enabled ? `<span>⏰ ${reminder.time}</span>` : ''}
+  filtered.forEach(h => {
+    const enabled = h.enabled !== false;
+    const reminder = h.reminder;
+    const reminderStr = reminder && reminder.enabled ? `⏰ ${reminder.time}` : '';
+    const typeStr = h.type === 'boolean' ? '打卡' : h.type === 'count' ? `计数(${h.unit})` : h.type === 'water' ? '饮水追踪' : `计时(${h.unit})`;
+    html += `
+      <div class="my-habit-item" id="myhabit-${h.id}">
+        <span class="mh-icon">${h.icon}</span>
+        <div class="mh-info">
+          <div class="mh-name">${h.name}</div>
+          <div class="mh-meta"><span>${typeStr}</span>${reminderStr ? `<span>${reminderStr}</span>` : ''}</div>
+        </div>
+        <div class="mh-toggle ${enabled ? 'on' : ''}" onclick="toggleHabitEnabled('${h.id}')"></div>
+        <div class="mh-actions">
+          <button onclick="openTimePanel('${h.id}')">设置</button>
+          <button class="mh-delete" onclick="deleteHabit('${h.id}')">删除</button>
+        </div>
+      </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function toggleHabitEnabled(habitId) {
+  const h = habitsConfig.find(x => x.id === habitId);
+  if (!h) return;
+  h.enabled = h.enabled === false ? true : false;
+  saveConfig();
+  renderMyPack();
+  renderCheckin();
+  showToast(h.enabled !== false ? `${h.icon} ${h.name} 已启用` : `${h.icon} ${h.name} 已禁用`);
+}
+
+function renderSystemPacks() {
+  const container = document.getElementById('systemPacks');
+  const myIds = new Set(habitsConfig.map(h => h.id));
+  const packs = [
+    {id:'healthPack', name:'健康生活建议包', emoji:'💚', desc:'基于医学研究的一日健康作息方案', data: HEALTH_PACK},
+    {id:'springPack', name:'春季养生包', emoji:'🌿', desc:'春季养生重在养肝舒展', data: SEASONAL_PACKS.spring},
+    {id:'summerPack', name:'夏季养生包', emoji:'☀️', desc:'夏季养生重在养心静心', data: SEASONAL_PACKS.summer},
+    {id:'autumnPack', name:'秋季养生包', emoji:'🍂', desc:'秋季养生重在养肺润燥', data: SEASONAL_PACKS.autumn},
+    {id:'winterPack', name:'冬季养生包', emoji:'❄️', desc:'冬季养生重在养肾保暖', data: SEASONAL_PACKS.winter},
+    {id:'colorDietPack', name:'五色饮食包', emoji:'🎨', desc:'黄帝内经五色养五脏', data: {habits: HABIT_LIBRARY.filter(h=>h.category==='color_diet').map(h=>({id:h.id}))}},
+    {id:'emotionPack', name:'情志养生包', emoji:'💭', desc:'五脏与情绪调理', data: {habits: HABIT_LIBRARY.filter(h=>h.category==='emotion').map(h=>({id:h.id}))}},
+    {id:'wulaoPack', name:'五劳防护包', emoji:'🛡️', desc:'久坐久视防护指南', data: {habits: HABIT_LIBRARY.filter(h=>h.category==='wulao').map(h=>({id:h.id}))}}
+  ];
+
+  let html = '';
+  packs.forEach(pack => {
+    const isExpanded = packExpanded[pack.id] || false;
+    const habits = pack.data.habits || [];
+    const addedCount = habits.filter(ph => myIds.has(ph.id)).length;
+    const allAdded = habits.length > 0 && addedCount === habits.length;
+
+    html += `
+      <div class="pack-card" id="${pack.id}Card">
+        <div class="pack-header" onclick="togglePack('${pack.id}')">
+          <div class="pack-header-left">
+            <span class="pack-emoji">${pack.emoji}</span>
+            <div>
+              <div class="pack-title">${pack.name}</div>
+              <div class="pack-subtitle">${allAdded ? '✅ 已全部添加' : `${habits.length}个习惯 · 已添加 ${addedCount}/${habits.length}`}</div>
             </div>
           </div>
-          <button class="checkin-btn pending" style="font-size:12px;padding:6px 12px" onclick="openTimePanel('${h.id}')">设置</button>
-          <div class="delete-btn" onclick="deleteHabit('${h.id}')">删除此习惯</div>
+          <span class="pack-toggle ${isExpanded ? 'expanded' : ''}" id="${pack.id}Toggle">▼</span>
+        </div>
+        <div class="pack-body ${isExpanded ? 'expanded' : ''}" id="${pack.id}Body">
+          ${pack.data.quote ? `<div class="pack-quote">${pack.data.quote}</div>` : ''}
+          ${pack.data.tip ? `<div class="pack-tip">${pack.data.tip}</div>` : ''}
+          ${!pack.data.quote && pack.data.description ? `<div class="pack-tip">${pack.data.description}</div>` : ''}
+          <div style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px">包内习惯：</div>`;
+
+    habits.forEach(ph => {
+      const lib = HABIT_LIBRARY.find(h => h.id === ph.id);
+      if (!lib) return;
+      const isAdded = myIds.has(ph.id);
+      const reminderStr = ph.reminder && ph.reminder.time ? `⏰ ${ph.reminder.time}` : '';
+      html += `
+        <div class="pack-habit-item">
+          <span class="ph-icon">${lib.icon}</span>
+          <div class="ph-info">
+            <div class="ph-name">${lib.name}</div>
+            <div class="ph-meta">${reminderStr || (lib.type === 'boolean' ? '打卡' : lib.type === 'count' ? `计数(${lib.unit})` : `计时(${lib.unit})`)}</div>
+          </div>
+          <span class="ph-status ${isAdded ? 'added' : 'add'}">${isAdded ? '✓ 已添加' : '未添加'}</span>
         </div>`;
-      }
     });
-    html += '</div>';
-  }
 
-  if (habitsConfig.length === 0) {
-    html = '<div style="text-align:center;padding:40px 20px;color:var(--muted);font-size:14px;">还没有添加习惯<br>点击下方按钮从习惯库选择</div>';
-  }
-
+    if (!allAdded) {
+      html += `
+          <div class="pack-actions">
+            <button class="import-all" onclick="importPack('${pack.id}')">一键导入此包</button>
+            <button class="custom-import" onclick="openLibraryPanel()">自定义导入</button>
+          </div>`;
+    } else {
+      html += `
+          <div class="pack-actions">
+            <button class="custom-import" style="flex:1" onclick="showToast('该包习惯已全部添加')">✅ 已全部导入</button>
+          </div>`;
+    }
+    html += `</div></div>`;
+  });
   container.innerHTML = html;
+}
+
+function importPack(packId) {
+  const packMap = {
+    'healthPack': HEALTH_PACK,
+    'springPack': SEASONAL_PACKS.spring,
+    'summerPack': SEASONAL_PACKS.summer,
+    'autumnPack': SEASONAL_PACKS.autumn,
+    'winterPack': SEASONAL_PACKS.winter,
+    'colorDietPack': {habits: HABIT_LIBRARY.filter(h=>h.category==='color_diet').map(h=>({id:h.id}))},
+    'emotionPack': {habits: HABIT_LIBRARY.filter(h=>h.category==='emotion').map(h=>({id:h.id}))},
+    'wulaoPack': {habits: HABIT_LIBRARY.filter(h=>h.category==='wulao').map(h=>({id:h.id}))}
+  };
+  const pack = packMap[packId];
+  if (!pack) return;
+  const myIds = new Set(habitsConfig.map(h => h.id));
+  let addedCount = 0;
+  pack.habits.forEach(ph => {
+    if (myIds.has(ph.id)) return;
+    const lib = HABIT_LIBRARY.find(h => h.id === ph.id);
+    if (!lib) return;
+    const newHabit = {
+      id: lib.id, name: lib.name, icon: lib.icon, category: lib.category,
+      type: lib.type, unit: lib.unit, enabled: true,
+      reminder: {enabled:false, time:'08:00', days:[0,1,2,3,4,5,6], method:'in-app'}
+    };
+    if (ph.reminder) {
+      newHabit.reminder = {enabled: ph.reminder.enabled, time: ph.reminder.time, days:[0,1,2,3,4,5,6], method:'in-app'};
+    }
+    if (lib.type === 'water' && lib.waterConfig) {
+      newHabit.waterConfig = JSON.parse(JSON.stringify(lib.waterConfig));
+      newHabit.reminder = {enabled:true, method:'in-app'};
+    }
+    habitsConfig.push(newHabit);
+    myIds.add(ph.id);
+    addedCount++;
+  });
+  if (addedCount > 0) {
+    saveConfig();
+    showToast(`已导入 ${addedCount} 个习惯`);
+    renderSystemPacks();
+    renderMyPack();
+    render();
+  } else {
+    showToast('包内习惯已全部添加');
+  }
+}
+
+function renderManage() {
+  renderMyPack();
+  renderSystemPacks();
 }
 
 // ===================== TABS =====================
@@ -1848,6 +2056,25 @@ function renderLibraryPanel(search) {
 
   let html = `<input class="lib-search" placeholder="搜索习惯..." value="${search}" oninput="renderLibraryPanel(this.value)">`;
 
+  // Custom add (below search)
+  html += `
+    <div class="lib-custom" style="margin-top:12px;margin-bottom:16px">
+      <div style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px">✨ 自定义习惯</div>
+      <div class="lib-custom-input">
+        <input id="customHabitName" placeholder="习惯名称" maxlength="20">
+        <input id="customHabitIcon" placeholder="图标" maxlength="4" style="width:60px">
+        <button onclick="addCustomHabit()">添加</button>
+      </div>
+      <div class="lib-custom-type" id="customTypeSelector">
+        <button class="active" data-type="boolean" onclick="selectCustomType(this)">打卡</button>
+        <button data-type="count" onclick="selectCustomType(this)">计数</button>
+        <button data-type="timer" onclick="selectCustomType(this)">计时</button>
+      </div>
+      <div id="customUnitWrap" style="display:none;margin-top:8px">
+        <input id="customHabitUnit" placeholder="单位（如：杯、个、分钟）" style="width:100%;padding:10px 14px;border:2px solid var(--rule);border-radius:12px;font-size:14px;background:#fff;outline:none">
+      </div>
+    </div>`;
+
   // Health Pack card
   const packHabits = HEALTH_PACK.habits;
   const packAddedCount = packHabits.filter(ph => myIds.has(ph.id)).length;
@@ -1920,24 +2147,6 @@ function renderLibraryPanel(search) {
     html += '</div>';
   });
 
-  // Custom add
-  html += `
-    <div class="lib-custom">
-      <div style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px">✨ 自定义习惯</div>
-      <div class="lib-custom-input">
-        <input id="customHabitName" placeholder="习惯名称" maxlength="20">
-        <input id="customHabitIcon" placeholder="图标" maxlength="4" style="width:60px">
-        <button onclick="addCustomHabit()">添加</button>
-      </div>
-      <div class="lib-custom-type" id="customTypeSelector">
-        <button class="active" data-type="boolean" onclick="selectCustomType(this)">打卡</button>
-        <button data-type="count" onclick="selectCustomType(this)">计数</button>
-        <button data-type="timer" onclick="selectCustomType(this)">计时</button>
-      </div>
-      <div id="customUnitWrap" style="display:none;margin-top:8px">
-        <input id="customHabitUnit" placeholder="单位（如：杯、个、分钟）" style="width:100%;padding:10px 14px;border:2px solid var(--rule);border-radius:12px;font-size:14px;background:#fff;outline:none">
-      </div>
-    </div>`;
 
   body.innerHTML = html;
 }
@@ -1985,6 +2194,11 @@ function addCustomHabit() {
 
   if (!name) {
     showToast('请输入习惯名称');
+    return;
+  }
+
+  if (habitsConfig.find(h => h.name === name)) {
+    showToast('已存在同名习惯，请使用不同名称');
     return;
   }
 
