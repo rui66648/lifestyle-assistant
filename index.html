@@ -1353,12 +1353,14 @@ function renderCheckin() {
         html += renderWaterTracker(h, rec).replace('class="water-tracker"', `class="water-tracker ${collapsedClass}"`);
       } else if (h.type === 'select') {
         const selected = rec[h.id] ? rec[h.id].value : '';
+        const tipStr2 = h.tip || '';
         html += `
           <div class="habit-card ${collapsedClass}" id="card-${h.id}" onclick="openEmotionPanel()">
             <span class="icon">${h.icon}</span>
             <div class="info">
               <div class="name">${h.name}${selected ? '：' + selected : ''}</div>
               <div class="meta"><span style="color:var(--accent)">点击记录今日情绪</span></div>
+              ${tipStr2 ? `<div style="font-size:11px;color:var(--accent);margin-top:3px;line-height:1.4">💡 ${tipStr2}</div>` : ''}
             </div>
             <button class="checkin-btn ${selected ? 'done' : 'pending'}">${selected ? '✓' : '记录'}</button>
           </div>`;
@@ -1367,6 +1369,7 @@ function renderCheckin() {
       const reminder = h.reminder;
       const reminderStr = reminder && reminder.enabled ? reminder.time : '';
       const valueStr = checked ? (h.type === 'boolean' ? '' : ` ${rec[h.id].value}${h.unit}`) : '';
+      const tipStr = h.tip || '';
       html += `
         <div class="habit-card ${collapsedClass}" id="card-${h.id}">
           <span class="icon">${h.icon}</span>
@@ -1376,6 +1379,7 @@ function renderCheckin() {
               ${reminderStr ? `<span>⏰ ${reminderStr}</span>` : ''}
               ${streak > 0 ? `<span class="streak">🔥${streak}天</span>` : ''}
             </div>
+            ${tipStr ? `<div style="font-size:11px;color:var(--accent);margin-top:3px;line-height:1.4">💡 ${tipStr}</div>` : ''}
           </div>
           <button class="checkin-btn ${checked ? 'done' : 'pending'}" onclick="handleCheckin('${h.id}')">
             ${checked ? '✓' : (h.type === 'boolean' ? '打卡' : h.type === 'count' ? '记录' : '记录')}
@@ -1740,6 +1744,7 @@ function renderSystemPacks() {
           ${pack.data.quote ? `<div class="pack-quote">${pack.data.quote}</div>` : ''}
           ${pack.data.tip ? `<div class="pack-tip">${pack.data.tip}</div>` : ''}
           ${!pack.data.quote && pack.data.description ? `<div class="pack-tip">${pack.data.description}</div>` : ''}
+          ${!allAdded ? `<div class="pack-actions" style="margin-bottom:12px"><button class="import-all" onclick="importPack('${pack.id}')">一键导入此包</button></div>` : ''}
           <div style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px">包内习惯：</div>`;
 
     habits.forEach(ph => {
@@ -1760,13 +1765,7 @@ function renderSystemPacks() {
         </div>`;
     });
 
-    if (!allAdded) {
-      html += `
-          <div class="pack-actions">
-            <button class="import-all" onclick="importPack('${pack.id}')">一键导入此包</button>
-            <button class="custom-import" onclick="openLibraryPanel()">自定义导入</button>
-          </div>`;
-    } else {
+    if (allAdded) {
       html += `
           <div class="pack-actions">
             <button class="custom-import" style="flex:1" onclick="showToast('该包习惯已全部添加')">✅ 已全部导入</button>
@@ -1790,6 +1789,18 @@ function importPack(packId) {
   };
   const pack = packMap[packId];
   if (!pack) return;
+
+  // Remove existing habits that will be replaced by the pack
+  const packIds = new Set(pack.habits.map(ph => ph.id));
+  let removedCount = 0;
+  habitsConfig = habitsConfig.filter(h => {
+    if (packIds.has(h.id)) {
+      removedCount++;
+      return false;
+    }
+    return true;
+  });
+
   const myIds = new Set(habitsConfig.map(h => h.id));
   let addedCount = 0;
   pack.habits.forEach(ph => {
@@ -1812,9 +1823,12 @@ function importPack(packId) {
     myIds.add(ph.id);
     addedCount++;
   });
-  if (addedCount > 0) {
+  if (addedCount > 0 || removedCount > 0) {
     saveConfig();
-    showToast(`已导入 ${addedCount} 个习惯`);
+    const msg = [];
+    if (removedCount > 0) msg.push(`已替换 ${removedCount} 个现有习惯`);
+    if (addedCount > 0) msg.push(`已导入 ${addedCount} 个新习惯`);
+    showToast(msg.join('，'));
     renderSystemPacks();
     renderMyPack();
     render();
