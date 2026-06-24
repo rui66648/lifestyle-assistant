@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lifestyle-assistant-v1';
+const CACHE_NAME = 'lifestyle-assistant-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -7,7 +7,6 @@ const ASSETS = [
   './assets/icon-192.jpg',
   './assets/icon-512.jpg',
   './assets/charts.js',
-  './_shared/js/echarts.min.js',
   './_shared/fonts/InstrumentSans-Regular.ttf',
   './_shared/fonts/InstrumentSans-Bold.ttf',
   './_shared/fonts/GeistMono-Regular.ttf'
@@ -31,6 +30,18 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request).then(cached => cached || fetch(event.request))
+    caches.match(event.request).then(cached => {
+      // Network-first for HTML to get latest updates
+      if (event.request.destination === 'document' || event.request.url.endsWith('.html')) {
+        return fetch(event.request).then(response => {
+          if (response && response.status === 200) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          }
+          return response;
+        }).catch(() => cached);
+      }
+      return cached || fetch(event.request);
+    })
   );
 });
