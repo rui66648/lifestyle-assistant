@@ -292,6 +292,14 @@ img{max-width:100%;display:block}
 /* Scrollbar */
 ::-webkit-scrollbar{width:0;height:0}
 
+/* Collapsed habits */
+.habit-card.collapsed{max-height:0;overflow:hidden;padding-top:0;padding-bottom:0;margin:0;opacity:0;transition:all .35s ease}
+.time-group-label{cursor:pointer;user-select:none}
+.time-group-label .collapse-count{font-size:11px;color:var(--accent);background:var(--accent-light);padding:2px 8px;border-radius:10px;margin-left:auto;font-weight:600}
+.time-group-header{display:flex;align-items:center;justify-content:space-between;width:100%}
+.time-group.collapsed-group .time-group-label{opacity:.6}
+.time-group.collapsed-group .habit-card:not(.collapsed){margin-top:6px}
+
 /* Ref Link in Health Tip */
 .ref-link{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--accent);font-weight:600;text-decoration:none;margin-top:6px;padding:4px 10px;background:rgba(124,182,157,0.1);border-radius:8px;transition:all .2s}
 .ref-link:active{background:var(--accent);color:#fff}
@@ -1213,15 +1221,43 @@ function renderCheckin() {
     const habits = groups[period];
     if (habits.length === 0) continue;
     const tp = TIME_PERIOD_MAP[period];
-    html += `<div class="time-group"><div class="time-group-label">${tp.emoji} ${tp.label}</div>`;
-    habits.forEach(h => {
+
+    // Count done vs total
+    const doneCount = habits.filter(h => {
       if (h.type === 'water') {
-        html += renderWaterTracker(h, rec);
+        const wr = rec[h.id] || {};
+        return (wr.value || 0) >= (h.waterConfig?.dailyGoal || 2000);
+      }
+      return rec[h.id] && rec[h.id].done;
+    }).length;
+    const allDone = doneCount === habits.length;
+    const hasDone = doneCount > 0;
+
+    const groupCollapsed = allDone && habits.length > 0;
+    html += `<div class="time-group ${groupCollapsed ? 'collapsed-group' : ''}" id="group-${period}">`;
+    html += `<div class="time-group-label" onclick="toggleGroup('${period}')">
+      <span class="time-group-header">
+        <span>${tp.emoji} ${tp.label}</span>
+        ${allDone ? '<span class="collapse-count">🎉 已完成</span>' : hasDone ? `<span class="collapse-count">📋 已打卡${doneCount}项</span>` : ''}
+      </span>
+    </div>`;
+
+    habits.forEach(h => {
+      let checked = false;
+      if (h.type === 'water') {
+        const wr = rec[h.id] || {};
+        checked = (wr.value || 0) >= (h.waterConfig?.dailyGoal || 2000);
+      } else {
+        checked = rec[h.id] && rec[h.id].done;
+      }
+      const collapsedClass = checked ? 'collapsed' : '';
+
+      if (h.type === 'water') {
+        html += renderWaterTracker(h, rec).replace('class="water-tracker"', `class="water-tracker ${collapsedClass}"`);
       } else if (h.type === 'select') {
-        // Emotion select type
         const selected = rec[h.id] ? rec[h.id].value : '';
         html += `
-          <div class="habit-card" id="card-${h.id}" onclick="openEmotionPanel()">
+          <div class="habit-card ${collapsedClass}" id="card-${h.id}" onclick="openEmotionPanel()">
             <span class="icon">${h.icon}</span>
             <div class="info">
               <div class="name">${h.name}${selected ? '：' + selected : ''}</div>
@@ -1230,13 +1266,12 @@ function renderCheckin() {
             <button class="checkin-btn ${selected ? 'done' : 'pending'}">${selected ? '✓' : '记录'}</button>
           </div>`;
       } else {
-      const checked = rec[h.id] && rec[h.id].done;
       const streak = getStreak(h.id);
       const reminder = h.reminder;
       const reminderStr = reminder && reminder.enabled ? reminder.time : '';
       const valueStr = checked ? (h.type === 'boolean' ? '' : ` ${rec[h.id].value}${h.unit}`) : '';
       html += `
-        <div class="habit-card" id="card-${h.id}">
+        <div class="habit-card ${collapsedClass}" id="card-${h.id}">
           <span class="icon">${h.icon}</span>
           <div class="info">
             <div class="name">${h.name}${valueStr}</div>
@@ -2478,6 +2513,20 @@ function selectEmotion(emotionId) {
 function openWulaoPanel() {
   renderWulaoPanel();
   openPanel('wulaoPanel');
+}
+
+function toggleGroup(period) {
+  const group = document.getElementById('group-' + period);
+  if (!group) return;
+  group.classList.toggle('collapsed-group');
+  const cards = group.querySelectorAll('.habit-card, .water-tracker');
+  cards.forEach(card => {
+    if (card.classList.contains('collapsed')) {
+      card.classList.remove('collapsed');
+    } else {
+      card.classList.add('collapsed');
+    }
+  });
 }
 
 function renderWulaoPanel() {
