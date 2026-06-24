@@ -289,6 +289,32 @@ img{max-width:100%;display:block}
 
 /* Scrollbar */
 ::-webkit-scrollbar{width:0;height:0}
+
+/* Ref Link in Health Tip */
+.ref-link{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--accent);font-weight:600;text-decoration:none;margin-top:6px;padding:4px 10px;background:rgba(124,182,157,0.1);border-radius:8px;transition:all .2s}
+.ref-link:active{background:var(--accent);color:#fff}
+.ref-link svg{width:14px;height:14px}
+
+/* Banner quote clickable */
+.banner-quote{cursor:pointer;position:relative}
+.banner-quote::after{content:'📚';font-size:10px;position:absolute;right:-20px;top:50%;transform:translateY(-50%);opacity:.6}
+
+/* Ref Panel */
+.ref-panel-header{text-align:center;margin-bottom:16px}
+.ref-panel-header h3{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.ref-panel-header p{font-size:12px;color:var(--muted)}
+.ref-section-title{font-size:13px;font-weight:700;color:var(--muted);margin:16px 0 8px;display:flex;align-items:center;gap:6px}
+.ref-card{display:flex;align-items:center;gap:12px;padding:12px;background:#fff;border-radius:12px;margin-bottom:8px;box-shadow:var(--shadow);transition:all .2s;text-decoration:none;color:var(--ink)}
+.ref-card:active{transform:scale(.98);opacity:.8}
+.ref-card .ref-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.ref-card .ref-icon.ancient{background:linear-gradient(135deg,#F4A683,#E8956A)}
+.ref-card .ref-icon.modern{background:linear-gradient(135deg,#7CB69D,#5FA882)}
+.ref-card .ref-info{flex:1;min-width:0}
+.ref-card .ref-name{font-size:14px;font-weight:700;margin-bottom:2px}
+.ref-card .ref-author{font-size:11px;color:var(--muted)}
+.ref-card .ref-arrow{font-size:16px;color:var(--muted);flex-shrink:0}
+.ref-lib-btn{display:block;width:100%;padding:14px;border-radius:14px;text-align:center;font-size:14px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));margin-top:12px;text-decoration:none;box-shadow:var(--shadow)}
+.ref-lib-btn:active{opacity:.8}
 </style>
 </head>
 <body>
@@ -301,7 +327,7 @@ img{max-width:100%;display:block}
   <img src="./assets/hero_1280x720.jpg" alt="banner" onerror="this.style.display='none'">
   <div class="banner-overlay">
     <div class="banner-date" id="bannerDate"></div>
-    <div class="banner-quote" id="bannerQuote"></div>
+    <div class="banner-quote" id="bannerQuote" onclick="openRefPanel(event)"></div>
   </div>
 </div>
 
@@ -311,6 +337,7 @@ img{max-width:100%;display:block}
   <div class="tip-content">
     <span class="tip-text" id="tipText"></span>
     <span class="tip-source" id="tipSource"></span>
+    <a class="ref-link" onclick="openRefPanel(event)">📚 查看养生参考文献</a>
   </div>
 </div>
 
@@ -375,6 +402,7 @@ img{max-width:100%;display:block}
   <button class="export-btn" style="margin-top:12px;background:linear-gradient(135deg,var(--accent-light),var(--accent2-light));color:var(--ink);font-weight:700" onclick="addHealthPack()">💚 一键添加健康生活建议包</button>
   <button class="export-btn" style="margin-top:8px;background:linear-gradient(135deg,#d4edda,#fff3cd);color:var(--ink);font-weight:700" onclick="openLibraryPanel()">🌿 四季养生（黄帝内经）</button>
   <button class="export-btn" style="margin-top:8px;background:linear-gradient(135deg,#e8f4f8,#d4edda);color:var(--ink);font-weight:700" onclick="openClockPanel()">⏳ 子午流注 · 十二时辰</button>
+  <button class="export-btn" style="margin-top:12px;background:linear-gradient(135deg,#F4A683,#7CB69D);color:#fff;font-weight:700;font-size:15px;padding:14px" onclick="openRefPanel(event)">📚 养生参考文献（14部经典）</button>
   <button class="export-btn" style="margin-top:12px" onclick="openLibraryPanel()">➕ 从习惯库添加</button>
 </div>
 
@@ -462,6 +490,16 @@ img{max-width:100%;display:block}
     <button class="panel-close" onclick="closeAllPanels()">✕</button>
   </div>
   <div class="panel-body" id="clockPanelBody"></div>
+</div>
+
+<!-- 养生参考文献 Panel -->
+<div class="panel" id="refPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title">📚 养生参考文献</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body" id="refPanelBody"></div>
 </div>
 
 <script>
@@ -2130,6 +2168,72 @@ function renderClockPanel() {
 
   html += '</div>';
   html += '<div style="margin-top:14px;font-size:12px;color:var(--muted);text-align:center">依据《黄帝内经》子午流注理论 · 时辰养生</div>';
+  body.innerHTML = html;
+}
+
+// ===================== REFERENCE PANEL (养生参考文献) =====================
+
+const REF_BOOKS = [
+  {name:'《黄帝内经》',author:'先秦 · 黄帝/岐伯',type:'ancient',emoji:'🏛️',desc:'中医养生理论之源',url:'https://rui66648.github.io/lifestyle-assistant/黄帝内经/黄帝内经.html'},
+  {name:'《遵生八笺》',author:'明代 · 高濂',type:'ancient',emoji:'🌿',desc:'古代养生百科全书',url:'https://rui66648.github.io/lifestyle-assistant/遵生八笺/遵生八笺.html'},
+  {name:'《老老恒言》',author:'清代 · 曹庭栋',type:'ancient',emoji:'👴',desc:'老年养生专著',url:'https://rui66648.github.io/lifestyle-assistant/老老恒言/老老恒言.html'},
+  {name:'《饮膳正要》',author:'元代 · 忽思慧',type:'ancient',emoji:'🍲',desc:'宫廷营养学专著',url:'https://rui66648.github.io/lifestyle-assistant/饮膳正要/饮膳正要.html'},
+  {name:'《养生论》',author:'三国 · 嵇康',type:'ancient',emoji:'📜',desc:'首创系统养生专论',url:'https://rui66648.github.io/lifestyle-assistant/养生论/养生论.html'},
+  {name:'《寿世青编》',author:'清代 · 尤乘',type:'ancient',emoji:'💚',desc:'五脏养生心药之说',url:'https://rui66648.github.io/lifestyle-assistant/寿世青编/寿世青编.html'},
+  {name:'《备急千金要方》',author:'唐代 · 孙思邈',type:'ancient',emoji:'💊',desc:'药王养性治未病',url:'https://rui66648.github.io/lifestyle-assistant/备急千金要方/备急千金要方.html'},
+  {name:'《抱朴子》',author:'晋代 · 葛洪',type:'ancient',emoji:'🔮',desc:'道家养生不伤为本',url:'https://rui66648.github.io/lifestyle-assistant/抱朴子/抱朴子.html'},
+  {name:'《闲情偶寄》',author:'清代 · 李渔',type:'ancient',emoji:'🎋',desc:'生活美学养生先养心',url:'https://rui66648.github.io/lifestyle-assistant/闲情偶寄/闲情偶寄.html'},
+  {name:'《你是你吃出来的》',author:'现代 · 夏萌',type:'modern',emoji:'🥗',desc:'细胞营养与七大营养素',url:'https://rui66648.github.io/lifestyle-assistant/你是你吃出来的/你是你吃出来的.html'},
+  {name:'《九种体质养生全书》',author:'现代 · 王琦',type:'modern',emoji:'🧬',desc:'九种体质辨识调理',url:'https://rui66648.github.io/lifestyle-assistant/九种体质养生全书/九种体质养生全书.html'},
+  {name:'《科学休息》',author:'现代 · 亚历克斯',type:'modern',emoji:'🧠',desc:'注意力网络与四种休息',url:'https://rui66648.github.io/lifestyle-assistant/科学休息/科学休息.html'},
+  {name:'《求医不如求己》',author:'现代 · 中里巴人',type:'modern',emoji:'💆',desc:'穴位按摩经络保健',url:'https://rui66648.github.io/lifestyle-assistant/求医不如求己/求医不如求己.html'},
+  {name:'《拉伸》',author:'现代 · 鲍勃',type:'modern',emoji:'🤸',desc:'拉伸动作与办公室拉伸',url:'https://rui66648.github.io/lifestyle-assistant/拉伸/拉伸.html'}
+];
+
+function openRefPanel(e) {
+  if (e) e.stopPropagation();
+  renderRefPanel();
+  openPanel('refPanel');
+}
+
+function renderRefPanel() {
+  const body = document.getElementById('refPanelBody');
+  const ancient = REF_BOOKS.filter(b => b.type === 'ancient');
+  const modern = REF_BOOKS.filter(b => b.type === 'modern');
+
+  let html = `
+    <div class="ref-panel-header">
+      <h3>📚 14部养生经典</h3>
+      <p>汇集先秦至现代养生著作，点击查看详情</p>
+    </div>
+    <div class="ref-section-title">🏛️ 经典古籍（${ancient.length}部）</div>
+  `;
+
+  ancient.forEach(b => {
+    html += `<a class="ref-card" href="${b.url}" target="_blank" rel="noopener">
+      <div class="ref-icon ancient">${b.emoji}</div>
+      <div class="ref-info">
+        <div class="ref-name">${b.name}</div>
+        <div class="ref-author">${b.author} · ${b.desc}</div>
+      </div>
+      <div class="ref-arrow">›</div>
+    </a>`;
+  });
+
+  html += `<div class="ref-section-title">📖 现代著作（${modern.length}部）</div>`;
+  modern.forEach(b => {
+    html += `<a class="ref-card" href="${b.url}" target="_blank" rel="noopener">
+      <div class="ref-icon modern">${b.emoji}</div>
+      <div class="ref-info">
+        <div class="ref-name">${b.name}</div>
+        <div class="ref-author">${b.author} · ${b.desc}</div>
+      </div>
+      <div class="ref-arrow">›</div>
+    </a>`;
+  });
+
+  html += `<a class="ref-lib-btn" href="https://rui66648.github.io/lifestyle-assistant/养生参考文献文库/index.html" target="_blank" rel="noopener">📖 进入参考文献文库</a>`;
+
   body.innerHTML = html;
 }
 
