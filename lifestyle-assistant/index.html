@@ -1,0 +1,2037 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#FDF8F0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="习惯打卡">
+<link rel="manifest" href="./manifest.json">
+<title>生活习惯小助手 V1</title>
+<style>
+@font-face{font-family:'InstrumentSans';src:url('./_shared/fonts/InstrumentSans-Regular.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
+:root{--bg:#FDF8F0;--bg2:#F5EDE0;--ink:#2D3436;--muted:#8D9196;--rule:#E0D8CC;--accent:#7CB69D;--accent2:#F4A683;--accent-light:#B8DCC9;--accent2-light:#FBD5C0;--radius:14px;--shadow:0 2px 12px rgba(0,0,0,.06)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'InstrumentSans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:80px;overflow-x:hidden}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;font-size:inherit}
+input,textarea{font-family:inherit;font-size:inherit}
+img{max-width:100%;display:block}
+
+/* Banner */
+.banner{position:relative;width:100%;height:180px;overflow:hidden;background:linear-gradient(135deg,var(--accent-light),var(--accent2-light))}
+.banner img{width:100%;height:100%;object-fit:cover;opacity:.35}
+.banner-overlay{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px;text-align:center}
+.banner-date{font-size:14px;color:var(--muted);margin-bottom:4px}
+.banner-quote{font-size:15px;color:var(--ink);line-height:1.5;max-width:320px}
+
+/* Reminder Banner */
+.reminder-banner{background:var(--bg2);border-radius:var(--radius);margin:12px 16px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.reminder-banner .text{font-size:13px;color:var(--ink);flex:1;line-height:1.4}
+.reminder-banner .settings-btn{font-size:20px;padding:4px 8px;border-radius:8px;transition:background .2s}
+.reminder-banner .settings-btn:active{background:var(--rule)}
+
+/* Tabs */
+.tabs{display:flex;margin:0 16px;border-bottom:2px solid var(--rule);gap:0}
+.tab{flex:1;text-align:center;padding:10px 0;font-size:14px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab:active{opacity:.7}
+
+/* Sections */
+.section{display:none;padding:16px}
+.section.active{display:block}
+.section-title{font-size:16px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+
+/* Time Period Groups */
+.time-group{margin-bottom:20px}
+.time-group-label{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+
+/* Habit Cards */
+.habit-card{background:#fff;border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;transition:all .2s;position:relative;overflow:hidden}
+.habit-card:active{transform:scale(.98)}
+.habit-card .icon{font-size:28px;width:36px;text-align:center;flex-shrink:0}
+.habit-card .info{flex:1;min-width:0}
+.habit-card .name{font-size:15px;font-weight:600;margin-bottom:2px}
+.habit-card .meta{font-size:12px;color:var(--muted);display:flex;gap:8px;align-items:center}
+.habit-card .streak{font-size:11px;color:var(--accent);background:var(--accent-light);padding:2px 8px;border-radius:10px;font-weight:600}
+.habit-card .checkin-btn{padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;transition:all .2s;flex-shrink:0}
+.habit-card .checkin-btn.pending{background:var(--accent);color:#fff}
+.habit-card .checkin-btn.pending:active{background:#6aa88a}
+.habit-card .checkin-btn.done{background:var(--accent-light);color:var(--accent)}
+.habit-card .delete-btn{position:absolute;bottom:0;left:0;right:0;background:#e74c3c;color:#fff;text-align:center;padding:6px;font-size:12px;font-weight:600;transform:translateY(100%);transition:transform .3s}
+.habit-card.show-delete .delete-btn{transform:translateY(0)}
+
+/* Ring Progress */
+.ring-container{display:flex;justify-content:center;align-items:center;margin:20px 0}
+.ring-wrap{position:relative;width:160px;height:160px}
+.ring-svg{width:160px;height:160px;transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:var(--bg2);stroke-width:12}
+.ring-fg{fill:none;stroke:var(--accent);stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset .6s ease}
+.ring-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.ring-pct{font-size:32px;font-weight:700;color:var(--accent)}
+.ring-label{font-size:12px;color:var(--muted)}
+
+/* Stats Grid */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.stat-card{background:#fff;border-radius:var(--radius);padding:12px 8px;text-align:center;box-shadow:var(--shadow)}
+.stat-val{font-size:20px;font-weight:700;color:var(--accent)}
+.stat-label{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* Ranking */
+.ranking-item{margin-bottom:10px}
+.ranking-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.ranking-name{font-size:13px;font-weight:600}
+.ranking-pct{font-size:13px;font-weight:700;color:var(--accent)}
+.ranking-bar{height:8px;background:var(--bg2);border-radius:4px;overflow:hidden}
+.ranking-fill{height:100%;border-radius:4px;transition:width .6s ease}
+.ranking-fill.high{background:var(--accent)}
+.ranking-fill.mid{background:var(--accent2)}
+.ranking-fill.low{background:var(--rule)}
+
+/* Heatmap */
+.heatmap{margin:16px 0}
+.heatmap-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.heatmap-title{font-size:14px;font-weight:600}
+.heatmap-nav{display:flex;gap:8px;align-items:center}
+.heatmap-nav button{font-size:18px;padding:2px 8px;border-radius:6px}
+.heatmap-nav button:active{background:var(--rule)}
+.heatmap-month{font-size:14px;font-weight:600;min-width:100px;text-align:center}
+.heatmap-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.heatmap-day-label{font-size:10px;color:var(--muted);text-align:center;padding:2px 0}
+.heatmap-cell{aspect-ratio:1;border-radius:4px;background:var(--bg2);transition:background .2s}
+.heatmap-cell.l1{background:var(--accent-light)}
+.heatmap-cell.l2{background:var(--accent)}
+.heatmap-cell.l3{background:#5a9e7e}
+.heatmap-cell.l4{background:#3d7a5f}
+.heatmap-cell.empty{background:transparent}
+.heatmap-cell.today{outline:2px solid var(--accent2);outline-offset:1px}
+
+/* Achievements */
+.achievements{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.badge{width:60px;text-align:center}
+.badge-icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 4px;box-shadow:var(--shadow)}
+.badge-icon.locked{background:var(--bg2);filter:grayscale(1);opacity:.5}
+.badge-icon.unlocked{background:linear-gradient(135deg,var(--accent-light),var(--accent2-light))}
+.badge-label{font-size:10px;color:var(--muted)}
+.badge-label.unlocked{color:var(--ink);font-weight:600}
+
+/* Bottom Panels */
+.panel-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:100;opacity:0;pointer-events:none;transition:opacity .3s}
+.panel-overlay.show{opacity:1;pointer-events:auto}
+.panel{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:480px;max-height:80vh;background:var(--bg);border-radius:20px 20px 0 0;z-index:101;transition:transform .3s ease;overflow:hidden;display:flex;flex-direction:column}
+.panel.show{transform:translateX(-50%) translateY(0)}
+.panel-handle{width:40px;height:4px;background:var(--rule);border-radius:2px;margin:10px auto 6px}
+.panel-header{display:flex;justify-content:space-between;align-items:center;padding:8px 16px 12px;border-bottom:1px solid var(--rule)}
+.panel-title{font-size:16px;font-weight:700}
+.panel-close{font-size:20px;padding:4px 8px;border-radius:8px}
+.panel-close:active{background:var(--rule)}
+.panel-body{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch}
+
+/* Habit Library Panel */
+.lib-search{width:100%;padding:10px 14px;border:2px solid var(--rule);border-radius:12px;font-size:14px;background:#fff;outline:none;margin-bottom:12px}
+.lib-search:focus{border-color:var(--accent)}
+.lib-category{margin-bottom:16px}
+.lib-cat-label{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px}
+.lib-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fff;border-radius:10px;margin-bottom:6px;box-shadow:var(--shadow)}
+.lib-item .icon{font-size:22px}
+.lib-item .name{font-size:14px;flex:1}
+.lib-item .type-tag{font-size:11px;color:var(--muted);background:var(--bg2);padding:2px 8px;border-radius:8px}
+.lib-item .add-btn{padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;background:var(--accent);color:#fff}
+.lib-item .add-btn:active{background:#6aa88a}
+.lib-item .add-btn.added{background:var(--bg2);color:var(--muted)}
+.lib-custom{margin-top:12px}
+.lib-custom-input{display:flex;gap:8px}
+.lib-custom-input input{flex:1;padding:10px 14px;border:2px solid var(--rule);border-radius:12px;font-size:14px;background:#fff;outline:none}
+.lib-custom-input input:focus{border-color:var(--accent)}
+.lib-custom-input button{padding:10px 16px;border-radius:12px;background:var(--accent);color:#fff;font-weight:600;font-size:13px;white-space:nowrap}
+.lib-custom-input button:active{background:#6aa88a}
+.lib-custom-type{display:flex;gap:8px;margin-top:8px}
+.lib-custom-type button{padding:6px 12px;border-radius:10px;font-size:12px;background:var(--bg2);font-weight:600}
+.lib-custom-type button.active{background:var(--accent);color:#fff}
+
+/* Checkin Input */
+.checkin-input-wrap{text-align:center;padding:20px 0}
+.checkin-input-label{font-size:16px;font-weight:600;margin-bottom:16px}
+.checkin-input-field{width:120px;height:60px;font-size:32px;font-weight:700;text-align:center;border:3px solid var(--rule);border-radius:16px;outline:none;color:var(--ink)}
+.checkin-input-field:focus{border-color:var(--accent)}
+.checkin-input-unit{font-size:14px;color:var(--muted);margin-top:8px}
+.checkin-input-actions{display:flex;gap:12px;justify-content:center;margin-top:20px}
+.checkin-input-actions button{padding:12px 32px;border-radius:20px;font-size:15px;font-weight:600}
+.checkin-input-actions .cancel{background:var(--bg2);color:var(--muted)}
+.checkin-input-actions .confirm{background:var(--accent);color:#fff}
+
+/* Reminder Settings */
+.reminder-option{display:flex;align-items:center;gap:12px;padding:14px;background:#fff;border-radius:12px;margin-bottom:8px;box-shadow:var(--shadow)}
+.reminder-option .radio{width:22px;height:22px;border-radius:50%;border:2px solid var(--rule);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.reminder-option .radio.active{border-color:var(--accent)}
+.reminder-option .radio.active::after{content:'';width:12px;height:12px;border-radius:50%;background:var(--accent)}
+.reminder-option .label{font-size:14px;flex:1}
+.reminder-option .desc{font-size:12px;color:var(--muted)}
+
+/* Time Picker */
+.time-picker-wrap{text-align:center;padding:10px 0}
+.time-picker-wrap label{font-size:14px;color:var(--muted);display:block;margin-bottom:8px}
+.time-picker-wrap input[type="time"]{font-size:28px;padding:8px 16px;border:2px solid var(--rule);border-radius:12px;outline:none;color:var(--ink)}
+.time-picker-wrap input[type="time"]:focus{border-color:var(--accent)}
+.days-selector{display:flex;gap:6px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.day-btn{width:40px;height:40px;border-radius:50%;font-size:13px;font-weight:600;background:var(--bg2);display:flex;align-items:center;justify-content:center}
+.day-btn.active{background:var(--accent);color:#fff}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+.toggle-label{font-size:14px;font-weight:600}
+.toggle-switch{width:48px;height:26px;border-radius:13px;background:var(--rule);position:relative;transition:background .2s}
+.toggle-switch.on{background:var(--accent)}
+.toggle-switch::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle-switch.on::after{transform:translateX(22px)}
+
+/* Weekly Report */
+.report-card{background:linear-gradient(135deg,var(--accent-light),var(--accent2-light));border-radius:var(--radius);padding:20px;margin-bottom:12px}
+.report-title{font-size:16px;font-weight:700;margin-bottom:12px;text-align:center}
+.report-stat{display:flex;justify-content:space-around;text-align:center;margin-bottom:16px}
+.report-stat-val{font-size:28px;font-weight:700;color:var(--accent)}
+.report-stat-label{font-size:12px;color:var(--muted)}
+.report-item{background:rgba(255,255,255,.7);border-radius:10px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.report-item .emoji{font-size:24px}
+.report-item .text{font-size:13px;flex:1}
+
+/* Health Tip */
+.health-tip{background:var(--bg2);border-radius:var(--radius);padding:14px 16px;margin:0 16px 12px;font-size:13px;line-height:1.5;color:var(--muted);display:flex;gap:8px;align-items:flex-start}
+.health-tip .tip-icon{font-size:18px;flex-shrink:0}
+
+/* Edit Mode */
+.edit-bar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--bg2);border-radius:var(--radius);margin:0 16px 12px}
+.edit-bar .label{font-size:13px;font-weight:600;color:var(--muted)}
+.edit-bar button{padding:8px 16px;border-radius:16px;font-size:13px;font-weight:600}
+.edit-bar .edit-on{background:var(--accent2);color:#fff}
+.edit-bar .edit-off{background:var(--bg2);color:var(--muted)}
+
+/* Toast */
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:var(--ink);color:#fff;padding:10px 24px;border-radius:20px;font-size:13px;font-weight:600;z-index:200;transition:transform .3s ease;white-space:nowrap;max-width:90%;overflow:hidden;text-overflow:ellipsis}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* Add Habit FAB */
+.fab{position:fixed;bottom:90px;right:calc(50% - 220px);width:52px;height:52px;border-radius:50%;background:var(--accent);color:#fff;font-size:28px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(124,182,157,.4);z-index:50;transition:transform .2s}
+.fab:active{transform:scale(.9)}
+@media(max-width:480px){.fab{right:20px}}
+
+/* Export */
+.export-btn{width:100%;padding:14px;border-radius:var(--radius);background:var(--bg2);font-size:14px;font-weight:600;color:var(--muted);margin-top:16px}
+.export-btn:active{background:var(--rule)}
+
+/* Water Tracker */
+.water-tracker{background:#fff;border-radius:var(--radius);padding:16px;margin-bottom:10px;box-shadow:var(--shadow)}
+.water-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.water-title{font-size:15px;font-weight:700;display:flex;align-items:center;gap:6px}
+.water-amount{font-size:13px;color:var(--muted)}
+.water-progress{height:16px;background:var(--bg2);border-radius:8px;overflow:hidden;margin-bottom:8px;position:relative}
+.water-progress-fill{height:100%;border-radius:8px;transition:width .5s ease;background:var(--accent2)}
+.water-progress-fill.mid{background:var(--accent-light)}
+.water-progress-fill.high{background:var(--accent)}
+.water-progress-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:11px;font-weight:700;color:var(--ink)}
+.water-schedule{margin-top:10px}
+.water-schedule-title{font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:600}
+.water-schedule-item{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:12px;border-bottom:1px solid var(--bg2)}
+.water-schedule-item:last-child{border-bottom:none}
+.water-schedule-time{color:var(--muted);min-width:45px;font-weight:600}
+.water-schedule-label{flex:1;color:var(--ink)}
+.water-schedule-amount{color:var(--accent);font-weight:600}
+.water-schedule-done{color:var(--accent);font-weight:700}
+.water-records{margin-top:10px}
+.water-record{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;color:var(--muted)}
+.water-record-time{min-width:45px}
+.water-record-amount{color:var(--accent);font-weight:600}
+.water-quick-btns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.water-quick-btn{padding:8px 16px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg2);color:var(--ink);transition:all .2s}
+.water-quick-btn:active{background:var(--accent);color:#fff}
+.water-quick-btn.primary{background:var(--accent);color:#fff}
+.water-quick-btn.primary:active{background:#6aa88a}
+
+/* Season Banner */
+.season-badge{display:inline-block;padding:3px 10px;border-radius:10px;font-size:12px;font-weight:600;margin-left:8px}
+.season-badge.spring{background:#d4edda;color:#155724}
+.season-badge.summer{background:#f8d7da;color:#721c24}
+.season-badge.autumn{background:#fff3cd;color:#856404}
+.season-badge.winter{background:#d1ecf1;color:#0c5460}
+.season-pack-card{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow);cursor:pointer;transition:transform .2s}
+.season-pack-card:active{transform:scale(.98)}
+.season-pack-card.current{border:2px solid var(--accent)}
+.season-pack-card.other{opacity:.6;border:2px solid var(--rule)}
+.season-pack-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.season-pack-icon{font-size:28px}
+.season-pack-title{font-size:15px;font-weight:700}
+.season-pack-subtitle{font-size:12px;color:var(--muted)}
+.season-pack-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:8px}
+.season-pack-quote{font-size:11px;color:var(--muted);font-style:italic;background:var(--bg2);padding:8px 12px;border-radius:8px;margin-bottom:8px;line-height:1.6}
+.season-pack-footer{display:flex;justify-content:space-between;align-items:center}
+.season-pack-count{font-size:12px;color:var(--muted)}
+.season-pack-btn{padding:6px 16px;border-radius:14px;font-size:12px;font-weight:600;background:var(--accent);color:#fff}
+.season-pack-btn.added{background:var(--bg2);color:var(--muted)}
+.season-tip{background:var(--bg2);border-radius:var(--radius);padding:14px 16px;margin:0 16px 12px;font-size:13px;line-height:1.6;color:var(--muted);display:flex;gap:8px;align-items:flex-start}
+.season-tip .tip-icon{font-size:18px;flex-shrink:0}
+.season-tip .tip-text em{font-style:normal;color:var(--ink);font-weight:600}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:0;height:0}
+</style>
+</head>
+<body>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Banner -->
+<div class="banner">
+  <img src="./assets/hero_1280x720.jpg" alt="banner" onerror="this.style.display='none'">
+  <div class="banner-overlay">
+    <div class="banner-date" id="bannerDate"></div>
+    <div class="banner-quote" id="bannerQuote"></div>
+  </div>
+</div>
+
+<!-- Health Tip -->
+<div class="health-tip" id="healthTip">
+  <span class="tip-icon">💡</span>
+  <span class="tip-text" id="tipText"></span>
+</div>
+
+<!-- Reminder Banner -->
+<div class="reminder-banner" id="reminderBanner">
+  <span class="text" id="reminderText">开启提醒，养成好习惯</span>
+  <button class="settings-btn" onclick="openReminderPanel()">⚙️</button>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab active" data-tab="checkin" onclick="switchTab('checkin')">打卡</button>
+  <button class="tab" data-tab="stats" onclick="switchTab('stats')">统计</button>
+  <button class="tab" data-tab="manage" onclick="switchTab('manage')">管理</button>
+</div>
+
+<!-- Checkin Section -->
+<div class="section active" id="sec-checkin">
+  <div id="checkinContent"></div>
+</div>
+
+<!-- Stats Section -->
+<div class="section" id="sec-stats">
+  <div class="ring-container">
+    <div class="ring-wrap">
+      <svg class="ring-svg" viewBox="0 0 160 160">
+        <circle class="ring-bg" cx="80" cy="80" r="68"/>
+        <circle class="ring-fg" id="ringFg" cx="80" cy="80" r="68" stroke-dasharray="427.26" stroke-dashoffset="427.26"/>
+      </svg>
+      <div class="ring-center">
+        <div class="ring-pct" id="ringPct">0%</div>
+        <div class="ring-label">今日完成</div>
+      </div>
+    </div>
+  </div>
+  <div class="stats-grid" id="statsGrid"></div>
+  <div class="section-title">📊 习惯完成率排行（近30天）</div>
+  <div id="rankingList"></div>
+  <div class="heatmap" id="heatmapSection">
+    <div class="heatmap-header">
+      <span class="heatmap-title">📅 月度热力图</span>
+      <div class="heatmap-nav">
+        <button onclick="changeMonth(-1)">◀</button>
+        <span class="heatmap-month" id="heatmapMonth"></span>
+        <button onclick="changeMonth(1)">▶</button>
+      </div>
+    </div>
+    <div class="heatmap-grid" id="heatmapGrid"></div>
+  </div>
+  <div class="section-title">🏆 成就徽章</div>
+  <div class="achievements" id="achievements"></div>
+  <button class="export-btn" onclick="exportCSV()">📥 导出CSV数据</button>
+</div>
+
+<!-- Manage Section -->
+<div class="section" id="sec-manage">
+  <div class="edit-bar">
+    <span class="label">管理我的习惯</span>
+    <button id="editToggle" class="edit-off" onclick="toggleEditMode()">编辑</button>
+  </div>
+  <div id="manageContent"></div>
+  <button class="export-btn" style="margin-top:12px;background:linear-gradient(135deg,var(--accent-light),var(--accent2-light));color:var(--ink);font-weight:700" onclick="addHealthPack()">💚 一键添加健康生活建议包</button>
+  <button class="export-btn" style="margin-top:8px;background:linear-gradient(135deg,#d4edda,#fff3cd);color:var(--ink);font-weight:700" onclick="openLibraryPanel()">🌿 四季养生（黄帝内经）</button>
+  <button class="export-btn" style="margin-top:12px" onclick="openLibraryPanel()">➕ 从习惯库添加</button>
+</div>
+
+<!-- FAB -->
+<button class="fab" onclick="openLibraryPanel()">+</button>
+
+<!-- Panel Overlay -->
+<div class="panel-overlay" id="panelOverlay" onclick="closeAllPanels()"></div>
+
+<!-- Checkin Input Panel -->
+<div class="panel" id="checkinPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title" id="checkinPanelTitle">输入数值</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body">
+    <div class="checkin-input-wrap">
+      <div class="checkin-input-label" id="checkinInputLabel"></div>
+      <input class="checkin-input-field" id="checkinInputField" type="number" min="0" inputmode="numeric">
+      <div class="checkin-input-unit" id="checkinInputUnit"></div>
+      <div class="checkin-input-actions">
+        <button class="cancel" onclick="closeAllPanels()">取消</button>
+        <button class="confirm" id="checkinConfirmBtn" onclick="confirmCheckinInput()">确认打卡</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Reminder Settings Panel -->
+<div class="panel" id="reminderPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title">提醒设置</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body" id="reminderPanelBody"></div>
+</div>
+
+<!-- Habit Time Settings Panel -->
+<div class="panel" id="timePanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title" id="timePanelTitle">设置提醒时间</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body" id="timePanelBody"></div>
+</div>
+
+<!-- Habit Library Panel -->
+<div class="panel" id="libraryPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title">习惯库</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body" id="libraryPanelBody"></div>
+</div>
+
+<!-- Weekly Report Panel -->
+<div class="panel" id="reportPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title">📋 本周总结</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body" id="reportPanelBody"></div>
+</div>
+
+<!-- Water Settings Panel -->
+<div class="panel" id="waterSettingsPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title" id="waterSettingsTitle">💧 饮水设置</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body" id="waterSettingsBody"></div>
+</div>
+
+<script>
+// ===================== DATA =====================
+
+const HABIT_LIBRARY = [
+  // 早晨
+  {id:'early_rise',name:'早起',icon:'☀️',category:'morning',type:'boolean',unit:''},
+  {id:'wake_water',name:'起床喝温水',icon:'🥛',category:'morning',type:'count',unit:'ml',defaultReminder:{time:'06:40'}},
+  {id:'morning_run',name:'晨跑',icon:'🏃',category:'morning',type:'timer',unit:'分钟'},
+  {id:'breakfast',name:'早餐',icon:'🥣',category:'morning',type:'boolean',unit:''},
+  // 上午
+  {id:'breathe',name:'深呼吸',icon:'🌬️',category:'forenoon',type:'count',unit:'次'},
+  {id:'eye_rest',name:'眼睛休息',icon:'👁️',category:'forenoon',type:'count',unit:'次',defaultReminder:{time:'10:00'}},
+  {id:'good_posture',name:'正确坐姿',icon:'🪑',category:'forenoon',type:'boolean',unit:'',defaultReminder:{time:'09:00'}},
+  {id:'less_sit',name:'少坐多动',icon:'🧍',category:'forenoon',type:'count',unit:'次',defaultReminder:{time:'10:30'}},
+  // 下午
+  {id:'reading',name:'阅读',icon:'📖',category:'afternoon',type:'timer',unit:'分钟'},
+  {id:'walk',name:'散步',icon:'🚶',category:'afternoon',type:'timer',unit:'分钟'},
+  {id:'healthy_diet',name:'均衡饮食',icon:'🥗',category:'afternoon',type:'boolean',unit:'',defaultReminder:{time:'12:00'}},
+  {id:'fruits_veggies',name:'蔬果摄入',icon:'🥗',category:'afternoon',type:'count',unit:'份',defaultReminder:{time:'14:00'}},
+  {id:'sunshine',name:'晒太阳',icon:'☀️',category:'afternoon',type:'timer',unit:'分钟',defaultReminder:{time:'16:00'}},
+  // 晚上
+  {id:'early_sleep',name:'早睡',icon:'🌙',category:'evening',type:'boolean',unit:''},
+  {id:'meditation',name:'冥想',icon:'🧘',category:'evening',type:'timer',unit:'分钟'},
+  {id:'diary',name:'写日记',icon:'📝',category:'evening',type:'boolean',unit:''},
+  {id:'skincare',name:'护肤',icon:'🧦',category:'evening',type:'boolean',unit:''},
+  {id:'foot_bath',name:'泡脚',icon:'🦶',category:'evening',type:'timer',unit:'分钟'},
+  {id:'vitamin',name:'补充维生素',icon:'💊',category:'evening',type:'boolean',unit:'',defaultReminder:{time:'20:00'}},
+  // 健身
+  {id:'strength',name:'力量训练',icon:'🏋️',category:'fitness',type:'timer',unit:'分钟'},
+  {id:'yoga',name:'瑜伽',icon:'🧘',category:'fitness',type:'timer',unit:'分钟'},
+  {id:'swimming',name:'游泳',icon:'🏊',category:'fitness',type:'timer',unit:'分钟'},
+  {id:'cycling',name:'骑车',icon:'🚴',category:'fitness',type:'timer',unit:'分钟'},
+  {id:'jump_rope',name:'跳绳',icon:'🤸',category:'fitness',type:'count',unit:'个'},
+  // 学习
+  {id:'vocabulary',name:'背单词',icon:'📝',category:'study',type:'count',unit:'个'},
+  {id:'calligraphy',name:'练字',icon:'✍️',category:'study',type:'timer',unit:'分钟'},
+  {id:'coding',name:'学编程',icon:'💻',category:'study',type:'timer',unit:'分钟'},
+  {id:'listen_course',name:'听课',icon:'🎧',category:'study',type:'boolean',unit:''},
+  {id:'notes',name:'写笔记',icon:'📓',category:'study',type:'boolean',unit:''},
+  // 健康建议
+  {id:'daily_water',name:'每日饮水',icon:'💧',category:'health',type:'water',unit:'ml',waterConfig:{dailyGoal:2000,perCup:250,schedule:[{time:'07:30',label:'起床后',amount:250},{time:'09:30',label:'上午加餐',amount:200},{time:'11:30',label:'午餐前',amount:250},{time:'14:00',label:'下午茶',amount:200},{time:'16:00',label:'下午补水',amount:250},{time:'18:30',label:'晚餐前',amount:200},{time:'20:30',label:'睡前',amount:150},{time:'22:00',label:'晚间',amount:150}]}}
+];
+
+const CATEGORY_MAP = {
+  morning: {label:'早晨', emoji:'☀️', timePeriod:'morning'},
+  forenoon: {label:'上午', emoji:'🌤️', timePeriod:'forenoon'},
+  afternoon: {label:'下午', emoji:'☀️', timePeriod:'afternoon'},
+  evening: {label:'晚上', emoji:'🌙', timePeriod:'evening'},
+  fitness: {label:'健身', emoji:'💪', timePeriod:'afternoon'},
+  study: {label:'学习', emoji:'📚', timePeriod:'forenoon'},
+  health: {label:'健康建议', emoji:'💚', timePeriod:'daytime'}
+};
+
+const TIME_PERIOD_MAP = {
+  morning: {label:'早晨', emoji:'🌅', order:0},
+  forenoon: {label:'上午', emoji:'🌤️', order:1},
+  afternoon: {label:'下午', emoji:'☀️', order:2},
+  evening: {label:'晚上', emoji:'🌙', order:3}
+};
+
+const DEFAULT_HABITS = ['wake_water','morning_run','early_sleep','reading','meditation','early_rise'];
+
+const HEALTH_PACK = {
+  name: '健康生活建议包',
+  description: '基于医学研究的一日健康作息方案，包含18个科学建议习惯',
+  habits: [
+    // 早晨 4个
+    {id:'early_rise',reminder:{time:'06:30',enabled:true}},
+    {id:'wake_water',reminder:{time:'06:40',enabled:true}},
+    {id:'morning_run',reminder:{time:'07:00',enabled:true}},
+    {id:'breakfast',reminder:{time:'07:45',enabled:true}},
+    // 上午 4个
+    {id:'eye_rest',reminder:{time:'10:00',enabled:true}},
+    {id:'good_posture',reminder:{time:'09:00',enabled:true}},
+    {id:'less_sit',reminder:{time:'10:30',enabled:true}},
+    {id:'breathe',reminder:{time:'11:00',enabled:true}},
+    // 下午 5个
+    {id:'healthy_diet',reminder:{time:'12:00',enabled:true}},
+    {id:'walk',reminder:{time:'12:30',enabled:true}},
+    {id:'fruits_veggies',reminder:{time:'14:00',enabled:true}},
+    {id:'daily_water',reminder:{time:'09:00',enabled:true}},
+    {id:'sunshine',reminder:{time:'16:00',enabled:true}},
+    // 晚上 5个
+    {id:'skincare',reminder:{time:'21:00',enabled:true}},
+    {id:'foot_bath',reminder:{time:'21:30',enabled:true}},
+    {id:'meditation',reminder:{time:'22:00',enabled:true}},
+    {id:'diary',reminder:{time:'22:15',enabled:true}},
+    {id:'early_sleep',reminder:{time:'22:30',enabled:true}}
+  ]
+};
+
+const SEASONAL_PACKS = {
+  spring: {
+    name: '春季养生包',
+    season: '春',
+    emoji: '🌿',
+    months: [2, 3, 4],
+    focus: '养肝舒展',
+    color: 'spring',
+    quote: '《黄帝内经》："春三月，此谓发陈，天地俱生，万物以荣。夜卧早起，广步于庭，被发缓形，以使志生。"',
+    tip: '春季养生重在<em>养肝</em>。宜晚睡早起（不超23点），多户外散步，饮食省酸增甘，保持心情舒畅。',
+    habits: [
+      {id:'early_rise',reminder:{time:'06:30',enabled:true}},
+      {id:'wake_water',reminder:{time:'06:40',enabled:true}},
+      {id:'breakfast',reminder:{time:'07:30',enabled:true}},
+      {id:'walk',reminder:{time:'07:30',enabled:true}},
+      {id:'breathe',reminder:{time:'10:00',enabled:true}},
+      {id:'fruits_veggies',reminder:{time:'12:00',enabled:true}},
+      {id:'daily_water',reminder:{time:'09:00',enabled:true}},
+      {id:'eye_rest',reminder:{time:'10:30',enabled:true}},
+      {id:'good_posture',reminder:{time:'09:00',enabled:true}},
+      {id:'meditation',reminder:{time:'22:00',enabled:true}},
+      {id:'early_sleep',reminder:{time:'22:30',enabled:true}}
+    ]
+  },
+  summer: {
+    name: '夏季养生包',
+    season: '夏',
+    emoji: '☀️',
+    months: [5, 6, 7],
+    focus: '养心静心',
+    color: 'summer',
+    quote: '《黄帝内经》："夏三月，此谓蕃秀，天地气交，万物华实。夜卧早起，无厌于日，使志无怒，使华英成秀。"',
+    tip: '夏季养生重在<em>养心</em>。宜晚睡早起，多饮水（2500ml），饮食清淡，适当晒太阳养阳气，保持心态平和。',
+    habits: [
+      {id:'early_rise',reminder:{time:'06:00',enabled:true}},
+      {id:'wake_water',reminder:{time:'06:10',enabled:true}},
+      {id:'breakfast',reminder:{time:'07:00',enabled:true}},
+      {id:'good_posture',reminder:{time:'09:00',enabled:true}},
+      {id:'less_sit',reminder:{time:'10:00',enabled:true}},
+      {id:'healthy_diet',reminder:{time:'12:00',enabled:true}},
+      {id:'fruits_veggies',reminder:{time:'14:00',enabled:true}},
+      {id:'daily_water',reminder:{time:'09:00',enabled:true}},
+      {id:'sunshine',reminder:{time:'16:00',enabled:true}},
+      {id:'foot_bath',reminder:{time:'21:30',enabled:true}},
+      {id:'meditation',reminder:{time:'22:00',enabled:true}},
+      {id:'early_sleep',reminder:{time:'22:30',enabled:true}}
+    ]
+  },
+  autumn: {
+    name: '秋季养生包',
+    season: '秋',
+    emoji: '🍂',
+    months: [8, 9, 10],
+    focus: '养肺润燥',
+    color: 'autumn',
+    quote: '《黄帝内经》："秋三月，此谓容平，天气以急，地气以明。早卧早起，与鸡俱兴，使志安宁，以缓秋刑。"',
+    tip: '秋季养生重在<em>养肺</em>。宜早睡早起，多食白色食物（百合、银耳、梨），注意皮肤保湿，保持情绪安宁。',
+    habits: [
+      {id:'early_rise',reminder:{time:'06:30',enabled:true}},
+      {id:'wake_water',reminder:{time:'06:40',enabled:true}},
+      {id:'breakfast',reminder:{time:'07:30',enabled:true}},
+      {id:'breathe',reminder:{time:'10:00',enabled:true}},
+      {id:'eye_rest',reminder:{time:'10:30',enabled:true}},
+      {id:'healthy_diet',reminder:{time:'12:00',enabled:true}},
+      {id:'fruits_veggies',reminder:{time:'14:00',enabled:true}},
+      {id:'daily_water',reminder:{time:'09:00',enabled:true}},
+      {id:'walk',reminder:{time:'16:00',enabled:true}},
+      {id:'skincare',reminder:{time:'21:00',enabled:true}},
+      {id:'foot_bath',reminder:{time:'21:30',enabled:true}},
+      {id:'early_sleep',reminder:{time:'22:00',enabled:true}}
+    ]
+  },
+  winter: {
+    name: '冬季养生包',
+    season: '冬',
+    emoji: '❄️',
+    months: [11, 12, 1],
+    focus: '养肾保暖',
+    color: 'winter',
+    quote: '《黄帝内经》："冬三月，此谓闭藏，水冰地坼，无扰乎阳。早卧晚起，必待日光，去寒就温，无泄皮肤。"',
+    tip: '冬季养生重在<em>养肾</em>。宜早睡晚起（等太阳升起），多温补食物，注意保暖，适当泡脚暖身，减少户外剧烈运动。',
+    habits: [
+      {id:'wake_water',reminder:{time:'07:00',enabled:true}},
+      {id:'breakfast',reminder:{time:'08:00',enabled:true}},
+      {id:'good_posture',reminder:{time:'09:00',enabled:true}},
+      {id:'less_sit',reminder:{time:'10:30',enabled:true}},
+      {id:'healthy_diet',reminder:{time:'12:00',enabled:true}},
+      {id:'fruits_veggies',reminder:{time:'14:00',enabled:true}},
+      {id:'daily_water',reminder:{time:'09:00',enabled:true}},
+      {id:'sunshine',reminder:{time:'15:00',enabled:true}},
+      {id:'vitamin',reminder:{time:'20:00',enabled:true}},
+      {id:'foot_bath',reminder:{time:'21:00',enabled:true}},
+      {id:'meditation',reminder:{time:'21:30',enabled:true}},
+      {id:'early_sleep',reminder:{time:'22:00',enabled:true}}
+    ]
+  }
+};
+
+const QUOTES = [
+  "千里之行，始于足下。",
+  "不积跬步，无以至千里。",
+  "习惯决定性格，性格决定命运。",
+  "每天进步一点点，就是成功的开始。",
+  "自律给我自由。",
+  "坚持就是胜利。",
+  "播种行为，收获习惯；播种习惯，收获性格。",
+  "好习惯是人生的财富。",
+  "今天多一分努力，明天多一分收获。",
+  "行动是治愈恐惧的良药。",
+  "成功不是将来才有的，而是从决定去做的那一刻起。",
+  "把每一天都当作新的开始。",
+  "小习惯，大改变。",
+  "积少成多，聚沙成塔。",
+  "改变从现在开始，永远都不晚。",
+  "日拱一卒，功不唐捐。",
+  "优秀是一种习惯。",
+  "越努力，越幸运。",
+  "做时间的朋友，让习惯复利增长。",
+  "每一个不曾起舞的日子，都是对生命的辜负。",
+  "知行合一，方能致远。",
+  "简单的事情重复做，就是专家。",
+  "重复的事情用心做，就是赢家。",
+  "人生没有白走的路，每一步都算数。",
+  "不怕慢，就怕站。",
+  "养成好习惯，受益一辈子。",
+  "心之所向，素履以往。",
+  "温故而知新，可以为师矣。",
+  "学而不思则罔，思而不学则殆。",
+  "天行健，君子以自强不息。"
+];
+
+const HEALTH_TIPS = [
+  {habit:'morning_run',text:'晨跑30分钟，提升一整天的精力和专注力。'},
+  {habit:'early_rise',text:'规律作息，早睡早起，让生物钟保持稳定。'},
+  {habit:'reading',text:'每天阅读20分钟，一年可以读完20本书。'},
+  {habit:'meditation',text:'冥想5分钟就能显著降低焦虑水平。'},
+  {habit:'early_sleep',text:'晚上11点前入睡，让身体充分修复。'},
+  {habit:'breakfast',text:'营养均衡的早餐是一天能量的基础。'},
+  {habit:'walk',text:'饭后散步15分钟，有助于消化和血糖控制。'},
+  {habit:'breathe',text:'深呼吸练习可以激活副交感神经，缓解压力。'},
+  {habit:'strength',text:'力量训练不仅塑形，还能增强骨密度。'},
+  {habit:'yoga',text:'瑜伽改善柔韧性，同时锻炼身心平衡。'},
+  {habit:'swimming',text:'游泳是全身运动，对关节压力最小。'},
+  {habit:'cycling',text:'骑车是低冲击有氧运动，适合所有年龄段。'},
+  {habit:'skincare',text:'坚持护肤习惯，皮肤状态会肉眼可见地改善。'},
+  {habit:'diary',text:'写日记是很好的情绪管理和自我反思方式。'},
+  {habit:'foot_bath',text:'睡前泡脚15分钟，促进血液循环，改善睡眠质量。'},
+  {habit:'vocabulary',text:'每天背20个单词，一年词汇量增长7000+。'},
+  {habit:'calligraphy',text:'练字可以培养耐心和专注力。'},
+  {habit:'coding',text:'编程是最好的逻辑思维训练。'},
+  {habit:'listen_course',text:'利用碎片时间听课，知识积累无处不在。'},
+  {habit:'notes',text:'写笔记帮助记忆和理解，是学习的好帮手。'},
+  {habit:'jump_rope',text:'跳绳10分钟消耗的热量相当于慢跑30分钟。'},
+  {habit:'daily_water',text:'成年人每天建议饮水1500-2000ml，少量多次效果最佳。'},
+  {habit:'healthy_diet',text:'均衡饮食是健康的基石，每天摄入12种以上食物。'},
+  {habit:'less_sit',text:'每坐45分钟站起来活动5分钟，保护腰椎。'},
+  {habit:'eye_rest',text:'每用眼20分钟，看20英尺外的物体20秒（20-20-20法则）。'},
+  {habit:'good_posture',text:'保持正确坐姿，屏幕上缘与眼睛平齐，减少颈椎压力。'},
+  {habit:'sunshine',text:'每天晒太阳15-20分钟，促进维生素D合成。'},
+  {habit:'vitamin',text:'适当补充维生素D和钙质，尤其秋冬季节。'},
+  {habit:'fruits_veggies',text:'每天摄入300-500克蔬菜和200-350克水果，降低慢性病风险。'},
+  {habit:'wake_water',text:'起床后空腹喝一杯温水（200-300ml），促进肠胃蠕动和代谢。'}
+];
+
+const DAY_NAMES = ['日','一','二','三','四','五','六'];
+
+// ===================== STATE =====================
+
+let habitsConfig = [];
+let checkinRecords = {};
+let currentTab = 'checkin';
+let editMode = false;
+let heatmapDate = new Date();
+let pendingCheckinHabitId = null;
+let pendingTimeHabitId = null;
+
+// ===================== STORAGE =====================
+
+function loadData() {
+  try {
+    const cfg = localStorage.getItem('habits_config');
+    if (cfg) {
+      habitsConfig = JSON.parse(cfg);
+    } else {
+      // First time: default 6 habits
+      habitsConfig = DEFAULT_HABITS.map(id => {
+        const lib = HABIT_LIBRARY.find(h => h.id === id);
+        return {
+          id: lib.id,
+          name: lib.name,
+          icon: lib.icon,
+          category: lib.category,
+          type: lib.type,
+          unit: lib.unit,
+          reminder: {enabled:false, time:'08:00', days:[0,1,2,3,4,5,6], method:'in-app'}
+        };
+      });
+      saveConfig();
+    }
+
+    const rec = localStorage.getItem('checkin_records');
+    if (rec) {
+      checkinRecords = JSON.parse(rec);
+      // Backward compatibility: convert old array format
+      migrateOldFormat();
+    } else {
+      checkinRecords = {};
+    }
+  } catch(e) {
+    console.error('Load data error:', e);
+    habitsConfig = [];
+    checkinRecords = {};
+  }
+}
+
+function migrateOldFormat() {
+  for (const dateKey in checkinRecords) {
+    const entry = checkinRecords[dateKey];
+    if (Array.isArray(entry)) {
+      const newObj = {};
+      entry.forEach(item => {
+        if (item && item.id) {
+          newObj[item.id] = {done: true, value: item.value || 1};
+        }
+      });
+      checkinRecords[dateKey] = newObj;
+    }
+  }
+  saveRecords();
+}
+
+function saveConfig() {
+  localStorage.setItem('habits_config', JSON.stringify(habitsConfig));
+}
+
+function saveRecords() {
+  localStorage.setItem('checkin_records', JSON.stringify(checkinRecords));
+}
+
+// ===================== UTILS =====================
+
+function getCurrentSeason() {
+  const month = new Date().getMonth() + 1;
+  for (const [key, pack] of Object.entries(SEASONAL_PACKS)) {
+    if (pack.months.includes(month)) return key;
+  }
+  return 'spring';
+}
+
+function getSeasonPack(season) {
+  return SEASONAL_PACKS[season] || SEASONAL_PACKS.spring;
+}
+
+function today() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function formatDate(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function getDayOfWeek() {
+  return new Date().getDay();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function getStreak(habitId) {
+  let streak = 0;
+  const d = new Date();
+  while (true) {
+    const key = formatDate(d);
+    const rec = checkinRecords[key];
+    if (rec && rec[habitId] && rec[habitId].done) {
+      streak++;
+      d.setDate(d.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+  return streak;
+}
+
+function getMaxStreak(habitId) {
+  let max = 0, cur = 0;
+  const dates = Object.keys(checkinRecords).sort();
+  if (dates.length === 0) return 0;
+  const start = new Date(dates[0]);
+  const end = new Date();
+  const d = new Date(start);
+  while (d <= end) {
+    const key = formatDate(d);
+    const rec = checkinRecords[key];
+    if (rec && rec[habitId] && rec[habitId].done) {
+      cur++;
+      max = Math.max(max, cur);
+    } else {
+      cur = 0;
+    }
+    d.setDate(d.getDate() + 1);
+  }
+  return max;
+}
+
+function getCompletionRate(habitId, days) {
+  let done = 0;
+  const d = new Date();
+  for (let i = 0; i < days; i++) {
+    const key = formatDate(d);
+    const rec = checkinRecords[key];
+    if (rec && rec[habitId] && rec[habitId].done) done++;
+    d.setDate(d.getDate() - 1);
+  }
+  return Math.round((done / days) * 100);
+}
+
+function getWeekRate() {
+  if (habitsConfig.length === 0) return 0;
+  let total = 0, done = 0;
+  const d = new Date();
+  for (let i = 0; i < 7; i++) {
+    const key = formatDate(d);
+    const rec = checkinRecords[key];
+    habitsConfig.forEach(h => {
+      total++;
+      if (rec && rec[h.id] && rec[h.id].done) done++;
+    });
+    d.setDate(d.getDate() - 1);
+  }
+  return total > 0 ? Math.round((done / total) * 100) : 0;
+}
+
+function getMonthRate() {
+  if (habitsConfig.length === 0) return 0;
+  const now = new Date();
+  const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  let total = 0, done = 0;
+  for (let i = 1; i <= daysInMonth; i++) {
+    const key = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+    const rec = checkinRecords[key];
+    habitsConfig.forEach(h => {
+      total++;
+      if (rec && rec[h.id] && rec[h.id].done) done++;
+    });
+  }
+  return total > 0 ? Math.round((done / total) * 100) : 0;
+}
+
+function getTodayDone() {
+  const rec = checkinRecords[today()] || {};
+  return habitsConfig.filter(h => rec[h.id] && rec[h.id].done).length;
+}
+
+function getTodayTotal() {
+  return habitsConfig.length;
+}
+
+// ===================== RENDER =====================
+
+function render() {
+  renderBanner();
+  renderHealthTip();
+  renderReminderBanner();
+  renderCheckin();
+  renderStats();
+  renderManage();
+}
+
+function renderBanner() {
+  const d = new Date();
+  const weekDay = DAY_NAMES[d.getDay()];
+  document.getElementById('bannerDate').innerHTML = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 星期${weekDay}<span class="season-badge ${getSeasonPack(getCurrentSeason()).color}">${getSeasonPack(getCurrentSeason()).emoji} ${getSeasonPack(getCurrentSeason()).focus}</span>`;
+  const dayOfYear = Math.floor((d - new Date(d.getFullYear(),0,0)) / 86400000);
+  document.getElementById('bannerQuote').textContent = QUOTES[dayOfYear % QUOTES.length];
+}
+
+function renderHealthTip() {
+  const season = getCurrentSeason();
+  const pack = getSeasonPack(season);
+  const tipEl = document.getElementById('healthTip');
+  tipEl.querySelector('.tip-icon').textContent = pack.emoji;
+  document.getElementById('tipText').innerHTML = pack.tip;
+}
+
+function renderReminderBanner() {
+  const done = getTodayDone();
+  const total = getTodayTotal();
+  const el = document.getElementById('reminderText');
+  if (total === 0) {
+    el.textContent = '还没有添加习惯，点击 + 开始吧';
+  } else if (done === 0) {
+    el.textContent = `新的一天开始了，今天有 ${total} 个习惯等你完成`;
+  } else if (done < total) {
+    el.textContent = `已打卡 ${done}/${total}，继续加油！还剩 ${total - done} 个`;
+  } else {
+    el.textContent = `太棒了！今天 ${total} 个习惯全部完成 🎉`;
+  }
+}
+
+function renderCheckin() {
+  const container = document.getElementById('checkinContent');
+  const rec = checkinRecords[today()] || {};
+
+  // Check for weekly report (Sunday)
+  const dow = new Date().getDay();
+  if (dow === 0) {
+    container.innerHTML = '<div class="report-card" style="cursor:pointer" onclick="openReportPanel()"><div class="report-title">📋 点击查看本周总结</div></div>';
+  }
+
+  // Group habits by time period
+  const groups = {morning:[], forenoon:[], afternoon:[], evening:[]};
+  habitsConfig.forEach(h => {
+    const tp = TIME_PERIOD_MAP[CATEGORY_MAP[h.category]?.timePeriod || 'daytime'];
+    if (tp) {
+      const key = tp.order === 0 ? 'morning' : tp.order === 1 ? 'forenoon' : tp.order === 2 ? 'afternoon' : 'evening';
+      groups[key].push(h);
+    }
+  });
+
+  let html = '';
+  for (const period of ['morning','forenoon','afternoon','evening']) {
+    const habits = groups[period];
+    if (habits.length === 0) continue;
+    const tp = TIME_PERIOD_MAP[period];
+    html += `<div class="time-group"><div class="time-group-label">${tp.emoji} ${tp.label}</div>`;
+    habits.forEach(h => {
+      if (h.type === 'water') {
+        html += renderWaterTracker(h, rec);
+      } else {
+      const checked = rec[h.id] && rec[h.id].done;
+      const streak = getStreak(h.id);
+      const reminder = h.reminder;
+      const reminderStr = reminder && reminder.enabled ? reminder.time : '';
+      const valueStr = checked ? (h.type === 'boolean' ? '' : ` ${rec[h.id].value}${h.unit}`) : '';
+      html += `
+        <div class="habit-card" id="card-${h.id}">
+          <span class="icon">${h.icon}</span>
+          <div class="info">
+            <div class="name">${h.name}${valueStr}</div>
+            <div class="meta">
+              ${reminderStr ? `<span>⏰ ${reminderStr}</span>` : ''}
+              ${streak > 0 ? `<span class="streak">🔥${streak}天</span>` : ''}
+            </div>
+          </div>
+          <button class="checkin-btn ${checked ? 'done' : 'pending'}" onclick="handleCheckin('${h.id}')">
+            ${checked ? '✓' : (h.type === 'boolean' ? '打卡' : h.type === 'count' ? '记录' : '记录')}
+          </button>
+        </div>`;
+      }
+    });
+    html += '</div>';
+  }
+
+  if (habitsConfig.length === 0) {
+    html = '<div style="text-align:center;padding:40px 20px;color:var(--muted);font-size:14px;">还没有添加习惯<br>点击下方 + 按钮开始添加</div>';
+  }
+
+  container.innerHTML += html;
+}
+
+function renderWaterTracker(h, rec) {
+  const wc = h.waterConfig || {dailyGoal:2000, perCup:250, schedule:[]};
+  const goal = wc.dailyGoal || 2000;
+  const waterRec = rec[h.id] || {};
+  const value = waterRec.value || 0;
+  const cups = waterRec.cups || [];
+  const pct = Math.min(100, Math.round((value / goal) * 100));
+  const remaining = Math.max(0, goal - value);
+  const streak = getStreak(h.id);
+
+  let fillClass = '';
+  if (pct >= 80) fillClass = 'high';
+  else if (pct >= 50) fillClass = 'mid';
+
+  let cupsHtml = '';
+  cups.forEach(c => {
+    cupsHtml += `<div class="water-record"><span class="water-record-time">${c.time}</span><span class="water-record-amount">${c.amount}ml</span></div>`;
+  });
+
+  let scheduleHtml = '';
+  if (wc.schedule && wc.schedule.length > 0) {
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    scheduleHtml = `<div class="water-schedule"><div class="water-schedule-title">今日饮水计划</div>`;
+    wc.schedule.forEach(s => {
+      const [sh, sm] = s.time.split(':').map(Number);
+      const schedMinutes = sh * 60 + sm;
+      const isPast = currentMinutes >= schedMinutes;
+      const doneIcon = isPast ? '✅' : '⬜';
+      scheduleHtml += `<div class="water-schedule-item">
+        <span class="water-schedule-time">${s.time}</span>
+        <span class="water-schedule-label">${s.label}</span>
+        <span class="water-schedule-amount">${s.amount}ml</span>
+        <span class="water-schedule-done">${doneIcon}</span>
+      </div>`;
+    });
+    scheduleHtml += '</div>';
+  }
+
+  return `<div class="water-tracker" id="card-${h.id}">
+    <div class="water-header">
+      <div class="water-title">${h.icon} ${h.name} ${streak > 0 ? `<span style="font-size:11px;color:var(--accent);background:var(--accent-light);padding:2px 8px;border-radius:10px;font-weight:600">🔥${streak}天</span>` : ''}</div>
+      <div class="water-amount">${value}ml / ${goal}ml</div>
+    </div>
+    <div class="water-progress">
+      <div class="water-progress-fill ${fillClass}" style="width:${pct}%"></div>
+      <div class="water-progress-text">${pct}%</div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">${remaining > 0 ? `还需喝 ${remaining}ml` : '今日目标已达成！🎉'}</div>
+    <div class="water-quick-btns">
+      <button class="water-quick-btn primary" onclick="quickAddWater('${h.id}',200)">200ml</button>
+      <button class="water-quick-btn" onclick="quickAddWater('${h.id}',250)">250ml</button>
+      <button class="water-quick-btn" onclick="quickAddWater('${h.id}',500)">500ml</button>
+      <button class="water-quick-btn" onclick="openWaterInputPanel('${h.id}')">自定义</button>
+    </div>
+    ${cups.length > 0 ? `<div class="water-records"><div style="font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:600">今日记录</div>${cupsHtml}</div>` : ''}
+    ${scheduleHtml}
+  </div>`;
+}
+
+function quickAddWater(habitId, amount) {
+  const rec = checkinRecords[today()] || {};
+  const waterRec = rec[habitId] || {done: true, value: 0, cups: []};
+  if (!waterRec.cups) waterRec.cups = [];
+  const now = new Date();
+  const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  waterRec.cups.push({time: timeStr, amount: amount});
+  waterRec.value = (waterRec.value || 0) + amount;
+  waterRec.done = true;
+  rec[habitId] = waterRec;
+  checkinRecords[today()] = rec;
+  saveRecords();
+  showToast(`💧 已记录 ${amount}ml`);
+  render();
+}
+
+function openWaterInputPanel(habitId) {
+  pendingCheckinHabitId = habitId;
+  const h = habitsConfig.find(x => x.id === habitId);
+  const body = document.getElementById('checkinPanelBody');
+  document.getElementById('checkinPanelTitle').textContent = '💧 记录喝水';
+  body.innerHTML = `
+    <div style="text-align:center;padding:10px 0">
+      <div style="font-size:14px;color:var(--muted);margin-bottom:12px">输入饮水量（ml）</div>
+      <div class="water-quick-btns" style="justify-content:center;margin-bottom:16px">
+        <button class="water-quick-btn primary" onclick="quickAddWaterFromPanel(200)">200ml</button>
+        <button class="water-quick-btn" onclick="quickAddWaterFromPanel(250)">250ml</button>
+        <button class="water-quick-btn" onclick="quickAddWaterFromPanel(500)">500ml</button>
+      </div>
+      <div class="checkin-input-wrap">
+        <input class="checkin-input-field" id="waterCustomAmount" type="number" min="1" placeholder="0" inputmode="numeric">
+        <div class="checkin-input-unit">ml</div>
+        <div class="checkin-input-actions">
+          <button class="cancel" onclick="closeAllPanels()">取消</button>
+          <button class="confirm" onclick="confirmWaterInput()">确认记录</button>
+        </div>
+      </div>
+    </div>`;
+  openPanel('checkinPanel');
+  setTimeout(() => {
+    const field = document.getElementById('waterCustomAmount');
+    if (field) field.focus();
+  }, 300);
+}
+
+function quickAddWaterFromPanel(amount) {
+  if (!pendingCheckinHabitId) return;
+  quickAddWater(pendingCheckinHabitId, amount);
+  closeAllPanels();
+}
+
+function confirmWaterInput() {
+  const field = document.getElementById('waterCustomAmount');
+  const val = parseInt(field.value);
+  if (isNaN(val) || val <= 0) {
+    showToast('请输入有效的数值');
+    return;
+  }
+  if (!pendingCheckinHabitId) return;
+  quickAddWater(pendingCheckinHabitId, val);
+  closeAllPanels();
+}
+
+function renderStats() {
+  const done = getTodayDone();
+  const total = getTodayTotal();
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+
+  // Ring
+  const circumference = 2 * Math.PI * 68;
+  const offset = circumference - (pct / 100) * circumference;
+  document.getElementById('ringFg').style.strokeDashoffset = offset;
+  document.getElementById('ringPct').textContent = pct + '%';
+
+  // Stats grid
+  let maxStreakAll = 0;
+  habitsConfig.forEach(h => {
+    maxStreakAll = Math.max(maxStreakAll, getMaxStreak(h.id));
+  });
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card"><div class="stat-val">${done}/${total}</div><div class="stat-label">今日完成</div></div>
+    <div class="stat-card"><div class="stat-val">${maxStreakAll}</div><div class="stat-label">最长连续</div></div>
+    <div class="stat-card"><div class="stat-val">${getWeekRate()}%</div><div class="stat-label">本周率</div></div>
+    <div class="stat-card"><div class="stat-val">${getMonthRate()}%</div><div class="stat-label">本月率</div></div>
+  `;
+
+  // Ranking
+  const rankHtml = habitsConfig.map(h => {
+    const rate = getCompletionRate(h.id, 30);
+    const cls = rate >= 70 ? 'high' : rate >= 40 ? 'mid' : 'low';
+    return `<div class="ranking-item">
+      <div class="ranking-header"><span class="ranking-name">${h.icon} ${h.name}</span><span class="ranking-pct">${rate}%</span></div>
+      <div class="ranking-bar"><div class="ranking-fill ${cls}" style="width:${rate}%"></div></div>
+    </div>`;
+  }).join('');
+  document.getElementById('rankingList').innerHTML = rankHtml || '<div style="text-align:center;color:var(--muted);font-size:13px;padding:20px">暂无数据</div>';
+
+  // Heatmap
+  renderHeatmap();
+
+  // Achievements
+  renderAchievements();
+}
+
+function renderHeatmap() {
+  const year = heatmapDate.getFullYear();
+  const month = heatmapDate.getMonth();
+  document.getElementById('heatmapMonth').textContent = `${year}年${month+1}月`;
+  const grid = document.getElementById('heatmapGrid');
+  const dayLabels = ['一','二','三','四','五','六','日'];
+  let html = dayLabels.map(l => `<div class="heatmap-day-label">${l}</div>`).join('');
+
+  const firstDay = new Date(year, month, 1);
+  let startWeekday = firstDay.getDay();
+  startWeekday = startWeekday === 0 ? 6 : startWeekday - 1; // Monday=0
+
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const todayStr = today();
+
+  // Empty cells before first day
+  for (let i = 0; i < startWeekday; i++) {
+    html += '<div class="heatmap-cell empty"></div>';
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const rec = checkinRecords[key] || {};
+    const total = habitsConfig.length;
+    let doneCount = 0;
+    habitsConfig.forEach(h => {
+      if (rec[h.id] && rec[h.id].done) doneCount++;
+    });
+    const ratio = total > 0 ? doneCount / total : 0;
+    let cls = '';
+    if (ratio > 0 && ratio <= 0.25) cls = 'l1';
+    else if (ratio > 0.25 && ratio <= 0.5) cls = 'l2';
+    else if (ratio > 0.5 && ratio <= 0.75) cls = 'l3';
+    else if (ratio > 0.75) cls = 'l4';
+    const todayCls = key === todayStr ? ' today' : '';
+    html += `<div class="heatmap-cell ${cls}${todayCls}" title="${key}: ${doneCount}/${total}"></div>`;
+  }
+
+  grid.innerHTML = html;
+}
+
+function changeMonth(delta) {
+  heatmapDate.setMonth(heatmapDate.getMonth() + delta);
+  renderHeatmap();
+}
+
+function renderAchievements() {
+  const container = document.getElementById('achievements');
+  const badges = [
+    {id:'streak7',label:'7天连续',icon:'🔥',check: () => habitsConfig.some(h => getMaxStreak(h.id) >= 7)},
+    {id:'streak14',label:'14天连续',icon:'🔥',check: () => habitsConfig.some(h => getMaxStreak(h.id) >= 14)},
+    {id:'streak30',label:'30天连续',icon:'⭐',check: () => habitsConfig.some(h => getMaxStreak(h.id) >= 30)},
+    {id:'all_done',label:'全部完成',icon:'🏆',check: () => {
+      const rec = checkinRecords[today()] || {};
+      return habitsConfig.length > 0 && habitsConfig.every(h => rec[h.id] && rec[h.id].done);
+    }}
+  ];
+
+  container.innerHTML = badges.map(b => {
+    const unlocked = b.check();
+    return `<div class="badge">
+      <div class="badge-icon ${unlocked ? 'unlocked' : 'locked'}">${b.icon}</div>
+      <div class="badge-label ${unlocked ? 'unlocked' : ''}">${b.label}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderManage() {
+  const container = document.getElementById('manageContent');
+  const groups = {morning:[], forenoon:[], afternoon:[], evening:[]};
+  habitsConfig.forEach(h => {
+    const tp = TIME_PERIOD_MAP[CATEGORY_MAP[h.category]?.timePeriod || 'daytime'];
+    if (tp) {
+      const key = tp.order === 0 ? 'morning' : tp.order === 1 ? 'forenoon' : tp.order === 2 ? 'afternoon' : 'evening';
+      groups[key].push(h);
+    }
+  });
+
+  let html = '';
+  for (const period of ['morning','forenoon','afternoon','evening']) {
+    const habits = groups[period];
+    if (habits.length === 0) continue;
+    const tp = TIME_PERIOD_MAP[period];
+    html += `<div class="time-group"><div class="time-group-label">${tp.emoji} ${tp.label}</div>`;
+    habits.forEach(h => {
+      const reminder = h.reminder;
+      if (h.type === 'water') {
+        const wc = h.waterConfig || {dailyGoal:2000, perCup:250, schedule:[]};
+        html += `
+          <div class="habit-card ${editMode ? 'show-delete' : ''}" id="manage-${h.id}">
+            <span class="icon">${h.icon}</span>
+            <div class="info">
+              <div class="name">${h.name}</div>
+              <div class="meta">
+                <span>每日目标：${wc.dailyGoal || 2000}ml</span>
+                <span>每次：${wc.perCup || 250}ml</span>
+                <span>提醒：${(wc.schedule || []).length}次</span>
+              </div>
+            </div>
+            <button class="checkin-btn pending" style="font-size:12px;padding:6px 12px" onclick="openWaterSettingsPanel('${h.id}')">设置</button>
+            <div class="delete-btn" onclick="deleteHabit('${h.id}')">删除此习惯</div>
+          </div>`;
+      } else {
+      html += `
+        <div class="habit-card ${editMode ? 'show-delete' : ''}" id="manage-${h.id}">
+          <span class="icon">${h.icon}</span>
+          <div class="info">
+            <div class="name">${h.name}</div>
+            <div class="meta">
+              <span>${h.type === 'boolean' ? '打卡' : h.type === 'count' ? `计数(${h.unit})` : `计时(${h.unit})`}</span>
+              ${reminder && reminder.enabled ? `<span>⏰ ${reminder.time}</span>` : ''}
+            </div>
+          </div>
+          <button class="checkin-btn pending" style="font-size:12px;padding:6px 12px" onclick="openTimePanel('${h.id}')">设置</button>
+          <div class="delete-btn" onclick="deleteHabit('${h.id}')">删除此习惯</div>
+        </div>`;
+      }
+    });
+    html += '</div>';
+  }
+
+  if (habitsConfig.length === 0) {
+    html = '<div style="text-align:center;padding:40px 20px;color:var(--muted);font-size:14px;">还没有添加习惯<br>点击下方按钮从习惯库选择</div>';
+  }
+
+  container.innerHTML = html;
+}
+
+// ===================== TABS =====================
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('sec-' + tab).classList.add('active');
+  if (tab === 'stats') renderStats();
+  if (tab === 'manage') renderManage();
+  if (tab === 'checkin') renderCheckin();
+}
+
+// ===================== CHECKIN =====================
+
+function handleCheckin(habitId) {
+  const h = habitsConfig.find(x => x.id === habitId);
+  if (!h) return;
+  const rec = checkinRecords[today()] || {};
+
+  if (h.type === 'water') {
+    openWaterInputPanel(habitId);
+    return;
+  }
+
+  if (h.type === 'boolean') {
+    if (rec[habitId] && rec[habitId].done) {
+      // Undo
+      delete rec[habitId];
+      showToast('已撤销打卡');
+    } else {
+      rec[habitId] = {done: true, value: 1};
+      showToast(`${h.icon} ${h.name} 打卡成功！`);
+    }
+    checkinRecords[today()] = rec;
+    saveRecords();
+    render();
+  } else {
+    // count or timer - show input panel
+    pendingCheckinHabitId = habitId;
+    document.getElementById('checkinPanelTitle').textContent = `${h.icon} ${h.name}`;
+    document.getElementById('checkinInputLabel').textContent = h.type === 'count' ? '请输入数量' : '请输入时长';
+    document.getElementById('checkinInputUnit').textContent = h.unit;
+    const field = document.getElementById('checkinInputField');
+    field.value = (rec[habitId] && rec[habitId].done) ? rec[habitId].value : '';
+    field.placeholder = h.type === 'count' ? '0' : '0';
+    openPanel('checkinPanel');
+    setTimeout(() => field.focus(), 300);
+  }
+}
+
+function confirmCheckinInput() {
+  const field = document.getElementById('checkinInputField');
+  const val = parseInt(field.value);
+  if (isNaN(val) || val < 0) {
+    showToast('请输入有效的数值');
+    return;
+  }
+  const habitId = pendingCheckinHabitId;
+  const h = habitsConfig.find(x => x.id === habitId);
+  if (!h) return;
+
+  const rec = checkinRecords[today()] || {};
+  if (val === 0) {
+    delete rec[habitId];
+    showToast('已撤销记录');
+  } else {
+    rec[habitId] = {done: true, value: val};
+    showToast(`${h.icon} ${h.name} 记录 ${val}${h.unit}！`);
+  }
+  checkinRecords[today()] = rec;
+  saveRecords();
+  closeAllPanels();
+  render();
+}
+
+// ===================== EDIT MODE =====================
+
+function toggleEditMode() {
+  editMode = !editMode;
+  const btn = document.getElementById('editToggle');
+  btn.textContent = editMode ? '完成' : '编辑';
+  btn.className = editMode ? 'edit-on' : 'edit-off';
+  renderManage();
+}
+
+// ===================== DELETE HABIT =====================
+
+function deleteHabit(habitId) {
+  if (!confirm('确定要删除这个习惯吗？打卡记录会保留。')) return;
+  habitsConfig = habitsConfig.filter(h => h.id !== habitId);
+  saveConfig();
+  showToast('已删除习惯');
+  render();
+}
+
+// ===================== PANELS =====================
+
+function openPanel(id) {
+  document.getElementById('panelOverlay').classList.add('show');
+  document.getElementById(id).classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeAllPanels() {
+  document.getElementById('panelOverlay').classList.remove('show');
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('show'));
+  document.body.style.overflow = '';
+  pendingCheckinHabitId = null;
+  pendingTimeHabitId = null;
+}
+
+// ===================== REMINDER PANEL =====================
+
+function openReminderPanel() {
+  const body = document.getElementById('reminderPanelBody');
+  const methods = [
+    {value:'in-app', label:'应用内横幅', desc:'在应用内显示提醒横幅'},
+    {value:'notification', label:'浏览器通知', desc:'通过浏览器推送通知提醒'},
+    {value:'off', label:'关闭提醒', desc:'不接收任何提醒'}
+  ];
+
+  // Get current global reminder method from first habit or default
+  let currentMethod = 'in-app';
+  if (habitsConfig.length > 0 && habitsConfig[0].reminder) {
+    currentMethod = habitsConfig[0].reminder.method || 'in-app';
+  }
+
+  body.innerHTML = `
+    <div style="margin-bottom:16px;font-size:13px;color:var(--muted)">选择提醒方式（将应用到所有习惯）</div>
+    ${methods.map(m => `
+      <div class="reminder-option" onclick="setGlobalReminder('${m.value}')">
+        <div class="radio ${currentMethod === m.value ? 'active' : ''}"></div>
+        <div>
+          <div class="label">${m.label}</div>
+          <div class="desc">${m.desc}</div>
+        </div>
+      </div>
+    `).join('')}
+  `;
+  openPanel('reminderPanel');
+}
+
+function setGlobalReminder(method) {
+  habitsConfig.forEach(h => {
+    if (!h.reminder) h.reminder = {enabled:false, time:'08:00', days:[0,1,2,3,4,5,6], method:'in-app'};
+    h.reminder.method = method;
+    if (method !== 'off') h.reminder.enabled = true;
+    else h.reminder.enabled = false;
+  });
+  saveConfig();
+  closeAllPanels();
+  showToast('提醒设置已更新');
+  render();
+}
+
+// ===================== TIME PANEL =====================
+
+function openTimePanel(habitId) {
+  pendingTimeHabitId = habitId;
+  const h = habitsConfig.find(x => x.id === habitId);
+  if (!h) return;
+  const r = h.reminder || {enabled:false, time:'08:00', days:[0,1,2,3,4,5,6], method:'in-app'};
+
+  document.getElementById('timePanelTitle').textContent = `${h.icon} ${h.name} 提醒设置`;
+  const body = document.getElementById('timePanelBody');
+  body.innerHTML = `
+    <div class="toggle-row">
+      <span class="toggle-label">开启提醒</span>
+      <div class="toggle-switch ${r.enabled ? 'on' : ''}" id="reminderToggle" onclick="toggleReminderEnabled()"></div>
+    </div>
+    <div class="time-picker-wrap">
+      <label>提醒时间</label>
+      <input type="time" id="reminderTimeInput" value="${r.time}">
+    </div>
+    <div style="margin-top:16px;font-size:13px;color:var(--muted);margin-bottom:8px">重复日期</div>
+    <div class="days-selector" id="daysSelector">
+      ${DAY_NAMES.map((name, i) => `
+        <button class="day-btn ${r.days.includes(i) ? 'active' : ''}" data-day="${i}" onclick="toggleDay(this, ${i})">${name}</button>
+      `).join('')}
+    </div>
+    <button class="export-btn" style="margin-top:20px;background:var(--accent);color:#fff" onclick="saveTimeSettings()">保存设置</button>
+  `;
+  openPanel('timePanel');
+}
+
+function toggleReminderEnabled() {
+  const el = document.getElementById('reminderToggle');
+  el.classList.toggle('on');
+}
+
+function toggleDay(btn, day) {
+  btn.classList.toggle('active');
+}
+
+function saveTimeSettings() {
+  const h = habitsConfig.find(x => x.id === pendingTimeHabitId);
+  if (!h) return;
+  const enabled = document.getElementById('reminderToggle').classList.contains('on');
+  const time = document.getElementById('reminderTimeInput').value;
+  const days = [];
+  document.querySelectorAll('#daysSelector .day-btn.active').forEach(btn => {
+    days.push(parseInt(btn.dataset.day));
+  });
+
+  h.reminder = {
+    enabled,
+    time: time || '08:00',
+    days: days.length > 0 ? days : [0,1,2,3,4,5,6],
+    method: h.reminder ? h.reminder.method : 'in-app'
+  };
+  saveConfig();
+  closeAllPanels();
+  showToast('提醒时间已保存');
+  render();
+}
+
+// ===================== LIBRARY PANEL =====================
+
+function openLibraryPanel() {
+  renderLibraryPanel('');
+  openPanel('libraryPanel');
+}
+
+function renderLibraryPanel(search) {
+  const body = document.getElementById('libraryPanelBody');
+  const myIds = new Set(habitsConfig.map(h => h.id));
+  const q = search.toLowerCase();
+
+  let html = `<input class="lib-search" placeholder="搜索习惯..." value="${search}" oninput="renderLibraryPanel(this.value)">`;
+
+  // Health Pack card
+  const packHabits = HEALTH_PACK.habits;
+  const packAddedCount = packHabits.filter(ph => myIds.has(ph.id)).length;
+  const packAllAdded = packAddedCount === packHabits.length;
+
+  html += `
+    <div style="background:linear-gradient(135deg,var(--accent-light),var(--accent2-light));border-radius:16px;padding:16px;margin-bottom:16px;cursor:pointer;box-shadow:var(--shadow)" onclick="addHealthPack()">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span style="font-size:28px">💚</span>
+        <div>
+          <div style="font-size:16px;font-weight:700;color:var(--ink)">健康生活建议包</div>
+          <div style="font-size:12px;color:var(--muted)">${HEALTH_PACK.description}</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:13px;color:var(--muted)">${packAllAdded ? '✅ 已全部添加' : `已添加 ${packAddedCount}/${packHabits.length} 个习惯`}</span>
+        <span style="padding:6px 16px;border-radius:16px;font-size:13px;font-weight:600;background:${packAllAdded ? 'var(--bg2)' : 'var(--accent)'};color:${packAllAdded ? 'var(--muted)' : '#fff'}">${packAllAdded ? '已添加' : '一键添加'}</span>
+      </div>
+    </div>
+  `;
+
+  // 四季养生包
+  const currentSeason = getCurrentSeason();
+  const seasonOrder = ['spring','summer','autumn','winter'];
+
+  html += `<div style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px;margin-top:4px">🌿 四季养生（黄帝内经）</div>`;
+
+  seasonOrder.forEach(key => {
+    const pack = SEASONAL_PACKS[key];
+    const isCurrent = key === currentSeason;
+    const packAddedCount = pack.habits.filter(ph => myIds.has(ph.id)).length;
+    const packAllAdded = packAddedCount === pack.habits.length;
+    
+    html += `
+      <div class="season-pack-card ${isCurrent ? 'current' : 'other'}" onclick="addSeasonalPack('${key}')">
+        <div class="season-pack-header">
+          <span class="season-pack-icon">${pack.emoji}</span>
+          <div>
+            <div class="season-pack-title">${pack.name} ${isCurrent ? '<span style="font-size:11px;color:var(--accent);font-weight:600">当前季节</span>' : ''}</div>
+            <div class="season-pack-subtitle">重点：${pack.focus} · ${pack.habits.length}个习惯</div>
+          </div>
+        </div>
+        <div class="season-pack-quote">${pack.quote}</div>
+        <div class="season-pack-footer">
+          <span class="season-pack-count">${packAllAdded ? '✅ 已全部添加' : `已添加 ${packAddedCount}/${pack.habits.length}`}</span>
+          <span class="season-pack-btn ${packAllAdded ? 'added' : ''}">${packAllAdded ? '已添加' : '一键添加'}</span>
+        </div>
+      </div>`;
+  });
+
+  const categories = ['morning','forenoon','afternoon','evening','fitness','study','health'];
+  categories.forEach(cat => {
+    const catInfo = CATEGORY_MAP[cat];
+    let items = HABIT_LIBRARY.filter(h => h.category === cat);
+    if (q) items = items.filter(h => h.name.toLowerCase().includes(q));
+    if (items.length === 0) return;
+
+    html += `<div class="lib-category"><div class="lib-cat-label">${catInfo.emoji} ${catInfo.label}</div>`;
+    items.forEach(h => {
+      const added = myIds.has(h.id);
+      const typeLabel = h.type === 'boolean' ? '打卡' : h.type === 'count' ? `计数(${h.unit})` : h.type === 'water' ? '饮水追踪' : `计时(${h.unit})`;
+      html += `
+        <div class="lib-item">
+          <span class="icon">${h.icon}</span>
+          <span class="name">${h.name}</span>
+          <span class="type-tag">${typeLabel}</span>
+          <button class="add-btn ${added ? 'added' : ''}" onclick="${added ? '' : `addHabitFromLib('${h.id}')`}">${added ? '已添加' : '添加'}</button>
+        </div>`;
+    });
+    html += '</div>';
+  });
+
+  // Custom add
+  html += `
+    <div class="lib-custom">
+      <div style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px">✨ 自定义习惯</div>
+      <div class="lib-custom-input">
+        <input id="customHabitName" placeholder="习惯名称" maxlength="20">
+        <input id="customHabitIcon" placeholder="图标" maxlength="4" style="width:60px">
+        <button onclick="addCustomHabit()">添加</button>
+      </div>
+      <div class="lib-custom-type" id="customTypeSelector">
+        <button class="active" data-type="boolean" onclick="selectCustomType(this)">打卡</button>
+        <button data-type="count" onclick="selectCustomType(this)">计数</button>
+        <button data-type="timer" onclick="selectCustomType(this)">计时</button>
+      </div>
+      <div id="customUnitWrap" style="display:none;margin-top:8px">
+        <input id="customHabitUnit" placeholder="单位（如：杯、个、分钟）" style="width:100%;padding:10px 14px;border:2px solid var(--rule);border-radius:12px;font-size:14px;background:#fff;outline:none">
+      </div>
+    </div>`;
+
+  body.innerHTML = html;
+}
+
+function selectCustomType(btn) {
+  document.querySelectorAll('#customTypeSelector button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const type = btn.dataset.type;
+  document.getElementById('customUnitWrap').style.display = (type === 'boolean') ? 'none' : 'block';
+}
+
+function addHabitFromLib(id) {
+  if (habitsConfig.find(h => h.id === id)) {
+    showToast('该习惯已添加');
+    return;
+  }
+  const lib = HABIT_LIBRARY.find(h => h.id === id);
+  if (!lib) return;
+  const newHabit = {
+    id: lib.id,
+    name: lib.name,
+    icon: lib.icon,
+    category: lib.category,
+    type: lib.type,
+    unit: lib.unit,
+    reminder: {enabled:false, time:'08:00', days:[0,1,2,3,4,5,6], method:'in-app'}
+  };
+  if (lib.type === 'water' && lib.waterConfig) {
+    newHabit.waterConfig = JSON.parse(JSON.stringify(lib.waterConfig));
+    newHabit.reminder = {enabled:true, method:'in-app'};
+  }
+  habitsConfig.push(newHabit);
+  saveConfig();
+  showToast(`${lib.icon} ${lib.name} 已添加`);
+  renderLibraryPanel(document.querySelector('.lib-search')?.value || '');
+  render();
+}
+
+function addCustomHabit() {
+  const name = document.getElementById('customHabitName').value.trim();
+  const icon = document.getElementById('customHabitIcon').value.trim() || '✅';
+  const typeBtn = document.querySelector('#customTypeSelector button.active');
+  const type = typeBtn ? typeBtn.dataset.type : 'boolean';
+  const unit = document.getElementById('customHabitUnit')?.value.trim() || (type === 'count' ? '个' : type === 'timer' ? '分钟' : '');
+
+  if (!name) {
+    showToast('请输入习惯名称');
+    return;
+  }
+
+  const id = 'custom_' + Date.now();
+  habitsConfig.push({
+    id,
+    name,
+    icon,
+    category: 'daytime',
+    type,
+    unit,
+    reminder: {enabled:false, time:'08:00', days:[0,1,2,3,4,5,6], method:'in-app'}
+  });
+  saveConfig();
+  showToast(`${icon} ${name} 已添加`);
+  renderLibraryPanel('');
+  render();
+}
+
+function addHealthPack() {
+  const myIds = new Set(habitsConfig.map(h => h.id));
+  let addedCount = 0;
+  
+  HEALTH_PACK.habits.forEach(ph => {
+    if (myIds.has(ph.id)) return;
+    const lib = HABIT_LIBRARY.find(h => h.id === ph.id);
+    if (!lib) return;
+    
+    const newHabit = {
+      id: lib.id,
+      name: lib.name,
+      icon: lib.icon,
+      category: lib.category,
+      type: lib.type,
+      unit: lib.unit,
+      reminder: {
+        enabled: ph.reminder.enabled,
+        time: ph.reminder.time,
+        days: [0,1,2,3,4,5,6],
+        method: 'in-app'
+      }
+    };
+    
+    if (lib.type === 'water' && lib.waterConfig) {
+      newHabit.waterConfig = JSON.parse(JSON.stringify(lib.waterConfig));
+    }
+    
+    habitsConfig.push(newHabit);
+    myIds.add(ph.id);
+    addedCount++;
+  });
+  
+  if (addedCount > 0) {
+    saveConfig();
+    showToast(`💚 健康生活建议包：已添加 ${addedCount} 个习惯`);
+    renderLibraryPanel('');
+    render();
+  } else {
+    showToast('建议包中的习惯已全部添加');
+  }
+}
+
+function addSeasonalPack(season) {
+  const pack = SEASONAL_PACKS[season];
+  if (!pack) return;
+  const myIds = new Set(habitsConfig.map(h => h.id));
+  let addedCount = 0;
+  
+  pack.habits.forEach(ph => {
+    if (myIds.has(ph.id)) return;
+    const lib = HABIT_LIBRARY.find(h => h.id === ph.id);
+    if (!lib) return;
+    
+    const newHabit = {
+      id: lib.id,
+      name: lib.name,
+      icon: lib.icon,
+      category: lib.category,
+      type: lib.type,
+      unit: lib.unit,
+      reminder: {
+        enabled: ph.reminder.enabled,
+        time: ph.reminder.time,
+        days: [0,1,2,3,4,5,6],
+        method: 'in-app'
+      }
+    };
+    
+    if (lib.type === 'water' && lib.waterConfig) {
+      newHabit.waterConfig = JSON.parse(JSON.stringify(lib.waterConfig));
+    }
+    
+    habitsConfig.push(newHabit);
+    myIds.add(ph.id);
+    addedCount++;
+  });
+  
+  if (addedCount > 0) {
+    saveConfig();
+    showToast(`${pack.emoji} ${pack.name}：已添加 ${addedCount} 个习惯`);
+    renderLibraryPanel('');
+    render();
+  } else {
+    showToast(`${pack.name}中的习惯已全部添加`);
+  }
+}
+
+// ===================== WEEKLY REPORT =====================
+
+function openReportPanel() {
+  const body = document.getElementById('reportPanelBody');
+  const d = new Date();
+  // Get this week's data (Mon to Sun)
+  const dow = d.getDay();
+  const mondayOffset = dow === 0 ? 6 : dow - 1;
+  const monday = new Date(d);
+  monday.setDate(d.getDate() - mondayOffset);
+
+  let totalDone = 0, totalAll = 0;
+  const habitStats = {};
+
+  habitsConfig.forEach(h => {
+    habitStats[h.id] = {done: 0, total: 7, name: h.name, icon: h.icon};
+  });
+
+  for (let i = 0; i < 7; i++) {
+    const day = new Date(monday);
+    day.setDate(monday.getDate() + i);
+    const key = formatDate(day);
+    const rec = checkinRecords[key] || {};
+    habitsConfig.forEach(h => {
+      totalAll++;
+      if (rec[h.id] && rec[h.id].done) {
+        totalDone++;
+        habitStats[h.id].done++;
+      }
+    });
+  }
+
+  const weekRate = totalAll > 0 ? Math.round((totalDone / totalAll) * 100) : 0;
+
+  // Find best and worst
+  let best = null, worst = null;
+  habitsConfig.forEach(h => {
+    const s = habitStats[h.id];
+    if (!best || s.done > best.done) best = s;
+    if (!worst || s.done < worst.done) worst = s;
+  });
+
+  body.innerHTML = `
+    <div class="report-card">
+      <div class="report-title">📊 本周总结</div>
+      <div class="report-stat">
+        <div><div class="report-stat-val">${weekRate}%</div><div class="report-stat-label">完成率</div></div>
+        <div><div class="report-stat-val">${totalDone}</div><div class="report-stat-label">总打卡</div></div>
+        <div><div class="report-stat-val">${totalAll}</div><div class="report-stat-label">总任务</div></div>
+      </div>
+      ${best ? `<div class="report-item"><span class="emoji">🌟</span><span class="text">最佳习惯：${best.icon} ${best.name}（完成${best.done}天）</span></div>` : ''}
+      ${worst && worst.done < 7 ? `<div class="report-item"><span class="emoji">💪</span><span class="text">需加油：${worst.icon} ${worst.name}（完成${worst.done}天）</span></div>` : ''}
+    </div>
+    <div style="font-size:13px;color:var(--muted);text-align:center;margin-top:8px">继续保持，下周会更好！</div>
+  `;
+  openPanel('reportPanel');
+}
+
+// ===================== CSV EXPORT =====================
+
+function exportCSV() {
+  const dates = Object.keys(checkinRecords).sort();
+  if (dates.length === 0) {
+    showToast('暂无数据可导出');
+    return;
+  }
+
+  const headers = ['日期', ...habitsConfig.map(h => h.name)];
+  const rows = [headers.join(',')];
+
+  dates.forEach(date => {
+    const rec = checkinRecords[date];
+    const row = [date];
+    habitsConfig.forEach(h => {
+      if (rec && rec[h.id] && rec[h.id].done) {
+        if (h.type === 'water') {
+          row.push(rec[h.id].value + 'ml');
+        } else {
+          row.push(h.type === 'boolean' ? '✓' : rec[h.id].value);
+        }
+      } else {
+        row.push('');
+      }
+    });
+    rows.push(row.join(','));
+  });
+
+  const csv = '\uFEFF' + rows.join('\n');
+  const blob = new Blob([csv], {type: 'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `习惯打卡_${today()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('CSV已导出');
+}
+
+// ===================== WATER SETTINGS PANEL =====================
+
+function openWaterSettingsPanel(habitId) {
+  pendingTimeHabitId = habitId;
+  const h = habitsConfig.find(x => x.id === habitId);
+  if (!h) return;
+  const wc = h.waterConfig || {dailyGoal:2000, perCup:250, schedule:[]};
+  document.getElementById('waterSettingsTitle').textContent = `${h.icon} ${h.name} 饮水设置`;
+
+  const body = document.getElementById('waterSettingsBody');
+  let scheduleHtml = '';
+  (wc.schedule || []).forEach((s, i) => {
+    scheduleHtml += `<div class="water-schedule-item" id="wsched-${i}">
+      <input type="time" value="${s.time}" style="width:80px;padding:4px 6px;border:1px solid var(--rule);border-radius:6px;font-size:13px" id="ws-time-${i}">
+      <input type="text" value="${s.label}" placeholder="标签" style="flex:1;padding:4px 8px;border:1px solid var(--rule);border-radius:6px;font-size:13px" id="ws-label-${i}">
+      <input type="number" value="${s.amount}" min="50" max="1000" style="width:70px;padding:4px 6px;border:1px solid var(--rule);border-radius:6px;font-size:13px;text-align:center" id="ws-amount-${i}">
+      <span style="font-size:12px;color:var(--muted)">ml</span>
+      <button style="font-size:16px;padding:4px;color:#e74c3c" onclick="removeWaterScheduleItem(${i})">✕</button>
+    </div>`;
+  });
+
+  body.innerHTML = `
+    <div style="margin-bottom:16px">
+      <div style="font-size:14px;font-weight:600;margin-bottom:8px">每日目标</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <input type="range" min="500" max="4000" step="100" value="${wc.dailyGoal || 2000}" id="wsGoalSlider" oninput="document.getElementById('wsGoalValue').textContent=this.value+'ml'" style="flex:1">
+        <span id="wsGoalValue" style="font-size:14px;font-weight:700;min-width:60px;text-align:right">${wc.dailyGoal || 2000}ml</span>
+      </div>
+    </div>
+    <div style="margin-bottom:16px">
+      <div style="font-size:14px;font-weight:600;margin-bottom:8px">每次推荐量</div>
+      <div style="display:flex;gap:8px">
+        ${[200,250,300,500].map(v => `<button class="water-quick-btn ${wc.perCup === v ? 'primary' : ''}" onclick="selectPerCup(${v})" data-percup="${v}">${v}ml</button>`).join('')}
+      </div>
+    </div>
+    <div style="margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-size:14px;font-weight:600">提醒时间表</span>
+        <button style="font-size:12px;padding:4px 12px;border-radius:10px;background:var(--accent);color:#fff;font-weight:600" onclick="addWaterScheduleItem()">+ 添加</button>
+      </div>
+      <div id="waterScheduleList">${scheduleHtml}</div>
+    </div>
+    <div class="toggle-row">
+      <span class="toggle-label">开启提醒</span>
+      <div class="toggle-switch ${h.reminder && h.reminder.enabled ? 'on' : ''}" id="waterReminderToggle" onclick="this.classList.toggle('on')"></div>
+    </div>
+    <button class="export-btn" style="margin-top:20px;background:var(--accent);color:#fff" onclick="saveWaterSettings()">保存设置</button>
+  `;
+  openPanel('waterSettingsPanel');
+}
+
+function selectPerCup(val) {
+  document.querySelectorAll('[data-percup]').forEach(btn => {
+    btn.classList.toggle('primary', parseInt(btn.dataset.percup) === val);
+  });
+}
+
+function addWaterScheduleItem() {
+  const list = document.getElementById('waterScheduleList');
+  const count = list.children.length;
+  const div = document.createElement('div');
+  div.className = 'water-schedule-item';
+  div.id = `wsched-${count}`;
+  div.innerHTML = `
+    <input type="time" value="12:00" style="width:80px;padding:4px 6px;border:1px solid var(--rule);border-radius:6px;font-size:13px" id="ws-time-${count}">
+    <input type="text" value="" placeholder="标签" style="flex:1;padding:4px 8px;border:1px solid var(--rule);border-radius:6px;font-size:13px" id="ws-label-${count}">
+    <input type="number" value="250" min="50" max="1000" style="width:70px;padding:4px 6px;border:1px solid var(--rule);border-radius:6px;font-size:13px;text-align:center" id="ws-amount-${count}">
+    <span style="font-size:12px;color:var(--muted)">ml</span>
+    <button style="font-size:16px;padding:4px;color:#e74c3c" onclick="removeWaterScheduleItem(${count})">✕</button>
+  `;
+  list.appendChild(div);
+}
+
+function removeWaterScheduleItem(index) {
+  const el = document.getElementById(`wsched-${index}`);
+  if (el) el.remove();
+}
+
+function saveWaterSettings() {
+  const h = habitsConfig.find(x => x.id === pendingTimeHabitId);
+  if (!h) return;
+
+  const dailyGoal = parseInt(document.getElementById('wsGoalSlider').value) || 2000;
+  const perCupBtn = document.querySelector('[data-percup].primary');
+  const perCup = perCupBtn ? parseInt(perCupBtn.dataset.percup) : 250;
+
+  const scheduleItems = document.querySelectorAll('#waterScheduleList .water-schedule-item');
+  const schedule = [];
+  scheduleItems.forEach(item => {
+    const timeInput = item.querySelector('input[type="time"]');
+    const labelInput = item.querySelector('input[type="text"]');
+    const amountInput = item.querySelector('input[type="number"]');
+    if (timeInput && labelInput && amountInput) {
+      schedule.push({
+        time: timeInput.value || '08:00',
+        label: labelInput.value || '喝水',
+        amount: parseInt(amountInput.value) || 250
+      });
+    }
+  });
+  schedule.sort((a, b) => a.time.localeCompare(b.time));
+
+  const reminderEnabled = document.getElementById('waterReminderToggle').classList.contains('on');
+
+  h.waterConfig = {dailyGoal, perCup, schedule};
+  h.reminder = {
+    enabled: reminderEnabled,
+    method: h.reminder ? h.reminder.method : 'in-app'
+  };
+
+  saveConfig();
+  closeAllPanels();
+  showToast('饮水设置已保存');
+  render();
+}
+
+// ===================== NOTIFICATION =====================
+
+function requestNotificationPermission() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+}
+
+function checkReminders() {
+  const now = new Date();
+  const currentTime = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const dow = now.getDay();
+
+  habitsConfig.forEach(h => {
+    if (!h.reminder || !h.reminder.enabled) return;
+    if (h.reminder.method === 'off') return;
+    if (!h.reminder.days || !h.reminder.days.includes(dow)) return;
+
+    if (h.type === 'water' && h.waterConfig && h.waterConfig.schedule) {
+      // Water type: check each schedule time point
+      h.waterConfig.schedule.forEach(s => {
+        if (s.time !== currentTime) return;
+        const rec = checkinRecords[today()] || {};
+        if (rec[h.id] && rec[h.id].done) return;
+        const msg = `该喝水了！${s.label} 建议喝 ${s.amount}ml`;
+        if (h.reminder.method === 'notification' && 'Notification' in window && Notification.permission === 'granted') {
+          new Notification('💧 饮水提醒', {body: msg, icon: './assets/hero_1280x720.jpg'});
+        }
+      });
+    } else {
+    if (h.reminder.time !== currentTime) return;
+
+    // Check if already done today
+    const rec = checkinRecords[today()] || {};
+    if (rec[h.id] && rec[h.id].done) return;
+
+    if (h.reminder.method === 'notification' && 'Notification' in window && Notification.permission === 'granted') {
+      new Notification('习惯打卡提醒', {
+        body: `该${h.name}了！${h.icon}`,
+        icon: './assets/hero_1280x720.jpg'
+      });
+    }
+    // In-app reminder is shown via the banner (already rendered)
+    }
+  });
+}
+
+// Check reminders every minute
+setInterval(checkReminders, 60000);
+
+// ===================== SERVICE WORKER =====================
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(err => {
+    console.log('SW registration failed:', err);
+  });
+}
+
+// ===================== INIT =====================
+
+loadData();
+render();
+requestNotificationPermission();
+</script>
+</body>
+</html>
