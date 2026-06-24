@@ -317,6 +317,9 @@ img{max-width:100%;display:block}
 .ref-panel-header{text-align:center;margin-bottom:16px}
 .ref-panel-header h3{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px}
 .ref-panel-header p{font-size:12px;color:var(--muted)}
+.ref-tabs{display:flex;gap:8px;margin:12px 0;background:var(--bg2);border-radius:12px;padding:4px}
+.ref-tab{flex:1;padding:10px;text-align:center;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--muted)}
+.ref-tab.active{background:var(--accent);color:#fff}
 .ref-section-title{font-size:13px;font-weight:700;color:var(--muted);margin:16px 0 8px;display:flex;align-items:center;gap:6px}
 .ref-card{display:flex;align-items:center;gap:12px;padding:12px;background:#fff;border-radius:12px;margin-bottom:8px;box-shadow:var(--shadow);transition:all .2s;text-decoration:none;color:var(--ink)}
 .ref-card:active{transform:scale(.98);opacity:.8}
@@ -2822,8 +2825,11 @@ function renderRefPanel() {
       <h3>📚 14部养生经典</h3>
       <p>汇集先秦至现代养生著作，点击查看详情</p>
     </div>
-    <div class="ref-section-title">🏛️ 经典古籍（${ancient.length}部）</div>
-  `;
+    <div class="ref-tabs">
+      <div class="ref-tab active" id="refTabAncient" onclick="switchRefTab('ancient')">🏛️ 经典古籍（${ancient.length}部）</div>
+      <div class="ref-tab" id="refTabModern" onclick="switchRefTab('modern')">📖 现代著作（${modern.length}部）</div>
+    </div>
+    <div id="refListAncient">`;
 
   ancient.forEach(b => {
     html += `<a class="ref-card" href="${b.url}" target="_blank" rel="noopener">
@@ -2836,7 +2842,7 @@ function renderRefPanel() {
     </a>`;
   });
 
-  html += `<div class="ref-section-title">📖 现代著作（${modern.length}部）</div>`;
+  html += `</div><div id="refListModern" style="display:none">`;
   modern.forEach(b => {
     html += `<a class="ref-card" href="${b.url}" target="_blank" rel="noopener">
       <div class="ref-icon modern">${b.emoji}</div>
@@ -2848,9 +2854,16 @@ function renderRefPanel() {
     </a>`;
   });
 
-  html += `<a class="ref-lib-btn" href="https://rui66648.github.io/lifestyle-assistant/养生参考文献文库/index.html" target="_blank" rel="noopener">📖 进入参考文献文库</a>`;
+  html += `</div><a class="ref-lib-btn" href="https://rui66648.github.io/lifestyle-assistant/养生参考文献文库/index.html" target="_blank" rel="noopener">📖 进入参考文献文库</a>`;
 
   body.innerHTML = html;
+}
+
+function switchRefTab(tab) {
+  document.getElementById('refTabAncient').classList.toggle('active', tab === 'ancient');
+  document.getElementById('refTabModern').classList.toggle('active', tab === 'modern');
+  document.getElementById('refListAncient').style.display = tab === 'ancient' ? '' : 'none';
+  document.getElementById('refListModern').style.display = tab === 'modern' ? '' : 'none';
 }
 
 // ===================== EMOTION PANEL =====================
