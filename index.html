@@ -323,9 +323,9 @@ img{max-width:100%;display:block}
 .ref-section-title{font-size:13px;font-weight:700;color:var(--muted);margin:16px 0 8px;display:flex;align-items:center;gap:6px}
 .ref-card{display:flex;align-items:center;gap:12px;padding:12px;background:#fff;border-radius:12px;margin-bottom:8px;box-shadow:var(--shadow);transition:all .2s;text-decoration:none;color:var(--ink)}
 .ref-card:active{transform:scale(.98);opacity:.8}
-.ref-card .ref-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.ref-card .ref-icon.ancient{background:linear-gradient(135deg,#F4A683,#E8956A)}
-.ref-card .ref-icon.modern{background:linear-gradient(135deg,#7CB69D,#5FA882)}
+.ref-card .ref-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;background:var(--bg2)}
+.ref-card .ref-icon.ancient{background:var(--bg2)}
+.ref-card .ref-icon.modern{background:var(--bg2)}
 .ref-card .ref-info{flex:1;min-width:0}
 .ref-card .ref-name{font-size:14px;font-weight:700;margin-bottom:2px}
 .ref-card .ref-author{font-size:11px;color:var(--muted)}
@@ -900,20 +900,20 @@ const QUOTES = [
 ];
 
 const REF_BOOKS = [
-  {name:'黄帝内经',emoji:'📕',author:'岐伯等',type:'ancient',desc:'中医四大经典之首',url:'https://ctext.org/text.pl?if=gb&file=27423&page=1'},
-  {name:'伤寒论',emoji:'📗',author:'张仲景',type:'ancient',desc:'辨证论治奠基之作',url:'https://ctext.org/text.pl?if=gb&file=27424&page=1'},
-  {name:'金匮要略',emoji:'📘',author:'张仲景',type:'ancient',desc:'杂病辨证论治经典',url:'https://ctext.org/text.pl?if=gb&file=27425&page=1'},
-  {name:'温病条辨',emoji:'📙',author:'吴鞠通',type:'ancient',desc:'温病学代表著作',url:'https://ctext.org/wiki.pl?if=gb&title=%E6%BA%AB%E7%97%85%E6%9D%A1%E8%BE%A8'},
-  {name:'本草纲目',emoji:'📗',author:'李时珍',type:'ancient',desc:'中药学巨著',url:'https://ctext.org/text.pl?if=gb&file=27426&page=1'},
-  {name:'神农本草经',emoji:'📘',author:'佚名',type:'ancient',desc:'最早的中药学专著',url:'https://ctext.org/text.pl?if=gb&file=27427&page=1'},
-  {name:'素问',emoji:'📕',author:'黄帝',type:'ancient',desc:'黄帝内经组成部分',url:'https://ctext.org/text.pl?if=gb&file=27423&page=1'},
-  {name:'灵枢',emoji:'📗',author:'黄帝',type:'ancient',desc:'黄帝内经组成部分',url:'https://ctext.org/text.pl?if=gb&file=27423&page=1'},
-  {name:'千金要方',emoji:'📙',author:'孙思邈',type:'ancient',desc:'临床医学百科全书',url:'https://ctext.org/text.pl?if=gb&file=27428&page=1'},
-  {name:'景岳全书',emoji:'📕',author:'张景岳',type:'ancient',desc:'明代医学巨著',url:'https://ctext.org/wiki.pl?if=gb&title=%E6%99%AF%E5%B2%B3%E5%85%A8%E4%B9%A6'},
-  {name:'中国居民膳食指南',emoji:'📖',author:'中国营养学会',type:'modern',desc:'2022版膳食指导',url:'https://dg.cndiet.org.cn/'},
-  {name:'中国居民膳食指南(2022)',emoji:'📖',author:'中国营养学会',type:'modern',desc:'科学膳食核心信息',url:'https://dg.cndiet.org.cn/'},
-  {name:'运动处方指南',emoji:'📖',author:'中国体育科学学会',type:'modern',desc:'科学运动指导',url:'https://www.sport.gov.cn/'},
-  {name:'中国睡眠医学指南',emoji:'📖',author:'中华医学会',type:'modern',desc:'睡眠健康管理',url:'https://www.cma.org.cn/'}
+  {name:'黄帝内经',emoji:'🏛️',author:'岐伯等',type:'ancient',desc:'中医四大经典之首',url:'https://ctext.org/text.pl?if=gb&file=27423&page=1'},
+  {name:'伤寒论',emoji:'🩺',author:'张仲景',type:'ancient',desc:'辨证论治奠基之作',url:'https://ctext.org/text.pl?if=gb&file=27424&page=1'},
+  {name:'金匮要略',emoji:'💊',author:'张仲景',type:'ancient',desc:'杂病辨证论治经典',url:'https://ctext.org/text.pl?if=gb&file=27425&page=1'},
+  {name:'温病条辨',emoji:'🌡️',author:'吴鞠通',type:'ancient',desc:'温病学代表著作',url:'https://ctext.org/wiki.pl?if=gb&title=%E6%BA%AB%E7%97%85%E6%9D%A1%E8%BE%A8'},
+  {name:'本草纲目',emoji:'🌿',author:'李时珍',type:'ancient',desc:'中药学巨著',url:'https://ctext.org/text.pl?if=gb&file=27426&page=1'},
+  {name:'神农本草经',emoji:'🌱',author:'佚名',type:'ancient',desc:'最早的中药学专著',url:'https://ctext.org/text.pl?if=gb&file=27427&page=1'},
+  {name:'素问',emoji:'📜',author:'黄帝',type:'ancient',desc:'黄帝内经组成部分',url:'https://ctext.org/text.pl?if=gb&file=27423&page=1'},
+  {name:'灵枢',emoji:'📜',author:'黄帝',type:'ancient',desc:'黄帝内经组成部分',url:'https://ctext.org/text.pl?if=gb&file=27423&page=1'},
+  {name:'千金要方',emoji:'👑',author:'孙思邈',type:'ancient',desc:'临床医学百科全书',url:'https://ctext.org/text.pl?if=gb&file=27428&page=1'},
+  {name:'景岳全书',emoji:'📖',author:'张景岳',type:'ancient',desc:'明代医学巨著',url:'https://ctext.org/wiki.pl?if=gb&title=%E6%99%AF%E5%B2%B3%E5%85%A8%E4%B9%A6'},
+  {name:'中国居民膳食指南',emoji:'🥗',author:'中国营养学会',type:'modern',desc:'2022版膳食指导',url:'https://dg.cndiet.org.cn/'},
+  {name:'中国居民膳食指南(2022)',emoji:'🥗',author:'中国营养学会',type:'modern',desc:'科学膳食核心信息',url:'https://dg.cndiet.org.cn/'},
+  {name:'运动处方指南',emoji:'🏃',author:'中国体育科学学会',type:'modern',desc:'科学运动指导',url:'https://www.sport.gov.cn/'},
+  {name:'中国睡眠医学指南',emoji:'😴',author:'中华医学会',type:'modern',desc:'睡眠健康管理',url:'https://www.cma.org.cn/'}
 ];
 
 const HEALTH_TIPS = [
@@ -2949,6 +2949,42 @@ function selectEmotion(emotionId) {
   saveRecords();
   renderEmotionPanel();
   render();
+}
+
+// ===================== CLOCK PANEL =====================
+
+function openClockPanel() {
+  const body = document.getElementById('clockPanelBody');
+  const current = getCurrentShichen();
+
+  let html = '<div style="padding:10px 0">';
+  html += '<div style="text-align:center;margin-bottom:16px">';
+  html += '<div style="font-size:32px;margin-bottom:4px">' + current.icon + '</div>';
+  html += '<div style="font-size:18px;font-weight:700;color:var(--ink)">' + current.name + ' · ' + current.meridian + '</div>';
+  html += '<div style="font-size:13px;color:var(--accent);font-weight:600;margin-top:4px">' + current.action + '</div>';
+  html += '<div style="font-size:12px;color:var(--muted);margin-top:2px">' + current.detail + '</div>';
+  html += '</div>';
+
+  html += '<div style="display:flex;flex-direction:column;gap:6px">';
+  BODY_CLOCK.forEach(function(sc) {
+    var isActive = sc.id === current.id;
+    var endLabel = sc.end === 0 ? 24 : sc.end;
+    html += '<div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:' + (isActive ? 'var(--accent-light)' : 'var(--bg2)') + ';border:2px solid ' + (isActive ? 'var(--accent)' : 'transparent') + '">';
+    html += '<div style="width:36px;text-align:center;font-size:20px">' + sc.icon + '</div>';
+    html += '<div style="flex:1">';
+    html += '<div style="font-size:13px;font-weight:700;color:' + (isActive ? 'var(--accent)' : 'var(--ink)') + '">' + sc.name + ' ' + sc.start + '-' + endLabel + '时 · ' + sc.meridian + '</div>';
+    html += '<div style="font-size:11px;color:var(--muted)">' + sc.action + '</div>';
+    html += '</div>';
+    if (isActive) html += '<div style="font-size:11px;font-weight:700;background:var(--accent);color:#fff;padding:2px 8px;border-radius:8px">当前</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  html += '<div style="font-size:11px;color:var(--muted);text-align:center;margin-top:12px">依据《黄帝内经》子午流注理论 · 十二时辰养生</div>';
+  html += '</div>';
+
+  body.innerHTML = html;
+  openPanel('clockPanel');
 }
 
 // ===================== WULAO PANEL =====================
