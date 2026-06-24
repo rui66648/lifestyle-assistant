@@ -470,7 +470,6 @@ img{max-width:100%;display:block}
 const HABIT_LIBRARY = [
   // 早晨
   {id:'early_rise',name:'早起',icon:'☀️',category:'morning',type:'boolean',unit:''},
-  {id:'wake_water',name:'起床喝温水',icon:'🥛',category:'morning',type:'count',unit:'ml',defaultReminder:{time:'06:40'}},
   {id:'morning_run',name:'晨跑',icon:'🏃',category:'morning',type:'timer',unit:'分钟'},
   {id:'breakfast',name:'早餐',icon:'🥣',category:'morning',type:'boolean',unit:''},
   // 上午
@@ -504,7 +503,7 @@ const HABIT_LIBRARY = [
   {id:'listen_course',name:'听课',icon:'🎧',category:'study',type:'boolean',unit:''},
   {id:'notes',name:'写笔记',icon:'📓',category:'study',type:'boolean',unit:''},
   // 健康建议
-  {id:'daily_water',name:'每日饮水',icon:'💧',category:'health',type:'water',unit:'ml',waterConfig:{dailyGoal:2000,perCup:250,schedule:[{time:'07:30',label:'起床后',amount:250},{time:'09:30',label:'上午加餐',amount:200},{time:'11:30',label:'午餐前',amount:250},{time:'14:00',label:'下午茶',amount:200},{time:'16:00',label:'下午补水',amount:250},{time:'18:30',label:'晚餐前',amount:200},{time:'20:30',label:'睡前',amount:150},{time:'22:00',label:'晚间',amount:150}]}},
+  {id:'daily_water',name:'每日饮水',icon:'💧',category:'health',type:'water',unit:'ml',waterConfig:{dailyGoal:2000,perCup:250,schedule:[{time:'06:30',label:'起床第一杯温水',amount:300},{time:'09:30',label:'上午',amount:250},{time:'11:30',label:'午餐前',amount:250},{time:'14:00',label:'下午',amount:200},{time:'16:00',label:'下午补水',amount:250},{time:'18:30',label:'晚餐前',amount:200},{time:'20:30',label:'睡前',amount:150},{time:'22:00',label:'晚间',amount:150}]}},
   // 五色养五脏（黄帝内经）
   {id:'green_food',name:'青色养肝',icon:'🥬',category:'color_diet',type:'count',unit:'种',foods:'菠菜、芹菜、西兰花、绿茶'},
   {id:'red_food',name:'赤色养心',icon:'🍅',category:'color_diet',type:'count',unit:'种',foods:'红枣、番茄、红豆、山楂'},
@@ -531,15 +530,15 @@ const TIME_PERIOD_MAP = {
   evening: {label:'晚上', emoji:'🌙', order:3}
 };
 
-const DEFAULT_HABITS = ['wake_water','morning_run','early_sleep','reading','meditation','early_rise'];
+const DEFAULT_HABITS = ['daily_water','morning_run','early_sleep','reading','meditation','early_rise'];
 
 const HEALTH_PACK = {
   name: '健康生活建议包',
   description: '基于医学研究的一日健康作息方案，包含18个科学建议习惯',
   habits: [
-    // 早晨 4个
+    // 早晨 3个
     {id:'early_rise',reminder:{time:'06:30',enabled:true}},
-    {id:'wake_water',reminder:{time:'06:40',enabled:true}},
+    {id:'daily_water',reminder:{time:'06:40',enabled:true}},
     {id:'morning_run',reminder:{time:'07:00',enabled:true}},
     {id:'breakfast',reminder:{time:'07:45',enabled:true}},
     // 上午 4个
@@ -574,7 +573,7 @@ const SEASONAL_PACKS = {
     tip: '春季养生重在<em>养肝</em>。宜晚睡早起（不超23点），多户外散步，饮食省酸增甘，保持心情舒畅。',
     habits: [
       {id:'early_rise',reminder:{time:'06:30',enabled:true}},
-      {id:'wake_water',reminder:{time:'06:40',enabled:true}},
+      {id:'daily_water',reminder:{time:'06:40',enabled:true}},
       {id:'breakfast',reminder:{time:'07:30',enabled:true}},
       {id:'walk',reminder:{time:'07:30',enabled:true}},
       {id:'breathe',reminder:{time:'10:00',enabled:true}},
@@ -597,7 +596,7 @@ const SEASONAL_PACKS = {
     tip: '夏季养生重在<em>养心</em>。宜晚睡早起，多饮水（2500ml），饮食清淡，适当晒太阳养阳气，保持心态平和。',
     habits: [
       {id:'early_rise',reminder:{time:'06:00',enabled:true}},
-      {id:'wake_water',reminder:{time:'06:10',enabled:true}},
+      {id:'daily_water',reminder:{time:'06:10',enabled:true}},
       {id:'breakfast',reminder:{time:'07:00',enabled:true}},
       {id:'good_posture',reminder:{time:'09:00',enabled:true}},
       {id:'less_sit',reminder:{time:'10:00',enabled:true}},
@@ -621,7 +620,7 @@ const SEASONAL_PACKS = {
     tip: '秋季养生重在<em>养肺</em>。宜早睡早起，多食白色食物（百合、银耳、梨），注意皮肤保湿，保持情绪安宁。',
     habits: [
       {id:'early_rise',reminder:{time:'06:30',enabled:true}},
-      {id:'wake_water',reminder:{time:'06:40',enabled:true}},
+      {id:'daily_water',reminder:{time:'06:40',enabled:true}},
       {id:'breakfast',reminder:{time:'07:30',enabled:true}},
       {id:'breathe',reminder:{time:'10:00',enabled:true}},
       {id:'eye_rest',reminder:{time:'10:30',enabled:true}},
@@ -644,7 +643,7 @@ const SEASONAL_PACKS = {
     quote: '《黄帝内经》："冬三月，此谓闭藏，水冰地坼，无扰乎阳。早卧晚起，必待日光，去寒就温，无泄皮肤。"',
     tip: '冬季养生重在<em>养肾</em>。宜早睡晚起（等太阳升起），多温补食物，注意保暖，适当泡脚暖身，减少户外剧烈运动。',
     habits: [
-      {id:'wake_water',reminder:{time:'07:00',enabled:true}},
+      {id:'daily_water',reminder:{time:'07:00',enabled:true}},
       {id:'breakfast',reminder:{time:'08:00',enabled:true}},
       {id:'good_posture',reminder:{time:'09:00',enabled:true}},
       {id:'less_sit',reminder:{time:'10:30',enabled:true}},
@@ -707,7 +706,7 @@ const HEALTH_TIPS = [
   {habit:'skincare',text:'坚持护肤习惯，皮肤状态会肉眼可见地改善。',source:'肺主皮毛，白当肺。——《素问·五脏生成篇》'},
   {habit:'diary',text:'写日记是很好的情绪管理和自我反思方式。',source:'志闲而少欲，心安而不惧。——《素问·上古天真论》'},
   {habit:'foot_bath',text:'睡前泡脚15分钟，促进血液循环，改善睡眠质量。',source:'去寒就温，无泄皮肤。——《素问·四气调神大论》'},
-  {habit:'daily_water',text:'成年人每天建议饮水1500-2000ml，少量多次效果最佳。',source:'卯时大肠经当令，起床饮温水。——《子午流注》'},
+  {habit:'daily_water',text:'成年人每天建议饮水1500-2000ml（约8杯），少量多次。起床后空腹喝一杯温水（200-300ml），促进肠胃蠕动和代谢。',source:'食饮有节，谨和五味；卯时大肠经当令，起床饮温水。——《素问·上古天真论》《子午流注》'},
   {habit:'healthy_diet',text:'均衡饮食是健康的基石，每天摄入12种以上食物。',source:'五谷为养，五果为助，五畜为益，五菜为充。——《素问·藏气法时论》'},
   {habit:'less_sit',text:'每坐45分钟站起来活动5分钟，保护腰椎。',source:'久坐伤肉。——《素问·宣明五气篇》'},
   {habit:'eye_rest',text:'每用眼20分钟远眺20秒，保护视力。',source:'久视伤血。——《素问·宣明五气篇》'},
@@ -715,7 +714,6 @@ const HEALTH_TIPS = [
   {habit:'sunshine',text:'每天晒太阳15-20分钟，促进阳气生发。',source:'无厌于日，使气得泄。——《素问·四气调神大论》'},
   {habit:'vitamin',text:'秋冬注意补充维生素D和钙质。',source:'必待日光，去寒就温。——《素问·四气调神大论》'},
   {habit:'fruits_veggies',text:'每天摄入300-500克蔬菜，降低慢性病风险。',source:'五菜为充，气味合而服之。——《素问·藏气法时论》'},
-  {habit:'wake_water',text:'起床后空腹喝一杯温水（200-300ml），促进代谢。',source:'平旦人气生，卯时大肠经当令。——《灵枢·顺气一日分为四时》'},
   {habit:'jump_rope',text:'跳绳10分钟消耗的热量相当于慢跑30分钟。',source:'春夏养阳，秋冬养阴。——《素问·四气调神大论》'}
 ];
 
@@ -1059,11 +1057,15 @@ function renderCheckin() {
 function renderWaterTracker(h, rec) {
   const wc = h.waterConfig || {dailyGoal:2000, perCup:250, schedule:[]};
   const goal = wc.dailyGoal || 2000;
+  const perCup = wc.perCup || 250;
   const waterRec = rec[h.id] || {};
   const value = waterRec.value || 0;
   const cups = waterRec.cups || [];
   const pct = Math.min(100, Math.round((value / goal) * 100));
   const remaining = Math.max(0, goal - value);
+  const remainingCups = Math.ceil(remaining / perCup);
+  const totalCups = Math.round(goal / perCup);
+  const doneCups = Math.round(value / perCup);
   const streak = getStreak(h.id);
 
   let fillClass = '';
@@ -1072,7 +1074,8 @@ function renderWaterTracker(h, rec) {
 
   let cupsHtml = '';
   cups.forEach(c => {
-    cupsHtml += `<div class="water-record"><span class="water-record-time">${c.time}</span><span class="water-record-amount">${c.amount}ml</span></div>`;
+    const cupNum = Math.round(c.amount / perCup) || 1;
+    cupsHtml += `<div class="water-record"><span class="water-record-time">${c.time}</span><span class="water-record-amount">${c.amount}ml（${cupNum}杯）</span></div>`;
   });
 
   let scheduleHtml = '';
@@ -1085,10 +1088,11 @@ function renderWaterTracker(h, rec) {
       const schedMinutes = sh * 60 + sm;
       const isPast = currentMinutes >= schedMinutes;
       const doneIcon = isPast ? '✅' : '⬜';
+      const cupNum = Math.round(s.amount / perCup) || 1;
       scheduleHtml += `<div class="water-schedule-item">
         <span class="water-schedule-time">${s.time}</span>
         <span class="water-schedule-label">${s.label}</span>
-        <span class="water-schedule-amount">${s.amount}ml</span>
+        <span class="water-schedule-amount">${cupNum}杯(${s.amount}ml)</span>
         <span class="water-schedule-done">${doneIcon}</span>
       </div>`;
     });
@@ -1098,17 +1102,17 @@ function renderWaterTracker(h, rec) {
   return `<div class="water-tracker" id="card-${h.id}">
     <div class="water-header">
       <div class="water-title">${h.icon} ${h.name} ${streak > 0 ? `<span style="font-size:11px;color:var(--accent);background:var(--accent-light);padding:2px 8px;border-radius:10px;font-weight:600">🔥${streak}天</span>` : ''}</div>
-      <div class="water-amount">${value}ml / ${goal}ml</div>
+      <div class="water-amount">${doneCups}杯(${value}ml) / ${totalCups}杯(${goal}ml)</div>
     </div>
     <div class="water-progress">
       <div class="water-progress-fill ${fillClass}" style="width:${pct}%"></div>
       <div class="water-progress-text">${pct}%</div>
     </div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">${remaining > 0 ? `还需喝 ${remaining}ml` : '今日目标已达成！🎉'}</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">${remaining > 0 ? `还需喝 ${remainingCups}杯(${remaining}ml)` : '今日目标已达成！🎉'}</div>
     <div class="water-quick-btns">
-      <button class="water-quick-btn primary" onclick="quickAddWater('${h.id}',200)">200ml</button>
-      <button class="water-quick-btn" onclick="quickAddWater('${h.id}',250)">250ml</button>
-      <button class="water-quick-btn" onclick="quickAddWater('${h.id}',500)">500ml</button>
+      <button class="water-quick-btn primary" onclick="quickAddWater('${h.id}',${perCup})">1杯(${perCup}ml)</button>
+      <button class="water-quick-btn" onclick="quickAddWater('${h.id}',${perCup*2})">2杯(${perCup*2}ml)</button>
+      <button class="water-quick-btn" onclick="quickAddWater('${h.id}',${perCup*3})">3杯(${perCup*3}ml)</button>
       <button class="water-quick-btn" onclick="openWaterInputPanel('${h.id}')">自定义</button>
     </div>
     ${cups.length > 0 ? `<div class="water-records"><div style="font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:600">今日记录</div>${cupsHtml}</div>` : ''}
