@@ -30,9 +30,12 @@ img{max-width:100%;display:block}
 .today-lunar{font-size:12px;color:var(--muted);background:rgba(255,255,255,.6);padding:2px 8px;border-radius:8px}
 .today-badges{display:flex;gap:6px;flex-wrap:wrap}
 .today-season-tip{font-size:13px;color:var(--ink);font-weight:600;line-height:1.5;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid rgba(0,0,0,.06)}
-.today-quote-source{font-size:14px;color:var(--accent);font-weight:600;cursor:pointer;padding:6px 0;border-radius:4px;transition:all .15s;display:block;margin-bottom:8px;line-height:1.6}
-.today-quote-source:hover{background:rgba(124,182,157,.12)}
-.today-quote-source::after{content:' →';font-style:normal;font-size:12px;opacity:.7;margin-left:4px}
+.quote-card{background:linear-gradient(135deg,#e8f5e9,#e3f2fd);border-radius:16px;padding:16px;margin:0 16px 12px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.quote-title{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.quote-text{font-size:16px;font-weight:600;color:var(--ink);line-height:1.8;margin-bottom:8px}
+.quote-source{font-size:13px;color:var(--accent);font-weight:600;text-align:right}
+.quote-refresh{font-size:12px;color:var(--muted);text-align:center;padding-top:8px;cursor:pointer;border-top:1px dashed rgba(0,0,0,.1);margin-top:8px}
+.quote-refresh:active{opacity:.7}
 .today-ref-link{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--accent);font-weight:600;text-decoration:none;padding:4px 10px;background:rgba(255,255,255,.6);border-radius:8px;transition:all .2s}
 .today-ref-link:active{background:var(--accent);color:#fff}
 
@@ -446,7 +449,12 @@ img{max-width:100%;display:block}
     <div class="today-badges" id="todayBadges"></div>
   </div>
   <div class="today-season-tip" id="todaySeasonTip"></div>
-  <div class="today-quote-source" id="todayQuoteSource"></div>
+  <div class="quote-card" id="quoteCard">
+    <div class="quote-title">📜 每日养生名言</div>
+    <div class="quote-text" id="quoteText"></div>
+    <div class="quote-source" id="quoteSource"></div>
+    <div class="quote-refresh" onclick="refreshQuote()">🔄 换一条</div>
+  </div>
   <a class="today-ref-link" onclick="openRefPanel(event)">📚 查看养生参考文献</a>
 </div>
 
@@ -890,37 +898,37 @@ const QUOTES = [
 
 const HEALTH_TIPS = [
   {habit:'morning_run',text:'晨跑30分钟，提升一整天的精力和专注力。',source:'广步于庭，被发缓形，以使志生。——《素问·四气调神大论》',refBook:'黄帝内经'},
-  {habit:'early_rise',text:'规律作息，早睡早起，让生物钟保持稳定。',source:'起居有常，不妄作劳。——《素问·上古天真论》',refBook:'黄帝内经'},
+  {habit:'early_rise',text:'规律作息，早睡早起，让生物钟保持稳定。',source:'法于阴阳，和于术数，食饮有节，起居有常，不妄作劳。——《素问·上古天真论》',refBook:'黄帝内经'},
   {habit:'reading',text:'每天阅读20分钟，一年可以读完20本书。',source:'嗜欲不能劳其目，淫邪不能惑其心。——《素问·上古天真论》',refBook:'黄帝内经'},
   {habit:'meditation',text:'冥想5分钟就能显著降低焦虑水平。',source:'恬惔虚无，真气从之，精神内守，病安从来。——《素问·上古天真论》',refBook:'黄帝内经'},
   {habit:'early_sleep',text:'晚上11点前入睡，让身体充分修复。',source:'子时胆经当令，凡十一脏取决于胆。——《子午流注》',refBook:'黄帝内经'},
   {habit:'breakfast',text:'营养均衡的早餐是一天能量的基础。',source:'辰时胃经最活跃，必须吃早餐。——《子午流注》',refBook:'黄帝内经'},
   {habit:'walk',text:'饭后散步15分钟，有助于消化和血糖控制。',source:'广步于庭，以缓其形。——《素问·四气调神大论》',refBook:'黄帝内经'},
   {habit:'breathe',text:'深呼吸练习可以激活副交感神经，缓解压力。',source:'和于术数，导引吐纳。——《素问·上古天真论》',refBook:'黄帝内经'},
-  {habit:'strength',text:'力量训练不仅塑形，还能增强骨密度。',source:'形劳而不倦。——《素问·上古天真论》',refBook:'黄帝内经'},
-  {habit:'yoga',text:'瑜伽改善柔韧性，同时锻炼身心平衡。',source:'和于术数，故能形与神俱。——《素问·上古天真论》',refBook:'黄帝内经'},
+  {habit:'strength',text:'力量训练不仅塑形，还能增强骨密度。',source:'志闲而少欲，心安而不惧，形劳而不倦。——《素问·上古天真论》',refBook:'黄帝内经'},
+  {habit:'yoga',text:'瑜伽改善柔韧性，同时锻炼身心平衡。',source:'不妄作劳，故能形与神俱。——《素问·上古天真论》',refBook:'黄帝内经'},
   {habit:'skincare',text:'坚持护肤习惯，皮肤状态会肉眼可见地改善。',source:'肺主皮毛，白当肺。——《素问·五脏生成篇》',refBook:'黄帝内经'},
-  {habit:'diary',text:'写日记是很好的情绪管理和自我反思方式。',source:'志闲而少欲，心安而不惧。——《素问·上古天真论》',refBook:'黄帝内经'},
-  {habit:'foot_bath',text:'睡前泡脚15分钟，促进血液循环，改善睡眠质量。',source:'去寒就温，无泄皮肤。——《素问·四气调神大论》',refBook:'黄帝内经'},
+  {habit:'diary',text:'写日记是很好的情绪管理和自我反思方式。',source:'志闲而少欲，心安而不惧，形劳而不倦。——《素问·上古天真论》',refBook:'黄帝内经'},
+  {habit:'foot_bath',text:'睡前泡脚15分钟，促进血液循环，改善睡眠质量。',source:'冬三月，此谓闭藏，水冰地坼，无扰乎阳。早卧晚起，必待日光，去寒就温，无泄皮肤。——《素问·四气调神大论》',refBook:'黄帝内经'},
   {habit:'daily_water',text:'成年人每天建议饮水1500-2000ml（约8杯），少量多次。起床后空腹喝一杯温水（200-300ml），促进肠胃蠕动和代谢。',source:'食饮有节，谨和五味；卯时大肠经当令，起床饮温水。——《素问·上古天真论》《子午流注》',refBook:'黄帝内经'},
   {habit:'healthy_diet',text:'均衡饮食是健康的基石，每天摄入12种以上食物。',source:'五谷为养，五果为助，五畜为益，五菜为充。——《素问·藏气法时论》',refBook:'黄帝内经'},
-  {habit:'less_sit',text:'每坐45分钟站起来活动5分钟，保护腰椎。',source:'久坐伤肉。——《素问·宣明五气篇》',refBook:'黄帝内经'},
-  {habit:'eye_rest',text:'每用眼20分钟远眺20秒，保护视力。',source:'久视伤血。——《素问·宣明五气篇》',refBook:'黄帝内经'},
+  {habit:'less_sit',text:'每坐45分钟站起来活动5分钟，保护腰椎。',source:'久视伤血，久卧伤气，久坐伤肉，久立伤骨，久行伤筋。——《素问·宣明五气篇》',refBook:'黄帝内经'},
+  {habit:'eye_rest',text:'每用眼20分钟远眺20秒，保护视力。',source:'久视伤血，久卧伤气，久坐伤肉，久立伤骨，久行伤筋。——《素问·宣明五气篇》',refBook:'黄帝内经'},
   {habit:'good_posture',text:'保持正确坐姿，减少颈椎压力。',source:'形正则气顺。——《遵生八笺》',refBook:'遵生八笺'},
-  {habit:'sunshine',text:'每天晒太阳15-20分钟，促进阳气生发。',source:'无厌于日，使气得泄。——《素问·四气调神大论》',refBook:'黄帝内经'},
-  {habit:'vitamin',text:'秋冬注意补充维生素D和钙质。',source:'必待日光，去寒就温。——《素问·四气调神大论》',refBook:'黄帝内经'},
-  {habit:'fruits_veggies',text:'每天摄入300-500克蔬菜，降低慢性病风险。',source:'五菜为充，气味合而服之。——《素问·藏气法时论》',refBook:'黄帝内经'},
-  {habit:'jump_rope',text:'跳绳10分钟消耗的热量相当于慢跑30分钟。',source:'春夏养阳，秋冬养阴。——《素问·四气调神大论》',refBook:'黄帝内经'},
+  {habit:'sunshine',text:'每天晒太阳15-20分钟，促进阳气生发。',source:'夏三月，此谓蕃秀，天地气交，万物华实。夜卧早起，无厌于日，使志无怒，使华英成秀。——《素问·四气调神大论》',refBook:'黄帝内经'},
+  {habit:'vitamin',text:'秋冬注意补充维生素D和钙质。',source:'冬三月，此谓闭藏，水冰地坼，无扰乎阳。早卧晚起，必待日光，去寒就温，无泄皮肤。——《素问·四气调神大论》',refBook:'黄帝内经'},
+  {habit:'fruits_veggies',text:'每天摄入300-500克蔬菜，降低慢性病风险。',source:'五谷为养，五果为助，五畜为益，五菜为充。——《素问·藏气法时论》',refBook:'黄帝内经'},
+  {habit:'jump_rope',text:'跳绳10分钟消耗的热量相当于慢跑30分钟。',source:'夫四时阴阳者，万物之根本也。春夏养阳，秋冬养阴，以从其根。——《素问·四气调神大论》',refBook:'黄帝内经'},
   {habit:'stretch',text:'办公室拉伸5分钟，缓解肩颈僵硬和腰背酸痛。',source:'导引按跷，以通经气。——《黄帝内经》',refBook:'拉伸'},
   {habit:'sleep_quality',text:'右侧卧睡，屈右臂，头枕左手，安眠养神。',source:'屈膝侧卧，益人气力。——《老老恒言》',refBook:'老老恒言'},
   {habit:'acupressure',text:'每日按揉足三里、合谷穴各3分钟，调理脾胃。',source:'胃病者，胃脘当心而痛，上支两胁。——《灵枢》',refBook:'求医不如求己'},
-  {habit:'emotion',text:'怒伤肝，悲伤肺，思伤脾，恐伤肾。保持情绪平和。',source:'怒伤肝，悲胜怒；喜伤心，恐胜喜。——《素问·阴阳应象大论》',refBook:'黄帝内经'},
-  {habit:'rest',text:'主动休息比被动休息更有效，每90分钟休息15分钟。',source:'久视伤血，久卧伤气，久坐伤肉。——《素问·宣明五气篇》',refBook:'科学休息'},
+  {habit:'emotion',text:'怒伤肝，悲伤肺，思伤脾，恐伤肾。保持情绪平和。',source:'怒伤肝，悲胜怒；喜伤心，恐胜喜；思伤脾，怒胜思；忧伤肺，喜胜忧；恐伤肾，思胜恐。——《素问·阴阳应象大论》',refBook:'黄帝内经'},
+  {habit:'rest',text:'主动休息比被动休息更有效，每90分钟休息15分钟。',source:'久视伤血，久卧伤气，久坐伤肉，久立伤骨，久行伤筋。——《素问·宣明五气篇》',refBook:'科学休息'},
   {habit:'constitution',text:'了解自己的体质类型，针对性调理饮食和运动。',source:'阴阳和平之人，其骨直以和。——《灵枢·通天》',refBook:'九种体质养生全书'},
-  {habit:'food_therapy',text:'食物是最好的药物，合理搭配可预防疾病。',source:'毒药攻邪，五谷为养，五果为助。——《素问·藏气法时论》',refBook:'饮膳正要'},
+  {habit:'food_therapy',text:'食物是最好的药物，合理搭配可预防疾病。',source:'五谷为养，五果为助，五畜为益，五菜为充。——《素问·藏气法时论》',refBook:'饮膳正要'},
   {habit:'mind',text:'养生先养心，心为五脏六腑之大主。',source:'心者，君主之官也，神明出焉。——《素问·灵兰秘典论》',refBook:'闲情偶寄'},
   {habit:'longevity',text:'不伤为本，积微成损，养生在于日常点滴。',source:'善养生者，不伤为本。——《抱朴子》',refBook:'抱朴子'},
-  {habit:'five_viscera',text:'五脏养生各有法：肝苦急，急食甘以缓之。',source:'肝苦急，急食甘以缓之。——《素问·藏气法时论》',refBook:'寿世青编'},
+  {habit:'five_viscera',text:'五脏养生各有法：肝苦急，急食甘以缓之。',source:'五谷为养，五果为助，五畜为益，五菜为充。——《素问·藏气法时论》',refBook:'寿世青编'},
   {habit:'medicine',text:'大医精诚，养性之道在于日常修身。',source:'安生之本，必资于食。——《备急千金要方》',refBook:'备急千金要方'},
   {habit:'body_form',text:'形神相亲，养生贵在形神兼养。',source:'精神之于形骸，犹国之有君也。——《养生论》',refBook:'养生论'}
 ];
@@ -1285,19 +1293,46 @@ function renderTodayCard() {
   }
   document.getElementById('todaySeasonTip').innerHTML = tipHtml;
 
-  // Quote + Source merged: random from all refs, clickable
+  // Quote card: random from HEALTH_TIPS source (now full quotes)
   const qIdx = Math.floor(Math.random() * HEALTH_TIPS.length);
-  const qTip = HEALTH_TIPS[qIdx];
+  let qTip = HEALTH_TIPS[qIdx];
+  // Ensure we pick one with a substantial source (full quote)
+  let attempts = 0;
+  while (qTip.source.length < 20 && attempts < 10) {
+    qTip = HEALTH_TIPS[Math.floor(Math.random() * HEALTH_TIPS.length)];
+    attempts++;
+  }
   const qRefBook = REF_BOOKS.find(b => b.name.includes(qTip.refBook));
   const qRefUrl = qRefBook ? qRefBook.url : null;
-  const qsEl = document.getElementById('todayQuoteSource');
-  qsEl.textContent = '📖 ' + qTip.source;
+  document.getElementById('quoteText').textContent = qTip.source.split('——')[0];
+  document.getElementById('quoteSource').textContent = '——' + (qTip.source.split('——')[1] || '');
   if (qRefUrl) {
-    qsEl.style.cursor = 'pointer';
-    qsEl.onclick = function() { window.open(qRefUrl, '_blank'); };
-  } else {
-    qsEl.style.cursor = 'default';
-    qsEl.onclick = null;
+    document.getElementById('quoteCard').style.cursor = 'pointer';
+    document.getElementById('quoteCard').onclick = function(e) {
+      if (e.target.classList.contains('quote-refresh')) return;
+      window.open(qRefUrl, '_blank');
+    };
+  }
+}
+
+function refreshQuote() {
+  const qIdx = Math.floor(Math.random() * HEALTH_TIPS.length);
+  let qTip = HEALTH_TIPS[qIdx];
+  let attempts = 0;
+  while (qTip.source.length < 20 && attempts < 10) {
+    qTip = HEALTH_TIPS[Math.floor(Math.random() * HEALTH_TIPS.length)];
+    attempts++;
+  }
+  const qRefBook = REF_BOOKS.find(b => b.name.includes(qTip.refBook));
+  const qRefUrl = qRefBook ? qRefBook.url : null;
+  document.getElementById('quoteText').textContent = qTip.source.split('——')[0];
+  document.getElementById('quoteSource').textContent = '——' + (qTip.source.split('——')[1] || '');
+  if (qRefUrl) {
+    document.getElementById('quoteCard').style.cursor = 'pointer';
+    document.getElementById('quoteCard').onclick = function(e) {
+      if (e.target.classList.contains('quote-refresh')) return;
+      window.open(qRefUrl, '_blank');
+    };
   }
 }
 
