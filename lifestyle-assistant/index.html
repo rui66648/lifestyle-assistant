@@ -10,7 +10,7 @@
 <link rel="manifest" href="./manifest.json">
 <title>生活习惯小助手 V1</title>
 <style>
-@font-face{font-family:'InstrumentSans';src:url('./_shared/fonts/InstrumentSans-Regular.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'InstrumentSans';src:url('../黄帝内经/_shared/fonts/InstrumentSans-Regular.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
 :root{--bg:#FDF8F0;--bg2:#F5EDE0;--ink:#2D3436;--muted:#8D9196;--rule:#E0D8CC;--accent:#7CB69D;--accent2:#F4A683;--accent-light:#B8DCC9;--accent2-light:#FBD5C0;--radius:14px;--shadow:0 2px 12px rgba(0,0,0,.06)}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{font-family:'InstrumentSans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:80px;overflow-x:hidden}
@@ -194,10 +194,28 @@ img{max-width:100%;display:block}
 .report-item .text{font-size:13px;flex:1}
 
 /* Health Tip */
-.health-tip{background:var(--bg2);border-radius:var(--radius);padding:14px 16px;margin:0 16px 12px;font-size:13px;line-height:1.5;color:var(--muted);display:flex;gap:8px;align-items:flex-start}
-.health-tip .tip-icon{font-size:18px;flex-shrink:0}
+.health-tip{background:var(--bg2);border-radius:var(--radius);padding:14px 16px;margin:0 16px 12px;font-size:13px;line-height:1.5;color:var(--muted);display:flex;gap:10px;align-items:flex-start}
+.health-tip .tip-icon{font-size:22px;flex-shrink:0;padding-top:1px}
+.health-tip .tip-content{flex:1;min-width:0}
+.health-tip .tip-text{display:block;color:var(--ink);font-weight:600;margin-bottom:4px}
+.health-tip .tip-source{display:block;font-size:11px;color:var(--accent);font-style:italic;line-height:1.4}
 
 /* Edit Mode */
+
+/* 子午流注 Clock */
+.clock-current{background:linear-gradient(135deg,var(--accent-light),var(--accent2-light));border-radius:var(--radius);padding:16px;margin-bottom:16px;text-align:center}
+.clock-current .shi{font-size:28px;font-weight:700;color:var(--ink)}
+.clock-current .meridian{font-size:14px;color:var(--muted);margin:4px 0}
+.clock-current .action{font-size:16px;font-weight:600;color:var(--accent);margin:6px 0}
+.clock-current .detail{font-size:13px;color:var(--muted);font-style:italic}
+.clock-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.clock-card{background:#fff;border-radius:12px;padding:10px 12px;box-shadow:var(--shadow);transition:all .2s;position:relative;overflow:hidden}
+.clock-card.active{border:2px solid var(--accent);background:var(--accent-light)}
+.clock-card .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.clock-card .shi-name{font-size:15px;font-weight:700}
+.clock-card .shi-time{font-size:11px;color:var(--muted);font-family:var(--font-mono,monospace)}
+.clock-card .shi-meridian{font-size:12px;color:var(--accent);font-weight:600}
+.clock-card .shi-action{font-size:12px;color:var(--ink);line-height:1.4;margin-top:2px}
 .edit-bar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--bg2);border-radius:var(--radius);margin:0 16px 12px}
 .edit-bar .label{font-size:13px;font-weight:600;color:var(--muted)}
 .edit-bar button{padding:8px 16px;border-radius:16px;font-size:13px;font-weight:600}
@@ -289,8 +307,11 @@ img{max-width:100%;display:block}
 
 <!-- Health Tip -->
 <div class="health-tip" id="healthTip">
-  <span class="tip-icon">💡</span>
-  <span class="tip-text" id="tipText"></span>
+  <span class="tip-icon"></span>
+  <div class="tip-content">
+    <span class="tip-text" id="tipText"></span>
+    <span class="tip-source" id="tipSource"></span>
+  </div>
 </div>
 
 <!-- Reminder Banner -->
@@ -353,6 +374,7 @@ img{max-width:100%;display:block}
   <div id="manageContent"></div>
   <button class="export-btn" style="margin-top:12px;background:linear-gradient(135deg,var(--accent-light),var(--accent2-light));color:var(--ink);font-weight:700" onclick="addHealthPack()">💚 一键添加健康生活建议包</button>
   <button class="export-btn" style="margin-top:8px;background:linear-gradient(135deg,#d4edda,#fff3cd);color:var(--ink);font-weight:700" onclick="openLibraryPanel()">🌿 四季养生（黄帝内经）</button>
+  <button class="export-btn" style="margin-top:8px;background:linear-gradient(135deg,#e8f4f8,#d4edda);color:var(--ink);font-weight:700" onclick="openClockPanel()">⏳ 子午流注 · 十二时辰</button>
   <button class="export-btn" style="margin-top:12px" onclick="openLibraryPanel()">➕ 从习惯库添加</button>
 </div>
 
@@ -432,6 +454,16 @@ img{max-width:100%;display:block}
   <div class="panel-body" id="waterSettingsBody"></div>
 </div>
 
+<!-- 子午流注 Bio-Rhythm Panel -->
+<div class="panel" id="clockPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title">⏳ 子午流注 · 十二时辰</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body" id="clockPanelBody"></div>
+</div>
+
 <script>
 // ===================== DATA =====================
 
@@ -472,7 +504,13 @@ const HABIT_LIBRARY = [
   {id:'listen_course',name:'听课',icon:'🎧',category:'study',type:'boolean',unit:''},
   {id:'notes',name:'写笔记',icon:'📓',category:'study',type:'boolean',unit:''},
   // 健康建议
-  {id:'daily_water',name:'每日饮水',icon:'💧',category:'health',type:'water',unit:'ml',waterConfig:{dailyGoal:2000,perCup:250,schedule:[{time:'07:30',label:'起床后',amount:250},{time:'09:30',label:'上午加餐',amount:200},{time:'11:30',label:'午餐前',amount:250},{time:'14:00',label:'下午茶',amount:200},{time:'16:00',label:'下午补水',amount:250},{time:'18:30',label:'晚餐前',amount:200},{time:'20:30',label:'睡前',amount:150},{time:'22:00',label:'晚间',amount:150}]}}
+  {id:'daily_water',name:'每日饮水',icon:'💧',category:'health',type:'water',unit:'ml',waterConfig:{dailyGoal:2000,perCup:250,schedule:[{time:'07:30',label:'起床后',amount:250},{time:'09:30',label:'上午加餐',amount:200},{time:'11:30',label:'午餐前',amount:250},{time:'14:00',label:'下午茶',amount:200},{time:'16:00',label:'下午补水',amount:250},{time:'18:30',label:'晚餐前',amount:200},{time:'20:30',label:'睡前',amount:150},{time:'22:00',label:'晚间',amount:150}]}},
+  // 五色养五脏（黄帝内经）
+  {id:'green_food',name:'青色养肝',icon:'🥬',category:'color_diet',type:'count',unit:'种',foods:'菠菜、芹菜、西兰花、绿茶'},
+  {id:'red_food',name:'赤色养心',icon:'🍅',category:'color_diet',type:'count',unit:'种',foods:'红枣、番茄、红豆、山楂'},
+  {id:'yellow_food',name:'黄色养脾',icon:'🌽',category:'color_diet',type:'count',unit:'种',foods:'南瓜、小米、黄豆、玉米'},
+  {id:'white_food',name:'白色养肺',icon:'🥦',category:'color_diet',type:'count',unit:'种',foods:'白萝卜、百合、银耳、莲藕'},
+  {id:'black_food',name:'黑色养肾',icon:'🫘',category:'color_diet',type:'count',unit:'种',foods:'黑豆、黑芝麻、桑葚、海带'}
 ];
 
 const CATEGORY_MAP = {
@@ -482,7 +520,8 @@ const CATEGORY_MAP = {
   evening: {label:'晚上', emoji:'🌙', timePeriod:'evening'},
   fitness: {label:'健身', emoji:'💪', timePeriod:'afternoon'},
   study: {label:'学习', emoji:'📚', timePeriod:'forenoon'},
-  health: {label:'健康建议', emoji:'💚', timePeriod:'daytime'}
+  health: {label:'健康建议', emoji:'💚', timePeriod:'daytime'},
+  color_diet: {label:'五色饮食', emoji:'🎨', timePeriod:'afternoon'}
 };
 
 const TIME_PERIOD_MAP = {
@@ -622,70 +661,90 @@ const SEASONAL_PACKS = {
 };
 
 const QUOTES = [
-  "千里之行，始于足下。",
-  "不积跬步，无以至千里。",
-  "习惯决定性格，性格决定命运。",
-  "每天进步一点点，就是成功的开始。",
-  "自律给我自由。",
-  "坚持就是胜利。",
-  "播种行为，收获习惯；播种习惯，收获性格。",
-  "好习惯是人生的财富。",
-  "今天多一分努力，明天多一分收获。",
-  "行动是治愈恐惧的良药。",
-  "成功不是将来才有的，而是从决定去做的那一刻起。",
-  "把每一天都当作新的开始。",
-  "小习惯，大改变。",
-  "积少成多，聚沙成塔。",
-  "改变从现在开始，永远都不晚。",
-  "日拱一卒，功不唐捐。",
-  "优秀是一种习惯。",
-  "越努力，越幸运。",
-  "做时间的朋友，让习惯复利增长。",
-  "每一个不曾起舞的日子，都是对生命的辜负。",
-  "知行合一，方能致远。",
-  "简单的事情重复做，就是专家。",
-  "重复的事情用心做，就是赢家。",
-  "人生没有白走的路，每一步都算数。",
-  "不怕慢，就怕站。",
-  "养成好习惯，受益一辈子。",
-  "心之所向，素履以往。",
-  "温故而知新，可以为师矣。",
-  "学而不思则罔，思而不学则殆。",
-  "天行健，君子以自强不息。"
+  "法于阴阳，和于术数，食饮有节，起居有常，不妄作劳。——《素问·上古天真论》",
+  "恬惔虚无，真气从之，精神内守，病安从来。——《素问·上古天真论》",
+  "圣人不治已病，治未病；不治已乱，治未乱。——《素问·四气调神大论》",
+  "虚邪贼风，避之有时。——《素问·上古天真论》",
+  "夫四时阴阳者，万物之根本也。春夏养阳，秋冬养阴，以从其根。——《素问·四气调神大论》",
+  "春三月，此谓发陈，天地俱生，万物以荣。——《素问·四气调神大论》",
+  "夏三月，此谓蕃秀，天地气交，万物华实。——《素问·四气调神大论》",
+  "秋三月，此谓容平，天气以急，地气以明。——《素问·四气调神大论》",
+  "冬三月，此谓闭藏，水冰地坼，无扰乎阳。——《素问·四气调神大论》",
+  "五谷为养，五果为助，五畜为益，五菜为充。——《素问·藏气法时论》",
+  "饮食自倍，肠胃乃伤。——《素问·痹论》",
+  "食饮者，热无灼灼，寒无沧沧。寒温中适，故气将持。——《灵枢·师传》",
+  "百病生于气也。怒则气上，喜则气缓，悲则气消，恐则气下，思则气结。——《素问·举痛论》",
+  "怒伤肝，悲胜怒；喜伤心，恐胜喜；思伤脾，怒胜思；忧伤肺，喜胜忧；恐伤肾，思胜恐。——《素问·阴阳应象大论》",
+  "心藏神，肺藏魄，肝藏魂，脾藏意，肾藏志。——《素问·宣明五气篇》",
+  "人与天地相参也，与日月相应也。——《灵枢·岁露论》",
+  "阳气者，若天与日，失其所，则折寿而不彰。——《素问·生气通天论》",
+  "久视伤血，久卧伤气，久坐伤肉，久立伤骨，久行伤筋。——《素问·宣明五气篇》",
+  "志闲而少欲，心安而不惧，形劳而不倦。——《素问·上古天真论》",
+  "阴阳者，天地之道也，万物之纲纪，变化之父母。——《素问·阴阳应象大论》",
+  "逆之则灾害生，从之则苛疾不起。——《素问·四气调神大论》",
+  "嗜欲不能劳其目，淫邪不能惑其心。——《素问·上古天真论》",
+  "以酒为浆，以妄为常，起居无节，故半百而衰也。——《素问·上古天真论》",
+  "不妄作劳，故能形与神俱。——《素问·上古天真论》",
+  "春伤于风，夏生飧泄；夏伤于暑，秋必痎疟。——《素问·阴阳应象大论》",
+  "秋伤于湿，冬生咳嗽。——《素问·阴阳应象大论》",
+  "正气存内，邪不可干。——《素问·刺法论》",
+  "形与神俱，而尽终其天年，度百岁乃去。——《素问·上古天真论》",
+  "四时阴阳者，从之则苛疾不起，逆之则灾害生。——《素问·四气调神大论》",
+  "上工治未病，不治已病。——《灵枢·逆顺》"
 ];
 
 const HEALTH_TIPS = [
-  {habit:'morning_run',text:'晨跑30分钟，提升一整天的精力和专注力。'},
-  {habit:'early_rise',text:'规律作息，早睡早起，让生物钟保持稳定。'},
-  {habit:'reading',text:'每天阅读20分钟，一年可以读完20本书。'},
-  {habit:'meditation',text:'冥想5分钟就能显著降低焦虑水平。'},
-  {habit:'early_sleep',text:'晚上11点前入睡，让身体充分修复。'},
-  {habit:'breakfast',text:'营养均衡的早餐是一天能量的基础。'},
-  {habit:'walk',text:'饭后散步15分钟，有助于消化和血糖控制。'},
-  {habit:'breathe',text:'深呼吸练习可以激活副交感神经，缓解压力。'},
-  {habit:'strength',text:'力量训练不仅塑形，还能增强骨密度。'},
-  {habit:'yoga',text:'瑜伽改善柔韧性，同时锻炼身心平衡。'},
-  {habit:'swimming',text:'游泳是全身运动，对关节压力最小。'},
-  {habit:'cycling',text:'骑车是低冲击有氧运动，适合所有年龄段。'},
-  {habit:'skincare',text:'坚持护肤习惯，皮肤状态会肉眼可见地改善。'},
-  {habit:'diary',text:'写日记是很好的情绪管理和自我反思方式。'},
-  {habit:'foot_bath',text:'睡前泡脚15分钟，促进血液循环，改善睡眠质量。'},
-  {habit:'vocabulary',text:'每天背20个单词，一年词汇量增长7000+。'},
-  {habit:'calligraphy',text:'练字可以培养耐心和专注力。'},
-  {habit:'coding',text:'编程是最好的逻辑思维训练。'},
-  {habit:'listen_course',text:'利用碎片时间听课，知识积累无处不在。'},
-  {habit:'notes',text:'写笔记帮助记忆和理解，是学习的好帮手。'},
-  {habit:'jump_rope',text:'跳绳10分钟消耗的热量相当于慢跑30分钟。'},
-  {habit:'daily_water',text:'成年人每天建议饮水1500-2000ml，少量多次效果最佳。'},
-  {habit:'healthy_diet',text:'均衡饮食是健康的基石，每天摄入12种以上食物。'},
-  {habit:'less_sit',text:'每坐45分钟站起来活动5分钟，保护腰椎。'},
-  {habit:'eye_rest',text:'每用眼20分钟，看20英尺外的物体20秒（20-20-20法则）。'},
-  {habit:'good_posture',text:'保持正确坐姿，屏幕上缘与眼睛平齐，减少颈椎压力。'},
-  {habit:'sunshine',text:'每天晒太阳15-20分钟，促进维生素D合成。'},
-  {habit:'vitamin',text:'适当补充维生素D和钙质，尤其秋冬季节。'},
-  {habit:'fruits_veggies',text:'每天摄入300-500克蔬菜和200-350克水果，降低慢性病风险。'},
-  {habit:'wake_water',text:'起床后空腹喝一杯温水（200-300ml），促进肠胃蠕动和代谢。'}
+  {habit:'morning_run',text:'晨跑30分钟，提升一整天的精力和专注力。',source:'广步于庭，被发缓形，以使志生。——《素问·四气调神大论》'},
+  {habit:'early_rise',text:'规律作息，早睡早起，让生物钟保持稳定。',source:'起居有常，不妄作劳。——《素问·上古天真论》'},
+  {habit:'reading',text:'每天阅读20分钟，一年可以读完20本书。',source:'嗜欲不能劳其目，淫邪不能惑其心。——《素问·上古天真论》'},
+  {habit:'meditation',text:'冥想5分钟就能显著降低焦虑水平。',source:'恬惔虚无，真气从之，精神内守，病安从来。——《素问·上古天真论》'},
+  {habit:'early_sleep',text:'晚上11点前入睡，让身体充分修复。',source:'子时胆经当令，凡十一脏取决于胆。——《子午流注》'},
+  {habit:'breakfast',text:'营养均衡的早餐是一天能量的基础。',source:'辰时胃经最活跃，必须吃早餐。——《子午流注》'},
+  {habit:'walk',text:'饭后散步15分钟，有助于消化和血糖控制。',source:'广步于庭，以缓其形。——《素问·四气调神大论》'},
+  {habit:'breathe',text:'深呼吸练习可以激活副交感神经，缓解压力。',source:'和于术数，导引吐纳。——《素问·上古天真论》'},
+  {habit:'strength',text:'力量训练不仅塑形，还能增强骨密度。',source:'形劳而不倦。——《素问·上古天真论》'},
+  {habit:'yoga',text:'瑜伽改善柔韧性，同时锻炼身心平衡。',source:'和于术数，故能形与神俱。——《素问·上古天真论》'},
+  {habit:'skincare',text:'坚持护肤习惯，皮肤状态会肉眼可见地改善。',source:'肺主皮毛，白当肺。——《素问·五脏生成篇》'},
+  {habit:'diary',text:'写日记是很好的情绪管理和自我反思方式。',source:'志闲而少欲，心安而不惧。——《素问·上古天真论》'},
+  {habit:'foot_bath',text:'睡前泡脚15分钟，促进血液循环，改善睡眠质量。',source:'去寒就温，无泄皮肤。——《素问·四气调神大论》'},
+  {habit:'daily_water',text:'成年人每天建议饮水1500-2000ml，少量多次效果最佳。',source:'卯时大肠经当令，起床饮温水。——《子午流注》'},
+  {habit:'healthy_diet',text:'均衡饮食是健康的基石，每天摄入12种以上食物。',source:'五谷为养，五果为助，五畜为益，五菜为充。——《素问·藏气法时论》'},
+  {habit:'less_sit',text:'每坐45分钟站起来活动5分钟，保护腰椎。',source:'久坐伤肉。——《素问·宣明五气篇》'},
+  {habit:'eye_rest',text:'每用眼20分钟远眺20秒，保护视力。',source:'久视伤血。——《素问·宣明五气篇》'},
+  {habit:'good_posture',text:'保持正确坐姿，减少颈椎压力。',source:'形正则气顺。——《遵生八笺》'},
+  {habit:'sunshine',text:'每天晒太阳15-20分钟，促进阳气生发。',source:'无厌于日，使气得泄。——《素问·四气调神大论》'},
+  {habit:'vitamin',text:'秋冬注意补充维生素D和钙质。',source:'必待日光，去寒就温。——《素问·四气调神大论》'},
+  {habit:'fruits_veggies',text:'每天摄入300-500克蔬菜，降低慢性病风险。',source:'五菜为充，气味合而服之。——《素问·藏气法时论》'},
+  {habit:'wake_water',text:'起床后空腹喝一杯温水（200-300ml），促进代谢。',source:'平旦人气生，卯时大肠经当令。——《灵枢·顺气一日分为四时》'},
+  {habit:'jump_rope',text:'跳绳10分钟消耗的热量相当于慢跑30分钟。',source:'春夏养阳，秋冬养阴。——《素问·四气调神大论》'}
 ];
+
+const BODY_CLOCK = [
+  {id:'zishi',name:'子时',start:23,end:1,meridian:'胆经',action:'必须入睡',detail:'凡十一脏取决于胆',icon:'🌙',color:'#2d3436'},
+  {id:'choushi',name:'丑时',start:1,end:3,meridian:'肝经',action:'深度睡眠',detail:'血归于肝，肝排毒修复',icon:'🌙',color:'#2d3436'},
+  {id:'yinshi',name:'寅时',start:3,end:5,meridian:'肺经',action:'保持深睡',detail:'肺主气，不宜醒来',icon:'🌙',color:'#2d3436'},
+  {id:'maoshi',name:'卯时',start:5,end:7,meridian:'大肠经',action:'起床·喝温水·排便',detail:'大肠经当令，阳气初生',icon:'🌅',color:'#F4A683'},
+  {id:'chenshi',name:'辰时',start:7,end:9,meridian:'胃经',action:'必须吃早餐',detail:'胃最活跃，营养吸收佳',icon:'☀️',color:'#7CB69D'},
+  {id:'sishi',name:'巳时',start:9,end:11,meridian:'脾经',action:'高效工作学习',detail:'脾运化，精力充沛',icon:'☀️',color:'#7CB69D'},
+  {id:'wushi',name:'午时',start:11,end:13,meridian:'心经',action:'午休小睡15-30分钟',detail:'养心安神，小憩最佳',icon:'🌤️',color:'#F4A683'},
+  {id:'weishi',name:'未时',start:13,end:15,meridian:'小肠经',action:'午餐吸收营养',detail:'小肠泌别清浊',icon:'🌤️',color:'#7CB69D'},
+  {id:'shenshi',name:'申时',start:15,end:17,meridian:'膀胱经',action:'多喝水·适合运动',detail:'代谢旺盛，排毒最佳',icon:'☀️',color:'#7CB69D'},
+  {id:'youshi',name:'酉时',start:17,end:19,meridian:'肾经',action:'休息养肾',detail:'肾藏精，不宜过劳',icon:'🌅',color:'#F4A683'},
+  {id:'xushi',name:'戌时',start:19,end:21,meridian:'心包经',action:'放松心情',detail:'适合娱乐社交、舒缓情绪',icon:'🌙',color:'#2d3436'},
+  {id:'haishi',name:'亥时',start:21,end:23,meridian:'三焦经',action:'泡脚静心·准备入睡',detail:'三焦通百脉，宜静养',icon:'🌙',color:'#2d3436'}
+];
+
+function getCurrentShichen() {
+  const hour = new Date().getHours();
+  for (const sc of BODY_CLOCK) {
+    if (sc.start <= sc.end) {
+      if (hour >= sc.start && hour < sc.end) return sc;
+    } else {
+      if (hour >= sc.start || hour < sc.end) return sc;
+    }
+  }
+  return BODY_CLOCK[0];
+}
 
 const DAY_NAMES = ['日','一','二','三','四','五','六'];
 
@@ -910,7 +969,15 @@ function renderHealthTip() {
   const pack = getSeasonPack(season);
   const tipEl = document.getElementById('healthTip');
   tipEl.querySelector('.tip-icon').textContent = pack.emoji;
+
+  // Seasonal tip as main text
   document.getElementById('tipText').innerHTML = pack.tip;
+
+  // Random 黄帝内经 health tip as source
+  const todayNum = new Date().getDate();
+  const idx = todayNum % HEALTH_TIPS.length;
+  const tip = HEALTH_TIPS[idx];
+  document.getElementById('tipSource').textContent = '📖 ' + tip.source;
 }
 
 function renderReminderBanner() {
@@ -2018,6 +2085,49 @@ function checkReminders() {
 
 // Check reminders every minute
 setInterval(checkReminders, 60000);
+
+// ===================== CLOCK PANEL (子午流注) =====================
+
+function openClockPanel() {
+  renderClockPanel();
+  openPanel('clockPanel');
+}
+
+function renderClockPanel() {
+  const body = document.getElementById('clockPanelBody');
+  const current = getCurrentShichen();
+
+  let html = `
+    <div class="clock-current">
+      <div class="shi">${current.icon} ${current.name} · ${current.meridian}</div>
+      <div class="action">${current.action}</div>
+      <div class="detail">"${current.detail}"</div>
+      <div class="meridian">⏰ ${String(current.start).padStart(2,'0')}:00 - ${String(current.end).padStart(2,'0')}:00</div>
+    </div>
+    <div style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:10px">📋 十二时辰总览</div>
+    <div class="clock-grid">
+  `;
+
+  BODY_CLOCK.forEach((sc, i) => {
+    const isActive = sc.id === current.id;
+    // Time display
+    const timeStr = `${String(sc.start).padStart(2,'0')}:00 - ${String(sc.end).padStart(2,'0')}:00`;
+    html += `
+      <div class="clock-card ${isActive ? 'active' : ''}">
+        <div class="top">
+          <span class="shi-name">${sc.icon} ${sc.name}</span>
+          <span class="shi-time">${timeStr}</span>
+        </div>
+        <div class="shi-meridian">${sc.meridian}</div>
+        <div class="shi-action">${sc.action}</div>
+      </div>
+    `;
+  });
+
+  html += '</div>';
+  html += '<div style="margin-top:14px;font-size:12px;color:var(--muted);text-align:center">依据《黄帝内经》子午流注理论 · 时辰养生</div>';
+  body.innerHTML = html;
+}
 
 // ===================== SERVICE WORKER =====================
 
