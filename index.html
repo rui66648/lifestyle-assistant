@@ -1710,15 +1710,22 @@ function toggleHabitEnabled(habitId) {
 function renderSystemPacks() {
   const container = document.getElementById('systemPacks');
   const myIds = new Set(habitsConfig.map(h => h.id));
+  const neijingHabits = [];
+  Object.values(SEASONAL_PACKS).forEach(sp => {
+    sp.habits.forEach(h => { if (!neijingHabits.find(x=>x.id===h.id)) neijingHabits.push(h); });
+  });
+  HABIT_LIBRARY.filter(h=>['color_diet','emotion','wulao'].includes(h.category)).forEach(h => {
+    if (!neijingHabits.find(x=>x.id===h.id)) neijingHabits.push({id:h.id});
+  });
+
   const packs = [
     {id:'healthPack', name:'健康生活建议包', emoji:'💚', desc:'基于医学研究的一日健康作息方案', data: HEALTH_PACK},
-    {id:'springPack', name:'春季养生包', emoji:'🌿', desc:'春季养生重在养肝舒展', data: SEASONAL_PACKS.spring},
-    {id:'summerPack', name:'夏季养生包', emoji:'☀️', desc:'夏季养生重在养心静心', data: SEASONAL_PACKS.summer},
-    {id:'autumnPack', name:'秋季养生包', emoji:'🍂', desc:'秋季养生重在养肺润燥', data: SEASONAL_PACKS.autumn},
-    {id:'winterPack', name:'冬季养生包', emoji:'❄️', desc:'冬季养生重在养肾保暖', data: SEASONAL_PACKS.winter},
-    {id:'colorDietPack', name:'五色饮食包', emoji:'🎨', desc:'黄帝内经五色养五脏', data: {habits: HABIT_LIBRARY.filter(h=>h.category==='color_diet').map(h=>({id:h.id}))}},
-    {id:'emotionPack', name:'情志养生包', emoji:'💭', desc:'五脏与情绪调理', data: {habits: HABIT_LIBRARY.filter(h=>h.category==='emotion').map(h=>({id:h.id}))}},
-    {id:'wulaoPack', name:'五劳防护包', emoji:'🛡️', desc:'久坐久视防护指南', data: {habits: HABIT_LIBRARY.filter(h=>h.category==='wulao').map(h=>({id:h.id}))}}
+    {id:'neijingPack', name:'黄帝内经养生包', emoji:'📜', desc:'四季养生·五色饮食·情志调理·五劳防护', data: {
+      quote: '《黄帝内经》："法于阴阳，和于术数，食饮有节，起居有常，不妄作劳。"',
+      tip: '涵盖四季养生（春夏秋冬）、五色饮食（青赤黄白黑养五脏）、情志养生（怒喜思悲恐）、五劳防护（久视久坐久立久卧久行）。',
+      description: '基于《黄帝内经》的养生智慧，顺应四时阴阳，调和五脏六腑。',
+      habits: neijingHabits
+    }}
   ];
 
   let html = '';
@@ -1779,13 +1786,16 @@ function renderSystemPacks() {
 function importPack(packId) {
   const packMap = {
     'healthPack': HEALTH_PACK,
-    'springPack': SEASONAL_PACKS.spring,
-    'summerPack': SEASONAL_PACKS.summer,
-    'autumnPack': SEASONAL_PACKS.autumn,
-    'winterPack': SEASONAL_PACKS.winter,
-    'colorDietPack': {habits: HABIT_LIBRARY.filter(h=>h.category==='color_diet').map(h=>({id:h.id}))},
-    'emotionPack': {habits: HABIT_LIBRARY.filter(h=>h.category==='emotion').map(h=>({id:h.id}))},
-    'wulaoPack': {habits: HABIT_LIBRARY.filter(h=>h.category==='wulao').map(h=>({id:h.id}))}
+    'neijingPack': (() => {
+      const h = [];
+      Object.values(SEASONAL_PACKS).forEach(sp => {
+        sp.habits.forEach(x => { if (!h.find(y=>y.id===x.id)) h.push(x); });
+      });
+      HABIT_LIBRARY.filter(x=>['color_diet','emotion','wulao'].includes(x.category)).forEach(x => {
+        if (!h.find(y=>y.id===x.id)) h.push({id:x.id});
+      });
+      return {habits: h};
+    })()
   };
   const pack = packMap[packId];
   if (!pack) return;
