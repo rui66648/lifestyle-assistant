@@ -1319,81 +1319,107 @@ function renderReminderBanner() {
 function renderCheckin() {
   const container = document.getElementById('checkinContent');
   const rec = checkinRecords[today()] || {};
+  const now = new Date();
+  const nowMinutes = now.getHours() * 60 + now.getMinutes();
 
-  // Group habits by time period
-  const groups = {morning:[], forenoon:[], afternoon:[], evening:[]};
+  // Get next reminder time for sorting
+  function getNextTime(h) {
+    if (h.type === 'water' && h.waterConfig?.schedule) {
+      const doneTimes = new Set((rec[h.id]?.cups || []).map(c => c.time));
+      for (const s of h.waterConfig.schedule) {
+        const [sh, sm] = s.time.split(':').map(Number);
+        const schedMin = sh * 60 + sm;
+        if (!doneTimes.has(s.time) && schedMin >= nowMinutes) return schedMin;
+      }
+      return 9999; // all done or all past
+    }
+    if (h.reminder?.enabled) {
+      const [rh, rm] = h.reminder.time.split(':').map(Number);
+      return rh * 60 + rm;
+    }
+    const tp = CATEGORY_MAP[h.category]?.timePeriod || 'daytime';
+    const defaults = {morning:420, forenoon:600, afternoon:840, evening:1260, daytime:720};
+    return defaults[tp] || 720;
+  }
+
+  function isChecked(h) {
+    if (h.type === 'water') return (rec[h.id]?.value || 0) >= (h.waterConfig?.dailyGoal || 2000);
+    return rec[h.id] && rec[h.id].done;
+  }
+
+  // Collect all enabled habits with sort info
+  const items = [];
   habitsConfig.forEach(h => {
     if (h.enabled === false) return;
-    const tp = TIME_PERIOD_MAP[CATEGORY_MAP[h.category]?.timePeriod || 'daytime'];
-    if (tp) {
-      const key = tp.order === 0 ? 'morning' : tp.order === 1 ? 'forenoon' : tp.order === 2 ? 'afternoon' : 'evening';
-      groups[key].push(h);
-    }
+    const checked = isChecked(h);
+    const nextTime = getNextTime(h);
+    const overdue = !checked && nextTime < nowMinutes;
+    const soon = !checked && !overdue && nextTime <= nowMinutes + 60;
+    items.push({h, checked, nextTime, overdue, soon});
   });
 
-  // Check for weekly report (Sunday)
-  const dow = new Date().getDay();
+  // Sort: overdue first, then soon, then by nextTime, then done
+  items.sort((a, b) => {
+    if (a.checked !== b.checked) return a.checked ? 1 : -1;
+    if (a.overdue !== b.overdue) return a.overdue ? -1 : 1;
+    if (a.soon !== b.soon) return a.soon ? -1 : 1;
+    return a.nextTime - b.nextTime;
+  });
+
+  // Weekly report
+  const dow = now.getDay();
   let html = '';
   if (dow === 0) {
     html += '<div class="report-card" style="cursor:pointer" onclick="openReportPanel()"><div class="report-title">📋 点击查看本周总结</div></div>';
   }
 
-  for (const period of ['morning','forenoon','afternoon','evening']) {
-    const habits = groups[period];
-    if (habits.length === 0) continue;
-    const tp = TIME_PERIOD_MAP[period];
+  // Count stats
+  const total = items.length;
+  const doneCount = items.filter(x => x.checked).length;
+  const overdueCount = items.filter(x => x.overdue).length;
 
-    // Count done vs total
-    const doneCount = habits.filter(h => {
-      if (h.type === 'water') {
-        const wr = rec[h.id] || {};
-        return (wr.value || 0) >= (h.waterConfig?.dailyGoal || 2000);
-      }
-      return rec[h.id] && rec[h.id].done;
-    }).length;
-    const allDone = doneCount === habits.length;
-    const hasDone = doneCount > 0;
-
-    const groupCollapsed = allDone && habits.length > 0;
-    html += `<div class="time-group ${groupCollapsed ? 'collapsed-group' : ''}" id="group-${period}">`;
-    html += `<div class="time-group-label" onclick="toggleGroup('${period}')">
-      <span class="time-group-header">
-        <span>${tp.emoji} ${tp.label}</span>
-        ${allDone ? '<span class="collapse-count">🎉 已完成</span>' : hasDone ? `<span class="collapse-count">📋 已打卡${doneCount}项</span>` : ''}
-      </span>
+  // Progress bar at top
+  if (total > 0) {
+    const pct = Math.round((doneCount / total) * 100);
+    html += `<div style="margin:0 16px 12px;padding:12px;background:var(--bg2);border-radius:12px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px">
+        <span>今日进度 ${doneCount}/${total}</span>
+        <span>${pct}%</span>
+      </div>
+      <div style="height:8px;background:var(--bg);border-radius:4px;overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:var(--accent);border-radius:4px;transition:width .3s"></div>
+      </div>
+      ${overdueCount > 0 ? `<div style="font-size:11px;color:#e74c3c;margin-top:4px;font-weight:600">⚠️ ${overdueCount}项已过时未完成</div>` : ''}
     </div>`;
+  }
 
-    habits.forEach(h => {
-      let checked = false;
-      if (h.type === 'water') {
-        const wr = rec[h.id] || {};
-        checked = (wr.value || 0) >= (h.waterConfig?.dailyGoal || 2000);
-      } else {
-        checked = rec[h.id] && rec[h.id].done;
-      }
-      const collapsedClass = checked ? 'collapsed' : '';
+  // Render items
+  items.forEach(({h, checked, nextTime, overdue, soon}) => {
+    const collapsedClass = checked ? 'collapsed' : '';
 
-      if (h.type === 'water') {
-        html += renderWaterTracker(h, rec).replace('class="water-tracker"', `class="water-tracker ${collapsedClass}"`);
-      } else if (h.type === 'select') {
-        const selected = rec[h.id] ? rec[h.id].value : '';
-        const tipStr2 = h.tip || '';
-        html += `
-          <div class="habit-card ${collapsedClass}" id="card-${h.id}" onclick="openEmotionPanel()">
-            <span class="icon">${h.icon}</span>
-            <div class="info">
-              <div class="name">${h.name}${selected ? '：' + selected : ''}</div>
-              <div class="meta"><span style="color:var(--accent)">点击记录今日情绪</span></div>
-              ${tipStr2 ? `<div style="font-size:11px;color:var(--accent);margin-top:3px;line-height:1.4">💡 ${tipStr2}</div>` : ''}
-            </div>
-            <button class="checkin-btn ${selected ? 'done' : 'pending'}">${selected ? '✓' : '记录'}</button>
-          </div>`;
-      } else {
+    if (h.type === 'water') {
+      html += renderWaterTracker(h, rec).replace('class="water-tracker"', `class="water-tracker ${collapsedClass}"`);
+    } else if (h.type === 'select') {
+      const selected = rec[h.id] ? rec[h.id].value : '';
+      const tipStr2 = h.tip || '';
+      const timeHint = overdue ? `<span style="color:#e74c3c;font-size:11px">已过期</span>` : soon ? `<span style="color:#f39c12;font-size:11px">即将</span>` : '';
+      html += `
+        <div class="habit-card ${collapsedClass}" id="card-${h.id}" onclick="openEmotionPanel()">
+          <span class="icon">${h.icon}</span>
+          <div class="info">
+            <div class="name">${h.name}${selected ? '：' + selected : ''}</div>
+            <div class="meta"><span style="color:var(--accent)">点击记录今日情绪</span>${timeHint}</div>
+            ${tipStr2 ? `<div style="font-size:11px;color:var(--accent);margin-top:3px;line-height:1.4">💡 ${tipStr2}</div>` : ''}
+          </div>
+          <button class="checkin-btn ${selected ? 'done' : 'pending'}">${selected ? '✓' : '记录'}</button>
+        </div>`;
+    } else {
       const streak = getStreak(h.id);
       const reminder = h.reminder;
       const reminderStr = reminder && reminder.enabled ? reminder.time : '';
       const valueStr = checked ? (h.type === 'boolean' ? '' : ` ${rec[h.id].value}${h.unit}`) : '';
       const tipStr = h.tip || '';
+      const timeHint = overdue ? `<span style="color:#e74c3c;font-size:11px">已过期</span>` : soon ? `<span style="color:#f39c12;font-size:11px">即将</span>` : '';
       html += `
         <div class="habit-card ${collapsedClass}" id="card-${h.id}">
           <span class="icon">${h.icon}</span>
@@ -1402,6 +1428,7 @@ function renderCheckin() {
             <div class="meta">
               ${reminderStr ? `<span>⏰ ${reminderStr}</span>` : ''}
               ${streak > 0 ? `<span class="streak">🔥${streak}天</span>` : ''}
+              ${timeHint}
             </div>
             ${tipStr ? `<div style="font-size:11px;color:var(--accent);margin-top:3px;line-height:1.4">💡 ${tipStr}</div>` : ''}
           </div>
@@ -1409,12 +1436,10 @@ function renderCheckin() {
             ${checked ? '✓' : (h.type === 'boolean' ? '打卡' : h.type === 'count' ? '记录' : '记录')}
           </button>
         </div>`;
-      }
-    });
-    html += '</div>';
-  }
+    }
+  });
 
-  if (habitsConfig.length === 0) {
+  if (items.length === 0) {
     html = '<div style="text-align:center;padding:40px 20px;color:var(--muted);font-size:14px;">还没有添加习惯<br>点击下方 + 按钮开始添加</div>';
   }
 
@@ -1508,11 +1533,8 @@ function renderWaterTracker(h, rec) {
     <div style="font-size:12px;color:var(--muted);margin-bottom:4px">${remaining > 0 ? `还需 ${remainingCups}杯(${remaining}ml)` : '今日目标已达成！🎉'}</div>
     ${smartTip}
     ${cupsViz}
-    <div class="water-quick-btns">
-      <button class="water-quick-btn primary" onclick="quickAddWater('${h.id}',${perCup})">1杯(${perCup}ml)</button>
-      <button class="water-quick-btn" onclick="quickAddWater('${h.id}',${perCup*2})">2杯(${perCup*2}ml)</button>
-      <button class="water-quick-btn" onclick="quickAddWater('${h.id}',${perCup*3})">3杯(${perCup*3}ml)</button>
-      <button class="water-quick-btn" onclick="openWaterInputPanel('${h.id}')">自定义</button>
+    <div style="text-align:center;margin:8px 0">
+      <button onclick="openWaterInputPanel('${h.id}')" style="padding:10px 24px;border-radius:12px;font-size:14px;font-weight:600;background:var(--accent);color:#fff;border:none;cursor:pointer">💧 记录喝水</button>
     </div>
     ${cupsHtml}
     ${timelineHtml}
