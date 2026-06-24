@@ -2245,6 +2245,13 @@ function openTimePanel(habitId) {
   pendingTimeHabitId = habitId;
   const h = habitsConfig.find(x => x.id === habitId);
   if (!h) return;
+
+  // Water habit: show water-specific settings
+  if (h.type === 'water') {
+    openWaterSettingsPanel(habitId);
+    return;
+  }
+
   const r = h.reminder || {enabled:false, time:'08:00', days:[0,1,2,3,4,5,6], method:'in-app'};
 
   document.getElementById('timePanelTitle').textContent = `${h.icon} ${h.name} 提醒设置`;
@@ -2706,232 +2713,100 @@ function openWaterWeekPanel(habitId) {
 // ===================== WATER SETTINGS PANEL =====================
 
 function openWaterSettingsPanel(habitId) {
-  pendingTimeHabitId = habitId;
+  pendingCheckinHabitId = habitId;
   const h = habitsConfig.find(x => x.id === habitId);
   if (!h) return;
   const wc = h.waterConfig || {dailyGoal:2000, perCup:250, schedule:[]};
-  document.getElementById('waterSettingsTitle').textContent = `${h.icon} ${h.name} 饮水设置`;
+  const body = document.getElementById('checkinPanelBody');
+  document.getElementById('checkinPanelTitle').textContent = '💧 饮水设置';
 
-  const body = document.getElementById('waterSettingsBody');
-  let scheduleHtml = '';
-  (wc.schedule || []).forEach((s, i) => {
-    scheduleHtml += `<div class="water-schedule-item" id="wsched-${i}">
-      <input type="time" value="${s.time}" style="width:80px;padding:4px 6px;border:1px solid var(--rule);border-radius:6px;font-size:13px" id="ws-time-${i}">
-      <input type="text" value="${s.label}" placeholder="标签" style="flex:1;padding:4px 8px;border:1px solid var(--rule);border-radius:6px;font-size:13px" id="ws-label-${i}">
-      <input type="number" value="${s.amount}" min="50" max="1000" style="width:70px;padding:4px 6px;border:1px solid var(--rule);border-radius:6px;font-size:13px;text-align:center" id="ws-amount-${i}">
-      <span style="font-size:12px;color:var(--muted)">ml</span>
-      <button style="font-size:16px;padding:4px;color:#e74c3c" onclick="removeWaterScheduleItem(${i})">✕</button>
+  let html = `<div style="padding:10px 0">`;
+  html += `<div style="font-size:14px;color:var(--muted);margin-bottom:12px">为「${h.name}」设置饮水计划</div>`;
+
+  // Daily goal
+  html += `<div style="margin-bottom:16px">
+    <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:6px">每日目标 (ml)</label>
+    <input type="number" id="waterDailyGoal" value="${wc.dailyGoal || 2000}" min="500" max="5000" step="100" style="width:100%;padding:12px;border:2px solid var(--rule);border-radius:12px;font-size:16px;background:#fff;outline:none">
+  </div>`;
+
+  // Per cup
+  html += `<div style="margin-bottom:16px">
+    <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:6px">每杯容量 (ml)</label>
+    <input type="number" id="waterPerCup" value="${wc.perCup || 250}" min="50" max="1000" step="50" style="width:100%;padding:12px;border:2px solid var(--rule);border-radius:12px;font-size:16px;background:#fff;outline:none">
+  </div>`;
+
+  // Schedule
+  html += `<div style="margin-bottom:16px">
+    <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:6px">饮水时间表</label>
+    <div id="waterScheduleList" style="display:flex;flex-direction:column;gap:6px">`;
+  const schedule = wc.schedule || [];
+  schedule.forEach((s, idx) => {
+    html += `<div class="water-schedule-row" data-idx="${idx}" style="display:flex;gap:6px;align-items:center">
+      <input type="time" class="ws-time" value="${s.time}" style="flex:1;padding:8px;border:2px solid var(--rule);border-radius:8px;font-size:14px;background:#fff;outline:none">
+      <input type="text" class="ws-label" value="${s.label}" placeholder="标签" style="flex:2;padding:8px;border:2px solid var(--rule);border-radius:8px;font-size:14px;background:#fff;outline:none">
+      <input type="number" class="ws-amount" value="${s.amount}" min="50" max="1000" step="50" placeholder="ml" style="width:70px;padding:8px;border:2px solid var(--rule);border-radius:8px;font-size:14px;background:#fff;outline:none">
+      <button onclick="removeWaterScheduleRow(${idx})" style="width:32px;height:32px;border-radius:8px;background:var(--bg2);color:#e74c3c;font-size:16px;border:none;cursor:pointer">✕</button>
     </div>`;
   });
+  html += `</div>`;
+  html += `<button onclick="addWaterScheduleRow()" style="width:100%;padding:8px;margin-top:6px;border-radius:8px;background:var(--bg2);color:var(--accent);font-size:13px;font-weight:600;border:none;cursor:pointer">+ 添加时间点</button>`;
+  html += `</div>`;
 
-  body.innerHTML = `
-    <div style="margin-bottom:16px">
-      <div style="font-size:14px;font-weight:600;margin-bottom:8px">每日目标</div>
-      <div style="display:flex;align-items:center;gap:12px">
-        <input type="range" min="500" max="4000" step="100" value="${wc.dailyGoal || 2000}" id="wsGoalSlider" oninput="document.getElementById('wsGoalValue').textContent=this.value+'ml'" style="flex:1">
-        <span id="wsGoalValue" style="font-size:14px;font-weight:700;min-width:60px;text-align:right">${wc.dailyGoal || 2000}ml</span>
-      </div>
-    </div>
-    <div style="margin-bottom:16px">
-      <div style="font-size:14px;font-weight:600;margin-bottom:8px">每次推荐量</div>
-      <div style="display:flex;gap:8px">
-        ${[200,250,300,500].map(v => `<button class="water-quick-btn ${wc.perCup === v ? 'primary' : ''}" onclick="selectPerCup(${v})" data-percup="${v}">${v}ml</button>`).join('')}
-      </div>
-    </div>
-    <div style="margin-bottom:16px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <span style="font-size:14px;font-weight:600">提醒时间表</span>
-        <button style="font-size:12px;padding:4px 12px;border-radius:10px;background:var(--accent);color:#fff;font-weight:600" onclick="addWaterScheduleItem()">+ 添加</button>
-      </div>
-      <div id="waterScheduleList">${scheduleHtml}</div>
-    </div>
-    <div class="toggle-row">
-      <span class="toggle-label">开启提醒</span>
-      <div class="toggle-switch ${h.reminder && h.reminder.enabled ? 'on' : ''}" id="waterReminderToggle" onclick="this.classList.toggle('on')"></div>
-    </div>
-    <button class="export-btn" style="margin-top:20px;background:var(--accent);color:#fff" onclick="saveWaterSettings()">保存设置</button>
-  `;
-  openPanel('waterSettingsPanel');
+  html += `<div style="display:flex;gap:10px;margin-top:20px">
+    <button class="checkin-btn pending" style="flex:1;padding:12px;border-radius:12px;font-size:14px;font-weight:600" onclick="closeAllPanels()">取消</button>
+    <button class="checkin-btn done" style="flex:1;padding:12px;border-radius:12px;font-size:14px;font-weight:600" onclick="saveWaterSettings()">保存</button>
+  </div>`;
+
+  html += `</div>`;
+
+  body.innerHTML = html;
+  openPanel('checkinPanel');
 }
 
-function selectPerCup(val) {
-  document.querySelectorAll('[data-percup]').forEach(btn => {
-    btn.classList.toggle('primary', parseInt(btn.dataset.percup) === val);
-  });
-}
+let waterScheduleTemp = [];
 
-function addWaterScheduleItem() {
+function addWaterScheduleRow() {
   const list = document.getElementById('waterScheduleList');
-  const count = list.children.length;
+  const idx = list.children.length;
   const div = document.createElement('div');
-  div.className = 'water-schedule-item';
-  div.id = `wsched-${count}`;
-  div.innerHTML = `
-    <input type="time" value="12:00" style="width:80px;padding:4px 6px;border:1px solid var(--rule);border-radius:6px;font-size:13px" id="ws-time-${count}">
-    <input type="text" value="" placeholder="标签" style="flex:1;padding:4px 8px;border:1px solid var(--rule);border-radius:6px;font-size:13px" id="ws-label-${count}">
-    <input type="number" value="250" min="50" max="1000" style="width:70px;padding:4px 6px;border:1px solid var(--rule);border-radius:6px;font-size:13px;text-align:center" id="ws-amount-${count}">
-    <span style="font-size:12px;color:var(--muted)">ml</span>
-    <button style="font-size:16px;padding:4px;color:#e74c3c" onclick="removeWaterScheduleItem(${count})">✕</button>
-  `;
+  div.className = 'water-schedule-row';
+  div.dataset.idx = idx;
+  div.style.cssText = 'display:flex;gap:6px;align-items:center';
+  div.innerHTML = `<input type="time" class="ws-time" value="08:00" style="flex:1;padding:8px;border:2px solid var(--rule);border-radius:8px;font-size:14px;background:#fff;outline:none">
+    <input type="text" class="ws-label" value="" placeholder="标签" style="flex:2;padding:8px;border:2px solid var(--rule);border-radius:8px;font-size:14px;background:#fff;outline:none">
+    <input type="number" class="ws-amount" value="250" min="50" max="1000" step="50" placeholder="ml" style="width:70px;padding:8px;border:2px solid var(--rule);border-radius:8px;font-size:14px;background:#fff;outline:none">
+    <button onclick="this.parentElement.remove()" style="width:32px;height:32px;border-radius:8px;background:var(--bg2);color:#e74c3c;font-size:16px;border:none;cursor:pointer">✕</button>`;
   list.appendChild(div);
 }
 
-function removeWaterScheduleItem(index) {
-  const el = document.getElementById(`wsched-${index}`);
-  if (el) el.remove();
+function removeWaterScheduleRow(idx) {
+  const row = document.querySelector(`.water-schedule-row[data-idx="${idx}"]`);
+  if (row) row.remove();
 }
 
 function saveWaterSettings() {
-  const h = habitsConfig.find(x => x.id === pendingTimeHabitId);
+  const h = habitsConfig.find(x => x.id === pendingCheckinHabitId);
   if (!h) return;
-
-  const dailyGoal = parseInt(document.getElementById('wsGoalSlider').value) || 2000;
-  const perCupBtn = document.querySelector('[data-percup].primary');
-  const perCup = perCupBtn ? parseInt(perCupBtn.dataset.percup) : 250;
-
-  const scheduleItems = document.querySelectorAll('#waterScheduleList .water-schedule-item');
+  const goal = parseInt(document.getElementById('waterDailyGoal').value) || 2000;
+  const perCup = parseInt(document.getElementById('waterPerCup').value) || 250;
+  const rows = document.querySelectorAll('.water-schedule-row');
   const schedule = [];
-  scheduleItems.forEach(item => {
-    const timeInput = item.querySelector('input[type="time"]');
-    const labelInput = item.querySelector('input[type="text"]');
-    const amountInput = item.querySelector('input[type="number"]');
-    if (timeInput && labelInput && amountInput) {
-      schedule.push({
-        time: timeInput.value || '08:00',
-        label: labelInput.value || '喝水',
-        amount: parseInt(amountInput.value) || 250
-      });
-    }
+  rows.forEach(row => {
+    const time = row.querySelector('.ws-time').value;
+    const label = row.querySelector('.ws-label').value;
+    const amount = parseInt(row.querySelector('.ws-amount').value) || 250;
+    if (time) schedule.push({time, label: label || '喝水', amount});
   });
   schedule.sort((a, b) => a.time.localeCompare(b.time));
-
-  const reminderEnabled = document.getElementById('waterReminderToggle').classList.contains('on');
-
-  h.waterConfig = {dailyGoal, perCup, schedule};
-  h.reminder = {
-    enabled: reminderEnabled,
-    method: h.reminder ? h.reminder.method : 'in-app'
-  };
-
+  h.waterConfig = {dailyGoal: goal, perCup, schedule};
   saveConfig();
-  closeAllPanels();
   showToast('饮水设置已保存');
+  closeAllPanels();
   render();
 }
 
-// ===================== NOTIFICATION =====================
-
-function requestNotificationPermission() {
-  if ('Notification' in window && Notification.permission === 'default') {
-    Notification.requestPermission();
-  }
-}
-
-function checkReminders() {
-  const now = new Date();
-  const currentTime = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-  const dow = now.getDay();
-
-  habitsConfig.forEach(h => {
-    if (!h.reminder || !h.reminder.enabled) return;
-    if (h.reminder.method === 'off') return;
-    if (!h.reminder.days || !h.reminder.days.includes(dow)) return;
-
-    if (h.type === 'water' && h.waterConfig && h.waterConfig.schedule) {
-      // Water type: check each schedule time point
-      h.waterConfig.schedule.forEach(s => {
-        if (s.time !== currentTime) return;
-        const rec = checkinRecords[today()] || {};
-        if (rec[h.id] && rec[h.id].done) return;
-        const msg = `该喝水了！${s.label} 建议喝 ${s.amount}ml`;
-        if (h.reminder.method === 'notification' && 'Notification' in window && Notification.permission === 'granted') {
-          new Notification('💧 饮水提醒', {body: msg, icon: './assets/hero_1280x720.jpg'});
-        }
-      });
-    } else {
-    if (h.reminder.time !== currentTime) return;
-
-    // Check if already done today
-    const rec = checkinRecords[today()] || {};
-    if (rec[h.id] && rec[h.id].done) return;
-
-    if (h.reminder.method === 'notification' && 'Notification' in window && Notification.permission === 'granted') {
-      new Notification('习惯打卡提醒', {
-        body: `该${h.name}了！${h.icon}`,
-        icon: './assets/hero_1280x720.jpg'
-      });
-    }
-    // In-app reminder is shown via the banner (already rendered)
-    }
-  });
-}
-
-// Check reminders every minute
-setInterval(checkReminders, 60000);
-
-// ===================== CLOCK PANEL (子午流注) =====================
-
-function openClockPanel() {
-  renderClockPanel();
-  openPanel('clockPanel');
-}
-
-function renderClockPanel() {
-  const body = document.getElementById('clockPanelBody');
-  const current = getCurrentShichen();
-
-  let html = `
-    <div class="clock-current">
-      <div class="shi">${current.icon} ${current.name} · ${current.meridian}</div>
-      <div class="action">${current.action}</div>
-      <div class="detail">"${current.detail}"</div>
-      <div class="meridian">⏰ ${String(current.start).padStart(2,'0')}:00 - ${String(current.end).padStart(2,'0')}:00</div>
-    </div>
-    <div style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:10px">📋 十二时辰总览</div>
-    <div class="clock-grid">
-  `;
-
-  BODY_CLOCK.forEach((sc, i) => {
-    const isActive = sc.id === current.id;
-    // Time display
-    const timeStr = `${String(sc.start).padStart(2,'0')}:00 - ${String(sc.end).padStart(2,'0')}:00`;
-    html += `
-      <div class="clock-card ${isActive ? 'active' : ''}">
-        <div class="top">
-          <span class="shi-name">${sc.icon} ${sc.name}</span>
-          <span class="shi-time">${timeStr}</span>
-        </div>
-        <div class="shi-meridian">${sc.meridian}</div>
-        <div class="shi-action">${sc.action}</div>
-      </div>
-    `;
-  });
-
-  html += '</div>';
-  html += '<div style="margin-top:14px;font-size:12px;color:var(--muted);text-align:center">依据《黄帝内经》子午流注理论 · 时辰养生</div>';
-  body.innerHTML = html;
-}
-
-// ===================== REFERENCE PANEL (养生参考文献) =====================
-
-const REF_BOOKS = [
-  {name:'《黄帝内经》',author:'先秦 · 黄帝/岐伯',type:'ancient',emoji:'🏛️',desc:'中医养生理论之源',url:'https://rui66648.github.io/lifestyle-assistant/黄帝内经/黄帝内经.html'},
-  {name:'《遵生八笺》',author:'明代 · 高濂',type:'ancient',emoji:'🌿',desc:'古代养生百科全书',url:'https://rui66648.github.io/lifestyle-assistant/遵生八笺/遵生八笺.html'},
-  {name:'《老老恒言》',author:'清代 · 曹庭栋',type:'ancient',emoji:'👴',desc:'老年养生专著',url:'https://rui66648.github.io/lifestyle-assistant/老老恒言/老老恒言.html'},
-  {name:'《饮膳正要》',author:'元代 · 忽思慧',type:'ancient',emoji:'🍲',desc:'宫廷营养学专著',url:'https://rui66648.github.io/lifestyle-assistant/饮膳正要/饮膳正要.html'},
-  {name:'《养生论》',author:'三国 · 嵇康',type:'ancient',emoji:'📜',desc:'首创系统养生专论',url:'https://rui66648.github.io/lifestyle-assistant/养生论/养生论.html'},
-  {name:'《寿世青编》',author:'清代 · 尤乘',type:'ancient',emoji:'💚',desc:'五脏养生心药之说',url:'https://rui66648.github.io/lifestyle-assistant/寿世青编/寿世青编.html'},
-  {name:'《备急千金要方》',author:'唐代 · 孙思邈',type:'ancient',emoji:'💊',desc:'药王养性治未病',url:'https://rui66648.github.io/lifestyle-assistant/备急千金要方/备急千金要方.html'},
-  {name:'《抱朴子》',author:'晋代 · 葛洪',type:'ancient',emoji:'🔮',desc:'道家养生不伤为本',url:'https://rui66648.github.io/lifestyle-assistant/抱朴子/抱朴子.html'},
-  {name:'《闲情偶寄》',author:'清代 · 李渔',type:'ancient',emoji:'🎋',desc:'生活美学养生先养心',url:'https://rui66648.github.io/lifestyle-assistant/闲情偶寄/闲情偶寄.html'},
-  {name:'《你是你吃出来的》',author:'现代 · 夏萌',type:'modern',emoji:'🥗',desc:'细胞营养与七大营养素',url:'https://rui66648.github.io/lifestyle-assistant/你是你吃出来的/你是你吃出来的.html'},
-  {name:'《九种体质养生全书》',author:'现代 · 王琦',type:'modern',emoji:'🧬',desc:'九种体质辨识调理',url:'https://rui66648.github.io/lifestyle-assistant/九种体质养生全书/九种体质养生全书.html'},
-  {name:'《科学休息》',author:'现代 · 亚历克斯',type:'modern',emoji:'🧠',desc:'注意力网络与四种休息',url:'https://rui66648.github.io/lifestyle-assistant/科学休息/科学休息.html'},
-  {name:'《求医不如求己》',author:'现代 · 中里巴人',type:'modern',emoji:'💆',desc:'穴位按摩经络保健',url:'https://rui66648.github.io/lifestyle-assistant/求医不如求己/求医不如求己.html'},
-  {name:'《拉伸》',author:'现代 · 鲍勃',type:'modern',emoji:'🤸',desc:'拉伸动作与办公室拉伸',url:'https://rui66648.github.io/lifestyle-assistant/拉伸/拉伸.html'}
-];
-
-function openRefPanel(e) {
+function openWaterSettingsPanel(habitId) {
+  pendingCheckinHabitId = habitId;function openRefPanel(e) {
   if (e) e.stopPropagation();
   renderRefPanel();
   openPanel('refPanel');
@@ -2987,7 +2862,7 @@ function openEmotionPanel() {
 
 function renderEmotionPanel() {
   const body = document.getElementById('emotionPanelBody');
-  const todayRec = checkinRecords[getTodayKey()] || {};
+  const todayRec = checkinRecords[today()] || {};
   const emotionRec = todayRec['emotion_check'];
   let selected = null;
   if (emotionRec && emotionRec.value) {
@@ -3037,9 +2912,9 @@ function renderEmotionPanel() {
 function selectEmotion(emotionId) {
   const emo = EMOTION_DATA.find(e => e.id === emotionId);
   if (!emo) return;
-  const today = getTodayKey();
-  if (!checkinRecords[today]) checkinRecords[today] = {};
-  checkinRecords[today]['emotion_check'] = {value: emo.name, timestamp: Date.now()};
+  const todayStr = today();
+  if (!checkinRecords[todayStr]) checkinRecords[todayStr] = {};
+  checkinRecords[todayStr]['emotion_check'] = {value: emo.name, timestamp: Date.now()};
   saveData();
   renderEmotionPanel();
   render();
