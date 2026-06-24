@@ -1781,7 +1781,9 @@ function renderSystemPacks() {
                 ${sp.data.quote ? `<div class="pack-quote" style="margin-top:10px">${sp.data.quote}</div>` : ''}
                 ${sp.data.tip ? `<div class="pack-tip" style="margin-top:10px">${sp.data.tip}</div>` : ''}
                 ${sp.data.description && !sp.data.quote && !sp.data.tip ? `<div class="pack-tip" style="margin-top:10px">${sp.data.description}</div>` : ''}
-                ${!spAllAdded ? `<div class="pack-actions" style="margin:10px 0 4px"><button class="import-all" onclick="importPack('${sp.id}')">导入此子包</button></div>` : ''}`;
+                ${!spAllAdded
+                  ? `<div class="pack-actions" style="margin:10px 0 4px"><button class="import-all" onclick="importPack('${sp.id}')">导入此子包</button></div>`
+                  : `<div class="pack-actions" style="margin:10px 0 4px"><button onclick="removeSubPack('${sp.id}')" style="padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;background:#e74c3c;color:#fff;width:100%">一键导解除导入</button></div>`}`;
 
         spHabits.forEach(ph => {
           const lib = HABIT_LIBRARY.find(h => h.id === ph.id);
@@ -1936,6 +1938,33 @@ function importPack(packId) {
     render();
   } else {
     showToast('包内习惯已全部添加');
+  }
+}
+
+function removeSubPack(spId) {
+  const spMap = {
+    'neijing_spring': SEASONAL_PACKS.spring,
+    'neijing_summer': SEASONAL_PACKS.summer,
+    'neijing_autumn': SEASONAL_PACKS.autumn,
+    'neijing_winter': SEASONAL_PACKS.winter,
+    'neijing_color': {habits: HABIT_LIBRARY.filter(h=>h.category==='color_diet').map(h=>({id:h.id}))},
+    'neijing_emotion': {habits: HABIT_LIBRARY.filter(h=>h.category==='emotion').map(h=>({id:h.id}))},
+    'neijing_wulao': {habits: HABIT_LIBRARY.filter(h=>h.category==='wulao').map(h=>({id:h.id}))}
+  };
+  const sp = spMap[spId];
+  if (!sp) return;
+  const ids = new Set(sp.habits.map(ph => ph.id));
+  const before = habitsConfig.length;
+  habitsConfig = habitsConfig.filter(h => !ids.has(h.id));
+  const removed = before - habitsConfig.length;
+  if (removed > 0) {
+    saveConfig();
+    showToast(`已解除导入 ${removed} 个习惯`);
+    renderSystemPacks();
+    renderMyPack();
+    render();
+  } else {
+    showToast('该子包没有习惯需要解除');
   }
 }
 
