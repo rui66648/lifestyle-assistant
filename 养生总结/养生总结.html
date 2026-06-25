@@ -164,6 +164,69 @@ footer { text-align: center; padding: 40px 24px; color: var(--muted); font-size:
 }
 
 mark.key { background: none; color: var(--accent); font-weight: 700; }
+
+/* ── Age Cards ── */
+.age-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 20px 0; }
+.age-card { background: #fff; border-radius: 14px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); border-top: 4px solid var(--accent); }
+.age-card .age-icon { font-size: 2rem; margin-bottom: 8px; }
+.age-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+.age-card ul { font-size: 0.85rem; color: var(--muted); line-height: 1.7; padding-left: 1.2rem; margin: 0; }
+.age-card li { margin-bottom: 4px; }
+
+/* ── Gender Compare ── */
+.gender-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 20px 0; }
+.gender-card { background: #fff; border-radius: 14px; padding: 22px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+.gender-card.male { border-left: 4px solid #5B8DB8; }
+.gender-card.female { border-left: 4px solid #E07A5F; }
+.gender-card h4 { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; }
+.gender-card ul { font-size: 0.85rem; color: var(--muted); line-height: 1.7; padding-left: 1.2rem; margin: 0; }
+
+/* ── Season Cards ── */
+.season-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 20px 0; }
+.season-card { background: #fff; border-radius: 14px; padding: 22px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+.season-card.spring { border-top: 4px solid #81C784; }
+.season-card.summer { border-top: 4px solid #FFB74D; }
+.season-card.autumn { border-top: 4px solid #A1887F; }
+.season-card.winter { border-top: 4px solid #90CAF9; }
+.season-card h4 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+.season-card .principle { font-size: 0.8rem; color: var(--accent); font-weight: 600; margin-bottom: 10px; padding: 4px 10px; background: var(--bg2); border-radius: 6px; display: inline-block; }
+.season-card ul { font-size: 0.85rem; color: var(--muted); line-height: 1.7; padding-left: 1.2rem; margin: 0; }
+
+/* ── Solar Table ── */
+.solar-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.85rem; }
+.solar-table th { background: var(--bg2); padding: 10px 8px; text-align: left; font-weight: 700; border-bottom: 2px solid var(--rule); }
+.solar-table td { padding: 10px 8px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.solar-table .solar-name { font-weight: 700; color: var(--accent); white-space: nowrap; }
+
+/* ── Hour Table ── */
+.hour-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.85rem; }
+.hour-table th { background: var(--bg2); padding: 10px 8px; text-align: left; font-weight: 700; border-bottom: 2px solid var(--rule); }
+.hour-table td { padding: 10px 8px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.hour-table .hour-time { font-weight: 700; color: var(--accent); white-space: nowrap; font-family: 'GeistMono', monospace; }
+
+/* ── Body Type ── */
+.body-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin: 20px 0; }
+.body-card { background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+.body-card .bt-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.body-card .bt-emoji { font-size: 1.6rem; }
+.body-card .bt-name { font-size: 1rem; font-weight: 700; }
+.body-card .bt-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.6; margin-bottom: 8px; }
+.body-card .bt-food { font-size: 0.78rem; color: var(--accent); background: var(--bg2); padding: 6px 10px; border-radius: 6px; }
+
+/* ── Sleep & Diet ── */
+.topic-card { background: #fff; border-radius: 14px; padding: 22px; margin: 14px 0; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+.topic-card h4 { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.topic-card p { font-size: 0.9rem; color: var(--muted); line-height: 1.7; margin-bottom: 10px; }
+.topic-card ul { font-size: 0.88rem; color: var(--muted); line-height: 1.7; padding-left: 1.3rem; }
+
+/* tab bar */
+.tab-bar { display: flex; gap: 8px; margin: 16px 0; flex-wrap: wrap; }
+.tab-bar button { padding: 8px 16px; border-radius: 10px; border: 1px solid var(--rule); background: #fff; font-size: 0.85rem; font-weight: 600; color: var(--muted); cursor: pointer; }
+.tab-bar button.active { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; border-color: transparent; }
+
+/* table wrap for mobile scroll */
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.table-wrap table { min-width: 600px; }
 </style>
 </head>
 <body>
@@ -505,6 +568,381 @@ mark.key { background: none; color: var(--accent); font-weight: 700; }
         <div class="src">古：恬惔虚无，真气从之 ——《上古天真论》| 今：慢性压力加速端粒缩短7年 —— 《端粒效应》</div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Section 6: Age -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <h2>年龄维度：人生四阶段养生</h2>
+  </div>
+  <p>《黄帝内经》将人生分为不同阶段，各阶段生理特点不同，养生重点也随之变化。现代发育学与老年医学同样证实：年龄是决定健康策略的首要变量。</p>
+  <div class="age-grid">
+    <div class="age-card">
+      <div class="age-icon">👶</div>
+      <h4>儿童期（0-14岁）</h4>
+      <ul>
+        <li>核心：养脾胃、固根基、少用药</li>
+        <li>饮食：五谷为养，少吃零食冷饮，避免损伤脾阳</li>
+        <li>睡眠：保证10小时以上，生长激素分泌高峰在夜间</li>
+        <li>运动：多户外活动，晒太阳，顺应生发之气</li>
+        <li>古训："小儿脾常不足"——《小儿药证直诀》</li>
+      </ul>
+    </div>
+    <div class="age-card">
+      <div class="age-icon">🧑</div>
+      <h4>青壮期（15-44岁）</h4>
+      <ul>
+        <li>核心：防过劳、调情志、建立习惯</li>
+        <li>饮食：三餐定时，减少外卖，控糖控油</li>
+        <li>睡眠：避免熬夜，子时前入睡，保护肝胆</li>
+        <li>运动：每周150分钟有氧，结合力量训练</li>
+        <li>今证：25-35岁是代谢分水岭，习惯决定后半生</li>
+      </ul>
+    </div>
+    <div class="age-card">
+      <div class="age-icon">👔</div>
+      <h4>中年期（45-59岁）</h4>
+      <ul>
+        <li>核心：防慢性病、调阴阳、重体检</li>
+        <li>饮食：低盐低脂，增加膳食纤维，养护血管</li>
+        <li>睡眠：警惕失眠，关注睡眠呼吸暂停</li>
+        <li>运动：关节保护优先，游泳/太极/快走</li>
+        <li>今证：45岁后慢性炎症水平显著上升——《抗炎生活》</li>
+      </ul>
+    </div>
+    <div class="age-card">
+      <div class="age-icon">👴</div>
+      <h4>老年期（60岁+）</h4>
+      <ul>
+        <li>核心：保精气、慢节奏、防跌倒</li>
+        <li>饮食：少量多餐，软糯易消化，补骨密度</li>
+        <li>睡眠：早睡早起，午休30分钟，避免久卧</li>
+        <li>运动：太极拳、八段锦、散步，防肌肉流失</li>
+        <li>古训："老者安之"——顺应衰减，不可强求</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Section 7: Gender -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <h2>性别维度：男女养生差异</h2>
+  </div>
+  <p>《黄帝内经》言"男子以精为本，女子以血为本"。男女生理结构、激素周期不同，养生方法应有侧重。</p>
+  <div class="gender-grid">
+    <div class="gender-card male">
+      <h4>👨 男性养生重点</h4>
+      <ul>
+        <li><strong>护肾藏精：</strong>避免过度劳累和熬夜，肾精耗损难复</li>
+        <li><strong>控酒戒烟：</strong>男性烟酒比例高，肝肺损伤更直接</li>
+        <li><strong>心血管：</strong>45岁后心梗风险陡增，需定期监测</li>
+        <li><strong>情绪表达：</strong>男性压抑情绪比例高，需主动疏导</li>
+        <li><strong>运动强度：</strong>可适当高强度，但避免过度损耗关节</li>
+        <li>古："男子七八，肝气衰，筋不能动"——《上古天真论》</li>
+      </ul>
+    </div>
+    <div class="gender-card female">
+      <h4>👩 女性养生重点</h4>
+      <ul>
+        <li><strong>养血调经：</strong>月经、孕产、哺乳均以血为用</li>
+        <li><strong>疏肝解郁：</strong>女性情绪波动大，肝气郁结常见</li>
+        <li><strong>补钙防疏松：</strong>更年期后雌激素下降，骨量流失加速</li>
+        <li><strong>保暖防寒：</strong>女性阳气相对不足，腰腹脚需保暖</li>
+        <li><strong>周期调理：</strong>根据月经周期调整饮食和运动</li>
+        <li>古："女子七七，任脉虚，太冲脉衰少"——《上古天真论》</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Section 8: Four Seasons -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">08</span>
+    <h2>四季维度：春生夏长秋收冬藏</h2>
+  </div>
+  <p>《素问·四气调神大论》提出"春夏养阳，秋冬养阴"。四季变化直接影响人体气血运行，养生应顺应四时之气。</p>
+  <div class="season-grid">
+    <div class="season-card spring">
+      <h4>🌸 春三月（立春-立夏）</h4>
+      <span class="principle">夜卧早起，广步于庭，生而勿杀，赏而勿罚</span>
+      <ul>
+        <li><strong>起居：</strong>早睡早起，多户外活动，舒展形体</li>
+        <li><strong>饮食：</strong>省酸增甘，养脾气；多吃芽菜、绿叶</li>
+        <li><strong>情志：</strong>保持愉悦，忌抑郁恼怒，养肝气</li>
+        <li><strong>运动：</strong>踏青、慢跑、放风筝，生发阳气</li>
+        <li><strong>防病：</strong>春捂秋冻，防风邪入侵</li>
+      </ul>
+    </div>
+    <div class="season-card summer">
+      <h4>☀️ 夏三月（立夏-立秋）</h4>
+      <span class="principle">夜卧早起，无厌于日，使志无怒，使华英成秀</span>
+      <ul>
+        <li><strong>起居：</strong>晚睡早起，午间小憩30分钟</li>
+        <li><strong>饮食：</strong>清淡为主，多瓜果蔬菜；适量吃苦味</li>
+        <li><strong>情志：</strong>心静自然凉，戒躁戒怒，养心神</li>
+        <li><strong>运动：</strong>晨练或傍晚，避开烈日，及时补水</li>
+        <li><strong>防暑：</strong>避免空调直吹，适度出汗排毒</li>
+      </ul>
+    </div>
+    <div class="season-card autumn">
+      <h4>🍂 秋三月（立秋-立冬）</h4>
+      <span class="principle">早卧早起，与鸡俱兴，使志安宁，收敛神气</span>
+      <ul>
+        <li><strong>起居：</strong>早睡早起，收敛神气，不再剧烈运动</li>
+        <li><strong>饮食：</strong>省辛增酸，滋阴润肺；多吃梨、百合、银耳</li>
+        <li><strong>情志：</strong>保持平静，忌悲秋伤肺，可登高望远</li>
+        <li><strong>运动：</strong>太极、八段锦、散步，收敛为主</li>
+        <li><strong>防燥：</strong>多喝水，皮肤保湿，防秋燥伤肺</li>
+      </ul>
+    </div>
+    <div class="season-card winter">
+      <h4>❄️ 冬三月（立冬-立春）</h4>
+      <span class="principle">早卧晚起，必待日光，使志若伏若匿，若有私意</span>
+      <ul>
+        <li><strong>起居：</strong>早睡晚起，待日出后活动，避寒保暖</li>
+        <li><strong>饮食：</strong>省咸增苦，温补为主；羊肉、核桃、黑芝麻</li>
+        <li><strong>情志：</strong>安静内守，藏精蓄锐，少思少虑</li>
+        <li><strong>运动：</strong>室内瑜伽、太极，避免大汗伤阳</li>
+        <li><strong>养藏：</strong>冬不藏精，春必病温——最宜进补</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Section 9: 24 Solar Terms -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">09</span>
+    <h2>二十四节气养生日历</h2>
+  </div>
+  <p>二十四节气是古人观察太阳周年运动形成的智慧结晶。每个节气都有对应的养生要点，顺节气而养，事半功倍。</p>
+
+  <h3>🌱 春季六节气</h3>
+  <div class="table-wrap">
+  <table class="solar-table">
+    <tr><th>节气</th><th>时间</th><th>养生要点</th><th>推荐食物</th></tr>
+    <tr><td class="solar-name">立春</td><td>2月3-5日</td><td>春气始通，疏肝理气，防风保暖</td><td>韭菜、豆芽、春笋</td></tr>
+    <tr><td class="solar-name">雨水</td><td>2月18-20日</td><td>湿气渐重，健脾祛湿，养护脾胃</td><td>薏米、山药、红枣</td></tr>
+    <tr><td class="solar-name">惊蛰</td><td>3月5-7日</td><td>万物复苏，升发阳气，防春困</td><td>菠菜、芹菜、枸杞</td></tr>
+    <tr><td class="solar-name">春分</td><td>3月20-22日</td><td>阴阳平衡，调和肝脾，昼夜均分</td><td>荠菜、香椿、草莓</td></tr>
+    <tr><td class="solar-name">清明</td><td>4月4-6日</td><td>清气上升，清肝明目，踏青舒怀</td><td>菊花茶、绿叶菜</td></tr>
+    <tr><td class="solar-name">谷雨</td><td>4月19-21日</td><td>雨生百谷，健脾祛湿，防过敏</td><td>薏米、赤小豆、冬瓜</td></tr>
+  </table>
+  </div>
+
+  <h3>☀️ 夏季六节气</h3>
+  <div class="table-wrap">
+  <table class="solar-table">
+    <tr><th>节气</th><th>时间</th><th>养生要点</th><th>推荐食物</th></tr>
+    <tr><td class="solar-name">立夏</td><td>5月5-7日</td><td>心阳始盛，养心护阳，增酸减苦</td><td>樱桃、青梅、绿豆</td></tr>
+    <tr><td class="solar-name">小满</td><td>5月20-22日</td><td>湿热交蒸，清热利湿，防皮肤病</td><td>苦瓜、丝瓜、薏米</td></tr>
+    <tr><td class="solar-name">芒种</td><td>6月5-7日</td><td>暑湿困脾，清淡饮食，午间小憩</td><td>西瓜、黄瓜、荷叶</td></tr>
+    <tr><td class="solar-name">夏至</td><td>6月21-22日</td><td>阳极阴生，养心阴，防中暑</td><td>莲子、百合、鸭肉</td></tr>
+    <tr><td class="solar-name">小暑</td><td>7月6-8日</td><td>暑热渐盛，补水养阴，防腹泻</td><td>冬瓜、绿豆汤、酸梅汤</td></tr>
+    <tr><td class="solar-name">大暑</td><td>7月22-24日</td><td>最热之时，清热解暑，冬病夏治</td><td>苦瓜、西瓜、荷叶粥</td></tr>
+  </table>
+  </div>
+
+  <h3>🍂 秋季六节气</h3>
+  <div class="table-wrap">
+  <table class="solar-table">
+    <tr><th>节气</th><th>时间</th><th>养生要点</th><th>推荐食物</th></tr>
+    <tr><td class="solar-name">立秋</td><td>8月7-9日</td><td>秋气始肃，收敛肺气，贴秋膘适度</td><td>百合、银耳、梨</td></tr>
+    <tr><td class="solar-name">处暑</td><td>8月22-24日</td><td>暑气渐消，滋阴润燥，防秋乏</td><td>莲藕、山药、葡萄</td></tr>
+    <tr><td class="solar-name">白露</td><td>9月7-9日</td><td>昼夜温差，保暖护肺，防秋燥</td><td>银耳羹、蜂蜜水、梨</td></tr>
+    <tr><td class="solar-name">秋分</td><td>9月22-24日</td><td>阴阳平衡，润肺养阴，昼夜均分</td><td>芝麻、核桃、糯米</td></tr>
+    <tr><td class="solar-name">寒露</td><td>10月8-9日</td><td>寒气渐重，温阳御寒，护脾胃</td><td>红枣、桂圆、羊肉</td></tr>
+    <tr><td class="solar-name">霜降</td><td>10月23-24日</td><td>阳气更藏，进补最佳，防寒防咳</td><td>白萝卜、板栗、柿子</td></tr>
+  </table>
+  </div>
+
+  <h3>❄️ 冬季六节气</h3>
+  <div class="table-wrap">
+  <table class="solar-table">
+    <tr><th>节气</th><th>时间</th><th>养生要点</th><th>推荐食物</th></tr>
+    <tr><td class="solar-name">立冬</td><td>11月7-8日</td><td>冬气始寒，温补养藏，防寒护阳</td><td>羊肉、核桃、黑芝麻</td></tr>
+    <tr><td class="solar-name">小雪</td><td>11月22-23日</td><td>寒气渐盛，温肾助阳，防抑郁</td><td>黑豆、桂圆、羊肉汤</td></tr>
+    <tr><td class="solar-name">大雪</td><td>12月6-8日</td><td>寒气最盛，大补元气，藏精蓄锐</td><td>狗肉、鹿茸、当归</td></tr>
+    <tr><td class="solar-name">冬至</td><td>12月21-23日</td><td>阴极阳生，一阳初生，最宜进补</td><td>汤圆、饺子、羊肉</td></tr>
+    <tr><td class="solar-name">小寒</td><td>1月5-7日</td><td>寒气未极，温中散寒，防感冒</td><td>生姜红糖水、桂圆</td></tr>
+    <tr><td class="solar-name">大寒</td><td>1月20-21日</td><td>寒气至极，温补固本，迎春过渡</td><td>八宝粥、红枣、核桃</td></tr>
+  </table>
+  </div>
+</div>
+
+<!-- Section 10: 12 Hours -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">10</span>
+    <h2>十二时辰养生法（子午流注）</h2>
+  </div>
+  <p>《黄帝内经》创子午流注学说，将一天分为十二时辰，每个时辰对应一条经络当令。顺应时辰作息，可最大化养生效果。</p>
+  <div class="table-wrap">
+  <table class="hour-table">
+    <tr><th>时辰</th><th>时间</th><th>当令经络</th><th>脏腑</th><th>养生要点</th></tr>
+    <tr><td class="hour-time">子时</td><td>23:00-01:00</td><td>胆经</td><td>胆</td><td>必须入睡，胆气升发，熬夜伤胆</td></tr>
+    <tr><td class="hour-time">丑时</td><td>01:00-03:00</td><td>肝经</td><td>肝</td><td>深睡眠中，肝血回流，排毒修复</td></tr>
+    <tr><td class="hour-time">寅时</td><td>03:00-05:00</td><td>肺经</td><td>肺</td><td>深度睡眠，肺朝百脉，气血重新分配</td></tr>
+    <tr><td class="hour-time">卯时</td><td>05:00-07:00</td><td>大肠经</td><td>大肠</td><td>起床排便，喝温水，通肠排毒</td></tr>
+    <tr><td class="hour-time">辰时</td><td>07:00-09:00</td><td>胃经</td><td>胃</td><td>吃早餐，营养吸收最佳时段</td></tr>
+    <tr><td class="hour-time">巳时</td><td>09:00-11:00</td><td>脾经</td><td>脾</td><td>工作效率高峰，脾主运化，思维清晰</td></tr>
+    <tr><td class="hour-time">午时</td><td>11:00-13:00</td><td>心经</td><td>心</td><td>午餐+小憩，养心安神，午时小憩最佳</td></tr>
+    <tr><td class="hour-time">未时</td><td>13:00-15:00</td><td>小肠经</td><td>小肠</td><td>消化吸收，适当活动，避免久坐</td></tr>
+    <tr><td class="hour-time">申时</td><td>15:00-17:00</td><td>膀胱经</td><td>膀胱</td><td>多喝水，排毒排尿，工作效率第二高峰</td></tr>
+    <tr><td class="hour-time">酉时</td><td>17:00-19:00</td><td>肾经</td><td>肾</td><td>晚餐清淡，肾藏精，避免过度劳累</td></tr>
+    <tr><td class="hour-time">戌时</td><td>19:00-21:00</td><td>心包经</td><td>心包</td><td>放松身心，散步、阅读、泡脚</td></tr>
+    <tr><td class="hour-time">亥时</td><td>21:00-23:00</td><td>三焦经</td><td>三焦</td><td>准备入睡，远离手机，三焦通百脉</td></tr>
+  </table>
+  </div>
+  <div class="big-quote" style="margin-top:24px">
+    <p>"营卫之行，不失其常，故昼精而夜瞑。"</p>
+    <div class="source">—— 《灵枢·营卫生会》· 昼夜节律是养生的根本法则</div>
+  </div>
+</div>
+
+<!-- Section 11: Body Constitution -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">11</span>
+    <h2>九种体质调理指南</h2>
+  </div>
+  <p>王琦教授提出九种体质学说，为个性化养生提供了科学依据。了解自己的体质类型，才能精准调理。</p>
+  <div class="body-grid">
+    <div class="body-card">
+      <div class="bt-header"><span class="bt-emoji">😊</span><span class="bt-name">平和质</span></div>
+      <div class="bt-desc">体态适中，面色红润，精力充沛。最健康的体质。</div>
+      <div class="bt-food">继续保持，饮食均衡，劳逸结合</div>
+    </div>
+    <div class="body-card">
+      <div class="bt-header"><span class="bt-emoji">😮‍💨</span><span class="bt-name">气虚质</span></div>
+      <div class="bt-desc">容易疲乏，气短懒言，出汗多。元气不足。</div>
+      <div class="bt-food">宜：黄芪、山药、红枣 | 忌：过度劳累</div>
+    </div>
+    <div class="body-card">
+      <div class="bt-header"><span class="bt-emoji">🥶</span><span class="bt-name">阳虚质</span></div>
+      <div class="bt-desc">畏寒怕冷，手足不温，喜热饮食。阳气不足。</div>
+      <div class="bt-food">宜：生姜、羊肉、桂圆 | 忌：生冷寒凉</div>
+    </div>
+    <div class="body-card">
+      <div class="bt-header"><span class="bt-emoji">🔥</span><span class="bt-name">阴虚质</span></div>
+      <div class="bt-desc">口燥咽干，手足心热，喜冷饮。阴液亏少。</div>
+      <div class="bt-food">宜：银耳、百合、梨 | 忌：熬夜辛辣</div>
+    </div>
+    <div class="body-card">
+      <div class="bt-header"><span class="bt-emoji">💧</span><span class="bt-name">痰湿质</span></div>
+      <div class="bt-desc">形体肥胖，腹部肥满，口黏苔腻。痰湿凝聚。</div>
+      <div class="bt-food">宜：薏米、冬瓜、山楂 | 忌：油腻甜腻</div>
+    </div>
+    <div class="body-card">
+      <div class="bt-header"><span class="bt-emoji">🌡️</span><span class="bt-name">湿热质</span></div>
+      <div class="bt-desc">面垢油光，易生痤疮，口苦口干。湿热内蕴。</div>
+      <div class="bt-food">宜：绿豆、苦瓜、芹菜 | 忌：辛辣烧烤</div>
+    </div>
+    <div class="body-card">
+      <div class="bt-header"><span class="bt-emoji">🩸</span><span class="bt-name">血瘀质</span></div>
+      <div class="bt-desc">肤色晦暗，色素沉着，易出瘀斑。血行不畅。</div>
+      <div class="bt-food">宜：山楂、红花、黑豆 | 忌：久坐不动</div>
+    </div>
+    <div class="body-card">
+      <div class="bt-header"><span class="bt-emoji">😔</span><span class="bt-name">气郁质</span></div>
+      <div class="bt-desc">神情抑郁，情感脆弱，烦闷不乐。气机郁滞。</div>
+      <div class="bt-food">宜：玫瑰花茶、社交活动 | 忌：独处闷坐</div>
+    </div>
+    <div class="body-card">
+      <div class="bt-header"><span class="bt-emoji">🤧</span><span class="bt-name">特禀质</span></div>
+      <div class="bt-desc">过敏体质，易荨麻疹、哮喘。先天失常。</div>
+      <div class="bt-food">宜：清淡饮食、增强体质 | 忌：过敏原</div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 12: Sleep -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">12</span>
+    <h2>睡眠专题：古今睡眠智慧</h2>
+  </div>
+
+  <div class="topic-card">
+    <h4>🌙 古人怎么看睡眠</h4>
+    <p>《黄帝内经》将睡眠与阴阳交替、脏腑运行紧密结合。认为"阳气尽则卧，阴气尽则寤"，睡眠是阴阳自然转化的体现。</p>
+    <ul>
+      <li>子时（23-1点）胆经当令，必须入睡，否则胆气不升，次日头昏脑涨</li>
+      <li>丑时（1-3点）肝经当令，深睡眠中肝血回流，是肝脏排毒修复的黄金时间</li>
+      <li>"人卧血归于肝"——躺下后血液回流肝脏，进行净化和储备</li>
+      <li>睡前"不饱食、不妄想、不言语"——《老老恒言》</li>
+    </ul>
+  </div>
+
+  <div class="topic-card">
+    <h4>🔬 现代科学怎么说</h4>
+    <p>《睡眠革命》提出R90睡眠周期理论，颠覆了"必须睡够8小时"的固有观念。</p>
+    <ul>
+      <li><strong>R90周期：</strong>以90分钟为一个完整睡眠周期（浅睡→深睡→REM），每晚4-5个周期（6-7.5小时）即可</li>
+      <li><strong>睡眠时机 > 睡眠时长：</strong>固定的入睡和起床时间比单纯追求时长更重要</li>
+      <li><strong>光线调节：</strong>早晨接触自然光10分钟可重置生物钟；睡前2小时避免蓝光</li>
+      <li><strong>体温节律：</strong>睡前泡脚/洗澡，利用体温下降促进入睡</li>
+      <li><strong>咖啡因半衰期：</strong>约5-6小时，下午2点后不建议摄入</li>
+    </ul>
+  </div>
+
+  <div class="topic-card">
+    <h4>✅ 可执行的睡眠方案</h4>
+    <ul>
+      <li>固定起床时间（误差不超过30分钟），周末也不例外</li>
+      <li>根据起床时间倒推入睡时间，按90分钟周期计算</li>
+      <li>睡前1小时：调暗灯光，远离手机，可以阅读纸质书</li>
+      <li>卧室环境：温度18-22℃，遮光窗帘，安静或白噪音</li>
+      <li>午睡：13-14点之间，20-30分钟为佳，避免进入深睡眠</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Section 13: Diet -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">13</span>
+    <h2>饮食专题：从五谷到控糖</h2>
+  </div>
+
+  <div class="topic-card">
+    <h4>🌾 古人饮食智慧</h4>
+    <p>《黄帝内经》提出"五谷为养，五果为助，五畜为益，五菜为充"，构建了最朴素的膳食金字塔。</p>
+    <ul>
+      <li><strong>五谷为养：</strong>粳米、小麦、黍、稷、菽，是气血生化的根本</li>
+      <li><strong>谨和五味：</strong>酸入肝、苦入心、甘入脾、辛入肺、咸入肾，五味调和则不偏</li>
+      <li><strong>食饮有节：</strong>不过饥不过饱，定时定量，细嚼慢咽</li>
+      <li><strong>因时制宜：</strong>春省酸增甘，夏省苦增辛，秋省辛增酸，冬省咸增苦</li>
+      <li><strong>药食同源：</strong>上工治未病，食疗为先——《备急千金要方》</li>
+    </ul>
+  </div>
+
+  <div class="topic-card">
+    <h4>🔬 现代饮食科学</h4>
+    <p>多本现代著作从不同角度验证并发展了传统饮食观。</p>
+    <ul>
+      <li><strong>进食顺序（《控糖革命》）：</strong>先吃蔬菜（纤维）→再吃蛋白质→最后吃碳水，可降低血糖峰值73%</li>
+      <li><strong>肠道菌群（《肠子的小心思》）：</strong>每天30种不同植物性食物，可提升肠道菌群多样性40%</li>
+      <li><strong>抗炎饮食（《抗炎生活》）：</strong>Omega-3、天然香料（姜黄、生姜）可降低慢性炎症标志物30%</li>
+      <li><strong>细胞营养（《你是你吃出来的》）：</strong>食物构成细胞，营养决定健康状态</li>
+      <li><strong>传统智慧（《深度营养》）：</strong>四大支柱——带骨肉、发酵品、动物内脏、新鲜蔬果</li>
+    </ul>
+  </div>
+
+  <div class="topic-card">
+    <h4>✅ 一日三餐执行方案</h4>
+    <ul>
+      <li><strong>早餐（7-9点）：</strong>温热为主，粥/全麦面包+鸡蛋+蔬菜，避免冷食</li>
+      <li><strong>午餐（11-13点）：</strong>营养均衡，先吃菜再吃肉最后吃主食，七分饱</li>
+      <li><strong>晚餐（17-19点）：</strong>清淡少量，睡前3小时不进食，减轻脾胃负担</li>
+      <li><strong>饮水：</strong>晨起一杯温水，白天少量多次，睡前2小时减少</li>
+      <li><strong>控糖：</strong>减少精制碳水，用全谷物替代白米白面，水果不过量</li>
+    </ul>
   </div>
 </div>
 
