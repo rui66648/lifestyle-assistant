@@ -90,12 +90,18 @@ img{max-width:100%;display:block}
 /* Health tip inline in habit card */
 .health-tip-inline{font-size:11px;color:var(--muted);line-height:1.5;margin-top:4px;padding:6px 8px;background:var(--bg2);border-radius:8px;border-left:2px solid var(--accent)}
 .health-tip-inline .ht-source{font-size:10px;color:var(--accent);font-weight:700;margin-right:4px}
+/* Encourage bubble */
+.encourage-bubble{background:linear-gradient(135deg,rgba(124,182,157,0.08),rgba(244,166,131,0.08));border-radius:16px;padding:14px 16px;margin:12px 16px;text-align:left;font-size:14px;color:var(--ink);line-height:1.6;border:1px dashed var(--accent-light);position:relative;display:flex;align-items:center;gap:8px}
+.encourage-bubble::before{content:'💬';position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:16px}
 /* Checkin animation */
 @keyframes checkinPop{0%{transform:scale(0.8);opacity:0}50%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
 @keyframes confetti{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(-120px) rotate(720deg);opacity:0}}
 @keyframes starBurst{0%{transform:scale(0) translateY(0);opacity:1}50%{opacity:1}100%{transform:scale(1.5) translateY(-40px);opacity:0}}
 @keyframes cardGlow{0%{box-shadow:0 0 0 0 rgba(124,182,157,0.4)}100%{box-shadow:0 0 0 12px rgba(124,182,157,0)}}
+@keyframes cardFlip{0%{transform:perspective(400px) rotateY(0)}50%{transform:perspective(400px) rotateY(90deg)}100%{transform:perspective(400px) rotateY(0)}}
+@keyframes checkmark{0%{transform:scale(0);opacity:0}60%{transform:scale(1.3);opacity:1}100%{transform:scale(1);opacity:1}}
 .habit-card.pop{animation:checkinPop .3s ease}
+.habit-card.flip{animation:cardFlip .5s ease}
 .star-particle{position:absolute;pointer-events:none;font-size:16px;animation:starBurst .6s ease forwards;z-index:10}
 .confetti-particle{position:fixed;pointer-events:none;width:8px;height:8px;border-radius:2px;animation:confetti 1s ease forwards;z-index:999}
 .all-done-banner{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:999;text-align:center;pointer-events:none;animation:checkinPop .5s ease}
@@ -588,6 +594,12 @@ img{max-width:100%;display:block}
 
 <!-- Checkin Section -->
 <div class="section active" id="sec-checkin">
+  <div id="dateNavigator" style="display:none;text-align:center;padding:8px 16px;margin:0 16px;background:var(--bg2);border-radius:10px;margin-bottom:10px">
+    <button onclick="swipeDate(-1)" style="background:none;border:none;font-size:18px;cursor:pointer;padding:4px 12px">◀</button>
+    <span id="dateNavLabel" style="font-size:14px;font-weight:700;color:var(--ink);margin:0 12px">今天</span>
+    <button onclick="swipeDate(1)" style="background:none;border:none;font-size:18px;cursor:pointer;padding:4px 12px">▶</button>
+    <button onclick="swipeDate(0)" style="background:none;border:none;font-size:11px;color:var(--accent);cursor:pointer;margin-left:8px;text-decoration:underline">回到今天</button>
+  </div>
   <div id="checkinContent"></div>
 </div>
 
@@ -934,6 +946,28 @@ img{max-width:100%;display:block}
     <button class="panel-close" onclick="closeAllPanels()">✕</button>
   </div>
   <div class="panel-body" id="reviewPanelBody" style="padding:16px">
+  </div>
+</div>
+
+<!-- 补签 Panel -->
+<div class="panel" id="retroactivePanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title">📅 补签</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body" id="retroactivePanelBody" style="padding:16px">
+  </div>
+</div>
+
+<!-- 每日成就卡片 Panel -->
+<div class="panel" id="achievementPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title">🏆 每日成就</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body" id="achievementPanelBody" style="padding:16px">
   </div>
 </div>
 
@@ -1681,9 +1715,12 @@ function getSeasonPack(season) {
   return SEASONAL_PACKS[season] || SEASONAL_PACKS.spring;
 }
 
+let viewDateOffset = 0; // 0=today, -1=yesterday, 1=tomorrow
+
 function today() {
   const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  if (viewDateOffset !== 0) d.setDate(d.getDate() + viewDateOffset);
+  return formatDate(d);
 }
 
 function formatDate(d) {
@@ -1894,6 +1931,32 @@ function renderAmbientBg() {
   else el.classList.add('night');
 }
 
+function swipeDate(dir) {
+  if (dir === 0) viewDateOffset = 0;
+  else viewDateOffset = Math.max(-7, Math.min(1, viewDateOffset + dir));
+  render();
+}
+
+// Touch swipe for date switching
+(function() {
+  let startX = 0, startY = 0;
+  document.addEventListener('touchstart', function(e) {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, {passive: true});
+  document.addEventListener('touchend', function(e) {
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    // Only trigger if horizontal swipe and on checkin tab
+    if (Math.abs(dx) > 60 && Math.abs(dy) < 40) {
+      const checkinSec = document.getElementById('sec-checkin');
+      if (checkinSec && checkinSec.classList.contains('active')) {
+        swipeDate(dx > 0 ? -1 : 1);
+      }
+    }
+  }, {passive: true});
+})();
+
 function renderTodayCard() {
   const d = new Date();
   const weekDay = DAY_NAMES[d.getDay()];
@@ -1993,6 +2056,22 @@ function renderCheckin() {
   const now = new Date();
   const nowMinutes = now.getHours() * 60 + now.getMinutes();
 
+  // Update date navigator
+  const nav = document.getElementById('dateNavigator');
+  const navLabel = document.getElementById('dateNavLabel');
+  if (nav && navLabel) {
+    const hasHabits = habitsConfig.length > 0;
+    nav.style.display = hasHabits ? 'block' : 'none';
+    if (viewDateOffset === 0) navLabel.textContent = '📅 今天';
+    else if (viewDateOffset === -1) navLabel.textContent = '📅 昨天';
+    else if (viewDateOffset === -2) navLabel.textContent = '📅 前天';
+    else {
+      const vd = new Date();
+      vd.setDate(vd.getDate() + viewDateOffset);
+      navLabel.textContent = `📅 ${vd.getMonth()+1}/${vd.getDate()}`;
+    }
+  }
+
   // Get next reminder time for sorting
   function getNextTime(h) {
     if (h.type === 'water' && h.waterConfig?.schedule) {
@@ -2064,6 +2143,36 @@ function renderCheckin() {
         <div style="height:100%;width:${pct}%;background:var(--accent);border-radius:4px;transition:width .3s"></div>
       </div>
       ${overdueCount > 0 ? `<div style="font-size:11px;color:#e74c3c;margin-top:4px;font-weight:600">⚠️ ${overdueCount}项已过时未完成</div>` : ''}
+      <div style="text-align:right;margin-top:4px"><button onclick="openRetroactivePanel('${items[0]?.h?.id || habitsConfig[0]?.id || ''}')" style="font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;font-weight:600;text-decoration:underline">📅 补签过去7天</button></div>
+    </div>`;
+  }
+
+  // Encourage bubble
+  const done = getTodayDone();
+  const total = getTodayTotal();
+  const pct = total > 0 ? Math.round(done / total * 100) : 0;
+  const encourageMsgs = [
+    '每一天的坚持，都是对自己最好的投资 💪',
+    '养生不是一蹴而就，而是日积月累的功夫 🌱',
+    '今天又比昨天更健康了一点点 🌟',
+    '你的身体会感谢现在努力的自己 ❤️',
+    '好的习惯是最好的医生，坚持下去 🏥',
+    '法于阴阳，和于术数，食饮有节 📖',
+    '不积跬步，无以至千里 —— 荀子 🚶',
+    '上工治未病，不治已病 ——《黄帝内经》🌿',
+    '今天已完成 ' + pct + '%，继续加油！',
+    '坚持就是胜利，你已经很棒了 ✨'
+  ];
+  const encourageIdx = Math.floor(Date.now() / 86400000 + done) % encourageMsgs.length;
+  if (total > 0 && pct < 100) {
+    const r = 22, c = 2 * Math.PI * r, offset = c - (pct / 100) * c;
+    html += `<div class="encourage-bubble">
+      <svg width="52" height="52" style="vertical-align:middle;margin-right:8px;flex-shrink:0">
+        <circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--rule)" stroke-width="4"/>
+        <circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--accent)" stroke-width="4" stroke-dasharray="${c}" stroke-dashoffset="${offset}" stroke-linecap="round" transform="rotate(-90 26 26)" style="transition:stroke-dashoffset .5s"/>
+        <text x="26" y="30" text-anchor="middle" font-size="12" font-weight="700" fill="var(--accent)">${pct}%</text>
+      </svg>
+      <span>${encourageMsgs[encourageIdx]}</span>
     </div>`;
   }
 
@@ -3000,28 +3109,83 @@ function skipHabit(habitId) {
   render();
 }
 
+// ===================== RETROACTIVE CHECKIN (补签) =====================
+
+function openRetroactivePanel(habitId) {
+  const h = habitsConfig.find(x => x.id === habitId);
+  if (!h) return;
+  pendingCheckinHabitId = habitId;
+  const body = document.getElementById('retroactivePanelBody');
+  const dates = [];
+  for (let i = 1; i <= 7; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const key = formatDate(d);
+    const dayNames = ['日','一','二','三','四','五','六'];
+    const label = i === 1 ? '昨天' : i === 2 ? '前天' : `${i}天前（周${dayNames[d.getDay()]}）`;
+    const rec = checkinRecords[key] || {};
+    const done = rec[habitId] && rec[habitId].done;
+    dates.push({key, label, done, date: d});
+  }
+
+  body.innerHTML = `<div style="font-size:14px;font-weight:700;margin-bottom:12px">${h.icon} ${h.name} · 补签</div>` +
+    dates.map(d => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--rule)">
+        <div>
+          <div style="font-size:14px;font-weight:600">${d.label}</div>
+          <div style="font-size:12px;color:var(--muted)">${d.key}</div>
+        </div>
+        <button onclick="doRetroactiveCheckin('${habitId}','${d.key}',${d.done ? 'true' : 'false'})" class="const-btn" style="margin:0;padding:6px 14px;font-size:12px;${d.done ? 'background:var(--muted)' : ''}">
+          ${d.done ? '✓ 已签' : '补签'}
+        </button>
+      </div>
+    `).join('');
+  openPanel('retroactivePanel');
+}
+
+function doRetroactiveCheckin(habitId, dateKey, alreadyDone) {
+  const rec = checkinRecords[dateKey] || {};
+  if (alreadyDone) {
+    delete rec[habitId];
+    showToast('已取消补签');
+  } else {
+    rec[habitId] = {done: true, value: 1, retroactive: true};
+    playSound('checkin');
+    showToast('✅ 补签成功！');
+  }
+  checkinRecords[dateKey] = rec;
+  saveRecords();
+  render();
+  openRetroactivePanel(habitId); // Refresh panel
+}
+
 // ===================== CHECKIN ANIMATIONS =====================
 
 function animateCheckin(habitId) {
   const card = document.getElementById('card-' + habitId);
   if (!card) return;
-  card.classList.add('pop');
-  setTimeout(() => card.classList.remove('pop'), 300);
+  // Flip animation
+  card.classList.add('flip');
+  // Play click sound
+  if (navigator.vibrate) navigator.vibrate(10);
+  setTimeout(() => card.classList.remove('flip'), 500);
 
-  // Star burst particles
-  const emojis = ['⭐','✨','🌟','💫','🔥'];
-  for (let i = 0; i < 5; i++) {
-    setTimeout(() => {
-      const star = document.createElement('div');
-      star.className = 'star-particle';
-      star.textContent = emojis[i % emojis.length];
-      star.style.left = (card.offsetWidth / 2 + (Math.random() - 0.5) * 40) + 'px';
-      star.style.top = (card.offsetHeight / 2) + 'px';
-      star.style.animationDelay = (i * 0.05) + 's';
-      card.appendChild(star);
-      setTimeout(() => star.remove(), 600);
-    }, i * 50);
-  }
+  // Star burst particles after flip completes
+  setTimeout(() => {
+    const emojis = ['⭐','✨','🌟','💫','🔥'];
+    for (let i = 0; i < 5; i++) {
+      setTimeout(() => {
+        const star = document.createElement('div');
+        star.className = 'star-particle';
+        star.textContent = emojis[i % emojis.length];
+        star.style.left = (card.offsetWidth / 2 + (Math.random() - 0.5) * 40) + 'px';
+        star.style.top = (card.offsetHeight / 2) + 'px';
+        star.style.animationDelay = (i * 0.05) + 's';
+        card.appendChild(star);
+        setTimeout(() => star.remove(), 600);
+      }, i * 50);
+    }
+  }, 250); // Wait for card flip midpoint
 }
 
 function showAllDoneCelebration() {
@@ -3045,6 +3209,40 @@ function showAllDoneCelebration() {
       document.body.appendChild(p);
       setTimeout(() => p.remove(), 1500);
     }, i * 30);
+  }
+
+  // Show daily achievement card after 1.5s
+  setTimeout(() => openDailyAchievementCard(), 1500);
+}
+
+function openDailyAchievementCard() {
+  const key = today();
+  const diary = JSON.parse(localStorage.getItem('daily_diary_' + key) || '""');
+  const done = getTodayDone();
+  const total = getTodayTotal();
+
+  const body = document.getElementById('achievementPanelBody');
+  body.innerHTML = `
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:48px;margin-bottom:8px">🏆</div>
+      <div style="font-size:20px;font-weight:800;color:var(--accent)">今日全部完成！</div>
+      <div style="font-size:14px;color:var(--muted)">${done}/${total} 个习惯 · ${key}</div>
+    </div>
+    <div style="margin-bottom:16px">
+      <div style="font-size:14px;font-weight:700;margin-bottom:8px">📝 今日感想</div>
+      <textarea id="dailyDiaryInput" placeholder="记录今天的感受..." style="width:100%;height:80px;border:1px solid var(--rule);border-radius:10px;padding:12px;font-size:14px;resize:none;background:var(--bg);font-family:inherit;line-height:1.6">${diary || ''}</textarea>
+    </div>
+    <button class="const-btn" onclick="saveDailyDiary()" style="width:100%">💾 保存感想</button>
+  `;
+  openPanel('achievementPanel');
+}
+
+function saveDailyDiary() {
+  const input = document.getElementById('dailyDiaryInput');
+  if (input) {
+    localStorage.setItem('daily_diary_' + today(), JSON.stringify(input.value));
+    showToast('✅ 日记已保存！');
+    closeAllPanels();
   }
 }
 
