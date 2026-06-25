@@ -308,6 +308,22 @@ img{max-width:100%;display:block}
 .time-group.collapsed-group .time-group-label{opacity:.6}
 .time-group.collapsed-group .habit-card:not(.collapsed){margin-top:6px}
 
+/* AI Chat */
+.ai-msg{display:flex;gap:8px;max-width:85%}
+.ai-msg.user{align-self:flex-end;flex-direction:row-reverse}
+.ai-msg .ai-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.ai-msg.ai .ai-avatar{background:linear-gradient(135deg,var(--accent),var(--accent2))}
+.ai-msg.user .ai-avatar{background:var(--accent-light)}
+.ai-msg .ai-bubble{padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.6;word-break:break-word}
+.ai-msg.ai .ai-bubble{background:#fff;border:1px solid var(--rule);border-top-left-radius:4px}
+.ai-msg.user .ai-bubble{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-top-right-radius:4px}
+.ai-loading{display:flex;align-items:center;gap:6px;padding:10px 14px;background:#fff;border-radius:14px;border:1px solid var(--rule);width:fit-content}
+.ai-loading span{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:aiBounce 1.4s infinite ease-in-out both}
+.ai-loading span:nth-child(1){animation-delay:-0.32s}
+.ai-loading span:nth-child(2){animation-delay:-0.16s}
+@keyframes aiBounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+#aiFab:active{transform:scale(0.92)}
+
 /* Ref Link in Health Tip */
 .ref-link{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--accent);font-weight:600;text-decoration:none;margin-top:6px;padding:4px 10px;background:rgba(124,182,157,0.1);border-radius:8px;transition:all .2s}
 .ref-link:active{background:var(--accent);color:#fff}
@@ -660,6 +676,37 @@ img{max-width:100%;display:block}
   </div>
   <div class="panel-body" id="wulaoPanelBody"></div>
 </div>
+
+<!-- AI 养生顾问 Panel -->
+<div class="panel" id="aiChatPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title">🤖 AI 养生顾问</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body" id="aiChatPanelBody" style="display:flex;flex-direction:column;height:calc(70vh - 60px);padding:0">
+    <div id="aiChatMessages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px"></div>
+    <div id="aiChatInputArea" style="padding:12px 16px;border-top:1px solid var(--rule);display:flex;gap:8px;align-items:flex-end">
+      <input type="text" id="aiChatInput" placeholder="输入养生问题，如：失眠怎么调理？" style="flex:1;padding:10px 14px;border:1px solid var(--rule);border-radius:10px;font-size:14px;background:var(--bg);outline:none" onkeydown="if(event.key==='Enter')sendAiMessage()">
+      <button onclick="sendAiMessage()" style="padding:10px 16px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-radius:10px;font-size:14px;font-weight:600;white-space:nowrap">发送</button>
+    </div>
+    <div id="aiChatConfig" style="padding:16px;text-align:center;display:none">
+      <div style="font-size:14px;color:var(--muted);margin-bottom:12px">AI 养生顾问需要配置 Cloudflare Workers 代理</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.6;text-align:left;background:var(--bg2);padding:12px;border-radius:10px">
+        <strong>部署步骤：</strong><br>
+        1. 注册 Cloudflare 账号<br>
+        2. 注册阿里百炼获取 API Key<br>
+        3. 部署 workers/ai-proxy.js<br>
+        4. 在代码中配置 AI_WORKER_URL
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI 浮动按钮 -->
+<button id="aiFab" onclick="openAiChatPanel()" style="position:fixed;bottom:90px;right:16px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:24px;box-shadow:0 4px 16px rgba(124,182,157,0.4);z-index:50;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:transform .2s">
+  🤖
+</button>
 
 <script>
 // ===================== DATA =====================
@@ -3031,6 +3078,92 @@ function renderWulaoPanel() {
 
   html += `<div style="margin-top:14px;font-size:12px;color:var(--muted);text-align:center">依据《黄帝内经》五劳所伤理论 · 日常防护</div>`;
   body.innerHTML = html;
+}
+
+// ===================== AI CHAT =====================
+
+const AI_WORKER_URL = ''; // 部署 Cloudflare Workers 后填入 URL，如 'https://ai-proxy.yourname.workers.dev'
+
+let aiChatHistory = [];
+
+function openAiChatPanel() {
+  if (!AI_WORKER_URL) {
+    document.getElementById('aiChatInputArea').style.display = 'none';
+    document.getElementById('aiChatConfig').style.display = 'block';
+  } else {
+    document.getElementById('aiChatInputArea').style.display = 'flex';
+    document.getElementById('aiChatConfig').style.display = 'none';
+  }
+  const msgContainer = document.getElementById('aiChatMessages');
+  if (msgContainer.children.length === 0) {
+    renderAiMessage('ai', '你好！我是你的AI养生顾问，精通《黄帝内经》等14部中医经典。有任何养生问题都可以问我，比如：\n• 失眠怎么调理？\n• 夏天应该注意什么？\n• 久坐怎么保护身体？');
+  }
+  openPanel('aiChatPanel');
+}
+
+function renderAiMessage(role, text) {
+  const container = document.getElementById('aiChatMessages');
+  const div = document.createElement('div');
+  div.className = 'ai-msg ' + role;
+  const avatar = role === 'ai' ? '🤖' : '👤';
+  div.innerHTML = `<div class="ai-avatar">${avatar}</div><div class="ai-bubble">${text.replace(/\n/g, '<br>')}</div>`;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function renderAiLoading() {
+  const container = document.getElementById('aiChatMessages');
+  const div = document.createElement('div');
+  div.id = 'aiLoading';
+  div.className = 'ai-msg ai';
+  div.innerHTML = `<div class="ai-avatar">🤖</div><div class="ai-loading"><span></span><span></span><span></span></div>`;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function removeAiLoading() {
+  const el = document.getElementById('aiLoading');
+  if (el) el.remove();
+}
+
+async function sendAiMessage() {
+  if (!AI_WORKER_URL) return;
+  const input = document.getElementById('aiChatInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  renderAiMessage('user', text);
+  aiChatHistory.push({ role: 'user', content: text });
+  renderAiLoading();
+
+  try {
+    const response = await fetch(AI_WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: aiChatHistory })
+    });
+
+    removeAiLoading();
+
+    if (!response.ok) {
+      renderAiMessage('ai', '抱歉，服务暂时不可用，请检查 Cloudflare Workers 配置。');
+      return;
+    }
+
+    const data = await response.json();
+    const reply = data.output?.choices?.[0]?.message?.content || data.output?.text || '抱歉，没有获取到回答。';
+
+    renderAiMessage('ai', reply);
+    aiChatHistory.push({ role: 'assistant', content: reply });
+
+    if (aiChatHistory.length > 20) {
+      aiChatHistory = aiChatHistory.slice(-20);
+    }
+  } catch (err) {
+    removeAiLoading();
+    renderAiMessage('ai', '网络错误，请检查 Workers URL 是否正确配置。\n错误：' + err.message);
+  }
 }
 
 // ===================== SERVICE WORKER =====================
