@@ -324,6 +324,51 @@ img{max-width:100%;display:block}
 @keyframes aiBounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
 #aiFab:active{transform:scale(0.92)}
 
+/* Constitution Test */
+.const-progress{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--rule)}
+.const-progress-bar{flex:1;height:6px;background:var(--rule);border-radius:3px;overflow:hidden}
+.const-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;transition:width .3s}
+.const-progress-text{font-size:12px;color:var(--muted);white-space:nowrap}
+.const-question{padding:16px}
+.const-question-text{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:12px;line-height:1.5}
+.const-options{display:flex;flex-direction:column;gap:8px}
+.const-option{padding:12px 14px;border:2px solid var(--rule);border-radius:12px;font-size:14px;color:var(--ink);cursor:pointer;transition:all .2s;background:#fff}
+.const-option:hover{border-color:var(--accent);background:var(--accent-light)}
+.const-option.selected{border-color:var(--accent);background:var(--accent-light);font-weight:600}
+.const-result{text-align:center;padding:24px 16px}
+.const-result-emoji{font-size:48px;margin-bottom:8px}
+.const-result-name{font-size:20px;font-weight:700;margin-bottom:4px}
+.const-result-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px}
+.const-result-advice{background:var(--bg2);border-radius:12px;padding:14px;text-align:left;font-size:13px;line-height:1.6;margin-bottom:16px}
+.const-result-habits{display:flex;flex-direction:column;gap:8px;text-align:left}
+.const-result-habit{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fff;border-radius:10px;box-shadow:var(--shadow)}
+.const-result-habit .rh-icon{font-size:20px}
+.const-result-habit .rh-name{flex:1;font-size:14px;font-weight:600}
+.const-result-habit .rh-btn{font-size:12px;color:var(--accent);font-weight:600;cursor:pointer}
+.const-btn{width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:15px;font-weight:700;border:none;cursor:pointer;margin-top:12px}
+
+/* Health Report */
+.report-section{padding:16px;border-bottom:1px solid var(--rule)}
+.report-section:last-child{border-bottom:none}
+.report-title{font-size:15px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.report-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.report-card{background:#fff;border-radius:12px;padding:14px;text-align:center;box-shadow:var(--shadow)}
+.report-card .rc-num{font-size:24px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.report-card .rc-label{font-size:12px;color:var(--muted);margin-top:4px}
+.report-habit-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--rule)}
+.report-habit-row:last-child{border-bottom:none}
+.report-habit-name{font-size:14px;font-weight:600}
+.report-habit-bar{flex:1;height:6px;background:var(--rule);border-radius:3px;margin:0 10px;overflow:hidden}
+.report-habit-fill{height:100%;border-radius:3px}
+.report-habit-pct{font-size:12px;color:var(--muted);white-space:nowrap}
+.report-advice{background:linear-gradient(135deg,rgba(124,182,157,0.1),rgba(244,166,131,0.1));border-radius:12px;padding:14px;font-size:13px;line-height:1.7;color:var(--ink)}
+.report-advice-title{font-weight:700;color:var(--accent);margin-bottom:6px}
+.report-mood-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;text-align:center}
+.report-mood-item{padding:10px 4px;background:#fff;border-radius:10px;box-shadow:var(--shadow)}
+.report-mood-item .rm-emoji{font-size:24px}
+.report-mood-item .rm-count{font-size:14px;font-weight:700;margin-top:4px}
+.report-mood-item .rm-label{font-size:11px;color:var(--muted)}
+
 /* Ref Link in Health Tip */
 .ref-link{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--accent);font-weight:600;text-decoration:none;margin-top:6px;padding:4px 10px;background:rgba(124,182,157,0.1);border-radius:8px;transition:all .2s}
 .ref-link:active{background:var(--accent);color:#fff}
@@ -556,6 +601,8 @@ img{max-width:100%;display:block}
   </div>
   <div id="systemPacks"></div>
   <div class="manage-helpers">
+    <button onclick="openConstitutionPanel()">🩺 体质测试</button>
+    <button onclick="openHealthReportPanel()">📊 健康报告</button>
     <button onclick="openClockPanel()">⏳ 子午流注</button>
     <button onclick="openRefPanel(event)">📚 参考文献</button>
   </div>
@@ -701,6 +748,26 @@ img{max-width:100%;display:block}
       </div>
     </div>
   </div>
+</div>
+
+<!-- 体质测试 Panel -->
+<div class="panel" id="constitutionPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title">🩺 体质测试 · 九种体质辨识</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body" id="constitutionPanelBody" style="padding:0"></div>
+</div>
+
+<!-- 健康报告 Panel -->
+<div class="panel" id="healthReportPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title">📊 健康报告 · 本周养生总结</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body" id="healthReportPanelBody" style="padding:0"></div>
 </div>
 
 <!-- AI 浮动按钮 -->
@@ -1087,6 +1154,95 @@ function getCurrentSolarTerm() {
   }
   return null;
 }
+
+// ===================== 体质测试数据 =====================
+
+const CONSTITUTION_TYPES = [
+  {id:'pinghe',name:'平和质',emoji:'😊',color:'#7CB69D',desc:'阴阳气血调和，体态适中，面色红润，精力充沛。',advice:'继续保持，注意劳逸结合，饮食均衡。',habits:['early_rise','morning_run','breakfast','walk','reading','meditation','early_sleep']},
+  {id:'qixu',name:'气虚质',emoji:'😮‍💨',color:'#F4A683',desc:'元气不足，容易疲乏，气短懒言，出汗多。',advice:'宜食用黄芪、山药、红枣等补气食物，避免过度劳累。',habits:['early_rise','breakfast','breathe','walk','foot_bath','early_sleep','less_sit']},
+  {id:'yangxu',name:'阳虚质',emoji:'🥶',color:'#5B8DB8',desc:'阳气不足，畏寒怕冷，手足不温，喜热饮食。',advice:'宜食用生姜、羊肉、桂圆等温阳食物，注意保暖，多晒太阳。',habits:['early_rise','breakfast','walk','sunshine','foot_bath','early_sleep','vitamin']},
+  {id:'yinxu',name:'阴虚质',emoji:'🔥',color:'#E07A5F',desc:'阴液亏少，口燥咽干，手足心热，喜冷饮。',advice:'宜食用银耳、百合、梨等滋阴食物，避免熬夜，多喝水。',habits:['daily_water','reading','meditation','early_sleep','skincare','breathe']},
+  {id:'tanshi',name:'痰湿质',emoji:'💧',color:'#8B9A8B',desc:'痰湿凝聚，形体肥胖，腹部肥满，口黏苔腻。',advice:'宜食用薏米、冬瓜、山楂等祛湿食物，多运动，少吃油腻。',habits:['morning_run','walk','less_sit','healthy_diet','fruits_veggies','jump_rope']},
+  {id:'shire',name:'湿热质',emoji:'🌡️',color:'#D4A373',desc:'湿热内蕴，面垢油光，易生痤疮，口苦口干。',advice:'宜食用绿豆、苦瓜、芹菜等清热利湿食物，忌辛辣油腻。',habits:['daily_water','morning_run','walk','healthy_diet','skincare','foot_bath']},
+  {id:'xueyu',name:'血瘀质',emoji:'🩸',color:'#A44A4A',desc:'血行不畅，肤色晦暗，色素沉着，易出瘀斑。',advice:'宜食用山楂、红花、黑豆等活血食物，适度运动，保持心情舒畅。',habits:['morning_run','walk','stretch','yoga','breathe','meditation']},
+  {id:'qiyu',name:'气郁质',emoji:'😔',color:'#6B5B95',desc:'气机郁滞，神情抑郁，情感脆弱，烦闷不乐。',advice:'宜多参加社交活动，多晒太阳，饮用玫瑰花茶，保持心情舒畅。',habits:['reading','walk','meditation','yoga','breathe','sunshine','diary']},
+  {id:'tebing',name:'特禀质',emoji:'🤧',color:'#B8B8D1',desc:'先天失常，过敏体质，易荨麻疹、哮喘、花粉症。',advice:'避免接触过敏原，饮食清淡，增强体质，注意季节变化。',habits:['early_rise','breakfast','walk','sunshine','healthy_diet','vitamin']}
+];
+
+const CONSTITUTION_QUIZ = [
+  {
+    question:'你平时容易感到疲劳吗？',
+    options:[
+      {text:'精力充沛，很少疲劳',scores:{pinghe:2,qixu:0,yangxu:0,yinxu:0}},
+      {text:'容易疲劳，气短懒言',scores:{pinghe:0,qixu:2,yangxu:1,yinxu:0}},
+      {text:'容易疲劳，怕冷喜热',scores:{pinghe:0,qixu:1,yangxu:2,yinxu:0}},
+      {text:'容易疲劳，手足心热',scores:{pinghe:0,qixu:0,yangxu:0,yinxu:2}}
+    ]
+  },
+  {
+    question:'你的体型特征更接近哪种？',
+    options:[
+      {text:'体态适中，不胖不瘦',scores:{pinghe:2,tanshi:0,qixu:0,tebing:0}},
+      {text:'形体偏胖，腹部肥满',scores:{pinghe:0,tanshi:2,qixu:0,tebing:0}},
+      {text:'形体偏瘦，肌肉松软',scores:{pinghe:0,tanshi:0,qixu:2,tebing:0}},
+      {text:'体型正常但容易过敏',scores:{pinghe:0,tanshi:0,qixu:0,tebing:2}}
+    ]
+  },
+  {
+    question:'你的面色和皮肤状态如何？',
+    options:[
+      {text:'面色红润，皮肤正常',scores:{pinghe:2,xueyu:0,shire:0,yinxu:0}},
+      {text:'肤色晦暗，有色斑',scores:{pinghe:0,xueyu:2,shire:0,yinxu:0}},
+      {text:'面垢油光，易长痘',scores:{pinghe:0,xueyu:0,shire:2,yinxu:0}},
+      {text:'皮肤干燥，易起皮',scores:{pinghe:0,xueyu:0,shire:0,yinxu:2}}
+    ]
+  },
+  {
+    question:'你的情绪状态通常是？',
+    options:[
+      {text:'心情平和，情绪稳定',scores:{pinghe:2,qiyu:0,qixu:0,xueyu:0}},
+      {text:'容易抑郁，闷闷不乐',scores:{pinghe:0,qiyu:2,qixu:0,xueyu:0}},
+      {text:'容易烦躁，易怒',scores:{pinghe:0,qiyu:0,qixu:0,xueyu:0,yinxu:2}},
+      {text:'容易紧张，焦虑不安',scores:{pinghe:0,qiyu:1,qixu:0,xueyu:0,qiyu:1}}
+    ]
+  },
+  {
+    question:'你的耐寒耐热情况如何？',
+    options:[
+      {text:'耐寒耐热，适应力好',scores:{pinghe:2,yangxu:0,yinxu:0,tanshi:0}},
+      {text:'特别怕冷，手足不温',scores:{pinghe:0,yangxu:2,yinxu:0,tanshi:0}},
+      {text:'怕热，手足心热',scores:{pinghe:0,yangxu:0,yinxu:2,tanshi:0}},
+      {text:'怕热又怕冷，不耐寒热',scores:{pinghe:0,yangxu:1,yinxu:1,tanshi:0}}
+    ]
+  },
+  {
+    question:'你的饮食偏好是？',
+    options:[
+      {text:'饮食均衡，不偏不挑',scores:{pinghe:2,tanshi:0,shire:0,yangxu:0}},
+      {text:'喜食油腻，口重',scores:{pinghe:0,tanshi:2,shire:1,yangxu:0}},
+      {text:'喜食辛辣，口渴想喝凉',scores:{pinghe:0,tanshi:0,shire:2,yangxu:0}},
+      {text:'喜食温热，不爱冷饮',scores:{pinghe:0,tanshi:0,shire:0,yangxu:2}}
+    ]
+  },
+  {
+    question:'你的大便情况通常是？',
+    options:[
+      {text:'正常成形，每日1次',scores:{pinghe:2,tanshi:0,shire:0,qixu:0}},
+      {text:'大便黏滞，不成形',scores:{pinghe:0,tanshi:2,shire:1,qixu:0}},
+      {text:'容易便秘，大便干结',scores:{pinghe:0,tanshi:0,shire:0,yinxu:2}},
+      {text:'容易腹泻，大便稀溏',scores:{pinghe:0,tanshi:0,shire:0,yangxu:2,qixu:1}}
+    ]
+  },
+  {
+    question:'你的睡眠情况如何？',
+    options:[
+      {text:'睡眠良好，入睡快',scores:{pinghe:2,qiyu:0,yinxu:0,qixu:0}},
+      {text:'入睡困难，多梦易醒',scores:{pinghe:0,qiyu:1,yinxu:1,qixu:0}},
+      {text:'睡眠质量差，早醒',scores:{pinghe:0,qiyu:0,yinxu:2,qixu:0}},
+      {text:'嗜睡，睡不醒',scores:{pinghe:0,qiyu:0,yinxu:0,qixu:2,tanshi:1}}
+    ]
+  }
+];
 
 // ===================== STATE =====================
 
@@ -3164,6 +3320,318 @@ async function sendAiMessage() {
     removeAiLoading();
     renderAiMessage('ai', '网络错误，请检查 Workers URL 是否正确配置。\n错误：' + err.message);
   }
+}
+
+// ===================== 体质测试 =====================
+
+let constitutionAnswers = [];
+let constitutionResult = null;
+
+function openConstitutionPanel() {
+  constitutionAnswers = [];
+  constitutionResult = JSON.parse(localStorage.getItem('constitution_result') || 'null');
+  if (constitutionResult) {
+    renderConstitutionResult();
+  } else {
+    renderConstitutionQuiz(0);
+  }
+  openPanel('constitutionPanel');
+}
+
+function renderConstitutionQuiz(qIdx) {
+  const body = document.getElementById('constitutionPanelBody');
+  const q = CONSTITUTION_QUIZ[qIdx];
+  const progress = Math.round((qIdx / CONSTITUTION_QUIZ.length) * 100);
+
+  let html = `
+    <div class="const-progress">
+      <div class="const-progress-bar"><div class="const-progress-fill" style="width:${progress}%"></div></div>
+      <span class="const-progress-text">${qIdx + 1}/${CONSTITUTION_QUIZ.length}</span>
+    </div>
+    <div class="const-question">
+      <div class="const-question-text">${q.question}</div>
+      <div class="const-options">
+  `;
+
+  q.options.forEach((opt, i) => {
+    html += `<div class="const-option" onclick="selectConstitutionOption(${qIdx}, ${i})">${opt.text}</div>`;
+  });
+
+  html += '</div></div>';
+  body.innerHTML = html;
+}
+
+function selectConstitutionOption(qIdx, optIdx) {
+  constitutionAnswers.push({ qIdx, optIdx });
+
+  if (qIdx + 1 < CONSTITUTION_QUIZ.length) {
+    renderConstitutionQuiz(qIdx + 1);
+  } else {
+    calculateConstitution();
+  }
+}
+
+function calculateConstitution() {
+  const scores = {};
+  CONSTITUTION_TYPES.forEach(c => scores[c.id] = 0);
+
+  constitutionAnswers.forEach(ans => {
+    const opt = CONSTITUTION_QUIZ[ans.qIdx].options[ans.optIdx];
+    Object.entries(opt.scores).forEach(([id, score]) => {
+      scores[id] = (scores[id] || 0) + score;
+    });
+  });
+
+  // Find max score
+  let maxId = 'pinghe', maxScore = 0;
+  Object.entries(scores).forEach(([id, score]) => {
+    if (score > maxScore) {
+      maxScore = score;
+      maxId = id;
+    }
+  });
+
+  constitutionResult = { typeId: maxId, scores, date: new Date().toISOString() };
+  localStorage.setItem('constitution_result', JSON.stringify(constitutionResult));
+  renderConstitutionResult();
+}
+
+function renderConstitutionResult() {
+  const body = document.getElementById('constitutionPanelBody');
+  const result = constitutionResult;
+  const type = CONSTITUTION_TYPES.find(c => c.id === result.typeId);
+
+  let html = `
+    <div class="const-result">
+      <div class="const-result-emoji">${type.emoji}</div>
+      <div class="const-result-name" style="color:${type.color}">${type.name}</div>
+      <div class="const-result-desc">${type.desc}</div>
+      <div class="const-result-advice">
+        <strong>调理建议：</strong><br>${type.advice}
+      </div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:8px;text-align:left">🎯 推荐习惯（点击添加）</div>
+      <div class="const-result-habits">
+  `;
+
+  type.habits.forEach(hid => {
+    const habit = HABIT_LIBRARY.find(h => h.id === hid);
+    if (!habit) return;
+    const exists = habitsConfig.some(h => h.id === hid);
+    html += `
+      <div class="const-result-habit">
+        <span class="rh-icon">${habit.icon}</span>
+        <span class="rh-name">${habit.name}</span>
+        ${exists ? '<span style="font-size:12px;color:var(--accent)">✓ 已添加</span>' : `<span class="rh-btn" onclick="addHabitFromConstitution('${hid}')">+ 添加</span>`}
+      </div>
+    `;
+  });
+
+  html += `
+      </div>
+      <button class="const-btn" onclick="retakeConstitutionQuiz()">重新测试</button>
+    </div>
+  `;
+
+  body.innerHTML = html;
+}
+
+function addHabitFromConstitution(hid) {
+  const habit = HABIT_LIBRARY.find(h => h.id === hid);
+  if (!habit || habitsConfig.some(h => h.id === hid)) return;
+
+  const cat = CATEGORY_MAP[habit.category] || { timePeriod: 'afternoon' };
+  const newHabit = {
+    id: habit.id,
+    name: habit.name,
+    icon: habit.icon,
+    category: habit.category,
+    type: habit.type,
+    unit: habit.unit || '',
+    timePeriod: cat.timePeriod,
+    tip: habit.tip || '',
+    ...(habit.defaultReminder ? { reminder: { ...habit.defaultReminder, enabled: true } } : {})
+  };
+
+  if (habit.type === 'water') {
+    newHabit.waterConfig = { cupSize: 250, dailyGoal: 2000 };
+  }
+  if (habit.options) newHabit.options = habit.options;
+
+  habitsConfig.push(newHabit);
+  saveData();
+  renderConstitutionResult();
+  render();
+}
+
+function retakeConstitutionQuiz() {
+  constitutionAnswers = [];
+  constitutionResult = null;
+  localStorage.removeItem('constitution_result');
+  renderConstitutionQuiz(0);
+}
+
+// ===================== 健康报告 =====================
+
+function openHealthReportPanel() {
+  renderHealthReport();
+  openPanel('healthReportPanel');
+}
+
+function renderHealthReport() {
+  const body = document.getElementById('healthReportPanelBody');
+
+  // Calculate weekly stats
+  const today = new Date();
+  const weekData = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    weekData.push({ date: key, day: DAY_NAMES[d.getDay()], records: checkinRecords[key] || {} });
+  }
+
+  // Total habits count
+  const totalHabits = habitsConfig.length;
+  let totalCheckins = 0, totalPossible = 0;
+  let waterDays = 0, emotionDays = 0;
+  const habitStats = {};
+  const moodCounts = { anger: 0, joy: 0, thinking: 0, sorrow: 0, fear: 0 };
+
+  weekData.forEach(day => {
+    habitsConfig.forEach(h => {
+      totalPossible++;
+      const rec = day.records[h.id];
+      habitStats[h.id] = habitStats[h.id] || { name: h.name, icon: h.icon, done: 0, total: 0 };
+      habitStats[h.id].total++;
+
+      if (h.type === 'water') {
+        const val = rec?.value || 0;
+        if (val >= (h.waterConfig?.dailyGoal || 2000)) {
+          totalCheckins++;
+          habitStats[h.id].done++;
+        }
+      } else if (h.type === 'select') {
+        if (rec?.value) {
+          totalCheckins++;
+          habitStats[h.id].done++;
+          const map = {'怒':'anger','喜':'joy','思':'thinking','悲':'sorrow','恐':'fear'};
+          const mood = map[rec.value];
+          if (mood) moodCounts[mood]++;
+        }
+      } else {
+        if (rec?.done) {
+          totalCheckins++;
+          habitStats[h.id].done++;
+        }
+      }
+    });
+
+    // Water达标天数
+    const waterHabit = habitsConfig.find(h => h.type === 'water');
+    if (waterHabit) {
+      const rec = day.records[waterHabit.id];
+      if ((rec?.value || 0) >= (waterHabit.waterConfig?.dailyGoal || 2000)) waterDays++;
+    }
+
+    // 情绪记录天数
+    if (day.records['emotion_check']?.value) emotionDays++;
+  });
+
+  const completionRate = totalPossible > 0 ? Math.round((totalCheckins / totalPossible) * 100) : 0;
+
+  // Streak calculation
+  let streak = 0;
+  for (let i = 0; i < 365; i++) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const rec = checkinRecords[key];
+    const hasAny = rec && habitsConfig.some(h => {
+      if (h.type === 'water') return (rec[h.id]?.value || 0) >= (h.waterConfig?.dailyGoal || 2000);
+      return rec[h.id]?.done;
+    });
+    if (hasAny) streak++;
+    else break;
+  }
+
+  // Generate advice
+  let advice = '';
+  if (completionRate >= 80) advice = '太棒了！本周打卡完成率很高，养生习惯保持得很好，继续保持！';
+  else if (completionRate >= 50) advice = '本周表现不错！建议关注未完成的习惯，逐步提升完成率。';
+  else advice = '本周打卡较少，建议从1-2个核心习惯开始，循序渐进。';
+
+  if (waterDays < 3) advice += '\n• 饮水达标天数较少，建议设置提醒，养成定时喝水的习惯。';
+  if (emotionDays < 3) advice += '\n• 情绪记录较少，建议每天花30秒记录心情，有助于情志养生。';
+
+  // Constitution result
+  const constResult = JSON.parse(localStorage.getItem('constitution_result') || 'null');
+  if (constResult) {
+    const type = CONSTITUTION_TYPES.find(c => c.id === constResult.typeId);
+    advice += `\n• 根据体质测试结果，你是${type.name}，${type.advice}`;
+  }
+
+  // Build HTML
+  let html = '';
+
+  // Section 1: Overview
+  html += `
+    <div class="report-section">
+      <div class="report-title">📈 本周概览</div>
+      <div class="report-grid">
+        <div class="report-card"><div class="rc-num">${completionRate}%</div><div class="rc-label">打卡完成率</div></div>
+        <div class="report-card"><div class="rc-num">${streak}</div><div class="rc-label">连续打卡天</div></div>
+        <div class="report-card"><div class="rc-num">${waterDays}</div><div class="rc-label">饮水达标天</div></div>
+        <div class="report-card"><div class="rc-num">${emotionDays}</div><div class="rc-label">情绪记录天</div></div>
+      </div>
+    </div>
+  `;
+
+  // Section 2: Habit details
+  html += `
+    <div class="report-section">
+      <div class="report-title">📋 习惯完成情况</div>
+  `;
+  Object.values(habitStats).sort((a, b) => b.done - a.done).forEach(stat => {
+    const pct = stat.total > 0 ? Math.round((stat.done / stat.total) * 100) : 0;
+    const color = pct >= 80 ? '#7CB69D' : pct >= 50 ? '#F4A683' : '#E07A5F';
+    html += `
+      <div class="report-habit-row">
+        <span class="report-habit-name">${stat.icon} ${stat.name}</span>
+        <div class="report-habit-bar"><div class="report-habit-fill" style="width:${pct}%;background:${color}"></div></div>
+        <span class="report-habit-pct">${pct}%</span>
+      </div>
+    `;
+  });
+  html += '</div>';
+
+  // Section 3: Mood
+  const hasMood = Object.values(moodCounts).some(c => c > 0);
+  if (hasMood) {
+    html += `
+      <div class="report-section">
+        <div class="report-title">💭 情绪分布</div>
+        <div class="report-mood-grid">
+          ${Object.entries(moodCounts).map(([k, v]) => {
+            const emo = EMOTION_DATA.find(e => e.id === k);
+            return `<div class="report-mood-item"><div class="rm-emoji">${emo?.emoji || '?'}</div><div class="rm-count">${v}</div><div class="rm-label">${emo?.name || k}</div></div>`;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  // Section 4: Advice
+  html += `
+    <div class="report-section">
+      <div class="report-title">💡 个性化建议</div>
+      <div class="report-advice">
+        <div class="report-advice-title">本周养生建议</div>
+        ${advice.replace(/\n/g, '<br>')}
+      </div>
+    </div>
+  `;
+
+  body.innerHTML = html;
 }
 
 // ===================== SERVICE WORKER =====================
