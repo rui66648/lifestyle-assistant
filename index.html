@@ -723,6 +723,7 @@ img{max-width:100%;display:block}
   </div>
   <div class="manage-helpers">
     <button onclick="openClockPanel()">⏳ 子午流注</button>
+    <button onclick="openWulaoPanel()">🛡️ 五劳防护</button>
     <button onclick="openConstitutionPanel()">🩺 体质测试</button>
     <button onclick="openHealthReportPanel()">📊 健康报告</button>
     <button onclick="openDataPanel()">💾 数据管理</button>
@@ -1094,7 +1095,9 @@ const CATEGORY_MAP = {
   health: {label:'健康建议', emoji:'💚', timePeriod:'afternoon'},
   color_diet: {label:'五色饮食', emoji:'🎨', timePeriod:'afternoon'},
   emotion: {label:'情志养生', emoji:'💭', timePeriod:'evening'},
-  wulao: {label:'五劳防护', emoji:'🛡️', timePeriod:'forenoon'}
+  wulao: {label:'五劳防护', emoji:'🛡️', timePeriod:'forenoon'},
+  negative: {label:'负向习惯', emoji:'🚫', timePeriod:'evening'},
+  daytime: {label:'自定义', emoji:'✨', timePeriod:'afternoon'}
 };
 
 const TIME_PERIOD_MAP = {
@@ -1532,7 +1535,6 @@ const CONSTITUTION_QUIZ = [
 let habitsConfig = [];
 let checkinRecords = {};
 let currentTab = 'checkin';
-let editMode = false;
 let heatmapDate = new Date();
 let pendingCheckinHabitId = null;
 let pendingTimeHabitId = null;
@@ -1598,6 +1600,11 @@ function saveConfig() {
 
 function saveRecords() {
   localStorage.setItem('checkin_records', JSON.stringify(checkinRecords));
+}
+
+function saveData() {
+  saveConfig();
+  saveRecords();
 }
 
 // ===================== AUDIO =====================
@@ -3359,16 +3366,6 @@ function getPomoTotalStats(since) {
     d.setDate(d.getDate() + 1);
   }
   return {count, minutes};
-}
-
-// ===================== EDIT MODE =====================
-
-function toggleEditMode() {
-  editMode = !editMode;
-  const btn = document.getElementById('editToggle');
-  btn.textContent = editMode ? '完成' : '编辑';
-  btn.className = editMode ? 'edit-on' : 'edit-off';
-  renderManage();
 }
 
 // ===================== DELETE HABIT =====================
