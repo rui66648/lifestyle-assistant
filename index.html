@@ -13,13 +13,21 @@
 @font-face{font-family:'InstrumentSans';src:url('./_shared/fonts/InstrumentSans-Regular.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
 :root{--bg:#FDF8F0;--bg2:#F5EDE0;--ink:#2D3436;--muted:#8D9196;--rule:#E0D8CC;--accent:#7CB69D;--accent2:#F4A683;--accent-light:#B8DCC9;--accent2-light:#FBD5C0;--radius:14px;--shadow:0 2px 12px rgba(0,0,0,.06)}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:'InstrumentSans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:80px;overflow-x:hidden}
+body{font-family:'InstrumentSans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:70px;overflow-x:hidden}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;font-size:inherit}
 input,textarea{font-family:inherit;font-size:inherit}
 img{max-width:100%;display:block}
 
-/* 今日养生卡片 */
-.today-card{border-radius:var(--radius);margin:0 16px 12px;padding:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+/* Mini Header (replaces today-card) */
+.mini-header{padding:16px 16px 8px}
+.mini-date{font-size:18px;font-weight:700;color:var(--ink)}
+.mini-lunar{font-size:12px;color:var(--muted);background:var(--bg2);padding:2px 8px;border-radius:8px}
+.mini-badges{display:flex;gap:4px}
+.mini-badge{font-size:11px;font-weight:600;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));padding:2px 8px;border-radius:8px}
+.mini-tip{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5}
+
+/* Today Card (hidden in minimal mode, kept for reference) */
+.today-card{display:none}
 .today-card.spring{background:linear-gradient(135deg,#e8f5e9,#d4edda)}
 .today-card.summer{background:linear-gradient(135deg,#ffebee,#ffe0b2)}
 .today-card.autumn{background:linear-gradient(135deg,#fff8e1,#ffe0b2)}
@@ -55,10 +63,19 @@ img{max-width:100%;display:block}
 .ambient-bg.night{background:linear-gradient(180deg,#d1c4e9 0%,transparent 100%)}
 
 /* Tabs */
-.tabs{display:flex;margin:0 16px;gap:6px;padding:8px 0}
+.tabs{display:none}
 .tab{flex:1;text-align:center;padding:10px 0;font-size:14px;font-weight:600;color:var(--muted);background:var(--bg2);border-radius:12px;border-bottom:none;transition:all .2s}
 .tab.active{color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 2px 8px rgba(124,182,157,0.3)}
 .tab:active{opacity:.7}
+
+/* Bottom Navigation */
+.bnav-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 12px;border:none;background:none;cursor:pointer;opacity:0.4;transition:all .2s}
+.bnav-item.active{opacity:1}
+.bnav-icon{font-size:22px;line-height:1}
+.bnav-label{font-size:10px;font-weight:600;color:var(--muted)}
+.bnav-item.active .bnav-label{color:var(--accent)}
+.bnav-center{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#E07A5F,#F4A683);color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;box-shadow:0 2px 10px rgba(224,122,95,0.3);transition:transform .2s;margin-top:-16px}
+.bnav-center:active{transform:scale(.9)}
 
 /* Sections */
 .section{display:none;padding:16px}
@@ -69,20 +86,21 @@ img{max-width:100%;display:block}
 .time-group{margin-bottom:20px}
 .time-group-label{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
 
-/* Habit Cards */
-.habit-card{background:#fff;border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;transition:all .3s;position:relative;overflow:hidden;border:2px solid transparent}
-.habit-card.done-card{border-color:var(--accent-light);background:linear-gradient(135deg,rgba(124,182,157,0.04),rgba(244,166,131,0.04))}
+/* Habit Cards - Minimal */
+.habit-card{background:transparent;padding:14px 16px;margin-bottom:0;display:flex;align-items:center;gap:12px;transition:all .3s;position:relative;overflow:hidden;border:none;border-bottom:1px solid var(--rule)}
+.habit-card:last-child{border-bottom:none}
+.habit-card.done-card{opacity:0.5}
 .habit-card:active{transform:scale(.98)}
-.habit-card .icon{font-size:28px;width:36px;text-align:center;flex-shrink:0}
+.habit-card .icon{font-size:26px;width:32px;text-align:center;flex-shrink:0}
 .habit-card .info{flex:1;min-width:0}
-.habit-card .name{font-size:15px;font-weight:600;margin-bottom:2px}
-.habit-card .meta{font-size:12px;color:var(--muted);display:flex;gap:8px;align-items:center}
-.habit-card .streak{font-size:11px;color:var(--accent);background:var(--accent-light);padding:2px 8px;border-radius:10px;font-weight:600}
-.habit-card .checkin-btn{width:44px;height:44px;border-radius:50%;font-size:16px;font-weight:600;transition:all .25s;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.habit-card .checkin-btn.pending{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 2px 8px rgba(124,182,157,0.3)}
+.habit-card .name{font-size:15px;font-weight:600;margin-bottom:1px}
+.habit-card .meta{font-size:11px;color:var(--muted);display:flex;gap:6px;align-items:center}
+.habit-card .streak{font-size:10px;color:var(--accent);background:var(--accent-light);padding:1px 6px;border-radius:8px;font-weight:600}
+.habit-card .checkin-btn{width:38px;height:38px;border-radius:50%;font-size:15px;font-weight:600;transition:all .25s;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.habit-card .checkin-btn.pending{background:var(--accent);color:#fff}
 .habit-card .checkin-btn.pending:active{transform:scale(.9);background:#6aa88a}
-.habit-card .checkin-btn.done{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(124,182,157,0.2)}
-.habit-card .checkin-btn.skip{background:#fff3cd;color:#856404;width:36px;height:36px;font-size:14px}
+.habit-card .checkin-btn.done{background:var(--accent);color:#fff}
+.habit-card .checkin-btn.skip{background:var(--bg2);color:var(--muted);width:32px;height:32px;font-size:13px}
 .habit-card .checkin-btn.failed{background:#fde2e2;color:#c0392b}
 .habit-card.negative{border-left:3px solid #e74c3c}
 .habit-card.negative .checkin-btn.pending{background:#e74c3c}
@@ -551,43 +569,27 @@ img{max-width:100%;display:block}
 </style>
 </head>
 <body>
-<div class="ambient-bg" id="ambientBg"></div>
-
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
-<!-- 今日养生卡片 -->
-<div class="today-card" id="todayCard">
-  <div class="today-header">
-    <div class="today-date-row">
-      <span class="today-date" id="todayDate"></span>
-      <span class="today-lunar" id="todayLunar"></span>
+<!-- 极简顶栏 -->
+<div class="mini-header" id="todayCard">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px">
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <span class="mini-date" id="todayDate"></span>
+      <span class="mini-lunar" id="todayLunar"></span>
     </div>
-    <div class="today-badges" id="todayBadges"></div>
+    <div class="mini-badges" id="todayBadges"></div>
   </div>
-  <div class="today-season-tip" id="todaySeasonTip"></div>
-  <div class="quote-card" id="quoteCard">
-    <div class="quote-title">📜 每日养生名言</div>
-    <div class="quote-text" id="quoteText"></div>
-    <div class="quote-source" id="quoteSource"></div>
-    <div class="quote-refresh" onclick="refreshQuote()">🔄 换一条</div>
-  </div>
-  <a class="today-ref-link" onclick="openRefPanel(event)">📚 查看养生参考文献</a>
+  <div class="mini-tip" id="todaySeasonTip"></div>
 </div>
 
-<!-- Reminder Banner -->
-<div class="reminder-banner" id="reminderBanner">
+<!-- Reminder Banner (hidden by default in minimal mode) -->
+<div class="reminder-banner" id="reminderBanner" style="display:none">
   <span class="text" id="reminderText">开启提醒，养成好习惯</span>
   <button id="sharePosterBtn" class="settings-btn" onclick="openPosterPanel()" style="display:none;font-size:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-radius:8px;padding:4px 10px;font-weight:600">🎉 分享海报</button>
   <button class="settings-btn" onclick="openClockPanel()" title="子午流注">⏳</button>
   <button class="settings-btn" onclick="openReminderPanel()">⚙️</button>
-</div>
-
-<!-- Tabs -->
-<div class="tabs">
-  <button class="tab active" data-tab="checkin" onclick="switchTab('checkin')">📋 打卡</button>
-  <button class="tab" data-tab="stats" onclick="switchTab('stats')">📊 统计</button>
-  <button class="tab" data-tab="manage" onclick="switchTab('manage')">⚙️ 管理</button>
 </div>
 
 <!-- Checkin Section -->
@@ -931,11 +933,6 @@ img{max-width:100%;display:block}
   </div>
 </div>
 
-<!-- 番茄钟浮动按钮 -->
-<button id="pomoFab" onclick="openPomodoroPanel()" style="position:fixed;bottom:152px;right:16px;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#E07A5F,#F4A683);color:#fff;font-size:20px;box-shadow:0 4px 12px rgba(224,122,95,0.35);z-index:50;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:transform .2s">
-  🍅
-</button>
-
 <!-- 月度/年度回顾 Panel -->
 <div class="panel" id="reviewPanel">
   <div class="panel-handle"></div>
@@ -987,10 +984,26 @@ img{max-width:100%;display:block}
   </div>
 </div>
 
-<!-- AI 浮动按钮 -->
-<button id="aiFab" onclick="openAiChatPanel()" style="position:fixed;bottom:90px;right:16px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:24px;box-shadow:0 4px 16px rgba(124,182,157,0.4);z-index:50;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:transform .2s">
-  🤖
-</button>
+<!-- 底部导航栏 -->
+<div id="bottomNav" style="position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--rule);display:flex;justify-content:space-around;align-items:center;padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom));z-index:100">
+  <button class="bnav-item active" data-tab="checkin" onclick="switchTab('checkin')">
+    <span class="bnav-icon">📋</span>
+    <span class="bnav-label">打卡</span>
+  </button>
+  <button class="bnav-item" data-tab="stats" onclick="switchTab('stats')">
+    <span class="bnav-icon">📊</span>
+    <span class="bnav-label">统计</span>
+  </button>
+  <button class="bnav-center" onclick="openPomodoroPanel()">🍅</button>
+  <button class="bnav-item" data-tab="manage" onclick="switchTab('manage')">
+    <span class="bnav-icon">⚙️</span>
+    <span class="bnav-label">管理</span>
+  </button>
+  <button class="bnav-item" onclick="openAiChatPanel()">
+    <span class="bnav-icon">🤖</span>
+    <span class="bnav-label">AI</span>
+  </button>
+</div>
 
 <script>
 // ===================== DATA =====================
@@ -1912,7 +1925,6 @@ function render() {
   renderCheckin();
   renderStats();
   renderManage();
-  renderAmbientBg();
   showGuide();
 }
 
@@ -1962,49 +1974,25 @@ function renderTodayCard() {
   const pack = getSeasonPack(season);
   const lunar = getLunarDate(d);
 
-  // Set season background class
+  // Mini header
   const card = document.getElementById('todayCard');
-  card.className = 'today-card ' + season;
+  card.className = 'mini-header';
 
-  // Date row: 公历 + 农历
-  document.getElementById('todayDate').textContent = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 星期${weekDay}`;
-  document.getElementById('todayLunar').textContent = `农历${lunar.monthStr}月${lunar.dayStr}`;
+  // Date: 公历 + 农历
+  document.getElementById('todayDate').textContent = `${d.getMonth()+1}月${d.getDate()}日 周${weekDay}`;
+  document.getElementById('todayLunar').textContent = `${lunar.monthStr}${lunar.dayStr}`;
 
-  // Badges: season focus + solar term
+  // Badges: solar term
   const solarTerm = getCurrentSolarTerm();
-  let badgesHtml = `<span class="season-badge ${pack.color}">${pack.emoji} ${pack.focus}</span>`;
+  let badgesHtml = '';
   if (solarTerm) {
-    badgesHtml += `<span class="season-badge" style="background:linear-gradient(135deg,#F4A683,#7CB69D)">${solarTerm.emoji} ${solarTerm.name}</span>`;
+    badgesHtml = `<span class="mini-badge">${solarTerm.emoji} ${solarTerm.name}</span>`;
   }
   document.getElementById('todayBadges').innerHTML = badgesHtml;
 
-  // Season tip
-  let tipHtml = pack.tip;
-  if (solarTerm) {
-    tipHtml = `<span style="display:inline-block;background:linear-gradient(135deg,#F4A683,#7CB69D);color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;margin-right:6px">${solarTerm.emoji} ${solarTerm.name}</span>${solarTerm.tip}`;
-  }
-  document.getElementById('todaySeasonTip').innerHTML = tipHtml;
-
-  // Quote card: random from HEALTH_TIPS source (now full quotes)
-  const qIdx = Math.floor(Math.random() * HEALTH_TIPS.length);
-  let qTip = HEALTH_TIPS[qIdx];
-  // Ensure we pick one with a substantial source (full quote)
-  let attempts = 0;
-  while (qTip.source.length < 20 && attempts < 10) {
-    qTip = HEALTH_TIPS[Math.floor(Math.random() * HEALTH_TIPS.length)];
-    attempts++;
-  }
-  const qRefBook = REF_BOOKS.find(b => b.name.includes(qTip.refBook));
-  const qRefUrl = qRefBook ? qRefBook.url : null;
-  document.getElementById('quoteText').textContent = qTip.source.split('——')[0];
-  document.getElementById('quoteSource').textContent = '——' + (qTip.source.split('——')[1] || '');
-  if (qRefUrl) {
-    document.getElementById('quoteCard').style.cursor = 'pointer';
-    document.getElementById('quoteCard').onclick = function(e) {
-      if (e.target.classList.contains('quote-refresh')) return;
-      window.open(qRefUrl, '_blank');
-    };
-  }
+  // Season tip (single line)
+  let tipText = solarTerm ? solarTerm.tip : pack.tip;
+  document.getElementById('todaySeasonTip').textContent = tipText;
 }
 
 function refreshQuote() {
@@ -2129,26 +2117,7 @@ function renderCheckin() {
   const doneCount = items.filter(x => x.checked).length;
   const overdueCount = items.filter(x => x.overdue).length;
 
-  // Progress bar at top
-  if (total > 0) {
-    const pct = Math.round((doneCount / total) * 100);
-    html += `<div style="margin:0 16px 12px;padding:12px;background:var(--bg2);border-radius:12px">
-      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px">
-        <span>今日进度 ${doneCount}/${total}</span>
-        <span>${pct}%</span>
-      </div>
-      <div style="height:8px;background:var(--bg);border-radius:4px;overflow:hidden">
-        <div style="height:100%;width:${pct}%;background:var(--accent);border-radius:4px;transition:width .3s"></div>
-      </div>
-      ${overdueCount > 0 ? `<div style="font-size:11px;color:#e74c3c;margin-top:4px;font-weight:600">⚠️ ${overdueCount}项已过时未完成</div>` : ''}
-      <div style="text-align:right;margin-top:4px"><button onclick="openRetroactivePanel('${items[0]?.h?.id || habitsConfig[0]?.id || ''}')" style="font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;font-weight:600;text-decoration:underline">📅 补签过去7天</button></div>
-    </div>`;
-  }
-
-  // Encourage bubble
-  const done = getTodayDone();
-  const total = getTodayTotal();
-  const pct = total > 0 ? Math.round(done / total * 100) : 0;
+  // Big progress ring + encourage text (replaces progress bar)
   const encourageMsgs = [
     '每一天的坚持，都是对自己最好的投资 💪',
     '养生不是一蹴而就，而是日积月累的功夫 🌱',
@@ -2158,19 +2127,21 @@ function renderCheckin() {
     '法于阴阳，和于术数，食饮有节 📖',
     '不积跬步，无以至千里 —— 荀子 🚶',
     '上工治未病，不治已病 ——《黄帝内经》🌿',
-    '今天已完成 ' + pct + '%，继续加油！',
     '坚持就是胜利，你已经很棒了 ✨'
   ];
-  const encourageIdx = Math.floor(Date.now() / 86400000 + done) % encourageMsgs.length;
-  if (total > 0 && pct < 100) {
-    const r = 22, c = 2 * Math.PI * r, offset = c - (pct / 100) * c;
-    html += `<div class="encourage-bubble">
-      <svg width="52" height="52" style="vertical-align:middle;margin-right:8px;flex-shrink:0">
-        <circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--rule)" stroke-width="4"/>
-        <circle cx="26" cy="26" r="${r}" fill="none" stroke="var(--accent)" stroke-width="4" stroke-dasharray="${c}" stroke-dashoffset="${offset}" stroke-linecap="round" transform="rotate(-90 26 26)" style="transition:stroke-dashoffset .5s"/>
-        <text x="26" y="30" text-anchor="middle" font-size="12" font-weight="700" fill="var(--accent)">${pct}%</text>
+  const encourageIdx = Math.floor(Date.now() / 86400000 + doneCount) % encourageMsgs.length;
+  if (total > 0) {
+    const pct = Math.round((doneCount / total) * 100);
+    const r = 52, c = 2 * Math.PI * r, offset = c - (pct / 100) * c;
+    html += `<div style="text-align:center;padding:16px 16px 6px">
+      <svg width="120" height="120" style="display:block;margin:0 auto">
+        <circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--rule)" stroke-width="8"/>
+        <circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--accent)" stroke-width="8" stroke-dasharray="${c}" stroke-dashoffset="${offset}" stroke-linecap="round" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset .6s ease"/>
+        <text x="60" y="55" text-anchor="middle" font-size="28" font-weight="800" fill="var(--accent)">${pct}%</text>
+        <text x="60" y="72" text-anchor="middle" font-size="11" fill="var(--muted)">${doneCount}/${total}</text>
       </svg>
-      <span>${encourageMsgs[encourageIdx]}</span>
+      <div style="font-size:13px;color:var(--muted);margin-top:6px;line-height:1.6">${encourageMsgs[encourageIdx]}</div>
+      <div style="margin-top:4px"><button onclick="openRetroactivePanel('${items[0]?.h?.id || habitsConfig[0]?.id || ''}')" style="font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;font-weight:600">📅 补签过去7天</button></div>
     </div>`;
   }
 
@@ -2220,7 +2191,7 @@ function renderCheckin() {
               ${streak > 0 ? `<span class="streak">🔥${streak}天</span>` : ''}
               ${timeHint}
             </div>
-            ${!checked && !skipped && (tipStr || getHealthTipText(h.id, '')) ? `<div class="health-tip-inline"><span class="ht-source">${getHealthTipSource(h.id)}</span> ${getHealthTipText(h.id, tipStr)}</div>` : ''}
+            ${!checked && !skipped ? '' : ''}
           </div>
           <div style="display:flex;gap:8px;align-items:center">
             ${!isNegative ? `<button class="checkin-btn ${skipped ? 'skip' : 'pending'}" onclick="event.stopPropagation();skipHabit('${h.id}')" title="跳过（不打断连续）">${skipped ? '⏭' : '⏭'}</button>` : ''}
@@ -2971,6 +2942,7 @@ function renderManageHeatmap() {
 function switchTab(tab) {
   currentTab = tab;
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  document.querySelectorAll('.bnav-item').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.getElementById('sec-' + tab).classList.add('active');
   if (tab === 'stats') renderStats();
