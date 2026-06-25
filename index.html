@@ -2052,6 +2052,8 @@ function renderCheckin() {
   // Render items
   items.forEach(({h, checked, nextTime, overdue, soon}) => {
     const collapsedClass = checked ? 'collapsed' : '';
+    const rec2 = rec[h.id] || {};
+    const skipped = rec2.skipped;
     const doneCardClass = (checked || skipped) ? 'done-card' : '';
 
     if (h.type === 'water') {
@@ -2076,7 +2078,6 @@ function renderCheckin() {
       const reminderStr = reminder && reminder.enabled ? reminder.time : '';
       const valueStr = checked ? (h.type === 'boolean' ? '' : ` ${rec[h.id].value}${h.unit}`) : '';
       const tipStr = h.tip || '';
-      const skipped = rec[h.id] && rec[h.id].skipped;
       const failed = h.negative && rec[h.id] && rec[h.id].failed;
       const isNegative = h.negative;
       const negClass = isNegative ? ' negative' : '';
