@@ -576,6 +576,27 @@ img{max-width:100%;display:block}
 
 <!-- Manage Section -->
 <div class="section" id="sec-manage">
+  <div class="pack-card my-pack" id="levelCard" style="margin-bottom:12px">
+    <div class="pack-header" onclick="togglePack('level')" style="cursor:pointer">
+      <div class="pack-header-left">
+        <span class="pack-emoji" id="levelIcon">🌱</span>
+        <div>
+          <div class="pack-title" id="levelName">养生小白</div>
+          <div class="pack-subtitle" id="levelProgressText">连续打卡 0 天</div>
+        </div>
+      </div>
+      <span class="pack-toggle" id="levelToggle">▼</span>
+    </div>
+    <div class="pack-body" id="levelBody" style="padding:12px 16px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="flex:1;height:8px;background:var(--rule);border-radius:4px;overflow:hidden">
+          <div id="levelProgressBar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;width:0%;transition:width .5s"></div>
+        </div>
+        <span id="levelProgressPct" style="font-size:12px;color:var(--muted);white-space:nowrap">0%</span>
+      </div>
+      <div id="levelNext" style="font-size:12px;color:var(--muted)">再打卡 3 天升级为「养生学徒」</div>
+    </div>
+  </div>
   <div class="pack-card my-pack" id="myPackCard">
     <div class="pack-header" onclick="togglePack('myPack')">
       <div class="pack-header-left">
@@ -1368,6 +1389,101 @@ function saveConfig() {
 
 function saveRecords() {
   localStorage.setItem('checkin_records', JSON.stringify(checkinRecords));
+}
+
+// ===================== AUDIO =====================
+
+function playSound(type) {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const now = ctx.currentTime;
+
+    if (type === 'checkin') {
+      // 轻柔叮声
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'sine'; osc.frequency.setValueAtTime(880, now);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+      osc.start(now); osc.stop(now + 0.2);
+    } else if (type === 'complete') {
+      // 欢快和弦
+      [523, 659, 784].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.type = 'sine'; osc.frequency.setValueAtTime(freq, now + i * 0.08);
+        gain.gain.setValueAtTime(0.12, now + i * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.3);
+        osc.start(now + i * 0.08); osc.stop(now + i * 0.08 + 0.3);
+      });
+    } else if (type === 'unlock') {
+      // 庆祝琶音
+      [523, 659, 784, 1047].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.type = 'triangle'; osc.frequency.setValueAtTime(freq, now + i * 0.1);
+        gain.gain.setValueAtTime(0.1, now + i * 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.4);
+        osc.start(now + i * 0.1); osc.stop(now + i * 0.1 + 0.4);
+      });
+    }
+  } catch(e) {}
+}
+
+// ===================== LEVEL SYSTEM =====================
+
+const LEVELS = [
+  {level:1,name:'养生小白',icon:'🌱',minDays:0},
+  {level:2,name:'养生学徒',icon:'🌿',minDays:3},
+  {level:3,name:'养生达人',icon:'🌳',minDays:7},
+  {level:4,name:'养生专家',icon:'🏆',minDays:14},
+  {level:5,name:'养生大师',icon:'👑',minDays:30}
+];
+
+function getCurrentStreak() {
+  let streak = 0;
+  const d = new Date();
+  while (true) {
+    const key = formatDate(d);
+    const rec = checkinRecords[key];
+    const hasAny = rec && habitsConfig.some(h => {
+      if (h.type === 'water') return (rec[h.id]?.value || 0) >= (h.waterConfig?.dailyGoal || 2000);
+      return rec[h.id]?.done;
+    });
+    if (hasAny) { streak++; d.setDate(d.getDate() - 1); }
+    else break;
+  }
+  return streak;
+}
+
+function getCurrentLevel() {
+  const streak = getCurrentStreak();
+  let current = LEVELS[0];
+  for (const lv of LEVELS) {
+    if (streak >= lv.minDays) current = lv;
+  }
+  return current;
+}
+
+function getNextLevel() {
+  const current = getCurrentLevel();
+  const idx = LEVELS.findIndex(l => l.level === current.level);
+  return LEVELS[idx + 1] || null;
+}
+
+function getLevelProgress() {
+  const streak = getCurrentStreak();
+  const current = getCurrentLevel();
+  const next = getNextLevel();
+  if (!next) return 100;
+  const range = next.minDays - current.minDays;
+  const progress = streak - current.minDays;
+  return Math.min(100, Math.round((progress / range) * 100));
 }
 
 // ===================== UTILS =====================
@@ -2385,6 +2501,27 @@ function removeSubPack(spId) {
 function renderManage() {
   renderMyPack();
   renderSystemPacks();
+  renderLevelCard();
+}
+
+function renderLevelCard() {
+  const lv = getCurrentLevel();
+  const streak = getCurrentStreak();
+  const progress = getLevelProgress();
+  const next = getNextLevel();
+
+  document.getElementById('levelIcon').textContent = lv.icon;
+  document.getElementById('levelName').textContent = lv.name;
+  document.getElementById('levelProgressText').textContent = `连续打卡 ${streak} 天`;
+  document.getElementById('levelProgressBar').style.width = progress + '%';
+  document.getElementById('levelProgressPct').textContent = progress + '%';
+
+  if (next) {
+    const need = next.minDays - streak;
+    document.getElementById('levelNext').textContent = `再打卡 ${need} 天升级为「${next.name}」`;
+  } else {
+    document.getElementById('levelNext').textContent = '已达最高等级，继续保持！';
+  }
 }
 
 // ===================== TABS =====================
@@ -2419,6 +2556,8 @@ function handleCheckin(habitId) {
     } else {
       rec[habitId] = {done: true, value: 1};
       showToast(`${h.icon} ${h.name} 打卡成功！`);
+      playSound('checkin');
+      checkLevelUp();
     }
     checkinRecords[today()] = rec;
     saveRecords();
@@ -2455,11 +2594,30 @@ function confirmCheckinInput() {
   } else {
     rec[habitId] = {done: true, value: val};
     showToast(`${h.icon} ${h.name} 记录 ${val}${h.unit}！`);
+    playSound('checkin');
+    checkLevelUp();
   }
   checkinRecords[today()] = rec;
   saveRecords();
   closeAllPanels();
   render();
+}
+
+function checkLevelUp() {
+  const oldLevel = parseInt(localStorage.getItem('user_level') || '1');
+  const newLevel = getCurrentLevel().level;
+  if (newLevel > oldLevel) {
+    localStorage.setItem('user_level', String(newLevel));
+    const lv = LEVELS.find(l => l.level === newLevel);
+    playSound('unlock');
+    showToast(`🎉 升级！获得「${lv.icon} ${lv.name}」称号！`);
+  }
+  // Check all done
+  const done = getTodayDone();
+  const total = getTodayTotal();
+  if (done === total && total > 0) {
+    setTimeout(() => playSound('complete'), 300);
+  }
 }
 
 // ===================== EDIT MODE =====================
@@ -2486,8 +2644,10 @@ function deleteHabit(habitId) {
 
 function openPanel(id) {
   document.getElementById('panelOverlay').classList.add('show');
-  document.getElementById(id).classList.add('show');
+  const panel = document.getElementById(id);
+  panel.classList.add('show');
   document.body.style.overflow = 'hidden';
+  attachPanelGesture(panel);
 }
 
 function closeAllPanels() {
@@ -2496,6 +2656,48 @@ function closeAllPanels() {
   document.body.style.overflow = '';
   pendingCheckinHabitId = null;
   pendingTimeHabitId = null;
+}
+
+// ===================== PANEL GESTURE =====================
+
+function attachPanelGesture(panel) {
+  if (panel._gestureAttached) return;
+  panel._gestureAttached = true;
+
+  let startY = 0, startX = 0, currentY = 0;
+
+  panel.addEventListener('touchstart', e => {
+    if (e.touches.length !== 1) return;
+    startY = e.touches[0].clientY;
+    startX = e.touches[0].clientX;
+    currentY = startY;
+    panel.style.transition = 'none';
+  }, { passive: true });
+
+  panel.addEventListener('touchmove', e => {
+    if (startY === 0) return;
+    currentY = e.touches[0].clientY;
+    const deltaY = currentY - startY;
+    const deltaX = Math.abs(e.touches[0].clientX - startX);
+    if (deltaY > 0 && deltaY > deltaX) {
+      panel.style.transform = `translateY(${deltaY}px)`;
+    }
+  }, { passive: true });
+
+  panel.addEventListener('touchend', () => {
+    const deltaY = currentY - startY;
+    panel.style.transition = 'transform .25s ease';
+    if (deltaY > 100) {
+      panel.style.transform = `translateY(100%)`;
+      setTimeout(() => {
+        closeAllPanels();
+        panel.style.transform = '';
+      }, 250);
+    } else {
+      panel.style.transform = '';
+    }
+    startY = 0;
+  });
 }
 
 // ===================== REMINDER PANEL =====================
