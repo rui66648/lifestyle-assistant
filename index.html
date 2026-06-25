@@ -1780,6 +1780,21 @@ function renderWeekBarChart() {
   container.innerHTML = html;
 }
 
+function getHealthTipText(habitId, existingTip) {
+  // First use the habit's own tip (most accurate)
+  if (existingTip) return existingTip;
+  // Fallback to HEALTH_TIPS match
+  const tips = HEALTH_TIPS.filter(t => t.habit === habitId);
+  if (tips.length > 0) return tips[Math.floor(Date.now() / 86400000) % tips.length].text;
+  return '';
+}
+
+function getHealthTipSource(habitId) {
+  const tips = HEALTH_TIPS.filter(t => t.habit === habitId);
+  if (tips.length > 0) return tips[Math.floor(Date.now() / 86400000) % tips.length].refBook;
+  return '建议';
+}
+
 function getCompletionRate(habitId, days) {
   let done = 0;
   const d = new Date();
@@ -2088,10 +2103,6 @@ function renderCheckin() {
       const btnClass = skipped ? 'skip' : failed ? 'failed' : checked ? 'done' : 'pending';
       const btnText = skipped ? '⏭ 跳过' : failed ? '✗ 犯了' : checked ? '✓' : (isNegative ? '没犯' : (h.type === 'boolean' ? '打卡' : h.type === 'count' ? '记录' : '记录'));
 
-      // Match health tip for this habit
-      const matchedTips = HEALTH_TIPS.filter(t => t.habit === h.id);
-      const healthTip = matchedTips.length > 0 ? matchedTips[Math.floor(Date.now() / 86400000) % matchedTips.length] : null;
-
       html += `
         <div class="habit-card ${collapsedClass} ${negClass} ${doneCardClass}" id="card-${h.id}" style="position:relative">
           <span class="icon">${isNegative ? '❌' : h.icon}</span>
@@ -2102,8 +2113,7 @@ function renderCheckin() {
               ${streak > 0 ? `<span class="streak">🔥${streak}天</span>` : ''}
               ${timeHint}
             </div>
-            ${tipStr ? `<div style="font-size:11px;color:var(--accent);margin-top:3px;line-height:1.4">💡 ${tipStr}</div>` : ''}
-            ${healthTip && !checked && !skipped ? `<div class="health-tip-inline"><span class="ht-source">${healthTip.refBook}</span> ${healthTip.text}</div>` : ''}
+            ${!checked && !skipped && (tipStr || getHealthTipText(h.id, '')) ? `<div class="health-tip-inline"><span class="ht-source">${getHealthTipSource(h.id)}</span> ${getHealthTipText(h.id, tipStr)}</div>` : ''}
           </div>
           <div style="display:flex;gap:8px;align-items:center">
             ${!isNegative ? `<button class="checkin-btn ${skipped ? 'skip' : 'pending'}" onclick="event.stopPropagation();skipHabit('${h.id}')" title="跳过（不打断连续）">${skipped ? '⏭' : '⏭'}</button>` : ''}
