@@ -25,6 +25,16 @@ img{max-width:100%;display:block}
 .mini-badges{display:flex;gap:4px}
 .mini-badge{font-size:11px;font-weight:600;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));padding:2px 8px;border-radius:8px}
 .mini-tip{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5}
+.mini-quote{margin-top:8px;padding:12px;background:var(--bg2);border-radius:12px;cursor:pointer;overflow:hidden;max-height:32px;transition:max-height .3s ease}
+.mini-quote.expanded{max-height:200px}
+.mini-quote-text{font-size:14px;font-weight:600;color:var(--ink);line-height:1.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:all .3s}
+.mini-quote.expanded .mini-quote-text{white-space:normal;overflow:visible}
+.mini-quote-source{font-size:11px;color:var(--accent);font-weight:600;text-align:right;margin-top:2px;opacity:0;transition:opacity .2s}
+.mini-quote.expanded .mini-quote-source{opacity:1}
+.mini-quote-actions{display:flex;justify-content:space-between;margin-top:6px;opacity:0;transition:opacity .2s}
+.mini-quote.expanded .mini-quote-actions{opacity:1}
+.mini-quote-refresh,.mini-quote-ref{font-size:11px;color:var(--accent);cursor:pointer;font-weight:600;padding:2px 0}
+.mini-quote-refresh:active,.mini-quote-ref:active{opacity:.6}
 
 /* Today Card (hidden in minimal mode, kept for reference) */
 .today-card{display:none}
@@ -579,6 +589,14 @@ img{max-width:100%;display:block}
     <div class="mini-badges" id="todayBadges"></div>
   </div>
   <div class="mini-tip" id="todaySeasonTip"></div>
+  <div class="mini-quote" id="quoteCard" onclick="toggleQuoteExpand()">
+    <div class="mini-quote-text" id="quoteText"></div>
+    <div class="mini-quote-source" id="quoteSource"></div>
+    <div class="mini-quote-actions">
+      <span class="mini-quote-refresh" onclick="event.stopPropagation();refreshQuote()">🔄 换一条</span>
+      <span class="mini-quote-ref" onclick="event.stopPropagation();openRefPanel(event)">📚 参考文献</span>
+    </div>
+  </div>
 </div>
 
 <!-- Reminder Banner (hidden by default in minimal mode) -->
@@ -1990,6 +2008,9 @@ function renderTodayCard() {
   // Season tip (single line)
   let tipText = solarTerm ? solarTerm.tip : pack.tip;
   document.getElementById('todaySeasonTip').textContent = tipText;
+
+  // Quote
+  refreshQuote();
 }
 
 function refreshQuote() {
@@ -1997,20 +2018,16 @@ function refreshQuote() {
   let qTip = HEALTH_TIPS[qIdx];
   let attempts = 0;
   while (qTip.source.length < 20 && attempts < 10) {
-    qTip = HEALTH_TIPS[Math.floor(Math.random() * HEALTH_TIPS.length)];
+    qTip = HEALTH_TIPS[Math.floor(Math.random() * HEALTH_TIPS.length]);
     attempts++;
   }
-  const qRefBook = REF_BOOKS.find(b => b.name.includes(qTip.refBook));
-  const qRefUrl = qRefBook ? qRefBook.url : null;
   document.getElementById('quoteText').textContent = qTip.source.split('——')[0];
   document.getElementById('quoteSource').textContent = '——' + (qTip.source.split('——')[1] || '');
-  if (qRefUrl) {
-    document.getElementById('quoteCard').style.cursor = 'pointer';
-    document.getElementById('quoteCard').onclick = function(e) {
-      if (e.target.classList.contains('quote-refresh')) return;
-      window.open(qRefUrl, '_blank');
-    };
-  }
+}
+
+function toggleQuoteExpand() {
+  const el = document.getElementById('quoteCard');
+  if (el) el.classList.toggle('expanded');
 }
 
 function renderReminderBanner() {
