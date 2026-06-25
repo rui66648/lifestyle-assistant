@@ -40,15 +40,24 @@ img{max-width:100%;display:block}
 .today-ref-link:active{background:var(--accent);color:#fff}
 
 /* Reminder Banner */
-.reminder-banner{background:var(--bg2);border-radius:var(--radius);margin:12px 16px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.reminder-banner{background:var(--bg2);border-radius:var(--radius);margin:12px 16px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid var(--rule)}
 .reminder-banner .text{font-size:13px;color:var(--ink);flex:1;line-height:1.4}
-.reminder-banner .settings-btn{font-size:20px;padding:4px 8px;border-radius:8px;transition:background .2s}
+.reminder-banner .settings-btn{font-size:18px;padding:4px 8px;border-radius:8px;transition:background .2s}
 .reminder-banner .settings-btn:active{background:var(--rule)}
 
+/* Time-based ambient background */
+.ambient-bg{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:200px;pointer-events:none;z-index:-1;opacity:0.5;transition:background 2s ease}
+.ambient-bg.dawn{background:linear-gradient(180deg,#e8f5e9 0%,transparent 100%)}
+.ambient-bg.morning{background:linear-gradient(180deg,#c8e6c9 0%,transparent 100%)}
+.ambient-bg.midday{background:linear-gradient(180deg,#ffe0b2 0%,transparent 100%)}
+.ambient-bg.afternoon{background:linear-gradient(180deg,#fff9c4 0%,transparent 100%)}
+.ambient-bg.evening{background:linear-gradient(180deg,#ffe0b2 0%,transparent 100%)}
+.ambient-bg.night{background:linear-gradient(180deg,#d1c4e9 0%,transparent 100%)}
+
 /* Tabs */
-.tabs{display:flex;margin:0 16px;border-bottom:2px solid var(--rule);gap:0}
-.tab{flex:1;text-align:center;padding:10px 0;font-size:14px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s}
-.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tabs{display:flex;margin:0 16px;gap:6px;padding:8px 0}
+.tab{flex:1;text-align:center;padding:10px 0;font-size:14px;font-weight:600;color:var(--muted);background:var(--bg2);border-radius:12px;border-bottom:none;transition:all .2s}
+.tab.active{color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 2px 8px rgba(124,182,157,0.3)}
 .tab:active{opacity:.7}
 
 /* Sections */
@@ -61,18 +70,19 @@ img{max-width:100%;display:block}
 .time-group-label{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
 
 /* Habit Cards */
-.habit-card{background:#fff;border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;transition:all .2s;position:relative;overflow:hidden}
+.habit-card{background:#fff;border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;transition:all .3s;position:relative;overflow:hidden;border:2px solid transparent}
+.habit-card.done-card{border-color:var(--accent-light);background:linear-gradient(135deg,rgba(124,182,157,0.04),rgba(244,166,131,0.04))}
 .habit-card:active{transform:scale(.98)}
 .habit-card .icon{font-size:28px;width:36px;text-align:center;flex-shrink:0}
 .habit-card .info{flex:1;min-width:0}
 .habit-card .name{font-size:15px;font-weight:600;margin-bottom:2px}
 .habit-card .meta{font-size:12px;color:var(--muted);display:flex;gap:8px;align-items:center}
 .habit-card .streak{font-size:11px;color:var(--accent);background:var(--accent-light);padding:2px 8px;border-radius:10px;font-weight:600}
-.habit-card .checkin-btn{padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;transition:all .2s;flex-shrink:0}
-.habit-card .checkin-btn.pending{background:var(--accent);color:#fff}
-.habit-card .checkin-btn.pending:active{background:#6aa88a}
-.habit-card .checkin-btn.done{background:var(--accent-light);color:var(--accent)}
-.habit-card .checkin-btn.skip{background:#fff3cd;color:#856404}
+.habit-card .checkin-btn{width:44px;height:44px;border-radius:50%;font-size:16px;font-weight:600;transition:all .25s;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.habit-card .checkin-btn.pending{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 2px 8px rgba(124,182,157,0.3)}
+.habit-card .checkin-btn.pending:active{transform:scale(.9);background:#6aa88a}
+.habit-card .checkin-btn.done{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(124,182,157,0.2)}
+.habit-card .checkin-btn.skip{background:#fff3cd;color:#856404;width:36px;height:36px;font-size:14px}
 .habit-card .checkin-btn.failed{background:#fde2e2;color:#c0392b}
 .habit-card.negative{border-left:3px solid #e74c3c}
 .habit-card.negative .checkin-btn.pending{background:#e74c3c}
@@ -316,7 +326,7 @@ img{max-width:100%;display:block}
 ::-webkit-scrollbar{width:0;height:0}
 
 /* Collapsed habits */
-.habit-card.collapsed{max-height:0;overflow:hidden;padding-top:0;padding-bottom:0;margin:0;opacity:0;transition:all .35s ease}
+.habit-card.collapsed{max-height:0;overflow:hidden;padding-top:0;padding-bottom:0;margin:0;opacity:0;transition:all .5s cubic-bezier(.4,0,.2,1)}
 .time-group-label{cursor:pointer;user-select:none}
 .time-group-label .collapse-count{font-size:11px;color:var(--accent);background:var(--accent-light);padding:2px 8px;border-radius:10px;margin-left:auto;font-weight:600}
 .time-group-header{display:flex;align-items:center;justify-content:space-between;width:100%}
@@ -534,6 +544,7 @@ img{max-width:100%;display:block}
 </style>
 </head>
 <body>
+<div class="ambient-bg" id="ambientBg"></div>
 
 <!-- Toast -->
 <div class="toast" id="toast"></div>
@@ -567,9 +578,9 @@ img{max-width:100%;display:block}
 
 <!-- Tabs -->
 <div class="tabs">
-  <button class="tab active" data-tab="checkin" onclick="switchTab('checkin')">打卡</button>
-  <button class="tab" data-tab="stats" onclick="switchTab('stats')">统计</button>
-  <button class="tab" data-tab="manage" onclick="switchTab('manage')">管理</button>
+  <button class="tab active" data-tab="checkin" onclick="switchTab('checkin')">📋 打卡</button>
+  <button class="tab" data-tab="stats" onclick="switchTab('stats')">📊 统计</button>
+  <button class="tab" data-tab="manage" onclick="switchTab('manage')">⚙️ 管理</button>
 </div>
 
 <!-- Checkin Section -->
@@ -592,6 +603,8 @@ img{max-width:100%;display:block}
     </div>
   </div>
   <div class="stats-grid" id="statsGrid"></div>
+  <div class="section-title" style="margin-top:16px">📊 本周趋势</div>
+  <div id="weekBarChart" style="background:#fff;border-radius:var(--radius);padding:16px;margin-bottom:16px;box-shadow:var(--shadow)"></div>
   <div class="section-title">📊 习惯完成率排行（近30天）</div>
   <div id="rankingList"></div>
   <div class="heatmap" id="heatmapSection">
@@ -674,6 +687,8 @@ img{max-width:100%;display:block}
     <button onclick="openReviewPanel('monthly')">📅 月回顾</button>
     <button onclick="openReviewPanel('yearly')">📅 年回顾</button>
     <button onclick="window.open('https://rui66648.github.io/lifestyle-assistant/养生总结/养生总结.html', '_blank')">📊 养生总结</button>
+  </div>
+  <div class="manage-helpers">
     <button onclick="openClockPanel()">⏳ 子午流注</button>
     <button onclick="openConstitutionPanel()">🩺 体质测试</button>
     <button onclick="openHealthReportPanel()">📊 健康报告</button>
@@ -1720,6 +1735,48 @@ function getMaxStreak(habitId) {
   return max;
 }
 
+function renderWeekBarChart() {
+  const container = document.getElementById('weekBarChart');
+  if (!container) return;
+
+  const dayNames = ['日','一','二','三','四','五','六'];
+  const today = new Date();
+  const data = [];
+
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const key = formatDate(d);
+    const rec = checkinRecords[key] || {};
+    let done = 0, total = 0;
+    habitsConfig.forEach(h => {
+      total++;
+      if (h.type === 'water') {
+        if ((rec[h.id]?.value || 0) >= (h.waterConfig?.dailyGoal || 2000)) done++;
+      } else if (h.negative) {
+        if (rec[h.id]?.done && !rec[h.id].failed) done++;
+      } else if (rec[h.id]?.done) done++;
+    });
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    data.push({ day: dayNames[d.getDay()], date: `${d.getMonth()+1}/${d.getDate()}`, pct, isToday: i === 0 });
+  }
+
+  const maxH = 120;
+  let html = '<div style="display:flex;align-items:flex-end;justify-content:space-between;height:' + (maxH + 30) + 'px;gap:8px">';
+  data.forEach(d => {
+    const h = Math.max(2, (d.pct / 100) * maxH);
+    const isToday = d.isToday;
+    const color = isToday ? 'background:linear-gradient(180deg,var(--accent),var(--accent2))' : 'background:var(--accent-light)';
+    html += `<div style="flex:1;text-align:center">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:${isToday?'700':'400'}">${d.pct}%</div>
+      <div style="width:100%;height:${h}px;${color};border-radius:6px 6px 4px 4px;margin:0 auto;transition:height .5s"></div>
+      <div style="font-size:11px;color:${isToday?'var(--accent)':'var(--muted)'};margin-top:4px;font-weight:${isToday?'700':'400'}">${d.isToday ? '今天' : d.day}</div>
+    </div>`;
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
 function getCompletionRate(habitId, days) {
   let done = 0;
   const d = new Date();
@@ -1802,7 +1859,21 @@ function render() {
   renderCheckin();
   renderStats();
   renderManage();
+  renderAmbientBg();
   showGuide();
+}
+
+function renderAmbientBg() {
+  const h = new Date().getHours();
+  const el = document.getElementById('ambientBg');
+  if (!el) return;
+  el.className = 'ambient-bg';
+  if (h >= 5 && h < 7) el.classList.add('dawn');
+  else if (h >= 7 && h < 11) el.classList.add('morning');
+  else if (h >= 11 && h < 14) el.classList.add('midday');
+  else if (h >= 14 && h < 17) el.classList.add('afternoon');
+  else if (h >= 17 && h < 21) el.classList.add('evening');
+  else el.classList.add('night');
 }
 
 function renderTodayCard() {
@@ -1981,6 +2052,7 @@ function renderCheckin() {
   // Render items
   items.forEach(({h, checked, nextTime, overdue, soon}) => {
     const collapsedClass = checked ? 'collapsed' : '';
+    const doneCardClass = (checked || skipped) ? 'done-card' : '';
 
     if (h.type === 'water') {
       html += renderWaterTracker(h, rec).replace('class="water-tracker"', `class="water-tracker ${collapsedClass}"`);
@@ -2012,7 +2084,7 @@ function renderCheckin() {
       const btnClass = skipped ? 'skip' : failed ? 'failed' : checked ? 'done' : 'pending';
       const btnText = skipped ? '⏭ 跳过' : failed ? '✗ 犯了' : checked ? '✓' : (isNegative ? '没犯' : (h.type === 'boolean' ? '打卡' : h.type === 'count' ? '记录' : '记录'));
       html += `
-        <div class="habit-card ${collapsedClass} ${negClass}" id="card-${h.id}" style="position:relative">
+        <div class="habit-card ${collapsedClass} ${negClass} ${doneCardClass}" id="card-${h.id}" style="position:relative">
           <span class="icon">${isNegative ? '❌' : h.icon}</span>
           <div class="info">
             <div class="name">${isNegative ? '不' + h.name : h.name}${valueStr}</div>
@@ -2023,8 +2095,8 @@ function renderCheckin() {
             </div>
             ${tipStr ? `<div style="font-size:11px;color:var(--accent);margin-top:3px;line-height:1.4">💡 ${tipStr}</div>` : ''}
           </div>
-          <div style="display:flex;gap:6px;align-items:center">
-            ${!isNegative ? `<button class="checkin-btn ${skipped ? 'skip' : 'pending'}" onclick="event.stopPropagation();skipHabit('${h.id}')" title="跳过（不打断连续）">⏭</button>` : ''}
+          <div style="display:flex;gap:8px;align-items:center">
+            ${!isNegative ? `<button class="checkin-btn ${skipped ? 'skip' : 'pending'}" onclick="event.stopPropagation();skipHabit('${h.id}')" title="跳过（不打断连续）">${skipped ? '⏭' : '⏭'}</button>` : ''}
             <button class="checkin-btn ${btnClass}" onclick="handleCheckin('${h.id}')">
               ${btnText}
             </button>
@@ -2232,6 +2304,9 @@ function renderStats() {
     </div>`;
   }).join('');
   document.getElementById('rankingList').innerHTML = rankHtml || '<div style="text-align:center;color:var(--muted);font-size:13px;padding:20px">暂无数据</div>';
+
+  // Week bar chart
+  renderWeekBarChart();
 
   // Heatmap
   renderHeatmap();
