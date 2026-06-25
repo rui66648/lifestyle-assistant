@@ -72,7 +72,22 @@ img{max-width:100%;display:block}
 .habit-card .checkin-btn.pending{background:var(--accent);color:#fff}
 .habit-card .checkin-btn.pending:active{background:#6aa88a}
 .habit-card .checkin-btn.done{background:var(--accent-light);color:var(--accent)}
-.habit-card .delete-btn{position:absolute;bottom:0;left:0;right:0;background:#e74c3c;color:#fff;text-align:center;padding:6px;font-size:12px;font-weight:600;transform:translateY(100%);transition:transform .3s}
+.habit-card .checkin-btn.skip{background:#fff3cd;color:#856404}
+.habit-card .checkin-btn.failed{background:#fde2e2;color:#c0392b}
+.habit-card.negative{border-left:3px solid #e74c3c}
+.habit-card.negative .checkin-btn.pending{background:#e74c3c}
+.habit-card.negative .checkin-btn.done{background:#fde2e2;color:#e74c3c}
+/* Checkin animation */
+@keyframes checkinPop{0%{transform:scale(0.8);opacity:0}50%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+@keyframes confetti{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(-120px) rotate(720deg);opacity:0}}
+@keyframes starBurst{0%{transform:scale(0) translateY(0);opacity:1}50%{opacity:1}100%{transform:scale(1.5) translateY(-40px);opacity:0}}
+@keyframes cardGlow{0%{box-shadow:0 0 0 0 rgba(124,182,157,0.4)}100%{box-shadow:0 0 0 12px rgba(124,182,157,0)}}
+.habit-card.pop{animation:checkinPop .3s ease}
+.star-particle{position:absolute;pointer-events:none;font-size:16px;animation:starBurst .6s ease forwards;z-index:10}
+.confetti-particle{position:fixed;pointer-events:none;width:8px;height:8px;border-radius:2px;animation:confetti 1s ease forwards;z-index:999}
+.all-done-banner{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:999;text-align:center;pointer-events:none;animation:checkinPop .5s ease}
+.all-done-banner .emoji{font-size:64px;display:block;margin-bottom:8px}
+.all-done-banner .text{font-size:24px;font-weight:800;color:var(--accent)}
 .habit-card.show-delete .delete-btn{transform:translateY(0)}
 
 /* Ring Progress */
@@ -656,6 +671,8 @@ img{max-width:100%;display:block}
   </div>
   <div id="systemPacks"></div>
   <div class="manage-helpers">
+    <button onclick="openReviewPanel('monthly')">📅 月回顾</button>
+    <button onclick="openReviewPanel('yearly')">📅 年回顾</button>
     <button onclick="window.open('https://rui66648.github.io/lifestyle-assistant/养生总结/养生总结.html', '_blank')">📊 养生总结</button>
     <button onclick="openClockPanel()">⏳ 子午流注</button>
     <button onclick="openConstitutionPanel()">🩺 体质测试</button>
@@ -891,6 +908,17 @@ img{max-width:100%;display:block}
   🍅
 </button>
 
+<!-- 月度/年度回顾 Panel -->
+<div class="panel" id="reviewPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title">📅 养生回顾</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body" id="reviewPanelBody" style="padding:16px">
+  </div>
+</div>
+
 <!-- 首次访问引导 -->
 <div id="guideOverlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:200;align-items:center;justify-content:center">
   <div id="guideCard" style="background:#fff;border-radius:var(--radius);padding:32px 24px;margin:24px;max-width:340px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.2)">
@@ -967,7 +995,12 @@ const HABIT_LIBRARY = [
   {id:'sit_protect',name:'起身活动',icon:'🧍',category:'wulao',type:'timer',unit:'分钟',tip:'久坐伤肉，每45分钟起身5分钟'},
   {id:'stand_protect',name:'交替坐立',icon:'🪑',category:'wulao',type:'timer',unit:'分钟',tip:'久立伤骨，交替坐立踮脚尖'},
   {id:'lie_protect',name:'扩胸运动',icon:'🛏️',category:'wulao',type:'count',unit:'次',tip:'久卧伤气，适度活动扩胸'},
-  {id:'walk_protect',name:'拉筋放松',icon:'🚶',category:'wulao',type:'timer',unit:'分钟',tip:'久行伤筋，运动后拉伸'}
+  {id:'walk_protect',name:'拉筋放松',icon:'🚶',category:'wulao',type:'timer',unit:'分钟',tip:'久行伤筋，运动后拉伸'},
+  // 负向习惯
+  {id:'no_smoking',name:'吸烟',icon:'🚬',category:'negative',type:'boolean',unit:'',negative:true,tip:'记录今天有没有吸烟'},
+  {id:'no_drinking',name:'饮酒',icon:'🍺',category:'negative',type:'boolean',unit:'',negative:true,tip:'记录今天有没有饮酒'},
+  {id:'no_latenight',name:'熬夜',icon:'🌙',category:'negative',type:'boolean',unit:'',negative:true,tip:'23点后未睡即为熬夜'},
+  {id:'no_junkfood',name:'吃垃圾食品',icon:'🍔',category:'negative',type:'boolean',unit:'',negative:true,tip:'记录今天有没有吃垃圾食品'}
 ];
 
 const CATEGORY_MAP = {
@@ -1971,12 +2004,18 @@ function renderCheckin() {
       const reminderStr = reminder && reminder.enabled ? reminder.time : '';
       const valueStr = checked ? (h.type === 'boolean' ? '' : ` ${rec[h.id].value}${h.unit}`) : '';
       const tipStr = h.tip || '';
+      const skipped = rec[h.id] && rec[h.id].skipped;
+      const failed = h.negative && rec[h.id] && rec[h.id].failed;
+      const isNegative = h.negative;
+      const negClass = isNegative ? ' negative' : '';
       const timeHint = overdue ? `<span style="color:#e74c3c;font-size:11px">已过期</span>` : soon ? `<span style="color:#f39c12;font-size:11px">即将</span>` : '';
+      const btnClass = skipped ? 'skip' : failed ? 'failed' : checked ? 'done' : 'pending';
+      const btnText = skipped ? '⏭ 跳过' : failed ? '✗ 犯了' : checked ? '✓' : (isNegative ? '没犯' : (h.type === 'boolean' ? '打卡' : h.type === 'count' ? '记录' : '记录'));
       html += `
-        <div class="habit-card ${collapsedClass}" id="card-${h.id}">
-          <span class="icon">${h.icon}</span>
+        <div class="habit-card ${collapsedClass} ${negClass}" id="card-${h.id}" style="position:relative">
+          <span class="icon">${isNegative ? '❌' : h.icon}</span>
           <div class="info">
-            <div class="name">${h.name}${valueStr}</div>
+            <div class="name">${isNegative ? '不' + h.name : h.name}${valueStr}</div>
             <div class="meta">
               ${reminderStr ? `<span>⏰ ${reminderStr}</span>` : ''}
               ${streak > 0 ? `<span class="streak">🔥${streak}天</span>` : ''}
@@ -1984,9 +2023,12 @@ function renderCheckin() {
             </div>
             ${tipStr ? `<div style="font-size:11px;color:var(--accent);margin-top:3px;line-height:1.4">💡 ${tipStr}</div>` : ''}
           </div>
-          <button class="checkin-btn ${checked ? 'done' : 'pending'}" onclick="handleCheckin('${h.id}')">
-            ${checked ? '✓' : (h.type === 'boolean' ? '打卡' : h.type === 'count' ? '记录' : '记录')}
-          </button>
+          <div style="display:flex;gap:6px;align-items:center">
+            ${!isNegative ? `<button class="checkin-btn ${skipped ? 'skip' : 'pending'}" onclick="event.stopPropagation();skipHabit('${h.id}')" title="跳过（不打断连续）">⏭</button>` : ''}
+            <button class="checkin-btn ${btnClass}" onclick="handleCheckin('${h.id}')">
+              ${btnText}
+            </button>
+          </div>
         </div>`;
     }
   });
@@ -2746,6 +2788,31 @@ function handleCheckin(habitId) {
     return;
   }
 
+  if (h.negative) {
+    // Negative habit: click to mark "didn't do it" (success) or "did it" (failure)
+    if (rec[habitId] && rec[habitId].failed) {
+      // Undo - mark as "didn't do it"
+      delete rec[habitId];
+      showToast(`✅ ${h.icon} 今天没${h.name}，继续保持！`);
+      playSound('checkin');
+    } else if (rec[habitId] && rec[habitId].done) {
+      // Mark as failed (did the bad thing)
+      rec[habitId] = {done: false, failed: true, value: 0};
+      showToast(`❌ 今天${h.name}了，明天加油`);
+    } else {
+      // Default: didn't do it (success)
+      rec[habitId] = {done: true, failed: false, value: 1};
+      showToast(`✅ ${h.icon} 今天没${h.name}，继续保持！`);
+      playSound('checkin');
+      checkLevelUp();
+    }
+    checkinRecords[today()] = rec;
+    saveRecords();
+    animateCheckin(habitId);
+    render();
+    return;
+  }
+
   if (h.type === 'boolean') {
     if (rec[habitId] && rec[habitId].done) {
       // Undo
@@ -2755,6 +2822,7 @@ function handleCheckin(habitId) {
       rec[habitId] = {done: true, value: 1};
       showToast(`${h.icon} ${h.name} 打卡成功！`);
       playSound('checkin');
+      animateCheckin(habitId);
       checkLevelUp();
     }
     checkinRecords[today()] = rec;
@@ -2814,8 +2882,203 @@ function checkLevelUp() {
   const done = getTodayDone();
   const total = getTodayTotal();
   if (done === total && total > 0) {
-    setTimeout(() => playSound('complete'), 300);
+    setTimeout(() => {
+      playSound('complete');
+      showAllDoneCelebration();
+    }, 300);
   }
+}
+
+// ===================== SKIP LOGIC =====================
+
+function skipHabit(habitId) {
+  const rec = checkinRecords[today()] || {};
+  if (rec[habitId] && rec[habitId].skipped) {
+    delete rec[habitId];
+    showToast('已取消跳过');
+  } else {
+    rec[habitId] = {skipped: true};
+    showToast(`⏭ 已跳过，不打断连续记录`);
+  }
+  checkinRecords[today()] = rec;
+  saveRecords();
+  render();
+}
+
+// ===================== CHECKIN ANIMATIONS =====================
+
+function animateCheckin(habitId) {
+  const card = document.getElementById('card-' + habitId);
+  if (!card) return;
+  card.classList.add('pop');
+  setTimeout(() => card.classList.remove('pop'), 300);
+
+  // Star burst particles
+  const emojis = ['⭐','✨','🌟','💫','🔥'];
+  for (let i = 0; i < 5; i++) {
+    setTimeout(() => {
+      const star = document.createElement('div');
+      star.className = 'star-particle';
+      star.textContent = emojis[i % emojis.length];
+      star.style.left = (card.offsetWidth / 2 + (Math.random() - 0.5) * 40) + 'px';
+      star.style.top = (card.offsetHeight / 2) + 'px';
+      star.style.animationDelay = (i * 0.05) + 's';
+      card.appendChild(star);
+      setTimeout(() => star.remove(), 600);
+    }, i * 50);
+  }
+}
+
+function showAllDoneCelebration() {
+  // Full screen celebration
+  const banner = document.createElement('div');
+  banner.className = 'all-done-banner';
+  banner.innerHTML = '<span class="emoji">🎉</span><span class="text">全部完成！</span>';
+  document.body.appendChild(banner);
+  setTimeout(() => banner.remove(), 2000);
+
+  // Confetti particles
+  const colors = ['#7CB69D','#F4A683','#5B8DB8','#E07A5F','#C19A6B','#FFD700'];
+  for (let i = 0; i < 30; i++) {
+    setTimeout(() => {
+      const p = document.createElement('div');
+      p.className = 'confetti-particle';
+      p.style.background = colors[i % colors.length];
+      p.style.left = (Math.random() * 100) + 'vw';
+      p.style.top = (50 + Math.random() * 20) + 'vh';
+      p.style.animationDuration = (0.8 + Math.random() * 0.5) + 's';
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 1500);
+    }, i * 30);
+  }
+}
+
+// ===================== MONTHLY/ANNUAL REVIEW =====================
+
+function openReviewPanel(mode) {
+  renderReview(mode);
+  openPanel('reviewPanel');
+}
+
+function renderReview(mode) {
+  const body = document.getElementById('reviewPanelBody');
+  const today = new Date();
+  const isMonthly = mode === 'monthly';
+
+  // Date range
+  const startDate = new Date(today);
+  if (isMonthly) {
+    startDate.setDate(1); // first of month
+  } else {
+    startDate.setMonth(0, 1); // first of year
+  }
+  startDate.setHours(0,0,0,0);
+
+  // Calculate stats
+  let totalDays = 0, activeDays = 0, totalHabits = habitsConfig.length;
+  let totalCheckins = 0, totalPossible = 0;
+  const habitStats = {};
+  let bestHabit = null, bestCount = 0;
+  let maxStreak = 0, currentStreak = 0;
+
+  const d = new Date(startDate);
+  while (d <= today) {
+    const key = formatDate(d);
+    const rec = checkinRecords[key];
+    totalDays++;
+
+    let dayHasAny = false;
+    habitsConfig.forEach(h => {
+      totalPossible++;
+      habitStats[h.id] = habitStats[h.id] || {name:h.name, icon:h.icon, done:0, total:0};
+      habitStats[h.id].total++;
+
+      if (h.type === 'water') {
+        if ((rec?.[h.id]?.value || 0) >= (h.waterConfig?.dailyGoal || 2000)) {
+          totalCheckins++;
+          habitStats[h.id].done++;
+          dayHasAny = true;
+        }
+      } else if (h.negative) {
+        if (rec?.[h.id]?.done && !rec[h.id].failed) {
+          totalCheckins++;
+          habitStats[h.id].done++;
+          dayHasAny = true;
+        }
+      } else {
+        if (rec?.[h.id]?.done) {
+          totalCheckins++;
+          habitStats[h.id].done++;
+          dayHasAny = true;
+        }
+      }
+    });
+
+    if (dayHasAny) {
+      activeDays++;
+      currentStreak++;
+      maxStreak = Math.max(maxStreak, currentStreak);
+    } else {
+      currentStreak = 0;
+    }
+
+    d.setDate(d.getDate() + 1);
+  }
+
+  const completionRate = totalPossible > 0 ? Math.round((totalCheckins / totalPossible) * 100) : 0;
+
+  // Find best habit
+  Object.values(habitStats).forEach(s => {
+    if (s.done > bestCount) { bestCount = s.done; bestHabit = s; }
+  });
+
+  const periodLabel = isMonthly ? `${today.getMonth()+1}月` : `${today.getFullYear()}年`;
+  const totalPomo = getPomoTotalStats(startDate);
+
+  let html = `
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:14px;color:var(--muted)">${periodLabel}回顾</div>
+      <div style="font-size:28px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent">${completionRate}%</div>
+      <div style="font-size:13px;color:var(--muted)">总完成率</div>
+    </div>
+    <div class="report-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="report-card"><div class="rc-num">${activeDays}/${totalDays}</div><div class="rc-label">活跃天</div></div>
+      <div class="report-card"><div class="rc-num">${maxStreak}</div><div class="rc-label">最长连续</div></div>
+      <div class="report-card"><div class="rc-num">${totalPomo.count}</div><div class="rc-label">番茄数</div></div>
+    </div>
+    <div style="margin-top:20px;font-size:14px;font-weight:700;margin-bottom:10px">🏆 最常完成的习惯</div>
+    ${bestHabit ? `<div style="background:var(--bg2);border-radius:12px;padding:14px;text-align:center;margin-bottom:16px">
+      <span style="font-size:24px">${bestHabit.icon}</span>
+      <div style="font-size:15px;font-weight:700;margin:4px 0">${bestHabit.name}</div>
+      <div style="font-size:13px;color:var(--muted)">${bestHabit.done}/${bestHabit.total} 天</div>
+    </div>` : '<div style="color:var(--muted);font-size:13px">暂无数据</div>'}
+    <div style="font-size:14px;font-weight:700;margin-bottom:10px">📊 习惯排行</div>
+  `;
+
+  Object.values(habitStats).sort((a,b) => (b.done/b.total) - (a.done/a.total)).slice(0, 5).forEach(s => {
+    const pct = s.total > 0 ? Math.round((s.done / s.total) * 100) : 0;
+    html += `<div class="report-habit-row">
+      <span class="report-habit-name">${s.icon} ${s.name}</span>
+      <div class="report-habit-bar"><div class="report-habit-fill" style="width:${pct}%;background:var(--accent)"></div></div>
+      <span class="report-habit-pct">${pct}%</span>
+    </div>`;
+  });
+
+  body.innerHTML = html;
+}
+
+function getPomoTotalStats(since) {
+  let count = 0, minutes = 0;
+  const d = new Date(since);
+  const today = new Date();
+  while (d <= today) {
+    const key = 'pomo_stats_' + formatDate(d);
+    const stats = JSON.parse(localStorage.getItem(key) || '{"count":0,"minutes":0}');
+    count += stats.count;
+    minutes += stats.minutes;
+    d.setDate(d.getDate() + 1);
+  }
+  return {count, minutes};
 }
 
 // ===================== EDIT MODE =====================
