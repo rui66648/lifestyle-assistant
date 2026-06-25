@@ -323,6 +323,26 @@ img{max-width:100%;display:block}
 .ai-loading span:nth-child(2){animation-delay:-0.16s}
 @keyframes aiBounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
 #aiFab:active{transform:scale(0.92)}
+#pomoFab:active{transform:scale(0.92)}
+
+/* Heatmap */
+.heatmap-card{background:#fff;border-radius:14px;padding:16px;margin:12px 16px;box-shadow:var(--shadow)}
+.heatmap-title{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.heatmap-grid{display:grid;grid-template-columns:repeat(53,1fr);gap:2px}
+.heatmap-cell{width:100%;aspect-ratio:1;border-radius:2px;background:var(--rule)}
+.heatmap-cell.l0{background:#ebedf0}
+.heatmap-cell.l1{background:#c6e48b}
+.heatmap-cell.l2{background:#7bc96f}
+.heatmap-cell.l3{background:#239a3b}
+.heatmap-cell.l4{background:#196127}
+.heatmap-legend{display:flex;align-items:center;gap:6px;margin-top:8px;justify-content:flex-end;font-size:11px;color:var(--muted)}
+.heatmap-legend span{width:10px;height:10px;border-radius:2px}
+.heatmap-months{display:grid;grid-template-columns:repeat(53,1fr);gap:2px;margin-bottom:4px;font-size:10px;color:var(--muted)}
+.heatmap-months span{grid-column:span 4}
+.heatmap-labels{display:flex;flex-direction:column;gap:2px;margin-right:4px;font-size:10px;color:var(--muted);line-height:1}
+.heatmap-row{display:flex;align-items:center}
+.heatmap-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.heatmap-inner{min-width:320px}
 
 /* Constitution Test */
 .const-progress{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--rule)}
@@ -598,6 +618,18 @@ img{max-width:100%;display:block}
       <div id="levelNext" style="font-size:12px;color:var(--muted)">再打卡 3 天升级为「养生学徒」</div>
     </div>
   </div>
+
+  <!-- 打卡热力图 -->
+  <div class="heatmap-card" id="heatmapCard" style="display:none">
+    <div class="heatmap-title">🔥 打卡热力图</div>
+    <div class="heatmap-wrap">
+      <div class="heatmap-inner" id="heatmapInner"></div>
+    </div>
+    <div class="heatmap-legend">
+      少 <span style="background:#ebedf0"></span> <span style="background:#c6e48b"></span> <span style="background:#7bc96f"></span> <span style="background:#239a3b"></span> <span style="background:#196127"></span> 多
+    </div>
+  </div>
+
   <div class="pack-card my-pack" id="myPackCard">
     <div class="pack-header" onclick="togglePack('myPack')">
       <div class="pack-header-left">
@@ -827,6 +859,37 @@ img{max-width:100%;display:block}
     <button class="const-btn" onclick="document.getElementById('importFile').click()" style="background:linear-gradient(135deg,var(--accent2),var(--accent))">📤 导入数据</button>
   </div>
 </div>
+
+<!-- 番茄钟 Panel -->
+<div class="panel" id="pomodoroPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title">🍅 番茄专注钟</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body" style="padding:24px;text-align:center">
+    <div style="font-size:13px;color:var(--muted);margin-bottom:16px">专注25分钟，休息5分钟，循环4次后长休息15分钟</div>
+    <div id="pomoTimer" style="font-size:64px;font-weight:800;font-family:'GeistMono',monospace;color:var(--accent);letter-spacing:2px;margin:20px 0">25:00</div>
+    <div id="pomoStatus" style="font-size:16px;font-weight:600;color:var(--muted);margin-bottom:20px">准备开始专注</div>
+    <div id="pomoProgress" style="width:100%;height:8px;background:var(--rule);border-radius:4px;margin-bottom:24px;overflow:hidden"><div id="pomoProgressBar" style="width:0%;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .3s"></div></div>
+    <div id="pomoHabitSelect" style="margin-bottom:16px">
+      <select id="pomoHabit" style="padding:10px 14px;border:1px solid var(--rule);border-radius:10px;font-size:14px;background:var(--bg);width:100%;max-width:280px">
+        <option value="">-- 选择要专注的习惯 --</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:12px;justify-content:center">
+      <button id="pomoStartBtn" class="const-btn" onclick="startPomodoro()" style="margin:0">▶️ 开始专注</button>
+      <button id="pomoPauseBtn" class="const-btn" onclick="pausePomodoro()" style="margin:0;background:linear-gradient(135deg,var(--accent2),var(--accent));display:none">⏸️ 暂停</button>
+      <button id="pomoStopBtn" class="const-btn" onclick="stopPomodoro()" style="margin:0;background:var(--muted);display:none">⏹️ 结束</button>
+    </div>
+    <div id="pomoStats" style="margin-top:20px;font-size:13px;color:var(--muted)">今日专注：0 次 · 0 分钟</div>
+  </div>
+</div>
+
+<!-- 番茄钟浮动按钮 -->
+<button id="pomoFab" onclick="openPomodoroPanel()" style="position:fixed;bottom:152px;right:16px;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#E07A5F,#F4A683);color:#fff;font-size:20px;box-shadow:0 4px 12px rgba(224,122,95,0.35);z-index:50;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:transform .2s">
+  🍅
+</button>
 
 <!-- 首次访问引导 -->
 <div id="guideOverlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:200;align-items:center;justify-content:center">
@@ -1835,8 +1898,11 @@ function renderCheckin() {
 
   // Collect all enabled habits with sort info
   const items = [];
+  const todayDow = now.getDay();
   habitsConfig.forEach(h => {
     if (h.enabled === false) return;
+    const repeat = h.repeat || [0,1,2,3,4,5,6];
+    if (!repeat.includes(todayDow)) return; // skip if not scheduled today
     const checked = isChecked(h);
     const nextTime = getNextTime(h);
     const overdue = !checked && nextTime < nowMinutes;
@@ -2245,12 +2311,14 @@ function renderMyPack() {
     const reminder = h.reminder;
     const reminderStr = reminder && reminder.enabled ? `⏰ ${reminder.time}` : '';
     const typeStr = h.type === 'boolean' ? '打卡' : h.type === 'count' ? `计数(${h.unit})` : h.type === 'water' ? '饮水追踪' : `计时(${h.unit})`;
+    const repeatArr = h.repeat || [0,1,2,3,4,5,6];
+    const repeatLabel = repeatArr.length === 7 ? '每天' : repeatArr.length === 5 && !repeatArr.includes(0) && !repeatArr.includes(6) ? '工作日' : repeatArr.length === 2 && repeatArr.includes(0) && repeatArr.includes(6) ? '周末' : `每周${repeatArr.length}天`;
     html += `
       <div class="my-habit-item" id="myhabit-${h.id}">
         <span class="mh-icon">${h.icon}</span>
         <div class="mh-info">
           <div class="mh-name">${h.name}</div>
-          <div class="mh-meta"><span>${typeStr}</span>${reminderStr ? `<span>${reminderStr}</span>` : ''}</div>
+          <div class="mh-meta"><span>${typeStr}</span><span style="cursor:pointer" onclick="toggleRepeat('${h.id}')">${repeatLabel}</span>${reminderStr ? `<span>${reminderStr}</span>` : ''}</div>
         </div>
         <div class="mh-toggle ${enabled ? 'on' : ''}" onclick="toggleHabitEnabled('${h.id}')"></div>
         <div class="mh-actions">
@@ -2270,6 +2338,26 @@ function toggleHabitEnabled(habitId) {
   renderMyPack();
   renderCheckin();
   showToast(h.enabled !== false ? `${h.icon} ${h.name} 已启用` : `${h.icon} ${h.name} 已禁用`);
+}
+
+function toggleRepeat(habitId) {
+  const h = habitsConfig.find(x => x.id === habitId);
+  if (!h) return;
+  const current = h.repeat || [0,1,2,3,4,5,6];
+  // Cycle: every day -> workdays -> weekend -> every day
+  if (current.length === 7) {
+    h.repeat = [1,2,3,4,5]; // workdays
+    showToast(`${h.icon} ${h.name}：改为工作日打卡`);
+  } else if (current.length === 5 && !current.includes(0) && !current.includes(6)) {
+    h.repeat = [0,6]; // weekend
+    showToast(`${h.icon} ${h.name}：改为周末打卡`);
+  } else {
+    h.repeat = [0,1,2,3,4,5,6]; // every day
+    showToast(`${h.icon} ${h.name}：改为每天打卡`);
+  }
+  saveConfig();
+  renderMyPack();
+  renderCheckin();
 }
 
 function renderSystemPacks() {
@@ -2534,6 +2622,7 @@ function renderManage() {
   renderMyPack();
   renderSystemPacks();
   renderLevelCard();
+  renderHeatmap();
 }
 
 function renderLevelCard() {
@@ -2554,6 +2643,83 @@ function renderLevelCard() {
   } else {
     document.getElementById('levelNext').textContent = '已达最高等级，继续保持！';
   }
+}
+
+function renderHeatmap() {
+  const container = document.getElementById('heatmapInner');
+  const card = document.getElementById('heatmapCard');
+  if (!container || !card) return;
+
+  // Build last 53 weeks
+  const today = new Date();
+  const cells = [];
+  const dayNames = ['日', '一', '二', '三', '四', '五', '六'];
+
+  // Find start of week (Sunday) 53 weeks ago
+  const startDate = new Date(today);
+  startDate.setDate(today.getDate() - 52 * 7 - today.getDay());
+
+  // Calculate daily completion counts
+  for (let w = 0; w < 53; w++) {
+    const weekCells = [];
+    for (let d = 0; d < 7; d++) {
+      const date = new Date(startDate);
+      date.setDate(startDate.getDate() + w * 7 + d);
+      const key = formatDate(date);
+      const rec = checkinRecords[key];
+      let count = 0;
+      if (rec && habitsConfig.length > 0) {
+        habitsConfig.forEach(h => {
+          if (h.type === 'water') {
+            if ((rec[h.id]?.value || 0) >= (h.waterConfig?.dailyGoal || 2000)) count++;
+          } else if (h.type === 'select') {
+            if (rec[h.id]?.value) count++;
+          } else {
+            if (rec[h.id]?.done) count++;
+          }
+        });
+      }
+      weekCells.push({ date: key, count, day: date.getDay() });
+    }
+    cells.push(weekCells);
+  }
+
+  // Check if any data exists
+  const hasData = cells.some(w => w.some(d => d.count > 0));
+  if (!hasData) {
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = 'block';
+
+  // Build HTML
+  let html = '<div class="heatmap-row">';
+
+  // Day labels
+  html += '<div class="heatmap-labels">';
+  for (let d = 0; d < 7; d++) {
+    html += `<span>${dayNames[d]}</span>`;
+  }
+  html += '</div>';
+
+  // Grid
+  html += '<div style="flex:1">';
+  html += '<div class="heatmap-grid">';
+
+  cells.forEach(week => {
+    week.forEach(day => {
+      let level = 'l0';
+      if (day.count >= 7) level = 'l4';
+      else if (day.count >= 5) level = 'l3';
+      else if (day.count >= 3) level = 'l2';
+      else if (day.count >= 1) level = 'l1';
+      const tooltip = `${day.date} · ${day.count}个习惯完成`;
+      html += `<div class="heatmap-cell ${level}" title="${tooltip}"></div>`;
+    });
+  });
+
+  html += '</div></div></div>';
+  container.innerHTML = html;
 }
 
 // ===================== TABS =====================
@@ -2974,6 +3140,7 @@ function addHabitFromLib(id) {
     category: lib.category,
     type: lib.type,
     unit: lib.unit,
+    repeat: [0,1,2,3,4,5,6],
     reminder: {enabled:false, time:'08:00', days:[0,1,2,3,4,5,6], method:'in-app'}
   };
   if (lib.type === 'water' && lib.waterConfig) {
@@ -3012,6 +3179,7 @@ function addCustomHabit() {
     category: 'daytime',
     type,
     unit,
+    repeat: [0,1,2,3,4,5,6],
     reminder: {enabled:false, time:'08:00', days:[0,1,2,3,4,5,6], method:'in-app'}
   });
   saveConfig();
@@ -4160,6 +4328,161 @@ function nextGuideStep() {
 function skipGuide() {
   localStorage.setItem('has_seen_guide', 'true');
   document.getElementById('guideOverlay').style.display = 'none';
+}
+
+// ===================== POMODORO =====================
+
+let pomoInterval = null;
+let pomoSeconds = 25 * 60;
+let pomoRunning = false;
+let pomoPaused = false;
+let pomoMode = 'work'; // work / shortBreak / longBreak
+let pomoCycle = 0;
+const POMO_WORK = 25 * 60;
+const POMO_SHORT = 5 * 60;
+const POMO_LONG = 15 * 60;
+
+function openPomodoroPanel() {
+  populatePomoHabits();
+  updatePomoStats();
+  openPanel('pomodoroPanel');
+}
+
+function populatePomoHabits() {
+  const sel = document.getElementById('pomoHabit');
+  sel.innerHTML = '<option value="">-- 选择要专注的习惯 --</option>';
+  habitsConfig.forEach(h => {
+    if (h.enabled !== false) {
+      sel.innerHTML += `<option value="${h.id}">${h.icon} ${h.name}</option>`;
+    }
+  });
+}
+
+function formatPomoTime(sec) {
+  const m = Math.floor(sec / 60).toString().padStart(2, '0');
+  const s = (sec % 60).toString().padStart(2, '0');
+  return `${m}:${s}`;
+}
+
+function updatePomoDisplay() {
+  document.getElementById('pomoTimer').textContent = formatPomoTime(pomoSeconds);
+  const total = pomoMode === 'work' ? POMO_WORK : pomoMode === 'shortBreak' ? POMO_SHORT : POMO_LONG;
+  const pct = ((total - pomoSeconds) / total) * 100;
+  document.getElementById('pomoProgressBar').style.width = pct + '%';
+}
+
+function startPomodoro() {
+  if (pomoRunning) return;
+  pomoRunning = true;
+  pomoPaused = false;
+  document.getElementById('pomoStartBtn').style.display = 'none';
+  document.getElementById('pomoPauseBtn').style.display = 'inline-block';
+  document.getElementById('pomoStopBtn').style.display = 'inline-block';
+  document.getElementById('pomoStatus').textContent = pomoMode === 'work' ? '🔥 专注中...' : pomoMode === 'shortBreak' ? '☕ 短休息中...' : '🌿 长休息中...';
+  if (pomoMode === 'work') playSound('checkin');
+  pomoInterval = setInterval(() => {
+    if (pomoSeconds > 0) {
+      pomoSeconds--;
+      updatePomoDisplay();
+    } else {
+      onPomoComplete();
+    }
+  }, 1000);
+}
+
+function pausePomodoro() {
+  if (!pomoRunning || pomoPaused) return;
+  pomoPaused = true;
+  clearInterval(pomoInterval);
+  document.getElementById('pomoPauseBtn').textContent = '▶️ 继续';
+  document.getElementById('pomoPauseBtn').onclick = resumePomodoro;
+  document.getElementById('pomoStatus').textContent = '⏸️ 已暂停';
+}
+
+function resumePomodoro() {
+  if (!pomoRunning || !pomoPaused) return;
+  pomoPaused = false;
+  document.getElementById('pomoPauseBtn').textContent = '⏸️ 暂停';
+  document.getElementById('pomoPauseBtn').onclick = pausePomodoro;
+  document.getElementById('pomoStatus').textContent = pomoMode === 'work' ? '🔥 专注中...' : pomoMode === 'shortBreak' ? '☕ 短休息中...' : '🌿 长休息中...';
+  pomoInterval = setInterval(() => {
+    if (pomoSeconds > 0) {
+      pomoSeconds--;
+      updatePomoDisplay();
+    } else {
+      onPomoComplete();
+    }
+  }, 1000);
+}
+
+function stopPomodoro() {
+  clearInterval(pomoInterval);
+  pomoRunning = false;
+  pomoPaused = false;
+  pomoInterval = null;
+  pomoMode = 'work';
+  pomoSeconds = POMO_WORK;
+  pomoCycle = 0;
+  updatePomoDisplay();
+  document.getElementById('pomoStartBtn').style.display = 'inline-block';
+  document.getElementById('pomoPauseBtn').style.display = 'none';
+  document.getElementById('pomoStopBtn').style.display = 'none';
+  document.getElementById('pomoPauseBtn').textContent = '⏸️ 暂停';
+  document.getElementById('pomoPauseBtn').onclick = pausePomodoro;
+  document.getElementById('pomoStatus').textContent = '准备开始专注';
+}
+
+function onPomoComplete() {
+  clearInterval(pomoInterval);
+  playSound(pomoMode === 'work' ? 'complete' : 'checkin');
+  if (pomoMode === 'work') {
+    pomoCycle++;
+    savePomoStats(25);
+    // Auto checkin if habit selected
+    const habitId = document.getElementById('pomoHabit').value;
+    if (habitId) {
+      const rec = checkinRecords[today()] || {};
+      rec[habitId] = {done: true, value: 1};
+      checkinRecords[today()] = rec;
+      saveRecords();
+      render();
+    }
+    if (pomoCycle % 4 === 0) {
+      pomoMode = 'longBreak';
+      pomoSeconds = POMO_LONG;
+      showToast('🎉 完成4个番茄！休息15分钟');
+    } else {
+      pomoMode = 'shortBreak';
+      pomoSeconds = POMO_SHORT;
+      showToast('✅ 专注完成！休息5分钟');
+    }
+  } else {
+    pomoMode = 'work';
+    pomoSeconds = POMO_WORK;
+    showToast('⏰ 休息结束，继续专注！');
+  }
+  pomoRunning = false;
+  pomoPaused = false;
+  updatePomoDisplay();
+  document.getElementById('pomoStartBtn').style.display = 'inline-block';
+  document.getElementById('pomoPauseBtn').style.display = 'none';
+  document.getElementById('pomoStopBtn').style.display = 'none';
+  document.getElementById('pomoStatus').textContent = pomoMode === 'work' ? '准备开始专注' : pomoMode === 'shortBreak' ? '准备短休息' : '准备长休息';
+  updatePomoStats();
+}
+
+function savePomoStats(minutes) {
+  const key = 'pomo_stats_' + today();
+  const stats = JSON.parse(localStorage.getItem(key) || '{"count":0,"minutes":0}');
+  stats.count++;
+  stats.minutes += minutes;
+  localStorage.setItem(key, JSON.stringify(stats));
+}
+
+function updatePomoStats() {
+  const key = 'pomo_stats_' + today();
+  const stats = JSON.parse(localStorage.getItem(key) || '{"count":0,"minutes":0}');
+  document.getElementById('pomoStats').textContent = `今日专注：${stats.count} 次 · ${stats.minutes} 分钟`;
 }
 
 // ===================== SERVICE WORKER =====================
