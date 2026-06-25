@@ -87,6 +87,9 @@ img{max-width:100%;display:block}
 .habit-card.negative{border-left:3px solid #e74c3c}
 .habit-card.negative .checkin-btn.pending{background:#e74c3c}
 .habit-card.negative .checkin-btn.done{background:#fde2e2;color:#e74c3c}
+/* Health tip inline in habit card */
+.health-tip-inline{font-size:11px;color:var(--muted);line-height:1.5;margin-top:4px;padding:6px 8px;background:var(--bg2);border-radius:8px;border-left:2px solid var(--accent)}
+.health-tip-inline .ht-source{font-size:10px;color:var(--accent);font-weight:700;margin-right:4px}
 /* Checkin animation */
 @keyframes checkinPop{0%{transform:scale(0.8);opacity:0}50%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
 @keyframes confetti{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(-120px) rotate(720deg);opacity:0}}
@@ -2084,6 +2087,11 @@ function renderCheckin() {
       const timeHint = overdue ? `<span style="color:#e74c3c;font-size:11px">已过期</span>` : soon ? `<span style="color:#f39c12;font-size:11px">即将</span>` : '';
       const btnClass = skipped ? 'skip' : failed ? 'failed' : checked ? 'done' : 'pending';
       const btnText = skipped ? '⏭ 跳过' : failed ? '✗ 犯了' : checked ? '✓' : (isNegative ? '没犯' : (h.type === 'boolean' ? '打卡' : h.type === 'count' ? '记录' : '记录'));
+
+      // Match health tip for this habit
+      const matchedTips = HEALTH_TIPS.filter(t => t.habit === h.id);
+      const healthTip = matchedTips.length > 0 ? matchedTips[Math.floor(Date.now() / 86400000) % matchedTips.length] : null;
+
       html += `
         <div class="habit-card ${collapsedClass} ${negClass} ${doneCardClass}" id="card-${h.id}" style="position:relative">
           <span class="icon">${isNegative ? '❌' : h.icon}</span>
@@ -2095,6 +2103,7 @@ function renderCheckin() {
               ${timeHint}
             </div>
             ${tipStr ? `<div style="font-size:11px;color:var(--accent);margin-top:3px;line-height:1.4">💡 ${tipStr}</div>` : ''}
+            ${healthTip && !checked && !skipped ? `<div class="health-tip-inline"><span class="ht-source">${healthTip.refBook}</span> ${healthTip.text}</div>` : ''}
           </div>
           <div style="display:flex;gap:8px;align-items:center">
             ${!isNegative ? `<button class="checkin-btn ${skipped ? 'skip' : 'pending'}" onclick="event.stopPropagation();skipHabit('${h.id}')" title="跳过（不打断连续）">${skipped ? '⏭' : '⏭'}</button>` : ''}
