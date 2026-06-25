@@ -525,6 +525,7 @@ img{max-width:100%;display:block}
 <!-- Reminder Banner -->
 <div class="reminder-banner" id="reminderBanner">
   <span class="text" id="reminderText">开启提醒，养成好习惯</span>
+  <button id="sharePosterBtn" class="settings-btn" onclick="openPosterPanel()" style="display:none;font-size:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-radius:8px;padding:4px 10px;font-weight:600">🎉 分享海报</button>
   <button class="settings-btn" onclick="openReminderPanel()">⚙️</button>
 </div>
 
@@ -603,6 +604,7 @@ img{max-width:100%;display:block}
   <div class="manage-helpers">
     <button onclick="openConstitutionPanel()">🩺 体质测试</button>
     <button onclick="openHealthReportPanel()">📊 健康报告</button>
+    <button onclick="openDataPanel()">💾 数据管理</button>
     <button onclick="openClockPanel()">⏳ 子午流注</button>
     <button onclick="openRefPanel(event)">📚 参考文献</button>
   </div>
@@ -768,6 +770,57 @@ img{max-width:100%;display:block}
     <button class="panel-close" onclick="closeAllPanels()">✕</button>
   </div>
   <div class="panel-body" id="healthReportPanelBody" style="padding:0"></div>
+</div>
+
+<!-- 分享海报 Panel -->
+<div class="panel" id="posterPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title">🎉 打卡海报</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body" id="posterPanelBody" style="padding:16px;text-align:center">
+    <canvas id="posterCanvas" style="width:100%;max-width:320px;border-radius:12px;box-shadow:var(--shadow)"></canvas>
+    <div style="margin-top:12px;font-size:13px;color:var(--muted)">长按图片保存到相册</div>
+    <button class="const-btn" onclick="downloadPoster()" style="margin-top:12px">💾 下载海报</button>
+  </div>
+</div>
+
+<!-- 数据管理 Panel -->
+<div class="panel" id="dataPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title">💾 数据管理</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body" style="padding:16px">
+    <div style="font-size:14px;font-weight:700;margin-bottom:12px">导出数据</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.6">将所有习惯配置和打卡记录导出为 JSON 文件，可作为备份或在其他设备上恢复。</div>
+    <button class="const-btn" onclick="exportData()">📥 导出数据</button>
+    <div style="margin:20px 0;border-top:1px solid var(--rule)"></div>
+    <div style="font-size:14px;font-weight:700;margin-bottom:12px">导入数据</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.6">选择之前导出的 JSON 文件，恢复习惯配置和打卡记录。</div>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(this)">
+    <button class="const-btn" onclick="document.getElementById('importFile').click()" style="background:linear-gradient(135deg,var(--accent2),var(--accent))">📤 导入数据</button>
+  </div>
+</div>
+
+<!-- 首次访问引导 -->
+<div id="guideOverlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:200;align-items:center;justify-content:center">
+  <div id="guideCard" style="background:#fff;border-radius:var(--radius);padding:32px 24px;margin:24px;max-width:340px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.2)">
+    <div id="guideEmoji" style="font-size:48px;margin-bottom:12px">🌿</div>
+    <div id="guideTitle" style="font-size:18px;font-weight:700;margin-bottom:8px">欢迎使用生活习惯小助手</div>
+    <div id="guideText" style="font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px">基于《黄帝内经》的AI养生习惯追踪应用，让千年中医智慧融入日常生活。</div>
+    <button id="guideBtn" class="const-btn" onclick="nextGuideStep()" style="margin-top:0">下一步</button>
+    <div style="margin-top:12px">
+      <span id="guideDots" style="display:flex;gap:6px;justify-content:center">
+        <span style="width:8px;height:8px;border-radius:50%;background:var(--accent)"></span>
+        <span style="width:8px;height:8px;border-radius:50%;background:var(--rule)"></span>
+        <span style="width:8px;height:8px;border-radius:50%;background:var(--rule)"></span>
+      </span>
+    </div>
+    <button onclick="skipGuide()" style="margin-top:12px;font-size:12px;color:var(--muted);background:none;border:none;cursor:pointer">跳过引导</button>
+  </div>
 </div>
 
 <!-- AI 浮动按钮 -->
@@ -1476,6 +1529,27 @@ function getTodayTotal() {
   return habitsConfig.filter(h => h.enabled !== false).length;
 }
 
+function getMaxStreakAll() {
+  let max = 0, cur = 0;
+  const dates = Object.keys(checkinRecords).sort();
+  if (dates.length === 0) return 0;
+  const start = new Date(dates[0]);
+  const end = new Date();
+  const d = new Date(start);
+  while (d <= end) {
+    const key = formatDate(d);
+    const rec = checkinRecords[key];
+    const hasAny = rec && habitsConfig.some(h => {
+      if (h.type === 'water') return (rec[h.id]?.value || 0) >= (h.waterConfig?.dailyGoal || 2000);
+      return rec[h.id]?.done;
+    });
+    if (hasAny) { cur++; max = Math.max(max, cur); }
+    else { cur = 0; }
+    d.setDate(d.getDate() + 1);
+  }
+  return max;
+}
+
 // ===================== RENDER =====================
 
 function render() {
@@ -1484,6 +1558,7 @@ function render() {
   renderCheckin();
   renderStats();
   renderManage();
+  showGuide();
 }
 
 function renderTodayCard() {
@@ -1563,14 +1638,19 @@ function renderReminderBanner() {
   const done = getTodayDone();
   const total = getTodayTotal();
   const el = document.getElementById('reminderText');
+  const shareBtn = document.getElementById('sharePosterBtn');
   if (total === 0) {
     el.textContent = '还没有添加习惯，点击 + 开始吧';
+    if (shareBtn) shareBtn.style.display = 'none';
   } else if (done === 0) {
     el.textContent = `新的一天开始了，今天有 ${total} 个习惯等你完成`;
+    if (shareBtn) shareBtn.style.display = 'none';
   } else if (done < total) {
     el.textContent = `已打卡 ${done}/${total}，继续加油！还剩 ${total - done} 个`;
+    if (shareBtn) shareBtn.style.display = 'none';
   } else {
     el.textContent = `太棒了！今天 ${total} 个习惯全部完成 🎉`;
+    if (shareBtn) shareBtn.style.display = 'inline-block';
   }
 }
 
@@ -3632,6 +3712,220 @@ function renderHealthReport() {
   `;
 
   body.innerHTML = html;
+}
+
+// ===================== P1: 分享海报 =====================
+
+function openPosterPanel() {
+  generatePoster();
+  openPanel('posterPanel');
+}
+
+function generatePoster() {
+  const canvas = document.getElementById('posterCanvas');
+  const ctx = canvas.getContext('2d');
+  const w = 640, h = 960;
+  canvas.width = w; canvas.height = h;
+
+  // Background
+  const grad = ctx.createLinearGradient(0, 0, w, h);
+  grad.addColorStop(0, '#FDF8F0');
+  grad.addColorStop(1, '#F5EDE0');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
+
+  // Top decoration
+  ctx.fillStyle = '#7CB69D';
+  ctx.fillRect(0, 0, w, 8);
+
+  // Title
+  ctx.fillStyle = '#2D3436';
+  ctx.font = 'bold 36px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('生活习惯小助手', w/2, 80);
+
+  ctx.fillStyle = '#8D9196';
+  ctx.font = '22px sans-serif';
+  ctx.fillText('基于《黄帝内经》的养生习惯追踪', w/2, 115);
+
+  // Divider
+  ctx.strokeStyle = '#E0D8CC';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(80, 140); ctx.lineTo(w-80, 140);
+  ctx.stroke();
+
+  // Date
+  const d = new Date();
+  ctx.fillStyle = '#8D9196';
+  ctx.font = '20px sans-serif';
+  ctx.fillText(`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`, w/2, 175);
+
+  // Main content
+  const done = getTodayDone();
+  const total = getTodayTotal();
+  const streak = getMaxStreakAll();
+
+  // Big emoji
+  ctx.font = '80px sans-serif';
+  ctx.fillText('🎉', w/2, 280);
+
+  // Achievement text
+  ctx.fillStyle = '#2D3436';
+  ctx.font = 'bold 32px sans-serif';
+  ctx.fillText(`今日 ${done}/${total} 个习惯完成`, w/2, 340);
+
+  // Streak
+  if (streak > 0) {
+    ctx.fillStyle = '#F4A683';
+    ctx.font = 'bold 28px sans-serif';
+    ctx.fillText(`连续打卡 ${streak} 天 🔥`, w/2, 390);
+  }
+
+  // Divider
+  ctx.beginPath();
+  ctx.moveTo(120, 430); ctx.lineTo(w-120, 430);
+  ctx.stroke();
+
+  // Quote
+  const dayOfYear = Math.floor((d - new Date(d.getFullYear(),0,0)) / 86400000);
+  const quote = QUOTES[dayOfYear % QUOTES.length];
+  ctx.fillStyle = '#5B8DB8';
+  ctx.font = 'italic 22px sans-serif';
+  ctx.fillText('📖 今日养生名言', w/2, 475);
+
+  ctx.fillStyle = '#2D3436';
+  ctx.font = '22px sans-serif';
+  const maxWidth = 480;
+  const words = quote.split('');
+  let line = '', y = 515;
+  for (let i = 0; i < words.length; i++) {
+    const test = line + words[i];
+    if (ctx.measureText(test).width > maxWidth && i > 0) {
+      ctx.fillText(line, w/2, y);
+      line = words[i];
+      y += 32;
+    } else {
+      line = test;
+    }
+  }
+  ctx.fillText(line, w/2, y);
+
+  // Bottom decoration
+  ctx.fillStyle = '#7CB69D';
+  ctx.fillRect(0, h-8, w, 8);
+
+  // Footer
+  ctx.fillStyle = '#8D9196';
+  ctx.font = '18px sans-serif';
+  ctx.fillText('扫码体验 → rui66648.github.io/lifestyle-assistant', w/2, h-40);
+}
+
+function downloadPoster() {
+  const canvas = document.getElementById('posterCanvas');
+  const link = document.createElement('a');
+  link.download = `打卡海报_${new Date().toISOString().slice(0,10)}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+// ===================== P1: 数据导出/导入 =====================
+
+function openDataPanel() {
+  openPanel('dataPanel');
+}
+
+function exportData() {
+  const data = {
+    version: 2,
+    exportDate: new Date().toISOString(),
+    habitsConfig: habitsConfig,
+    checkinRecords: checkinRecords,
+    constitutionResult: JSON.parse(localStorage.getItem('constitution_result') || 'null')
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `生活习惯小助手备份_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.habitsConfig) {
+        habitsConfig = data.habitsConfig;
+        saveData();
+      }
+      if (data.checkinRecords) {
+        checkinRecords = data.checkinRecords;
+        saveData();
+      }
+      if (data.constitutionResult) {
+        localStorage.setItem('constitution_result', JSON.stringify(data.constitutionResult));
+      }
+      alert('数据导入成功！');
+      render();
+      closeAllPanels();
+    } catch (err) {
+      alert('导入失败：文件格式错误');
+    }
+  };
+  reader.readAsText(file);
+  input.value = '';
+}
+
+// ===================== P1: 首次访问引导 =====================
+
+const GUIDE_STEPS = [
+  { emoji: '🌿', title: '欢迎使用生活习惯小助手', text: '基于《黄帝内经》的AI养生习惯追踪应用，让千年中医智慧融入日常生活。' },
+  { emoji: '🩺', title: '先测体质，个性化推荐', text: '通过8道简单问题，辨识你的中医体质类型，获取专属养生习惯推荐。' },
+  { emoji: '📦', title: '从黄帝内经习惯包开始', text: '一键导入四季养生、五色饮食、情志调理等经典养生习惯，零基础入门。' }
+];
+let guideStep = 0;
+
+function showGuide() {
+  if (localStorage.getItem('has_seen_guide')) return;
+  guideStep = 0;
+  renderGuideStep();
+  document.getElementById('guideOverlay').style.display = 'flex';
+}
+
+function renderGuideStep() {
+  const step = GUIDE_STEPS[guideStep];
+  document.getElementById('guideEmoji').textContent = step.emoji;
+  document.getElementById('guideTitle').textContent = step.title;
+  document.getElementById('guideText').textContent = step.text;
+  document.getElementById('guideBtn').textContent = guideStep < GUIDE_STEPS.length - 1 ? '下一步' : '开始使用';
+
+  // Update dots
+  const dots = document.getElementById('guideDots').children;
+  for (let i = 0; i < dots.length; i++) {
+    dots[i].style.background = i === guideStep ? 'var(--accent)' : 'var(--rule)';
+  }
+}
+
+function nextGuideStep() {
+  guideStep++;
+  if (guideStep >= GUIDE_STEPS.length) {
+    localStorage.setItem('has_seen_guide', 'true');
+    document.getElementById('guideOverlay').style.display = 'none';
+    // Auto open constitution test
+    openConstitutionPanel();
+  } else {
+    renderGuideStep();
+  }
+}
+
+function skipGuide() {
+  localStorage.setItem('has_seen_guide', 'true');
+  document.getElementById('guideOverlay').style.display = 'none';
 }
 
 // ===================== SERVICE WORKER =====================
