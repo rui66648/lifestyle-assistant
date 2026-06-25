@@ -359,24 +359,22 @@ img{max-width:100%;display:block}
 #aiFab:active{transform:scale(0.92)}
 #pomoFab:active{transform:scale(0.92)}
 
-/* Heatmap */
-.heatmap-card{background:#fff;border-radius:14px;padding:16px;margin:12px 16px;box-shadow:var(--shadow)}
-.heatmap-title{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.heatmap-grid{display:grid;grid-template-columns:repeat(53,1fr);gap:2px}
-.heatmap-cell{width:100%;aspect-ratio:1;border-radius:2px;background:var(--rule)}
-.heatmap-cell.l0{background:#ebedf0}
-.heatmap-cell.l1{background:#c6e48b}
-.heatmap-cell.l2{background:#7bc96f}
-.heatmap-cell.l3{background:#239a3b}
-.heatmap-cell.l4{background:#196127}
-.heatmap-legend{display:flex;align-items:center;gap:6px;margin-top:8px;justify-content:flex-end;font-size:11px;color:var(--muted)}
-.heatmap-legend span{width:10px;height:10px;border-radius:2px}
-.heatmap-months{display:grid;grid-template-columns:repeat(53,1fr);gap:2px;margin-bottom:4px;font-size:10px;color:var(--muted)}
-.heatmap-months span{grid-column:span 4}
-.heatmap-labels{display:flex;flex-direction:column;gap:2px;margin-right:4px;font-size:10px;color:var(--muted);line-height:1}
-.heatmap-row{display:flex;align-items:center}
-.heatmap-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.heatmap-inner{min-width:320px}
+/* Manage Heatmap (GitHub-style) */
+.gm-heatmap-card{background:#fff;border-radius:14px;padding:16px;margin:12px 16px;box-shadow:var(--shadow)}
+.gm-heatmap-title{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.gm-heatmap-grid{display:grid;grid-template-columns:repeat(53,1fr);gap:2px}
+.gm-heatmap-cell{width:100%;aspect-ratio:1;border-radius:2px;background:var(--rule)}
+.gm-heatmap-cell.l0{background:#ebedf0}
+.gm-heatmap-cell.l1{background:#c6e48b}
+.gm-heatmap-cell.l2{background:#7bc96f}
+.gm-heatmap-cell.l3{background:#239a3b}
+.gm-heatmap-cell.l4{background:#196127}
+.gm-heatmap-legend{display:flex;align-items:center;gap:6px;margin-top:8px;justify-content:flex-end;font-size:11px;color:var(--muted)}
+.gm-heatmap-legend span{width:10px;height:10px;border-radius:2px}
+.gm-heatmap-labels{display:flex;flex-direction:column;gap:2px;margin-right:4px;font-size:10px;color:var(--muted);line-height:1}
+.gm-heatmap-row{display:flex;align-items:center}
+.gm-heatmap-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.gm-heatmap-inner{min-width:320px}
 
 /* Constitution Test */
 .const-progress{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--rule)}
@@ -663,12 +661,12 @@ img{max-width:100%;display:block}
   </div>
 
   <!-- 打卡热力图 -->
-  <div class="heatmap-card" id="heatmapCard" style="display:none">
-    <div class="heatmap-title">🔥 打卡热力图</div>
-    <div class="heatmap-wrap">
-      <div class="heatmap-inner" id="heatmapInner"></div>
+  <div class="gm-heatmap-card" id="heatmapCard" style="display:none">
+    <div class="gm-heatmap-title">🔥 打卡热力图</div>
+    <div class="gm-heatmap-wrap">
+      <div class="gm-heatmap-inner" id="heatmapInner"></div>
     </div>
-    <div class="heatmap-legend">
+    <div class="gm-heatmap-legend">
       少 <span style="background:#ebedf0"></span> <span style="background:#c6e48b"></span> <span style="background:#7bc96f"></span> <span style="background:#239a3b"></span> <span style="background:#196127"></span> 多
     </div>
   </div>
@@ -2868,7 +2866,7 @@ function renderManage() {
   renderMyPack();
   renderSystemPacks();
   renderLevelCard();
-  renderHeatmap();
+  renderManageHeatmap();
 }
 
 function renderLevelCard() {
@@ -2891,7 +2889,7 @@ function renderLevelCard() {
   }
 }
 
-function renderHeatmap() {
+function renderManageHeatmap() {
   const container = document.getElementById('heatmapInner');
   const card = document.getElementById('heatmapCard');
   if (!container || !card) return;
@@ -2939,10 +2937,10 @@ function renderHeatmap() {
   card.style.display = 'block';
 
   // Build HTML
-  let html = '<div class="heatmap-row">';
+  let html = '<div class="gm-heatmap-row">';
 
   // Day labels
-  html += '<div class="heatmap-labels">';
+  html += '<div class="gm-heatmap-labels">';
   for (let d = 0; d < 7; d++) {
     html += `<span>${dayNames[d]}</span>`;
   }
@@ -2950,7 +2948,7 @@ function renderHeatmap() {
 
   // Grid
   html += '<div style="flex:1">';
-  html += '<div class="heatmap-grid">';
+  html += '<div class="gm-heatmap-grid">';
 
   cells.forEach(week => {
     week.forEach(day => {
@@ -2960,7 +2958,7 @@ function renderHeatmap() {
       else if (day.count >= 3) level = 'l2';
       else if (day.count >= 1) level = 'l1';
       const tooltip = `${day.date} · ${day.count}个习惯完成`;
-      html += `<div class="heatmap-cell ${level}" title="${tooltip}"></div>`;
+      html += `<div class="gm-heatmap-cell ${level}" title="${tooltip}"></div>`;
     });
   });
 
@@ -5028,7 +5026,7 @@ function onPomoComplete() {
 }
 
 function savePomoStats(minutes) {
-  const key = 'pomo_stats_' + today();
+  const key = 'pomo_stats_' + formatDate(new Date());
   const stats = JSON.parse(localStorage.getItem(key) || '{"count":0,"minutes":0}');
   stats.count++;
   stats.minutes += minutes;
@@ -5036,7 +5034,7 @@ function savePomoStats(minutes) {
 }
 
 function updatePomoStats() {
-  const key = 'pomo_stats_' + today();
+  const key = 'pomo_stats_' + formatDate(new Date());
   const stats = JSON.parse(localStorage.getItem(key) || '{"count":0,"minutes":0}');
   document.getElementById('pomoStats').textContent = `今日专注：${stats.count} 次 · ${stats.minutes} 分钟`;
 }
