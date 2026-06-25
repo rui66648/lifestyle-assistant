@@ -579,6 +579,8 @@ img{max-width:100%;display:block}
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
+<!-- 氛围背景 -->
+<div class="ambient-bg" id="ambientBg"></div>
 <!-- 极简顶栏 -->
 <div class="mini-header" id="todayCard">
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px">
@@ -741,7 +743,7 @@ img{max-width:100%;display:block}
     <span class="panel-title" id="checkinPanelTitle">输入数值</span>
     <button class="panel-close" onclick="closeAllPanels()">✕</button>
   </div>
-  <div class="panel-body">
+  <div class="panel-body" id="checkinPanelBody">
     <div class="checkin-input-wrap">
       <div class="checkin-input-label" id="checkinInputLabel"></div>
       <input class="checkin-input-field" id="checkinInputField" type="number" min="0" inputmode="numeric">
@@ -1232,36 +1234,36 @@ const SEASONAL_PACKS = {
 };
 
 const QUOTES = [
-  "法于阴阳，和于术数，食饮有节，起居有常，不妄作劳。——《素问·上古天真论》",
-  "恬惔虚无，真气从之，精神内守，病安从来。——《素问·上古天真论》",
-  "圣人不治已病，治未病；不治已乱，治未乱。——《素问·四气调神大论》",
-  "虚邪贼风，避之有时。——《素问·上古天真论》",
-  "夫四时阴阳者，万物之根本也。春夏养阳，秋冬养阴，以从其根。——《素问·四气调神大论》",
-  "春三月，此谓发陈，天地俱生，万物以荣。——《素问·四气调神大论》",
-  "夏三月，此谓蕃秀，天地气交，万物华实。——《素问·四气调神大论》",
-  "秋三月，此谓容平，天气以急，地气以明。——《素问·四气调神大论》",
-  "冬三月，此谓闭藏，水冰地坼，无扰乎阳。——《素问·四气调神大论》",
-  "五谷为养，五果为助，五畜为益，五菜为充。——《素问·藏气法时论》",
-  "饮食自倍，肠胃乃伤。——《素问·痹论》",
-  "食饮者，热无灼灼，寒无沧沧。寒温中适，故气将持。——《灵枢·师传》",
-  "百病生于气也。怒则气上，喜则气缓，悲则气消，恐则气下，思则气结。——《素问·举痛论》",
-  "怒伤肝，悲胜怒；喜伤心，恐胜喜；思伤脾，怒胜思；忧伤肺，喜胜忧；恐伤肾，思胜恐。——《素问·阴阳应象大论》",
-  "心藏神，肺藏魄，肝藏魂，脾藏意，肾藏志。——《素问·宣明五气篇》",
-  "人与天地相参也，与日月相应也。——《灵枢·岁露论》",
-  "阳气者，若天与日，失其所，则折寿而不彰。——《素问·生气通天论》",
-  "久视伤血，久卧伤气，久坐伤肉，久立伤骨，久行伤筋。——《素问·宣明五气篇》",
-  "志闲而少欲，心安而不惧，形劳而不倦。——《素问·上古天真论》",
-  "阴阳者，天地之道也，万物之纲纪，变化之父母。——《素问·阴阳应象大论》",
-  "逆之则灾害生，从之则苛疾不起。——《素问·四气调神大论》",
-  "嗜欲不能劳其目，淫邪不能惑其心。——《素问·上古天真论》",
-  "以酒为浆，以妄为常，起居无节，故半百而衰也。——《素问·上古天真论》",
-  "不妄作劳，故能形与神俱。——《素问·上古天真论》",
-  "春伤于风，夏生飧泄；夏伤于暑，秋必痎疟。——《素问·阴阳应象大论》",
-  "秋伤于湿，冬生咳嗽。——《素问·阴阳应象大论》",
-  "正气存内，邪不可干。——《素问·刺法论》",
-  "形与神俱，而尽终其天年，度百岁乃去。——《素问·上古天真论》",
-  "四时阴阳者，从之则苛疾不起，逆之则灾害生。——《素问·四气调神大论》",
-  "上工治未病，不治已病。——《灵枢·逆顺》"
+  "法于阴阳，和于术数，食饮有节，起居有常，不妄作劳。--《素问·上古天真论》",
+  "恬惔虚无，真气从之，精神内守，病安从来。--《素问·上古天真论》",
+  "圣人不治已病，治未病；不治已乱，治未乱。--《素问·四气调神大论》",
+  "虚邪贼风，避之有时。--《素问·上古天真论》",
+  "夫四时阴阳者，万物之根本也。春夏养阳，秋冬养阴，以从其根。--《素问·四气调神大论》",
+  "春三月，此谓发陈，天地俱生，万物以荣。--《素问·四气调神大论》",
+  "夏三月，此谓蕃秀，天地气交，万物华实。--《素问·四气调神大论》",
+  "秋三月，此谓容平，天气以急，地气以明。--《素问·四气调神大论》",
+  "冬三月，此谓闭藏，水冰地坼，无扰乎阳。--《素问·四气调神大论》",
+  "五谷为养，五果为助，五畜为益，五菜为充。--《素问·藏气法时论》",
+  "饮食自倍，肠胃乃伤。--《素问·痹论》",
+  "食饮者，热无灼灼，寒无沧沧。寒温中适，故气将持。--《灵枢·师传》",
+  "百病生于气也。怒则气上，喜则气缓，悲则气消，恐则气下，思则气结。--《素问·举痛论》",
+  "怒伤肝，悲胜怒；喜伤心，恐胜喜；思伤脾，怒胜思；忧伤肺，喜胜忧；恐伤肾，思胜恐。--《素问·阴阳应象大论》",
+  "心藏神，肺藏魄，肝藏魂，脾藏意，肾藏志。--《素问·宣明五气篇》",
+  "人与天地相参也，与日月相应也。--《灵枢·岁露论》",
+  "阳气者，若天与日，失其所，则折寿而不彰。--《素问·生气通天论》",
+  "久视伤血，久卧伤气，久坐伤肉，久立伤骨，久行伤筋。--《素问·宣明五气篇》",
+  "志闲而少欲，心安而不惧，形劳而不倦。--《素问·上古天真论》",
+  "阴阳者，天地之道也，万物之纲纪，变化之父母。--《素问·阴阳应象大论》",
+  "逆之则灾害生，从之则苛疾不起。--《素问·四气调神大论》",
+  "嗜欲不能劳其目，淫邪不能惑其心。--《素问·上古天真论》",
+  "以酒为浆，以妄为常，起居无节，故半百而衰也。--《素问·上古天真论》",
+  "不妄作劳，故能形与神俱。--《素问·上古天真论》",
+  "春伤于风，夏生飧泄；夏伤于暑，秋必痎疟。--《素问·阴阳应象大论》",
+  "秋伤于湿，冬生咳嗽。--《素问·阴阳应象大论》",
+  "正气存内，邪不可干。--《素问·刺法论》",
+  "形与神俱，而尽终其天年，度百岁乃去。--《素问·上古天真论》",
+  "四时阴阳者，从之则苛疾不起，逆之则灾害生。--《素问·四气调神大论》",
+  "上工治未病，不治已病。--《灵枢·逆顺》"
 ];
 
 const REF_BOOKS = [
@@ -1291,61 +1293,61 @@ const REF_BOOKS = [
 ];
 
 const HEALTH_TIPS = [
-  {habit:'morning_run',text:'晨跑30分钟，提升一整天的精力和专注力。',source:'广步于庭，被发缓形，以使志生。——《素问·四气调神大论》',refBook:'黄帝内经'},
-  {habit:'early_rise',text:'规律作息，早睡早起，让生物钟保持稳定。',source:'法于阴阳，和于术数，食饮有节，起居有常，不妄作劳。——《素问·上古天真论》',refBook:'黄帝内经'},
-  {habit:'reading',text:'每天阅读20分钟，一年可以读完20本书。',source:'嗜欲不能劳其目，淫邪不能惑其心。——《素问·上古天真论》',refBook:'黄帝内经'},
-  {habit:'meditation',text:'冥想5分钟就能显著降低焦虑水平。',source:'恬惔虚无，真气从之，精神内守，病安从来。——《素问·上古天真论》',refBook:'黄帝内经'},
-  {habit:'early_sleep',text:'晚上11点前入睡，让身体充分修复。',source:'子时胆经当令，凡十一脏取决于胆。——《子午流注》',refBook:'黄帝内经'},
-  {habit:'breakfast',text:'营养均衡的早餐是一天能量的基础。',source:'辰时胃经最活跃，必须吃早餐。——《子午流注》',refBook:'黄帝内经'},
-  {habit:'walk',text:'饭后散步15分钟，有助于消化和血糖控制。',source:'广步于庭，以缓其形。——《素问·四气调神大论》',refBook:'黄帝内经'},
-  {habit:'breathe',text:'深呼吸练习可以激活副交感神经，缓解压力。',source:'和于术数，导引吐纳。——《素问·上古天真论》',refBook:'黄帝内经'},
-  {habit:'strength',text:'力量训练不仅塑形，还能增强骨密度。',source:'志闲而少欲，心安而不惧，形劳而不倦。——《素问·上古天真论》',refBook:'黄帝内经'},
-  {habit:'yoga',text:'瑜伽改善柔韧性，同时锻炼身心平衡。',source:'不妄作劳，故能形与神俱。——《素问·上古天真论》',refBook:'黄帝内经'},
-  {habit:'skincare',text:'坚持护肤习惯，皮肤状态会肉眼可见地改善。',source:'肺主皮毛，白当肺。——《素问·五脏生成篇》',refBook:'黄帝内经'},
-  {habit:'diary',text:'写日记是很好的情绪管理和自我反思方式。',source:'志闲而少欲，心安而不惧，形劳而不倦。——《素问·上古天真论》',refBook:'黄帝内经'},
-  {habit:'foot_bath',text:'睡前泡脚15分钟，促进血液循环，改善睡眠质量。',source:'冬三月，此谓闭藏，水冰地坼，无扰乎阳。早卧晚起，必待日光，去寒就温，无泄皮肤。——《素问·四气调神大论》',refBook:'黄帝内经'},
-  {habit:'daily_water',text:'成年人每天建议饮水1500-2000ml（约8杯），少量多次。起床后空腹喝一杯温水（200-300ml），促进肠胃蠕动和代谢。',source:'食饮有节，谨和五味；卯时大肠经当令，起床饮温水。——《素问·上古天真论》《子午流注》',refBook:'黄帝内经'},
-  {habit:'healthy_diet',text:'均衡饮食是健康的基石，每天摄入12种以上食物。',source:'五谷为养，五果为助，五畜为益，五菜为充。——《素问·藏气法时论》',refBook:'黄帝内经'},
-  {habit:'less_sit',text:'每坐45分钟站起来活动5分钟，保护腰椎。',source:'久视伤血，久卧伤气，久坐伤肉，久立伤骨，久行伤筋。——《素问·宣明五气篇》',refBook:'黄帝内经'},
-  {habit:'eye_rest',text:'每用眼20分钟远眺20秒，保护视力。',source:'久视伤血，久卧伤气，久坐伤肉，久立伤骨，久行伤筋。——《素问·宣明五气篇》',refBook:'黄帝内经'},
-  {habit:'good_posture',text:'保持正确坐姿，减少颈椎压力。',source:'形正则气顺。——《遵生八笺》',refBook:'遵生八笺'},
-  {habit:'sunshine',text:'每天晒太阳15-20分钟，促进阳气生发。',source:'夏三月，此谓蕃秀，天地气交，万物华实。夜卧早起，无厌于日，使志无怒，使华英成秀。——《素问·四气调神大论》',refBook:'黄帝内经'},
-  {habit:'vitamin',text:'秋冬注意补充维生素D和钙质。',source:'冬三月，此谓闭藏，水冰地坼，无扰乎阳。早卧晚起，必待日光，去寒就温，无泄皮肤。——《素问·四气调神大论》',refBook:'黄帝内经'},
-  {habit:'fruits_veggies',text:'每天摄入300-500克蔬菜，降低慢性病风险。',source:'五谷为养，五果为助，五畜为益，五菜为充。——《素问·藏气法时论》',refBook:'黄帝内经'},
-  {habit:'jump_rope',text:'跳绳10分钟消耗的热量相当于慢跑30分钟。',source:'夫四时阴阳者，万物之根本也。春夏养阳，秋冬养阴，以从其根。——《素问·四气调神大论》',refBook:'黄帝内经'},
-  {habit:'stretch',text:'办公室拉伸5分钟，缓解肩颈僵硬和腰背酸痛。',source:'导引按跷，以通经气。——《黄帝内经》',refBook:'拉伸'},
-  {habit:'sleep_quality',text:'右侧卧睡，屈右臂，头枕左手，安眠养神。',source:'屈膝侧卧，益人气力。——《老老恒言》',refBook:'老老恒言'},
-  {habit:'acupressure',text:'每日按揉足三里、合谷穴各3分钟，调理脾胃。',source:'胃病者，胃脘当心而痛，上支两胁。——《灵枢》',refBook:'求医不如求己'},
-  {habit:'emotion',text:'怒伤肝，悲伤肺，思伤脾，恐伤肾。保持情绪平和。',source:'怒伤肝，悲胜怒；喜伤心，恐胜喜；思伤脾，怒胜思；忧伤肺，喜胜忧；恐伤肾，思胜恐。——《素问·阴阳应象大论》',refBook:'黄帝内经'},
-  {habit:'rest',text:'主动休息比被动休息更有效，每90分钟休息15分钟。',source:'久视伤血，久卧伤气，久坐伤肉，久立伤骨，久行伤筋。——《素问·宣明五气篇》',refBook:'科学休息'},
-  {habit:'constitution',text:'了解自己的体质类型，针对性调理饮食和运动。',source:'阴阳和平之人，其骨直以和。——《灵枢·通天》',refBook:'九种体质养生全书'},
-  {habit:'food_therapy',text:'食物是最好的药物，合理搭配可预防疾病。',source:'五谷为养，五果为助，五畜为益，五菜为充。——《素问·藏气法时论》',refBook:'饮膳正要'},
-  {habit:'mind',text:'养生先养心，心为五脏六腑之大主。',source:'心者，君主之官也，神明出焉。——《素问·灵兰秘典论》',refBook:'闲情偶寄'},
-  {habit:'longevity',text:'不伤为本，积微成损，养生在于日常点滴。',source:'善养生者，不伤为本。——《抱朴子》',refBook:'抱朴子'},
-  {habit:'five_viscera',text:'五脏养生各有法：肝苦急，急食甘以缓之。',source:'五谷为养，五果为助，五畜为益，五菜为充。——《素问·藏气法时论》',refBook:'寿世青编'},
-  {habit:'medicine',text:'大医精诚，养性之道在于日常修身。',source:'安生之本，必资于食。——《备急千金要方》',refBook:'备急千金要方'},
-  {habit:'body_form',text:'形神相亲，养生贵在形神兼养。',source:'精神之于形骸，犹国之有君也。——《养生论》',refBook:'养生论'},
-  {habit:'sleep_quality',text:'R90睡眠方案：以90分钟为一个睡眠周期，每晚睡4-5个周期即可。',source:'不是睡够8小时，而是睡够睡眠周期。——《睡眠革命》',refBook:'睡眠革命'},
-  {habit:'morning_run',text:'有氧运动30分钟可提升脑源性神经营养因子(BDNF)，改善记忆力和情绪。',source:'运动是最接近万能药的东西。——《运动改造大脑》',refBook:'运动改造大脑'},
-  {habit:'meditation',text:'正念呼吸7分钟就能降低皮质醇水平，效果堪比一次短暂休假。',source:'呼吸是连接身与心的桥梁。——《正念的奇迹》',refBook:'正念的奇迹'},
-  {habit:'healthy_diet',text:'控糖的关键不是少吃甜食，而是改变进食顺序：先吃蔬菜→再吃蛋白质→最后吃碳水。',source:'正确的进食顺序能降低血糖峰值73%。——《控糖革命》',refBook:'控糖革命'},
-  {habit:'fruits_veggies',text:'每天摄入30种不同植物性食物，肠道菌群多样性可提升40%。',source:'肠道是人体的第二个大脑。——《肠子的小心思》',refBook:'肠子的小心思'},
-  {habit:'foot_bath',text:'慢性炎症是万病之源，通过饮食、运动、睡眠三管齐下可有效降低体内炎症水平。',source:'90%的慢性病都与慢性炎症有关。——《抗炎生活》',refBook:'抗炎生活'},
-  {habit:'daily_water',text:'细胞需要优质油脂（如橄榄油、鱼油）和天然电解质，而非单纯的低脂饮食。',source:'现代营养学正在回归传统饮食智慧。——《深度营养》',refBook:'深度营养'},
-  {habit:'early_sleep',text:'慢性压力会加速端粒缩短，冥想和正念可显著延缓细胞衰老速度。',source:'端粒长度决定细胞寿命。——《端粒效应》',refBook:'端粒效应'},
-  {habit:'breathe',text:'现代人最常见的亚健康状态是"上热下寒"，需要通过调整饮食和作息来恢复阴阳平衡。',source:'《黄帝内经》的核心是教人如何顺应自然节律生活。——《黄帝内经说什么》',refBook:'黄帝内经说什么'},
-  {habit:'reading',text:'每周150分钟中等强度运动，可将阿尔茨海默病风险降低45%。',source:'运动是对大脑最好的投资。——《运动改造大脑》',refBook:'运动改造大脑'},
-  {habit:'sunshine',text:'早晨接触自然光10分钟，可调节褪黑素分泌，改善夜间睡眠质量。',source:'光线是调节生物钟最重要的信号。——《睡眠革命》',refBook:'睡眠革命'},
-  {habit:'emotion',text:'正念练习8周可改变大脑结构，前额叶皮层增厚，杏仁核缩小。',source:'每一刻的觉察都是奇迹。——《正念的奇迹》',refBook:'正念的奇迹'},
-  {habit:'less_sit',text:'久坐1小时，寿命缩短22分钟。每30分钟起身活动2分钟即可抵消久坐危害。',source:'久坐是最接近吸烟的健康杀手。——《运动改造大脑》',refBook:'运动改造大脑'},
-  {habit:'vitamin',text:'Omega-3脂肪酸可降低体内炎症标志物C反应蛋白水平达30%。',source:'好的油脂是抗炎的关键。——《抗炎生活》',refBook:'抗炎生活'},
-  {habit:'stretch',text:'肠道菌群影响情绪和认知，益生菌补充可改善焦虑和抑郁症状。',source:'肠道被称为"第二大脑"。——《肠子的小心思》',refBook:'肠子的小心思'},
-  {habit:'acupressure',text:'食物中添加天然香料（姜黄、生姜、大蒜）可有效抑制慢性炎症反应。',source:'厨房是最好的药房。——《抗炎生活》',refBook:'抗炎生活'},
-  {habit:'yoga',text:'每天12分钟正念冥想，坚持8周即可检测到端粒酶活性提升。',source:'压力管理是最有效的抗衰老策略。——《端粒效应》',refBook:'端粒效应'},
-  {habit:'diary',text:'血糖波动过大会导致注意力不集中和情绪波动，控糖即控情绪。',source:'稳定的血糖带来稳定的情绪。——《控糖革命》',refBook:'控糖革命'},
-  {habit:'eye_rest',text:'传统发酵食品（泡菜、酸奶、味噌）富含益生菌，是肠道健康的最佳来源。',source:'发酵食品是人类最古老的营养智慧。——《深度营养》',refBook:'深度营养'},
-  {habit:'strength',text:'运动后立即学习，记忆巩固效率提升20%，这是运动对大脑最直接的馈赠。',source:'运动让大脑准备好学习。——《运动改造大脑》',refBook:'运动改造大脑'},
-  {habit:'jump_rope',text:'睡眠质量由睡眠周期决定，而非单纯的小时数。了解周期比追求时长更重要。',source:'90分钟是一个完整的睡眠周期。——《睡眠革命》',refBook:'睡眠革命'}
+  {habit:'morning_run',text:'晨跑30分钟，提升一整天的精力和专注力。',source:'广步于庭，被发缓形，以使志生。--《素问·四气调神大论》',refBook:'黄帝内经'},
+  {habit:'early_rise',text:'规律作息，早睡早起，让生物钟保持稳定。',source:'法于阴阳，和于术数，食饮有节，起居有常，不妄作劳。--《素问·上古天真论》',refBook:'黄帝内经'},
+  {habit:'reading',text:'每天阅读20分钟，一年可以读完20本书。',source:'嗜欲不能劳其目，淫邪不能惑其心。--《素问·上古天真论》',refBook:'黄帝内经'},
+  {habit:'meditation',text:'冥想5分钟就能显著降低焦虑水平。',source:'恬惔虚无，真气从之，精神内守，病安从来。--《素问·上古天真论》',refBook:'黄帝内经'},
+  {habit:'early_sleep',text:'晚上11点前入睡，让身体充分修复。',source:'子时胆经当令，凡十一脏取决于胆。--《子午流注》',refBook:'黄帝内经'},
+  {habit:'breakfast',text:'营养均衡的早餐是一天能量的基础。',source:'辰时胃经最活跃，必须吃早餐。--《子午流注》',refBook:'黄帝内经'},
+  {habit:'walk',text:'饭后散步15分钟，有助于消化和血糖控制。',source:'广步于庭，以缓其形。--《素问·四气调神大论》',refBook:'黄帝内经'},
+  {habit:'breathe',text:'深呼吸练习可以激活副交感神经，缓解压力。',source:'和于术数，导引吐纳。--《素问·上古天真论》',refBook:'黄帝内经'},
+  {habit:'strength',text:'力量训练不仅塑形，还能增强骨密度。',source:'志闲而少欲，心安而不惧，形劳而不倦。--《素问·上古天真论》',refBook:'黄帝内经'},
+  {habit:'yoga',text:'瑜伽改善柔韧性，同时锻炼身心平衡。',source:'不妄作劳，故能形与神俱。--《素问·上古天真论》',refBook:'黄帝内经'},
+  {habit:'skincare',text:'坚持护肤习惯，皮肤状态会肉眼可见地改善。',source:'肺主皮毛，白当肺。--《素问·五脏生成篇》',refBook:'黄帝内经'},
+  {habit:'diary',text:'写日记是很好的情绪管理和自我反思方式。',source:'志闲而少欲，心安而不惧，形劳而不倦。--《素问·上古天真论》',refBook:'黄帝内经'},
+  {habit:'foot_bath',text:'睡前泡脚15分钟，促进血液循环，改善睡眠质量。',source:'冬三月，此谓闭藏，水冰地坼，无扰乎阳。早卧晚起，必待日光，去寒就温，无泄皮肤。--《素问·四气调神大论》',refBook:'黄帝内经'},
+  {habit:'daily_water',text:'成年人每天建议饮水1500-2000ml（约8杯），少量多次。起床后空腹喝一杯温水（200-300ml），促进肠胃蠕动和代谢。',source:'食饮有节，谨和五味；卯时大肠经当令，起床饮温水。--《素问·上古天真论》《子午流注》',refBook:'黄帝内经'},
+  {habit:'healthy_diet',text:'均衡饮食是健康的基石，每天摄入12种以上食物。',source:'五谷为养，五果为助，五畜为益，五菜为充。--《素问·藏气法时论》',refBook:'黄帝内经'},
+  {habit:'less_sit',text:'每坐45分钟站起来活动5分钟，保护腰椎。',source:'久视伤血，久卧伤气，久坐伤肉，久立伤骨，久行伤筋。--《素问·宣明五气篇》',refBook:'黄帝内经'},
+  {habit:'eye_rest',text:'每用眼20分钟远眺20秒，保护视力。',source:'久视伤血，久卧伤气，久坐伤肉，久立伤骨，久行伤筋。--《素问·宣明五气篇》',refBook:'黄帝内经'},
+  {habit:'good_posture',text:'保持正确坐姿，减少颈椎压力。',source:'形正则气顺。--《遵生八笺》',refBook:'遵生八笺'},
+  {habit:'sunshine',text:'每天晒太阳15-20分钟，促进阳气生发。',source:'夏三月，此谓蕃秀，天地气交，万物华实。夜卧早起，无厌于日，使志无怒，使华英成秀。--《素问·四气调神大论》',refBook:'黄帝内经'},
+  {habit:'vitamin',text:'秋冬注意补充维生素D和钙质。',source:'冬三月，此谓闭藏，水冰地坼，无扰乎阳。早卧晚起，必待日光，去寒就温，无泄皮肤。--《素问·四气调神大论》',refBook:'黄帝内经'},
+  {habit:'fruits_veggies',text:'每天摄入300-500克蔬菜，降低慢性病风险。',source:'五谷为养，五果为助，五畜为益，五菜为充。--《素问·藏气法时论》',refBook:'黄帝内经'},
+  {habit:'jump_rope',text:'跳绳10分钟消耗的热量相当于慢跑30分钟。',source:'夫四时阴阳者，万物之根本也。春夏养阳，秋冬养阴，以从其根。--《素问·四气调神大论》',refBook:'黄帝内经'},
+  {habit:'stretch',text:'办公室拉伸5分钟，缓解肩颈僵硬和腰背酸痛。',source:'导引按跷，以通经气。--《黄帝内经》',refBook:'拉伸'},
+  {habit:'sleep_quality',text:'右侧卧睡，屈右臂，头枕左手，安眠养神。',source:'屈膝侧卧，益人气力。--《老老恒言》',refBook:'老老恒言'},
+  {habit:'acupressure',text:'每日按揉足三里、合谷穴各3分钟，调理脾胃。',source:'胃病者，胃脘当心而痛，上支两胁。--《灵枢》',refBook:'求医不如求己'},
+  {habit:'emotion',text:'怒伤肝，悲伤肺，思伤脾，恐伤肾。保持情绪平和。',source:'怒伤肝，悲胜怒；喜伤心，恐胜喜；思伤脾，怒胜思；忧伤肺，喜胜忧；恐伤肾，思胜恐。--《素问·阴阳应象大论》',refBook:'黄帝内经'},
+  {habit:'rest',text:'主动休息比被动休息更有效，每90分钟休息15分钟。',source:'久视伤血，久卧伤气，久坐伤肉，久立伤骨，久行伤筋。--《素问·宣明五气篇》',refBook:'科学休息'},
+  {habit:'constitution',text:'了解自己的体质类型，针对性调理饮食和运动。',source:'阴阳和平之人，其骨直以和。--《灵枢·通天》',refBook:'九种体质养生全书'},
+  {habit:'food_therapy',text:'食物是最好的药物，合理搭配可预防疾病。',source:'五谷为养，五果为助，五畜为益，五菜为充。--《素问·藏气法时论》',refBook:'饮膳正要'},
+  {habit:'mind',text:'养生先养心，心为五脏六腑之大主。',source:'心者，君主之官也，神明出焉。--《素问·灵兰秘典论》',refBook:'闲情偶寄'},
+  {habit:'longevity',text:'不伤为本，积微成损，养生在于日常点滴。',source:'善养生者，不伤为本。--《抱朴子》',refBook:'抱朴子'},
+  {habit:'five_viscera',text:'五脏养生各有法：肝苦急，急食甘以缓之。',source:'五谷为养，五果为助，五畜为益，五菜为充。--《素问·藏气法时论》',refBook:'寿世青编'},
+  {habit:'medicine',text:'大医精诚，养性之道在于日常修身。',source:'安生之本，必资于食。--《备急千金要方》',refBook:'备急千金要方'},
+  {habit:'body_form',text:'形神相亲，养生贵在形神兼养。',source:'精神之于形骸，犹国之有君也。--《养生论》',refBook:'养生论'},
+  {habit:'sleep_quality',text:'R90睡眠方案：以90分钟为一个睡眠周期，每晚睡4-5个周期即可。',source:'不是睡够8小时，而是睡够睡眠周期。--《睡眠革命》',refBook:'睡眠革命'},
+  {habit:'morning_run',text:'有氧运动30分钟可提升脑源性神经营养因子(BDNF)，改善记忆力和情绪。',source:'运动是最接近万能药的东西。--《运动改造大脑》',refBook:'运动改造大脑'},
+  {habit:'meditation',text:'正念呼吸7分钟就能降低皮质醇水平，效果堪比一次短暂休假。',source:'呼吸是连接身与心的桥梁。--《正念的奇迹》',refBook:'正念的奇迹'},
+  {habit:'healthy_diet',text:'控糖的关键不是少吃甜食，而是改变进食顺序：先吃蔬菜→再吃蛋白质→最后吃碳水。',source:'正确的进食顺序能降低血糖峰值73%。--《控糖革命》',refBook:'控糖革命'},
+  {habit:'fruits_veggies',text:'每天摄入30种不同植物性食物，肠道菌群多样性可提升40%。',source:'肠道是人体的第二个大脑。--《肠子的小心思》',refBook:'肠子的小心思'},
+  {habit:'foot_bath',text:'慢性炎症是万病之源，通过饮食、运动、睡眠三管齐下可有效降低体内炎症水平。',source:'90%的慢性病都与慢性炎症有关。--《抗炎生活》',refBook:'抗炎生活'},
+  {habit:'daily_water',text:'细胞需要优质油脂（如橄榄油、鱼油）和天然电解质，而非单纯的低脂饮食。',source:'现代营养学正在回归传统饮食智慧。--《深度营养》',refBook:'深度营养'},
+  {habit:'early_sleep',text:'慢性压力会加速端粒缩短，冥想和正念可显著延缓细胞衰老速度。',source:'端粒长度决定细胞寿命。--《端粒效应》',refBook:'端粒效应'},
+  {habit:'breathe',text:'现代人最常见的亚健康状态是"上热下寒"，需要通过调整饮食和作息来恢复阴阳平衡。',source:'《黄帝内经》的核心是教人如何顺应自然节律生活。--《黄帝内经说什么》',refBook:'黄帝内经说什么'},
+  {habit:'reading',text:'每周150分钟中等强度运动，可将阿尔茨海默病风险降低45%。',source:'运动是对大脑最好的投资。--《运动改造大脑》',refBook:'运动改造大脑'},
+  {habit:'sunshine',text:'早晨接触自然光10分钟，可调节褪黑素分泌，改善夜间睡眠质量。',source:'光线是调节生物钟最重要的信号。--《睡眠革命》',refBook:'睡眠革命'},
+  {habit:'emotion',text:'正念练习8周可改变大脑结构，前额叶皮层增厚，杏仁核缩小。',source:'每一刻的觉察都是奇迹。--《正念的奇迹》',refBook:'正念的奇迹'},
+  {habit:'less_sit',text:'久坐1小时，寿命缩短22分钟。每30分钟起身活动2分钟即可抵消久坐危害。',source:'久坐是最接近吸烟的健康杀手。--《运动改造大脑》',refBook:'运动改造大脑'},
+  {habit:'vitamin',text:'Omega-3脂肪酸可降低体内炎症标志物C反应蛋白水平达30%。',source:'好的油脂是抗炎的关键。--《抗炎生活》',refBook:'抗炎生活'},
+  {habit:'stretch',text:'肠道菌群影响情绪和认知，益生菌补充可改善焦虑和抑郁症状。',source:'肠道被称为"第二大脑"。--《肠子的小心思》',refBook:'肠子的小心思'},
+  {habit:'acupressure',text:'食物中添加天然香料（姜黄、生姜、大蒜）可有效抑制慢性炎症反应。',source:'厨房是最好的药房。--《抗炎生活》',refBook:'抗炎生活'},
+  {habit:'yoga',text:'每天12分钟正念冥想，坚持8周即可检测到端粒酶活性提升。',source:'压力管理是最有效的抗衰老策略。--《端粒效应》',refBook:'端粒效应'},
+  {habit:'diary',text:'血糖波动过大会导致注意力不集中和情绪波动，控糖即控情绪。',source:'稳定的血糖带来稳定的情绪。--《控糖革命》',refBook:'控糖革命'},
+  {habit:'eye_rest',text:'传统发酵食品（泡菜、酸奶、味噌）富含益生菌，是肠道健康的最佳来源。',source:'发酵食品是人类最古老的营养智慧。--《深度营养》',refBook:'深度营养'},
+  {habit:'strength',text:'运动后立即学习，记忆巩固效率提升20%，这是运动对大脑最直接的馈赠。',source:'运动让大脑准备好学习。--《运动改造大脑》',refBook:'运动改造大脑'},
+  {habit:'jump_rope',text:'睡眠质量由睡眠周期决定，而非单纯的小时数。了解周期比追求时长更重要。',source:'90分钟是一个完整的睡眠周期。--《睡眠革命》',refBook:'睡眠革命'}
 ];
 
 const BODY_CLOCK = [
@@ -1659,8 +1661,8 @@ function getCurrentStreak() {
     const key = formatDate(d);
     const rec = checkinRecords[key];
     const hasAny = rec && habitsConfig.some(h => {
-      if (h.type === 'water') return (rec[h.id]?.value || 0) >= (h.waterConfig?.dailyGoal || 2000);
-      return rec[h.id]?.done;
+      if (h.type === 'water') return ((rec[h.id] && rec[h.id].value) || 0) >= ((h.waterConfig && h.waterConfig.dailyGoal) || 2000);
+      return (rec[h.id] && rec[h.id].done);
     });
     if (hasAny) { streak++; d.setDate(d.getDate() - 1); }
     else break;
@@ -1819,10 +1821,10 @@ function renderWeekBarChart() {
     habitsConfig.forEach(h => {
       total++;
       if (h.type === 'water') {
-        if ((rec[h.id]?.value || 0) >= (h.waterConfig?.dailyGoal || 2000)) done++;
+        if (((rec[h.id] && rec[h.id].value) || 0) >= ((h.waterConfig && h.waterConfig.dailyGoal) || 2000)) done++;
       } else if (h.negative) {
-        if (rec[h.id]?.done && !rec[h.id].failed) done++;
-      } else if (rec[h.id]?.done) done++;
+        if ((rec[h.id] && rec[h.id].done) && !rec[h.id].failed) done++;
+      } else if ((rec[h.id] && rec[h.id].done)) done++;
     });
     const pct = total > 0 ? Math.round((done / total) * 100) : 0;
     data.push({ day: dayNames[d.getDay()], date: `${d.getMonth()+1}/${d.getDate()}`, pct, isToday: i === 0 });
@@ -1923,8 +1925,8 @@ function getMaxStreakAll() {
     const key = formatDate(d);
     const rec = checkinRecords[key];
     const hasAny = rec && habitsConfig.some(h => {
-      if (h.type === 'water') return (rec[h.id]?.value || 0) >= (h.waterConfig?.dailyGoal || 2000);
-      return rec[h.id]?.done;
+      if (h.type === 'water') return ((rec[h.id] && rec[h.id].value) || 0) >= ((h.waterConfig && h.waterConfig.dailyGoal) || 2000);
+      return (rec[h.id] && rec[h.id].done);
     });
     if (hasAny) { cur++; max = Math.max(max, cur); }
     else { cur = 0; }
@@ -2022,8 +2024,8 @@ function refreshQuote() {
     qTip = HEALTH_TIPS[Math.floor(Math.random() * HEALTH_TIPS.length]);
     attempts++;
   }
-  document.getElementById('quoteText').textContent = qTip.source.split('——')[0];
-  document.getElementById('quoteSource').textContent = '——' + (qTip.source.split('——')[1] || '');
+  document.getElementById('quoteText').textContent = qTip.source.split('--')[0];
+  document.getElementById('quoteSource').textContent = '--' + (qTip.source.split('--')[1] || '');
 }
 
 function toggleQuoteExpand() {
@@ -2075,8 +2077,8 @@ function renderCheckin() {
 
   // Get next reminder time for sorting
   function getNextTime(h) {
-    if (h.type === 'water' && h.waterConfig?.schedule) {
-      const doneTimes = new Set((rec[h.id]?.cups || []).map(c => c.time));
+    if (h.type === 'water' && (h.waterConfig && h.waterConfig.schedule)) {
+      const doneTimes = new Set(((rec[h.id] && rec[h.id].cups) || []).map(c => c.time));
       for (const s of h.waterConfig.schedule) {
         const [sh, sm] = s.time.split(':').map(Number);
         const schedMin = sh * 60 + sm;
@@ -2084,17 +2086,17 @@ function renderCheckin() {
       }
       return 9999; // all done or all past
     }
-    if (h.reminder?.enabled) {
+    if ((h.reminder && h.reminder.enabled)) {
       const [rh, rm] = h.reminder.time.split(':').map(Number);
       return rh * 60 + rm;
     }
-    const tp = CATEGORY_MAP[h.category]?.timePeriod || 'daytime';
+    const tp = (CATEGORY_MAP[h.category] && CATEGORY_MAP[h.category].timePeriod) || 'daytime';
     const defaults = {morning:420, forenoon:600, afternoon:840, evening:1260, daytime:720};
     return defaults[tp] || 720;
   }
 
   function isChecked(h) {
-    if (h.type === 'water') return (rec[h.id]?.value || 0) >= (h.waterConfig?.dailyGoal || 2000);
+    if (h.type === 'water') return ((rec[h.id] && rec[h.id].value) || 0) >= ((h.waterConfig && h.waterConfig.dailyGoal) || 2000);
     return rec[h.id] && rec[h.id].done;
   }
 
@@ -2140,8 +2142,8 @@ function renderCheckin() {
     '你的身体会感谢现在努力的自己 ❤️',
     '好的习惯是最好的医生，坚持下去 🏥',
     '法于阴阳，和于术数，食饮有节 📖',
-    '不积跬步，无以至千里 —— 荀子 🚶',
-    '上工治未病，不治已病 ——《黄帝内经》🌿',
+    '不积跬步，无以至千里 -- 荀子 🚶',
+    '上工治未病，不治已病 --《黄帝内经》🌿',
     '坚持就是胜利，你已经很棒了 ✨'
   ];
   const encourageIdx = Math.floor(Date.now() / 86400000 + doneCount) % encourageMsgs.length;
@@ -2156,7 +2158,7 @@ function renderCheckin() {
         <text x="60" y="72" text-anchor="middle" font-size="11" fill="var(--muted)">${doneCount}/${total}</text>
       </svg>
       <div style="font-size:13px;color:var(--muted);margin-top:6px;line-height:1.6">${encourageMsgs[encourageIdx]}</div>
-      <div style="margin-top:4px"><button onclick="openRetroactivePanel('${items[0]?.h?.id || habitsConfig[0]?.id || ''}')" style="font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;font-weight:600">📅 补签过去7天</button></div>
+      <div style="margin-top:4px"><button onclick="openRetroactivePanel('${(items[0] && items[0].h && items[0].h.id) || (habitsConfig[0] && habitsConfig[0].id) || ''}')" style="font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;font-weight:600">📅 补签过去7天</button></div>
     </div>`;
   }
 
@@ -2518,13 +2520,13 @@ function setPackFilter(filter) {
 
 function renderMyPack() {
   const container = document.getElementById('myPackContent');
-  const search = document.getElementById('myPackSearch')?.value.toLowerCase() || '';
+  const search = (document.getElementById('myPackSearch') && document.getElementById('myPackSearch').value).toLowerCase() || '';
   const enabledCount = habitsConfig.filter(h => h.enabled !== false).length;
   document.getElementById('myPackSubtitle').textContent = `当前 ${habitsConfig.length} 个习惯 · ${enabledCount} 个启用`;
 
   let filtered = habitsConfig;
   if (packFilter !== 'all') {
-    filtered = filtered.filter(h => CATEGORY_MAP[h.category]?.timePeriod === packFilter);
+    filtered = filtered.filter(h => (CATEGORY_MAP[h.category] && CATEGORY_MAP[h.category].timePeriod) === packFilter);
   }
   if (search) {
     filtered = filtered.filter(h => h.name.toLowerCase().includes(search));
@@ -2901,11 +2903,11 @@ function renderManageHeatmap() {
       if (rec && habitsConfig.length > 0) {
         habitsConfig.forEach(h => {
           if (h.type === 'water') {
-            if ((rec[h.id]?.value || 0) >= (h.waterConfig?.dailyGoal || 2000)) count++;
+            if (((rec[h.id] && rec[h.id].value) || 0) >= ((h.waterConfig && h.waterConfig.dailyGoal) || 2000)) count++;
           } else if (h.type === 'select') {
-            if (rec[h.id]?.value) count++;
+            if ((rec[h.id] && rec[h.id].value)) count++;
           } else {
-            if (rec[h.id]?.done) count++;
+            if ((rec[h.id] && rec[h.id].done)) count++;
           }
         });
       }
@@ -3272,19 +3274,19 @@ function renderReview(mode) {
       habitStats[h.id].total++;
 
       if (h.type === 'water') {
-        if ((rec?.[h.id]?.value || 0) >= (h.waterConfig?.dailyGoal || 2000)) {
+        if (((rec && rec[h.id] && rec[h.id].value) || 0) >= ((h.waterConfig && h.waterConfig.dailyGoal) || 2000)) {
           totalCheckins++;
           habitStats[h.id].done++;
           dayHasAny = true;
         }
       } else if (h.negative) {
-        if (rec?.[h.id]?.done && !rec[h.id].failed) {
+        if ((rec && rec[h.id] && rec[h.id].done) && !rec[h.id].failed) {
           totalCheckins++;
           habitStats[h.id].done++;
           dayHasAny = true;
         }
       } else {
-        if (rec?.[h.id]?.done) {
+        if ((rec && rec[h.id] && rec[h.id].done)) {
           totalCheckins++;
           habitStats[h.id].done++;
           dayHasAny = true;
@@ -3691,7 +3693,7 @@ function addHabitFromLib(id) {
   habitsConfig.push(newHabit);
   saveConfig();
   showToast(`${lib.icon} ${lib.name} 已添加`);
-  renderLibraryPanel(document.querySelector('.lib-search')?.value || '');
+  renderLibraryPanel((document.querySelector('.lib-search') && document.querySelector('.lib-search').value) || '');
   render();
 }
 
@@ -3700,7 +3702,7 @@ function addCustomHabit() {
   const icon = document.getElementById('customHabitIcon').value.trim() || '✅';
   const typeBtn = document.querySelector('#customTypeSelector button.active');
   const type = typeBtn ? typeBtn.dataset.type : 'boolean';
-  const unit = document.getElementById('customHabitUnit')?.value.trim() || (type === 'count' ? '个' : type === 'timer' ? '分钟' : '');
+  const unit = (document.getElementById('customHabitUnit') && document.getElementById('customHabitUnit').value).trim() || (type === 'count' ? '个' : type === 'timer' ? '分钟' : '');
 
   if (!name) {
     showToast('请输入习惯名称');
@@ -4331,7 +4333,7 @@ async function sendAiMessage() {
     }
 
     const data = await response.json();
-    const reply = data.output?.choices?.[0]?.message?.content || data.output?.text || '抱歉，没有获取到回答。';
+    const reply = (data.output && data.output.choices && data.output.choices[0] && data.output.choices[0].message && data.output.choices[0].message.content) || (data.output && data.output.text) || '抱歉，没有获取到回答。';
 
     renderAiMessage('ai', reply);
     aiChatHistory.push({ role: 'assistant', content: reply });
@@ -4528,13 +4530,13 @@ function renderHealthReport() {
       habitStats[h.id].total++;
 
       if (h.type === 'water') {
-        const val = rec?.value || 0;
-        if (val >= (h.waterConfig?.dailyGoal || 2000)) {
+        const val = (rec && rec.value) || 0;
+        if (val >= ((h.waterConfig && h.waterConfig.dailyGoal) || 2000)) {
           totalCheckins++;
           habitStats[h.id].done++;
         }
       } else if (h.type === 'select') {
-        if (rec?.value) {
+        if ((rec && rec.value)) {
           totalCheckins++;
           habitStats[h.id].done++;
           const map = {'怒':'anger','喜':'joy','思':'thinking','悲':'sorrow','恐':'fear'};
@@ -4542,7 +4544,7 @@ function renderHealthReport() {
           if (mood) moodCounts[mood]++;
         }
       } else {
-        if (rec?.done) {
+        if ((rec && rec.done)) {
           totalCheckins++;
           habitStats[h.id].done++;
         }
@@ -4553,11 +4555,11 @@ function renderHealthReport() {
     const waterHabit = habitsConfig.find(h => h.type === 'water');
     if (waterHabit) {
       const rec = day.records[waterHabit.id];
-      if ((rec?.value || 0) >= (waterHabit.waterConfig?.dailyGoal || 2000)) waterDays++;
+      if (((rec && rec.value) || 0) >= (waterHabit.waterConfig && waterHabit.waterConfig.dailyGoal || 2000)) waterDays++;
     }
 
     // 情绪记录天数
-    if (day.records['emotion_check']?.value) emotionDays++;
+    if ((day.records['emotion_check'] && day.records['emotion_check'].value)) emotionDays++;
   });
 
   const completionRate = totalPossible > 0 ? Math.round((totalCheckins / totalPossible) * 100) : 0;
@@ -4570,8 +4572,8 @@ function renderHealthReport() {
     const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     const rec = checkinRecords[key];
     const hasAny = rec && habitsConfig.some(h => {
-      if (h.type === 'water') return (rec[h.id]?.value || 0) >= (h.waterConfig?.dailyGoal || 2000);
-      return rec[h.id]?.done;
+      if (h.type === 'water') return ((rec[h.id] && rec[h.id].value) || 0) >= ((h.waterConfig && h.waterConfig.dailyGoal) || 2000);
+      return (rec[h.id] && rec[h.id].done);
     });
     if (hasAny) streak++;
     else break;
@@ -4636,7 +4638,7 @@ function renderHealthReport() {
         <div class="report-mood-grid">
           ${Object.entries(moodCounts).map(([k, v]) => {
             const emo = EMOTION_DATA.find(e => e.id === k);
-            return `<div class="report-mood-item"><div class="rm-emoji">${emo?.emoji || '?'}</div><div class="rm-count">${v}</div><div class="rm-label">${emo?.name || k}</div></div>`;
+            return `<div class="report-mood-item"><div class="rm-emoji">${(emo && emo.emoji) || '?'}</div><div class="rm-count">${v}</div><div class="rm-label">${(emo && emo.name) || k}</div></div>`;
           }).join('')}
         </div>
       </div>
