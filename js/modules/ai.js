@@ -1,5 +1,5 @@
 (function() {
-  const AI_WORKER_URL = '';
+  const AI_WORKER_URL = 'https://ai-proxy.3487331518.workers.dev';
   let aiChatHistory = [];
 
   function openAiChatPanel() {
