@@ -19,8 +19,24 @@
     }
   }
 
+  function initDarkMode() {
+    const saved = localStorage.getItem('dark_mode');
+    const checkbox = document.getElementById('themeCheckbox');
+    const icon = document.getElementById('themeIcon');
+    if (saved === 'true') {
+      document.body.classList.add('dark');
+      if (checkbox) checkbox.checked = true;
+      if (icon) icon.textContent = '🌙';
+    } else {
+      document.body.classList.remove('dark');
+      if (checkbox) checkbox.checked = false;
+      if (icon) icon.textContent = '☀️';
+    }
+  }
+
   function initApp() {
     initSkin();
+    initDarkMode();
     App.Core.Storage.loadData();
     App.UI.Render.render();
     App.UI.Events.initTouchSwipe();

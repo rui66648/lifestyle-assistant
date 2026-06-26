@@ -58,6 +58,15 @@
 
 <!-- Profile Section (我的) -->
 <div class="section" id="sec-profile">
+  <!-- 暗黑模式切换 -->
+  <div class="theme-toggle-wrapper">
+    <span class="theme-toggle-icon" id="themeIcon">☀️</span>
+    <span class="theme-toggle-label">暗黑模式</span>
+    <label class="theme-toggle" for="themeCheckbox">
+      <input class="theme-checkbox" type="checkbox" id="themeCheckbox" onchange="toggleDarkMode(this.checked)">
+      <span class="theme-slider"></span>
+    </label>
+  </div>
   <!-- 个人信息卡片 -->
   <div class="profile-card" id="profileCard">
     <div class="profile-avatar" id="profileAvatar">🌱</div>

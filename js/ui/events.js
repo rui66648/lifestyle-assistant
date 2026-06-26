@@ -608,9 +608,23 @@
     showToast('CSV已导出');
   }
 
+
   function toggleReminderEnabled() {
     const el = document.getElementById('reminderToggle');
     el.classList.toggle('on');
+  }
+
+  function toggleDarkMode(enable) {
+    const icon = document.getElementById('themeIcon');
+    if (enable) {
+      document.body.classList.add('dark');
+      localStorage.setItem('dark_mode', 'true');
+      if (icon) icon.textContent = '🌙';
+    } else {
+      document.body.classList.remove('dark');
+      localStorage.setItem('dark_mode', 'false');
+      if (icon) icon.textContent = '☀️';
+    }
   }
 
   if (!window.App) window.App = {};
@@ -622,6 +636,7 @@
     confirmCheckinInput,
     checkLevelUp,
     skipHabit,
+    toggleDarkMode,
     doRetroactiveCheckin,
     animateCheckin,
     showAllDoneCelebration,
