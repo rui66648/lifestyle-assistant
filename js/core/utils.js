@@ -167,7 +167,17 @@
     } catch(e) {}
   }
 
-  const isChecked = App.Core.Storage.isHabitChecked;
+  function _isChecked(habit, rec) {
+    if (App.Core && App.Core.Storage && App.Core.Storage.isHabitChecked) {
+      return App.Core.Storage.isHabitChecked(habit, rec);
+    }
+    if (rec && rec[habit.id] !== undefined) {
+      if (habit.type === 'boolean') return rec[habit.id] === true || rec[habit.id] === 1;
+      if (habit.type === 'number') return (rec[habit.id] || 0) >= (habit.goal || 1);
+      return !!rec[habit.id];
+    }
+    return false;
+  }
 
   function getCurrentStreak() {
     let streak = 0;
@@ -175,7 +185,7 @@
     while (true) {
       const key = formatDate(d);
       const rec = checkinRecords[key];
-      const hasAny = rec && habitsConfig.some(h => isChecked(h, rec));
+      const hasAny = rec && habitsConfig.some(h => _isChecked(h, rec));
       if (hasAny) { streak++; d.setDate(d.getDate() - 1); }
       else break;
     }
@@ -213,7 +223,7 @@
     let total = 0;
     for (const key in checkinRecords) {
       const rec = checkinRecords[key];
-      habitsConfig.forEach(h => { if (isChecked(h, rec)) total++; });
+      habitsConfig.forEach(h => { if (_isChecked(h, rec)) total++; });
     }
     return total;
   }
@@ -266,7 +276,7 @@
     const rec = checkinRecords[key];
     if (!habitsConfig.length) return 0;
     let done = 0;
-    habitsConfig.forEach(h => { if (isChecked(h, rec)) done++; });
+    habitsConfig.forEach(h => { if (_isChecked(h, rec)) done++; });
     return Math.round((done / habitsConfig.length) * 100);
   }
 

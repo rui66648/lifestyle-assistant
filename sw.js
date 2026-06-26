@@ -27,9 +27,6 @@ const ASSETS = [
   './js/ui/render.js',
   './assets/icon-192.jpg',
   './assets/icon-512.jpg',
-  './_shared/fonts/InstrumentSans-Regular.ttf',
-  './_shared/fonts/InstrumentSans-Bold.ttf',
-  './_shared/fonts/GeistMono-Regular.ttf'
 ];
 
 self.addEventListener('install', event => {
