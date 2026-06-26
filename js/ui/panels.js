@@ -608,6 +608,64 @@
     openPanel('wulaoPanel');
   }
 
+  /* ========== 皮肤面板 ========== */
+  const SKINS = [
+    { id:'default', name:'竹青', emoji:'🌿', vars:{accent:'#5BB98A',accent2:'#FF9F67','accent-light':'#D4F0E4','accent2-light':'#FFE2CC',bg:'#FFFCF7',bg2:'#F7F3ED'} },
+    { id:'ocean', name:'海蓝', emoji:'🌊', vars:{accent:'#4A90D9',accent2:'#48C9B0','accent-light':'#D6EAF8','accent2-light':'#D1F2EB',bg:'#F5F9FC',bg2:'#EBF2F8'} },
+    { id:'rose', name:'桃粉', emoji:'🌸', vars:{accent:'#E07B8C',accent2:'#D4A0B5','accent-light':'#FADBD8','accent2-light':'#F5EEF8',bg:'#FFF5F7',bg2:'#FEF0F3'} },
+    { id:'sunset', name:'暖橘', emoji:'🌅', vars:{accent:'#E8913A',accent2:'#E05A4B','accent-light':'#FDEBD0','accent2-light':'#FADBD8',bg:'#FFFBF5',bg2:'#FFF3E6'} },
+    { id:'lavender', name:'紫韵', emoji:'💜', vars:{accent:'#7B6CB8',accent2:'#9B8EC4','accent-light':'#E8E5F5','accent2-light':'#F0EEF8',bg:'#FAFAFE',bg2:'#F2F1FA'} },
+    { id:'forest', name:'墨绿', emoji:'🌲', vars:{accent:'#2E7D5B',accent2:'#8D9B6A','accent-light':'#D4EDDA','accent2-light':'#E8ECD6',bg:'#F5FAF6',bg2:'#EBF4EE'} },
+  ];
+
+  function getCurrentSkin() {
+    const saved = localStorage.getItem('app_skin');
+    return saved || 'default';
+  }
+
+  function applySkin(skinId) {
+    const skin = SKINS.find(s => s.id === skinId);
+    if (!skin) return;
+    const root = document.documentElement;
+    for (const [key, val] of Object.entries(skin.vars)) {
+      root.style.setProperty('--' + key, val);
+    }
+    localStorage.setItem('app_skin', skinId);
+    // 更新选中态
+    document.querySelectorAll('.skin-option').forEach(el => {
+      el.classList.toggle('active', el.dataset.skin === skinId);
+    });
+  }
+
+  function openSkinPanel() {
+    const current = getCurrentSkin();
+    const panel = document.getElementById('skinPanel');
+    if (panel) {
+      const body = panel.querySelector('.panel-body');
+      if (body) {
+        body.innerHTML = `
+          <div style="font-size:16px;font-weight:700;margin-bottom:16px;text-align:center">🎨 选择皮肤</div>
+          <div class="skin-grid">
+            ${SKINS.map(s => `
+              <button class="skin-option${s.id === current ? ' active' : ''}" data-skin="${s.id}" onclick="App.UI.Panels.selectSkin('${s.id}')">
+                <div class="skin-preview" style="background:linear-gradient(135deg,${s.vars.accent},${s.vars.accent2})">
+                  <div class="skin-swatch" style="background:${s.vars.bg}"></div>
+                </div>
+                <span class="skin-name">${s.emoji} ${s.name}</span>
+              </button>
+            `).join('')}
+          </div>`;
+      }
+    }
+    openPanel('skinPanel');
+  }
+
+  function selectSkin(skinId) {
+    applySkin(skinId);
+    // 刷新 profile 卡片以应用新配色
+    if (typeof renderLevelCard === 'function') renderLevelCard();
+  }
+
   function toggleGroup(period) {
     const group = document.getElementById('group-' + period);
     if (!group) return;
@@ -1030,6 +1088,8 @@
     openWulaoPanel,
     toggleGroup,
     renderWulaoPanel,
+    openSkinPanel,
+    selectSkin,
     openHealthReportPanel,
     renderHealthReport,
     openDataPanel,

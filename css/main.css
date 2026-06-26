@@ -1291,8 +1291,34 @@ img{max-width:100%;display:block}
 .sd-section{margin-bottom:20px}
 .sd-section-title{font-size:15px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px}
 
+
 /* 成就徽章区域 */
 .profile-badges-section{margin-top:16px}
+
+/* ========== 皮肤面板 ========== */
+.skin-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
+  padding:8px 0;
+}
+.skin-option{
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  padding:14px 8px;border-radius:var(--radius);
+  border:2px solid transparent;background:var(--bg2);
+  cursor:pointer;transition:all .2s ease;
+  font-family:inherit;font-size:inherit;width:100%;
+}
+.skin-option:active{transform:scale(.95)}
+.skin-option.active{border-color:var(--accent);background:var(--accent-light)}
+.skin-preview{
+  width:48px;height:48px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+.skin-swatch{
+  width:20px;height:20px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.6);
+}
+.skin-name{font-size:12px;font-weight:600;color:var(--ink)}
 
 @media (prefers-color-scheme: dark){
   .profile-grid-item{background:var(--bg2)}

@@ -867,6 +867,7 @@
       { icon:'⏳', label:'子午流注', gradient:'linear-gradient(135deg,#e3f2fd,#bbdefb)', action:'clock' },
       { icon:'🛡️', label:'五劳防护', gradient:'linear-gradient(135deg,#fff3e0,#ffe0b2)', action:'wulao' },
       { icon:'🩺', label:'体质测试', gradient:'linear-gradient(135deg,#fce4ec,#f8bbd0)', action:'constitution' },
+      { icon:'🎨', label:'皮肤', gradient:'linear-gradient(135deg,#ede7f6,#d1c4e9)', action:'skin' },
       { icon:'📈', label:'健康报告', gradient:'linear-gradient(135deg,#e8eaf6,#c5cae9)', action:'healthReport' },
       { icon:'📋', label:'养生总结', gradient:'linear-gradient(135deg,#f1f8e9,#dcedc8)', action:'healthSummary' },
       { icon:'💾', label:'数据管理', gradient:'linear-gradient(135deg,#efebe9,#d7ccc8)', action:'data' },
@@ -888,6 +889,7 @@
       case 'clock': App.UI.Panels.openClockPanel(); break;
       case 'wulao': App.UI.Panels.openWulaoPanel(); break;
       case 'constitution': App.Modules.Constitution.openConstitutionPanel(); break;
+      case 'skin': App.UI.Panels.openSkinPanel(); break;
       case 'healthReport': App.UI.Panels.openHealthReportPanel(); break;
       case 'healthSummary': location.href = 'references/养生总结/养生总结.html'; break;
       case 'data': App.UI.Panels.openDataPanel(); break;
