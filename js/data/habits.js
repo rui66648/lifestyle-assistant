@@ -135,3 +135,7 @@ App.Data.HABIT_LIBRARY = HABIT_LIBRARY;
 App.Data.CATEGORY_MAP = CATEGORY_MAP;
 App.Data.TIME_PERIOD_MAP = TIME_PERIOD_MAP;
 App.Data.DEFAULT_HABITS = DEFAULT_HABITS;
+
+if (App.registerModule) {
+  App.registerModule('data.habits', 'data', null);
+}

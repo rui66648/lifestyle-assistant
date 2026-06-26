@@ -321,4 +321,8 @@
     checkAllDoneBonus
   };
   window.__utilsDone = true;
+
+  if (App.registerModule) {
+    App.registerModule('core.utils', 'core', null);
+  }
 })();

@@ -1467,6 +1467,10 @@
     renderSdMonthReview,
     renderSdYearReview
   };
+
+  if (App.registerModule) {
+    App.registerModule('ui.render', 'ui', null);
+  }
 })();
 
 // 全局删除习惯函数（供管理页面调用）

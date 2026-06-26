@@ -4,4 +4,8 @@
   if (!window.App) window.App = {};
   if (!App.Modules) App.Modules = {};
   if (!App.Modules.Habit) App.Modules.Habit = {};
+
+  if (App.registerModule) {
+    App.registerModule('modules.habit', 'modules', null);
+  }
 })();

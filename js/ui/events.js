@@ -700,4 +700,8 @@
     exportCSV,
     toggleReminderEnabled
   };
+
+  if (App.registerModule) {
+    App.registerModule('ui.events', 'ui', null);
+  }
 })();

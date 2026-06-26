@@ -155,4 +155,8 @@
     addHabitFromConstitution,
     retakeConstitutionQuiz
   };
+
+  if (App.registerModule) {
+    App.registerModule('modules.constitution', 'modules', null);
+  }
 })();

@@ -4,3 +4,13 @@ lifestyle-assistant/.git/
 node_modules/
 package-lock.json
 package.json
+
+# 调试/缓存文件
+.playwright-cli/
+.codebuddy/plans/
+workers/.wrangler/cache/
+
+# 临时截图
+*.png
+!assets/*.png
+!_shared/fonts/*.png

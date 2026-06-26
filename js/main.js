@@ -14,13 +14,37 @@
     }
   }
 
+  function checkModules() {
+    if (App.checkDependencies) {
+      const ok = App.checkDependencies();
+      if (!ok) {
+        console.warn('[main] 模块依赖不完整，尝试继续运行...');
+        if (App.listModules) App.listModules();
+      } else {
+        console.log('[main] 所有模块加载完成');
+        if (App.listModules) App.listModules();
+      }
+    }
+  }
+
   function initApp() {
-    App.UI.Panels.initAllSkins();  // 统一初始化所有皮肤（主题 + 按钮/复选框等组件）
+    checkModules();
+    if (App.UI && App.UI.Panels && App.UI.Panels.initAllSkins) {
+      App.UI.Panels.initAllSkins();
+    }
     initDarkMode();
-    App.Core.Storage.loadData();
-    App.UI.Render.render();
-    App.UI.Events.initTouchSwipe();
-    App.Modules.Guide.showGuide();
+    if (App.Core && App.Core.Storage && App.Core.Storage.loadData) {
+      App.Core.Storage.loadData();
+    }
+    if (App.UI && App.UI.Render && App.UI.Render.render) {
+      App.UI.Render.render();
+    }
+    if (App.UI && App.UI.Events && App.UI.Events.initTouchSwipe) {
+      App.UI.Events.initTouchSwipe();
+    }
+    if (App.Modules && App.Modules.Guide && App.Modules.Guide.showGuide) {
+      App.Modules.Guide.showGuide();
+    }
   }
 
   if (document.readyState === 'loading') {

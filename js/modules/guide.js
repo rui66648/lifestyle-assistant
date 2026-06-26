@@ -69,4 +69,8 @@
     nextGuideStep,
     skipGuide
   };
+
+  if (App.registerModule) {
+    App.registerModule('modules.guide', 'modules', null);
+  }
 })();

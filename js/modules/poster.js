@@ -107,4 +107,8 @@
     generatePoster,
     downloadPoster
   };
+
+  if (App.registerModule) {
+    App.registerModule('modules.poster', 'modules', null);
+  }
 })();

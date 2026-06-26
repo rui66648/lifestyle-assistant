@@ -111,4 +111,8 @@
   App.Modules.Water = {
     renderWaterTracker
   };
+
+  if (App.registerModule) {
+    App.registerModule('modules.water', 'modules', null);
+  }
 })();

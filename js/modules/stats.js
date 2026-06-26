@@ -49,4 +49,8 @@
   App.Modules.Stats = {
     renderWeekBarChart
   };
+
+  if (App.registerModule) {
+    App.registerModule('modules.stats', 'modules', null);
+  }
 })();

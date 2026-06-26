@@ -216,3 +216,7 @@ if (!App.Data) App.Data = {};
 App.Data.HEALTH_PACK = HEALTH_PACK;
 App.Data.SEASONAL_PACKS = SEASONAL_PACKS;
 App.Data.NEIJING_PACK = NEIJING_PACK;
+
+if (App.registerModule) {
+  App.registerModule('data.packs', 'data', null);
+}

@@ -149,4 +149,8 @@
     // 统一的判断函数，供 stats / render 等模块复用
     isHabitChecked
   };
+
+  if (App.registerModule) {
+    App.registerModule('core.storage', 'core', null);
+  }
 })();

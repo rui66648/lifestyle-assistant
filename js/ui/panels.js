@@ -1388,4 +1388,8 @@
     removeWaterScheduleRow,
     saveWaterSettings
   };
+
+  if (App.registerModule) {
+    App.registerModule('ui.panels', 'ui', null);
+  }
 })();

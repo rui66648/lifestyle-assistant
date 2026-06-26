@@ -545,13 +545,20 @@
   </button>
 </div>
 
+<!-- ===== 第0层：命名空间 + 模块系统 ===== -->
 <script src="js/app.js"></script>
+
+<!-- ===== 第1层：数据层（无依赖） ===== -->
 <script src="js/data/constants.js"></script>
 <script src="js/data/content.js"></script>
 <script src="js/data/habits.js"></script>
 <script src="js/data/packs.js"></script>
+
+<!-- ===== 第2层：核心层（依赖 data） ===== -->
 <script src="js/core/utils.js"></script>
 <script src="js/core/storage.js"></script>
+
+<!-- ===== 第3层：业务模块层（依赖 core + data） ===== -->
 <script src="js/modules/checkin.js"></script>
 <script src="js/modules/habit.js"></script>
 <script src="js/modules/stats.js"></script>
@@ -561,10 +568,16 @@
 <script src="js/modules/constitution.js"></script>
 <script src="js/modules/poster.js"></script>
 <script src="js/modules/guide.js"></script>
+
+<!-- ===== 第4层：UI层（依赖 modules + core + data） ===== -->
 <script src="js/ui/render.js"></script>
 <script src="js/ui/panels.js"></script>
 <script src="js/ui/events.js"></script>
+
+<!-- ===== 第5层：兼容层（暴露全局函数） ===== -->
 <script src="js/compat.js"></script>
+
+<!-- ===== 第6层：应用入口 ===== -->
 <script src="js/main.js"></script>
 <script>
 if ('serviceWorker' in navigator) {

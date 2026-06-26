@@ -255,3 +255,7 @@ App.Data.WULAO_DATA = WULAO_DATA;
 App.Data.CONSTITUTION_TYPES = CONSTITUTION_TYPES;
 App.Data.CONSTITUTION_QUIZ = CONSTITUTION_QUIZ;
 App.Data.GUIDE_STEPS = GUIDE_STEPS;
+
+if (App.registerModule) {
+  App.registerModule('data.content', 'data', null);
+}

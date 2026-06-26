@@ -68,3 +68,7 @@ App.Data.CUSTOM_ICONS = CUSTOM_ICONS;
 App.Data.POMO_WORK = POMO_WORK;
 App.Data.POMO_SHORT = POMO_SHORT;
 App.Data.POMO_LONG = POMO_LONG;
+
+if (App.registerModule) {
+  App.registerModule('data.constants', 'data', null);
+}

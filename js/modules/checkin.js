@@ -135,4 +135,8 @@
     getHealthTipText,
     getHealthTipSource
   };
+
+  if (App.registerModule) {
+    App.registerModule('modules.checkin', 'modules', null);
+  }
 })();

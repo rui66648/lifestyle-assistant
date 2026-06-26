@@ -199,4 +199,8 @@
   window.pausePomodoro = pausePomodoro;
   window.resumePomodoro = resumePomodoro;
   window.stopPomodoro = stopPomodoro;
+
+  if (App.registerModule) {
+    App.registerModule('modules.pomodoro', 'modules', null);
+  }
 })();

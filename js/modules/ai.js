@@ -122,4 +122,8 @@
     removeAiLoading,
     sendAiMessage
   };
+
+  if (App.registerModule) {
+    App.registerModule('modules.ai', 'modules', null);
+  }
 })();
