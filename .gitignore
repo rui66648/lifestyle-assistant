@@ -1,3 +1,6 @@
 .uploads/
 .trae/
 lifestyle-assistant/.git/
+node_modules/
+package-lock.json
+package.json
