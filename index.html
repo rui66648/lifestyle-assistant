@@ -19,15 +19,15 @@
 <div class="ambient-bg" id="ambientBg"></div>
 <!-- 极简顶栏 -->
 <div class="mini-header" id="todayCard">
-  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px">
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px">
+    <div style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap">
       <span class="mini-date" id="todayDate"></span>
       <span class="mini-lunar" id="todayLunar"></span>
     </div>
     <div class="mini-badges" id="todayBadges"></div>
   </div>
   <div class="mini-tip" id="todaySeasonTip"></div>
-  <div class="mini-quote" id="quoteCard" onclick="toggleQuoteExpand()">
+  <div class="mini-quote" id="quoteCard">
     <div class="mini-quote-text" id="quoteText"></div>
     <div class="mini-quote-source" id="quoteSource"></div>
     <div class="mini-quote-actions">
@@ -56,8 +56,45 @@
   <div id="checkinContent"></div>
 </div>
 
-<!-- Stats Section -->
-<div class="section" id="sec-stats">
+<!-- Profile Section (我的) -->
+<div class="section" id="sec-profile">
+  <!-- 个人信息卡片 -->
+  <div class="profile-card" id="profileCard">
+    <div class="profile-avatar" id="profileAvatar">🌱</div>
+    <div class="profile-info">
+      <div class="profile-name" id="levelName">养生小白</div>
+      <div class="profile-desc" id="levelProgressText">连续打卡 0 天</div>
+      <div class="profile-progress">
+        <div class="profile-progress-bar">
+          <div class="profile-progress-fill" id="levelProgressBar" style="width:0%"></div>
+        </div>
+        <span class="profile-progress-pct" id="levelProgressPct">0%</span>
+      </div>
+      <div class="profile-next" id="levelNext">再打卡 3 天升级为「养生学徒」</div>
+    </div>
+  </div>
+
+  <!-- 统计概览 -->
+  <div class="profile-stats" id="profileStats">
+    <div class="profile-stat-item">
+      <span class="ps-val" id="psStreak">0</span>
+      <span class="ps-label">连续打卡</span>
+    </div>
+    <div class="profile-stat-item">
+      <span class="ps-val" id="psTotal">0</span>
+      <span class="ps-label">累计打卡</span>
+    </div>
+    <div class="profile-stat-item">
+      <span class="ps-val" id="psRate">0%</span>
+      <span class="ps-label">完成率</span>
+    </div>
+    <div class="profile-stat-item">
+      <span class="ps-val" id="psHabits">0</span>
+      <span class="ps-label">习惯数</span>
+    </div>
+  </div>
+
+  <!-- 环形进度图 -->
   <div class="ring-container">
     <div class="ring-wrap">
       <svg class="ring-svg" viewBox="0 0 160 160">
@@ -70,105 +107,48 @@
       </div>
     </div>
   </div>
-  <div class="stats-grid" id="statsGrid"></div>
-  <div class="section-title" style="margin-top:16px">📊 本周趋势</div>
-  <div id="weekBarChart" style="background:#fff;border-radius:var(--radius);padding:16px;margin-bottom:16px;box-shadow:var(--shadow)"></div>
-  <div class="section-title">📊 习惯完成率排行（近30天）</div>
-  <div id="rankingList"></div>
-  <div class="heatmap" id="heatmapSection">
-    <div class="heatmap-header">
-      <span class="heatmap-title">📅 月度热力图</span>
-      <div class="heatmap-nav">
-        <button onclick="changeMonth(-1)">◀</button>
-        <span class="heatmap-month" id="heatmapMonth"></span>
-        <button onclick="changeMonth(1)">▶</button>
-      </div>
-    </div>
-    <div class="heatmap-grid" id="heatmapGrid"></div>
+
+  <!-- 图标宫格 -->
+  <div class="profile-grid" id="profileGrid"></div>
+
+  <!-- 成就徽章 -->
+  <div class="profile-badges-section">
+    <div class="section-title">🏆 成就徽章</div>
+    <div class="achievements" id="achievements"></div>
   </div>
-  <div class="section-title">🏆 成就徽章</div>
-  <div class="achievements" id="achievements"></div>
+
+  <!-- 每日卡片收藏入口 -->
+  <div class="daily-cards-entry" id="dailyCardsEntry" onclick="openDailyCardCollection()" style="display:none">
+    <div class="dc-header">
+      <span class="dc-title">🎴 每日卡片收藏</span>
+      <span class="dc-count" id="dcCount">0张</span>
+    </div>
+    <div class="dc-preview" id="dcPreview"></div>
+  </div>
+
+  <!-- 导出CSV -->
   <button class="export-btn" onclick="exportCSV()">📥 导出CSV数据</button>
 </div>
 
-<!-- Manage Section -->
+<!-- Manage Section (管理 - 按时间段分组管理习惯) -->
 <div class="section" id="sec-manage">
-  <div class="pack-card my-pack" id="levelCard" style="margin-bottom:12px">
-    <div class="pack-header" onclick="togglePack('level')" style="cursor:pointer">
-      <div class="pack-header-left">
-        <span class="pack-emoji" id="levelIcon">🌱</span>
-        <div>
-          <div class="pack-title" id="levelName">养生小白</div>
-          <div class="pack-subtitle" id="levelProgressText">连续打卡 0 天</div>
-        </div>
-      </div>
-      <span class="pack-toggle" id="levelToggle">▼</span>
+  <!-- 统计概览卡片 -->
+  <div class="mg-stats" id="mgStats"></div>
+
+  <!-- 顶部搜索和添加 -->
+  <div class="mg-header">
+    <div class="mg-search-wrap">
+      <input class="mg-search" id="mgSearch" placeholder="🔍 搜索习惯..." oninput="renderManage()">
     </div>
-    <div class="pack-body" id="levelBody" style="padding:12px 16px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-        <div style="flex:1;height:8px;background:var(--rule);border-radius:4px;overflow:hidden">
-          <div id="levelProgressBar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;width:0%;transition:width .5s"></div>
-        </div>
-        <span id="levelProgressPct" style="font-size:12px;color:var(--muted);white-space:nowrap">0%</span>
-      </div>
-      <div id="levelNext" style="font-size:12px;color:var(--muted)">再打卡 3 天升级为「养生学徒」</div>
-    </div>
+    <button class="mg-add-btn" onclick="openLibraryPanel()">＋</button>
   </div>
 
-  <!-- 打卡热力图 -->
-  <div class="gm-heatmap-card" id="heatmapCard" style="display:none">
-    <div class="gm-heatmap-title">🔥 打卡热力图</div>
-    <div class="gm-heatmap-wrap">
-      <div class="gm-heatmap-inner" id="heatmapInner"></div>
-    </div>
-    <div class="gm-heatmap-legend">
-      少 <span style="background:#ebedf0"></span> <span style="background:#c6e48b"></span> <span style="background:#7bc96f"></span> <span style="background:#239a3b"></span> <span style="background:#196127"></span> 多
-    </div>
-  </div>
-
-  <div class="pack-card my-pack" id="myPackCard">
-    <div class="pack-header" onclick="togglePack('myPack')">
-      <div class="pack-header-left">
-        <span class="pack-emoji">📦</span>
-        <div>
-          <div class="pack-title">我的习惯包</div>
-          <div class="pack-subtitle" id="myPackSubtitle">当前 0 个习惯</div>
-        </div>
-      </div>
-      <span class="pack-toggle" id="myPackToggle">▼</span>
-    </div>
-    <div class="pack-body" id="myPackBody">
-      <input type="text" class="pack-search" id="myPackSearch" placeholder="🔍 搜索习惯..." oninput="renderMyPack()">
-      <div class="pack-filter" id="myPackFilter">
-        <button class="pack-filter-btn active" data-filter="all" onclick="setPackFilter('all')">全部</button>
-        <button class="pack-filter-btn" data-filter="morning" onclick="setPackFilter('morning')">🌅 早晨</button>
-        <button class="pack-filter-btn" data-filter="forenoon" onclick="setPackFilter('forenoon')">🌤️ 上午</button>
-        <button class="pack-filter-btn" data-filter="afternoon" onclick="setPackFilter('afternoon')">☀️ 下午</button>
-        <button class="pack-filter-btn" data-filter="evening" onclick="setPackFilter('evening')">🌙 晚上</button>
-      </div>
-      <div id="myPackContent"></div>
-      <div class="add-habit-btn" onclick="openLibraryPanel()">+ 添加新习惯</div>
-    </div>
-  </div>
-  <div id="systemPacks"></div>
-  <div class="manage-helpers">
-    <button onclick="openReviewPanel('monthly')">📅 月回顾</button>
-    <button onclick="openReviewPanel('yearly')">📅 年回顾</button>
-    <button onclick="window.open('https://rui66648.github.io/lifestyle-assistant/养生总结/养生总结.html', '_blank')">📊 养生总结</button>
-    <button onclick="showGuide()">📖 使用教程</button>
-  </div>
-  <div class="manage-helpers">
-    <button onclick="openClockPanel()">⏳ 子午流注</button>
-    <button onclick="openWulaoPanel()">🛡️ 五劳防护</button>
-    <button onclick="openConstitutionPanel()">🩺 体质测试</button>
-    <button onclick="openHealthReportPanel()">📊 健康报告</button>
-    <button onclick="openDataPanel()">💾 数据管理</button>
-    <button onclick="openRefPanel(event)">📚 参考文献</button>
-  </div>
+  <!-- 按时间段分组的习惯列表 -->
+  <div id="mgGroups"></div>
 </div>
 
-<!-- FAB -->
-<button class="fab" onclick="openLibraryPanel()">+</button>
+
+
 
 <!-- Panel Overlay -->
 <div class="panel-overlay" id="panelOverlay" onclick="closeAllPanels()"></div>
@@ -388,14 +368,77 @@
   </div>
 </div>
 
-<!-- 月度/年度回顾 Panel -->
-<div class="panel" id="reviewPanel">
+
+<!-- 统计详情 Panel -->
+<div class="panel" id="statsDetailPanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
-    <span class="panel-title">📅 养生回顾</span>
+    <span class="panel-title">📊 统计详情</span>
     <button class="panel-close" onclick="closeAllPanels()">✕</button>
   </div>
-  <div class="panel-body" id="reviewPanelBody" style="padding:16px">
+  <!-- 周月年标签页 -->
+  <div class="sd-tabs">
+    <button class="sd-tab active" data-period="week" onclick="App.UI.Render.switchStatsPeriod('week', this)">周</button>
+    <button class="sd-tab" data-period="month" onclick="App.UI.Render.switchStatsPeriod('month', this)">月</button>
+    <button class="sd-tab" data-period="year" onclick="App.UI.Render.switchStatsPeriod('year', this)">年</button>
+  </div>
+  <div class="panel-body" id="statsDetailPanelBody" style="padding:16px">
+    <!-- 周统计 -->
+    <div class="sd-period-content" id="sdWeekContent">
+      <div class="sd-section">
+        <div class="sd-section-title">📈 本周趋势</div>
+        <div id="sdWeekBarChart" style="background:#fff;border-radius:var(--radius);padding:16px;margin-bottom:16px;box-shadow:var(--shadow)"></div>
+      </div>
+      <div class="sd-section" id="sdWaterWeekSection" style="display:none">
+        <div class="sd-section-title">💧 本周饮水趋势</div>
+        <div id="sdWaterWeekChart" style="background:#fff;border-radius:var(--radius);padding:16px;margin-bottom:16px;box-shadow:var(--shadow)"></div>
+      </div>
+      <div class="sd-section">
+        <div class="sd-section-title">📊 习惯完成率排行（近30天）</div>
+        <div id="sdRankingList"></div>
+      </div>
+    </div>
+    <!-- 月统计 -->
+    <div class="sd-period-content" id="sdMonthContent" style="display:none">
+      <div class="sd-section">
+        <div class="heatmap-header">
+          <span class="heatmap-title">📅 月度热力图</span>
+          <div class="heatmap-nav">
+            <button onclick="sdChangeMonth(-1)">◀</button>
+            <span class="heatmap-month" id="sdHeatmapMonth"></span>
+            <button onclick="sdChangeMonth(1)">▶</button>
+          </div>
+        </div>
+        <div class="heatmap-grid" id="sdHeatmapGrid"></div>
+      </div>
+      <div class="sd-section" style="margin-top:16px">
+        <div class="sd-section-title">📅 月度回顾</div>
+        <div id="sdMonthReview"></div>
+      </div>
+    </div>
+    <!-- 年统计 -->
+    <div class="sd-period-content" id="sdYearContent" style="display:none">
+      <div class="sd-section">
+        <div class="sd-section-title">🗓️ 年度打卡热力图</div>
+        <div class="year-heatmap-wrap">
+          <div class="year-heatmap-months" id="yearHeatmapMonths"></div>
+          <div class="year-heatmap-grid" id="yearHeatmapGrid"></div>
+          <div class="year-heatmap-legend">
+            <span style="font-size:11px;color:var(--muted)">少</span>
+            <div class="yh-cell" style="background:var(--yh-0)"></div>
+            <div class="yh-cell" style="background:var(--yh-1)"></div>
+            <div class="yh-cell" style="background:var(--yh-2)"></div>
+            <div class="yh-cell" style="background:var(--yh-3)"></div>
+            <div class="yh-cell" style="background:var(--yh-4)"></div>
+            <span style="font-size:11px;color:var(--muted)">多</span>
+          </div>
+        </div>
+      </div>
+      <div class="sd-section" style="margin-top:16px">
+        <div class="sd-section-title">🗓️ 年度回顾</div>
+        <div id="sdYearReview"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -421,6 +464,28 @@
   </div>
 </div>
 
+<!-- 每日卡片收藏 Panel -->
+<div class="panel" id="dailyCardPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title">🎴 每日卡片收藏</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body" id="dailyCardPanelBody" style="padding:16px">
+  </div>
+</div>
+
+<!-- 习惯编辑 Panel -->
+<div class="panel" id="habitEditPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title">✏️ 编辑习惯</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body" id="habitEditPanelBody" style="padding:16px">
+  </div>
+</div>
+
 <!-- 首次访问引导 -->
 <div id="guideOverlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:200;align-items:center;justify-content:center">
   <div id="guideCard" style="background:#fff;border-radius:var(--radius);padding:32px 24px;margin:24px;max-width:340px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.2)">
@@ -429,11 +494,7 @@
     <div id="guideText" style="font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:20px">基于《黄帝内经》的AI养生习惯追踪应用，让千年中医智慧融入日常生活。</div>
     <button id="guideBtn" class="const-btn" onclick="nextGuideStep()" style="margin-top:0">下一步</button>
     <div style="margin-top:12px">
-      <span id="guideDots" style="display:flex;gap:6px;justify-content:center">
-        <span style="width:8px;height:8px;border-radius:50%;background:var(--accent)"></span>
-        <span style="width:8px;height:8px;border-radius:50%;background:var(--rule)"></span>
-        <span style="width:8px;height:8px;border-radius:50%;background:var(--rule)"></span>
-      </span>
+      <span id="guideDots" style="display:flex;gap:5px;justify-content:center;flex-wrap:wrap"></span>
     </div>
     <button onclick="skipGuide()" style="margin-top:12px;font-size:12px;color:var(--muted);background:none;border:none;cursor:pointer">跳过引导</button>
   </div>
@@ -445,18 +506,18 @@
     <span class="bnav-icon">📋</span>
     <span class="bnav-label">打卡</span>
   </button>
-  <button class="bnav-item" data-tab="stats" onclick="switchTab('stats')">
-    <span class="bnav-icon">📊</span>
-    <span class="bnav-label">统计</span>
-  </button>
-  <button class="bnav-center" onclick="openPomodoroPanel()">🍅</button>
   <button class="bnav-item" data-tab="manage" onclick="switchTab('manage')">
-    <span class="bnav-icon">⚙️</span>
+    <span class="bnav-icon">🗂️</span>
     <span class="bnav-label">管理</span>
   </button>
+  <button class="bnav-center" onclick="openPomodoroPanel()">🍅</button>
   <button class="bnav-item" onclick="openAiChatPanel()">
     <span class="bnav-icon">🤖</span>
     <span class="bnav-label">AI</span>
+  </button>
+  <button class="bnav-item" data-tab="profile" onclick="switchTab('profile')">
+    <span class="bnav-icon">👤</span>
+    <span class="bnav-label">我的</span>
   </button>
 </div>
 
@@ -480,5 +541,16 @@
 <script src="js/ui/panels.js"></script>
 <script src="js/ui/events.js"></script>
 <script src="js/compat.js"></script>
+<script src="js/main.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').then(reg => {
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) { refreshing = true; window.location.reload(); }
+    });
+  }).catch(err => console.log('SW registration failed:', err));
+}
+</script>
 </body>
 </html>

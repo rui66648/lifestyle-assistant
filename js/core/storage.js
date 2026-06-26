@@ -19,6 +19,7 @@
             name: lib.name,
             icon: lib.icon,
             category: lib.category,
+            timePeriod: lib.timePeriod || 'daytime',
             type: lib.type,
             unit: lib.unit,
             reminder: {enabled:false, time:'08:00', days:[0,1,2,3,4,5,6], method:'in-app'}

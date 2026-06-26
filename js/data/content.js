@@ -54,7 +54,11 @@ const REF_BOOKS = [
   {name:'《肠子的小心思》',author:'现代 · 朱莉娅·恩德斯',type:'modern',emoji:'🦠',desc:'肠道菌群与健康',url:'https://rui66648.github.io/lifestyle-assistant/references/肠子的小心思/肠子的小心思.html'},
   {name:'《深度营养》',author:'现代 · 凯瑟琳·沙纳汉',type:'modern',emoji:'🥑',desc:'传统饮食智慧与现代营养学',url:'https://rui66648.github.io/lifestyle-assistant/references/深度营养/深度营养.html'},
   {name:'《控糖革命》',author:'现代 · 杰西·安佐斯佩',type:'modern',emoji:'🍬',desc:'血糖管理与健康饮食',url:'https://rui66648.github.io/lifestyle-assistant/references/控糖革命/控糖革命.html'},
-  {name:'《端粒效应》',author:'现代 · 伊丽莎白·布莱克本',type:'modern',emoji:'🧬',desc:'端粒科学与抗衰老',url:'https://rui66648.github.io/lifestyle-assistant/references/端粒效应/端粒效应.html'}
+  {name:'《端粒效应》',author:'现代 · 伊丽莎白·布莱克本',type:'modern',emoji:'🧬',desc:'端粒科学与抗衰老',url:'https://rui66648.github.io/lifestyle-assistant/references/端粒效应/端粒效应.html'},
+  {name:'《人体运动生理学》',author:'现代 · 运动科学',type:'modern',emoji:'🏃',desc:'能量代谢与运动系统适应',url:'https://rui66648.github.io/lifestyle-assistant/references/人体运动生理学/人体运动生理学.html'},
+  {name:'《高级运动营养学》',author:'现代 · 营养科学',type:'modern',emoji:'🥩',desc:'周期化营养与补剂科学',url:'https://rui66648.github.io/lifestyle-assistant/references/高级运动营养学/高级运动营养学.html'},
+  {name:'《力量训练基础》',author:'现代 · 力量训练',type:'modern',emoji:'🏋️',desc:'训练原则与周期化模型',url:'https://rui66648.github.io/lifestyle-assistant/references/力量训练基础/力量训练基础.html'},
+  {name:'《运动医学与康复》',author:'现代 · 运动医学',type:'modern',emoji:'🩺',desc:'损伤预防与康复方案',url:'https://rui66648.github.io/lifestyle-assistant/references/运动医学与康复/运动医学与康复.html'}
 ];
 
 const HEALTH_TIPS = [

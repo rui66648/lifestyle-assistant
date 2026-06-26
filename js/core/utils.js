@@ -23,12 +23,24 @@
     const now = new Date();
     const m = now.getMonth() + 1;
     const d = now.getDate();
+    // 精确匹配 ±3 天
     for (const term of SOLAR_TERMS) {
       if (term.month === m && Math.abs(term.day - d) <= 3) {
         return term;
       }
     }
-    return null;
+    // 没匹配到精确节气，返回最近的一个节气
+    let nearest = null;
+    let minDiff = Infinity;
+    for (const term of SOLAR_TERMS) {
+      const termDate = new Date(now.getFullYear(), term.month - 1, term.day);
+      const diff = Math.abs(termDate - now);
+      if (diff < minDiff) {
+        minDiff = diff;
+        nearest = term;
+      }
+    }
+    return nearest;
   }
 
   function getCurrentSeason() {
@@ -175,6 +187,42 @@
     return Math.min(100, Math.round((progress / range) * 100));
   }
 
+  function getTotalCheckins() {
+    let total = 0;
+    for (const key in checkinRecords) {
+      const rec = checkinRecords[key];
+      habitsConfig.forEach(h => {
+        if (h.type === 'water') {
+          if (((rec[h.id] && rec[h.id].value) || 0) >= ((h.waterConfig && h.waterConfig.dailyGoal) || 2000)) total++;
+        } else if (h.type === 'select') {
+          if ((rec[h.id] && rec[h.id].value)) total++;
+        } else {
+          if ((rec[h.id] && rec[h.id].done)) total++;
+        }
+      });
+    }
+    return total;
+  }
+
+  function getTodayCompletionRate() {
+    const today = new Date();
+    today.setDate(today.getDate() + viewDateOffset);
+    const key = formatDate(today);
+    const rec = checkinRecords[key];
+    if (!habitsConfig.length) return 0;
+    let done = 0;
+    habitsConfig.forEach(h => {
+      if (h.type === 'water') {
+        if (((rec && rec[h.id] && rec[h.id].value) || 0) >= ((h.waterConfig && h.waterConfig.dailyGoal) || 2000)) done++;
+      } else if (h.type === 'select') {
+        if ((rec && rec[h.id] && rec[h.id].value)) done++;
+      } else {
+        if ((rec && rec[h.id] && rec[h.id].done)) done++;
+      }
+    });
+    return Math.round((done / habitsConfig.length) * 100);
+  }
+
   function getViewDateOffset() {
     return viewDateOffset;
   }
@@ -207,6 +255,8 @@
     getNextLevel,
     getLevelProgress,
     getViewDateOffset,
-    setViewDateOffset
+    setViewDateOffset,
+    getTotalCheckins,
+    getTodayCompletionRate
   };
 })();

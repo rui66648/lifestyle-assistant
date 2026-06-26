@@ -1,9 +1,16 @@
 (function() {
-  const AI_WORKER_URL = 'https://ai-proxy.3487331518.workers.dev';
+  // Cloudflare AI Gateway 配置（通过 gateway.ai.cloudflare.com 代理，国内可访问）
+  const AI_GATEWAY_URL = 'https://gateway.ai.cloudflare.com/v1/45e8ad82bb9cbdcd3f6e4669591761fe/ai-proxy';
+  // 阿里百炼 API Key（兼容 OpenAI 模式）
+  // 请在下方填入你的 API Key（本地使用，不要提交到公开仓库）
+  const DASHSCOPE_API_KEY = '';
+  // AI Gateway 认证 Token — 请在 Cloudflare AI Gateway 设置中创建并填入
+  const AI_GATEWAY_TOKEN = '';
+
   let aiChatHistory = [];
 
   function openAiChatPanel() {
-    if (!AI_WORKER_URL) {
+    if (!AI_GATEWAY_TOKEN) {
       document.getElementById('aiChatInputArea').style.display = 'none';
       document.getElementById('aiChatConfig').style.display = 'block';
     } else {
@@ -43,7 +50,7 @@
   }
 
   async function sendAiMessage() {
-    if (!AI_WORKER_URL) return;
+    if (!AI_GATEWAY_TOKEN) return;
     const input = document.getElementById('aiChatInput');
     const text = input.value.trim();
     if (!text) return;
@@ -54,21 +61,39 @@
     renderAiLoading();
 
     try {
-      const response = await fetch(AI_WORKER_URL, {
+      const messages = [
+        { role: 'system', content: '你是一位精通《黄帝内经》等14部中医养生经典的养生顾问。回答用户健康问题时，请结合中医经典理论给出建议，并尽可能注明引用的古籍出处（如《素问》《灵枢》等）。回答要简洁实用，适合普通用户理解，每次回答控制在200字以内。' },
+        ...aiChatHistory
+      ];
+
+      // 通过 AI Gateway compat 端点调用（OpenAI 兼容格式）
+      const response = await fetch(AI_GATEWAY_URL + '/compat/v1/chat/completions', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: aiChatHistory })
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + DASHSCOPE_API_KEY,
+          'cf-aig-authorization': 'Bearer ' + AI_GATEWAY_TOKEN
+        },
+        body: JSON.stringify({
+          model: 'qwen-turbo',
+          messages: messages,
+          max_tokens: 500,
+          temperature: 0.7
+        })
       });
 
       removeAiLoading();
 
       if (!response.ok) {
-        renderAiMessage('ai', '抱歉，服务暂时不可用，请检查 Cloudflare Workers 配置。');
+        const errText = await response.text();
+        console.error('AI Gateway error:', response.status, errText);
+        renderAiMessage('ai', '抱歉，AI 服务暂时不可用。\n状态码: ' + response.status);
         return;
       }
 
       const data = await response.json();
-      const reply = (data.output && data.output.choices && data.output.choices[0] && data.output.choices[0].message && data.output.choices[0].message.content) || (data.output && data.output.text) || '抱歉，没有获取到回答。';
+      const reply = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content)
+        || '抱歉，没有获取到回答。';
 
       renderAiMessage('ai', reply);
       aiChatHistory.push({ role: 'assistant', content: reply });
@@ -78,7 +103,7 @@
       }
     } catch (err) {
       removeAiLoading();
-      renderAiMessage('ai', '网络错误，请检查 Workers URL 是否正确配置。\n错误：' + err.message);
+      renderAiMessage('ai', '网络错误: ' + err.message);
     }
   }
 

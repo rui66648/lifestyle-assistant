@@ -5,7 +5,10 @@
     document.querySelectorAll('.bnav-item').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.getElementById('sec-' + tab).classList.add('active');
-    if (tab === 'stats') renderStats();
+    // 我的页面隐藏顶部日期卡片，其他页面显示
+    const todayCard = document.getElementById('todayCard');
+    if (todayCard) todayCard.style.display = tab === 'profile' ? 'none' : '';
+    if (tab === 'profile') renderProfile();
     if (tab === 'manage') renderManage();
     if (tab === 'checkin') renderCheckin();
   }
@@ -221,6 +224,7 @@
       name: lib.name,
       icon: lib.icon,
       category: lib.category,
+      timePeriod: lib.timePeriod || 'daytime',
       type: lib.type,
       unit: lib.unit,
       repeat: [0,1,2,3,4,5,6],
@@ -237,12 +241,49 @@
     render();
   }
 
+  function toggleHabitFromLib(id) {
+    const existing = habitsConfig.find(h => h.id === id);
+    if (existing) {
+      // 已添加，执行删除
+      if (!confirm('确定要删除这个习惯吗？打卡记录会保留。')) return;
+      const idx = habitsConfig.findIndex(h => h.id === id);
+      if (idx >= 0) {
+        habitsConfig.splice(idx, 1);
+        saveConfig();
+        showToast('已删除习惯');
+      }
+    } else {
+      // 未添加，执行添加
+      addHabitFromLib(id);
+      return; // addHabitFromLib 内部已调用 renderLibraryPanel
+    }
+    // 重新渲染习惯库
+    renderLibraryPanel((document.querySelector('.lib-search') && document.querySelector('.lib-search').value) || '');
+    render();
+  }
+
   function addCustomHabit() {
     const name = document.getElementById('customHabitName').value.trim();
-    const icon = document.getElementById('customHabitIcon').value.trim() || '✅';
+    const icon = document.getElementById('customHabitIcon').value || '✅';
     const typeBtn = document.querySelector('#customTypeSelector button.active');
     const type = typeBtn ? typeBtn.dataset.type : 'boolean';
     const unit = (document.getElementById('customHabitUnit') && document.getElementById('customHabitUnit').value).trim() || (type === 'count' ? '个' : type === 'timer' ? '分钟' : '');
+    const timeEl = document.getElementById('customHabitTime');
+    const time = timeEl ? timeEl.value : '08:00';
+    // 收集选中的星期
+    const activeDays = document.querySelectorAll('#customWeekdays button.active');
+    const repeat = [];
+    activeDays.forEach(btn => repeat.push(parseInt(btn.dataset.day)));
+    const repeatDays = repeat.length > 0 ? repeat : [0,1,2,3,4,5,6];
+    // 收集额外提醒时间
+    const reminderInputs = document.querySelectorAll('#customRemindersList input[type="time"]');
+    const extraReminders = [];
+    reminderInputs.forEach(inp => {
+      if (inp.value) extraReminders.push(inp.value);
+    });
+    // 备注说明
+    const noteEl = document.getElementById('customHabitNote');
+    const note = noteEl ? noteEl.value.trim() : '';
 
     if (!name) {
       showToast('请输入习惯名称');
@@ -260,10 +301,13 @@
       name,
       icon,
       category: 'daytime',
+      timePeriod: 'daytime',
       type,
       unit,
-      repeat: [0,1,2,3,4,5,6],
-      reminder: {enabled:false, time:'08:00', days:[0,1,2,3,4,5,6], method:'in-app'}
+      repeat: repeatDays,
+      note: note,
+      extraReminders: extraReminders,
+      reminder: {enabled:true, time, days:repeatDays, method:'in-app'}
     });
     saveConfig();
     showToast(`${icon} ${name} 已添加`);
@@ -271,11 +315,95 @@
     render();
   }
 
+  function addCustomReminderTime() {
+    const list = document.getElementById('customRemindersList');
+    if (!list) return;
+    const count = list.children.length;
+    if (count >= 5) { showToast('最多添加5个额外提醒'); return; }
+    const div = document.createElement('div');
+    div.className = 'lib-custom-reminder-item';
+    div.innerHTML = `<input type="time" value="12:00"><span class="reminder-remove" onclick="this.parentElement.remove()">✕</span>`;
+    list.appendChild(div);
+  }
+
   function selectCustomType(btn) {
     document.querySelectorAll('#customTypeSelector button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     const type = btn.dataset.type;
     document.getElementById('customUnitWrap').style.display = (type === 'boolean') ? 'none' : 'block';
+  }
+
+  function toggleCustomWeekday(btn) {
+    btn.classList.toggle('active');
+  }
+
+  function selectCustomIcon(el, icon) {
+    document.querySelectorAll('#customIconGrid span').forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('customIconPreview').textContent = icon;
+    document.getElementById('customHabitIcon').value = icon;
+  }
+
+  function filterLibCategory(cat, tabBtn) {
+    // 切换标签 active 状态
+    document.querySelectorAll('#libTabs .lib-tab').forEach(t => t.classList.remove('active'));
+    if (tabBtn) tabBtn.classList.add('active');
+    // 隐藏所有网格，只显示对应分类
+    document.querySelectorAll('.lib-grid').forEach(g => g.style.display = 'none');
+    const grid = document.getElementById('libGrid_' + cat);
+    if (grid) grid.style.display = 'grid';
+  }
+
+  function toggleNeijingMaster() {
+    const body = document.getElementById('neijingPackBody');
+    const arrow = document.getElementById('neijingMasterArrow');
+    if (!body || !arrow) return;
+    if (body.style.display === 'none') {
+      body.style.display = 'block';
+      arrow.style.transform = 'rotate(180deg)';
+    } else {
+      body.style.display = 'none';
+      arrow.style.transform = 'rotate(0deg)';
+    }
+  }
+
+  function toggleNeijingSub(subId) {
+    const body = document.getElementById('neijingSubBody_' + subId);
+    const arrow = document.getElementById('neijingSubArrow_' + subId);
+    if (!body || !arrow) return;
+    if (body.style.display === 'none') {
+      body.style.display = 'block';
+      arrow.style.transform = 'rotate(180deg)';
+    } else {
+      body.style.display = 'none';
+      arrow.style.transform = 'rotate(0deg)';
+    }
+  }
+
+  function toggleSeasonPack(season) {
+    const body = document.getElementById('seasonPackBody_' + season);
+    const arrow = document.querySelector('#seasonPack_' + season + ' .season-pack-arrow');
+    if (!body || !arrow) return;
+    if (body.style.display === 'none') {
+      body.style.display = 'block';
+      arrow.style.transform = 'rotate(180deg)';
+    } else {
+      body.style.display = 'none';
+      arrow.style.transform = 'rotate(0deg)';
+    }
+  }
+
+  function toggleHealthPack() {
+    const body = document.getElementById('healthPackBody');
+    const arrow = document.querySelector('.health-pack-arrow');
+    if (!body || !arrow) return;
+    if (body.style.display === 'none') {
+      body.style.display = 'block';
+      arrow.style.transform = 'rotate(180deg)';
+    } else {
+      body.style.display = 'none';
+      arrow.style.transform = 'rotate(0deg)';
+    }
   }
 
   function addHealthPack() {
@@ -370,10 +498,18 @@
     const h = habitsConfig.find(x => x.id === habitId);
     if (!h) return;
     h.enabled = h.enabled === false ? true : false;
-    saveConfig();
-    renderMyPack();
+    const enabled = h.enabled !== false;
+    // 立即更新开关视觉状态，避免等待重渲染
+    const toggleEl = document.querySelector(`.mg-item-toggle[onclick*="${habitId}"]`);
+    if (toggleEl) {
+      if (enabled) toggleEl.classList.add('on');
+      else toggleEl.classList.remove('on');
+    }
+    // 异步保存配置
+    setTimeout(() => saveConfig(), 0);
+    // 重新渲染管理页和打卡页
+    renderManage();
     renderCheckin();
-    showToast(h.enabled !== false ? `${h.icon} ${h.name} 已启用` : `${h.icon} ${h.name} 已禁用`);
   }
 
   function quickAddWater(habitId, amount) {
@@ -492,8 +628,17 @@
     saveDailyDiary,
     deleteHabit,
     addHabitFromLib,
+    toggleHabitFromLib,
     addCustomHabit,
+    addCustomReminderTime,
     selectCustomType,
+    toggleCustomWeekday,
+    selectCustomIcon,
+    filterLibCategory,
+    toggleNeijingMaster,
+    toggleNeijingSub,
+    toggleHealthPack,
+    toggleSeasonPack,
     addHealthPack,
     addSeasonalPack,
     toggleHabitEnabled,

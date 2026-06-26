@@ -113,7 +113,6 @@
     const habit = HABIT_LIBRARY.find(h => h.id === hid);
     if (!habit || habitsConfig.some(h => h.id === hid)) return;
 
-    const cat = CATEGORY_MAP[habit.category] || { timePeriod: 'afternoon' };
     const newHabit = {
       id: habit.id,
       name: habit.name,
@@ -121,13 +120,13 @@
       category: habit.category,
       type: habit.type,
       unit: habit.unit || '',
-      timePeriod: cat.timePeriod,
+      timePeriod: habit.timePeriod || 'daytime',
       tip: habit.tip || '',
       ...(habit.defaultReminder ? { reminder: { ...habit.defaultReminder, enabled: true } } : {})
     };
 
     if (habit.type === 'water') {
-      newHabit.waterConfig = { cupSize: 250, dailyGoal: 2000 };
+      newHabit.waterConfig = { perCup: 250, dailyGoal: 2000 };
     }
     if (habit.options) newHabit.options = habit.options;
 
