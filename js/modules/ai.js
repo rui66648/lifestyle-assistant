@@ -10,15 +10,17 @@
   let aiChatHistory = [];
 
   function openAiChatPanel() {
+    const inputArea = document.getElementById('aiChatInputArea');
+    const configArea = document.getElementById('aiChatConfig');
     if (!AI_GATEWAY_TOKEN) {
-      document.getElementById('aiChatInputArea').style.display = 'none';
-      document.getElementById('aiChatConfig').style.display = 'block';
+      if (inputArea) inputArea.style.display = 'none';
+      if (configArea) configArea.style.display = 'block';
     } else {
-      document.getElementById('aiChatInputArea').style.display = 'flex';
-      document.getElementById('aiChatConfig').style.display = 'none';
+      if (inputArea) inputArea.style.display = 'flex';
+      if (configArea) configArea.style.display = 'none';
     }
     const msgContainer = document.getElementById('aiChatMessages');
-    if (msgContainer.children.length === 0) {
+    if (msgContainer && msgContainer.children.length === 0) {
       renderAiMessage('ai', '你好！我是你的AI养生顾问，精通《黄帝内经》等14部中医经典。有任何养生问题都可以问我，比如：\n• 失眠怎么调理？\n• 夏天应该注意什么？\n• 久坐怎么保护身体？');
     }
     openPanel('aiChatPanel');
@@ -26,6 +28,7 @@
 
   function renderAiMessage(role, text) {
     const container = document.getElementById('aiChatMessages');
+    if (!container) return;
     const div = document.createElement('div');
     div.className = 'ai-msg ' + role;
     const avatar = role === 'ai' ? '🤖' : '👤';
@@ -36,6 +39,7 @@
 
   function renderAiLoading() {
     const container = document.getElementById('aiChatMessages');
+    if (!container) return;
     const div = document.createElement('div');
     div.id = 'aiLoading';
     div.className = 'ai-msg ai';
@@ -52,6 +56,7 @@
   async function sendAiMessage() {
     if (!AI_GATEWAY_TOKEN) return;
     const input = document.getElementById('aiChatInput');
+    if (!input) return;
     const text = input.value.trim();
     if (!text) return;
 

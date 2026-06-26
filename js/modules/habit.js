@@ -1,7 +1,7 @@
-// habit.js - 习惯管理模块（函数定义已统一至 js/ui/events.js）
-// 此文件保留用于向后兼容
+// habit.js - 习惯管理模块（所有功能已迁移至 js/ui/events.js 和 js/ui/panels.js）
+// 此文件仅保留空占位，避免其他模块引用报错
 (function() {
   if (!window.App) window.App = {};
   if (!App.Modules) App.Modules = {};
-  App.Modules.Habit = {};
+  if (!App.Modules.Habit) App.Modules.Habit = {};
 })();

@@ -8,6 +8,7 @@
   });
 
   function getCurrentShichen() {
+    if (typeof BODY_CLOCK === 'undefined' || !Array.isArray(BODY_CLOCK) || BODY_CLOCK.length === 0) return {icon:'⏳',name:'未知时辰',meridian:'',action:'',detail:'',start:0,end:24,id:'unknown'};
     const hour = new Date().getHours();
     for (const sc of BODY_CLOCK) {
       if (sc.start <= sc.end) {
@@ -20,6 +21,7 @@
   }
 
   function getCurrentSolarTerm() {
+    if (typeof SOLAR_TERMS === 'undefined' || !Array.isArray(SOLAR_TERMS) || SOLAR_TERMS.length === 0) return null;
     const now = new Date();
     const m = now.getMonth() + 1;
     const d = now.getDate();
@@ -44,18 +46,23 @@
   }
 
   function getCurrentSeason() {
+    if (typeof SEASONAL_PACKS === 'undefined' || !SEASONAL_PACKS || typeof SEASONAL_PACKS !== 'object') return 'spring';
     const month = new Date().getMonth() + 1;
     for (const [key, pack] of Object.entries(SEASONAL_PACKS)) {
-      if (pack.months.includes(month)) return key;
+      if (pack && pack.months && pack.months.includes(month)) return key;
     }
     return 'spring';
   }
 
   function getSeasonPack(season) {
-    return SEASONAL_PACKS[season] || SEASONAL_PACKS.spring;
+    if (typeof SEASONAL_PACKS === 'undefined' || !SEASONAL_PACKS || typeof SEASONAL_PACKS !== 'object') return {name:'春季',emoji:'🌸',focus:'',months:[],habits:[],quote:'',tip:''};
+    return SEASONAL_PACKS[season] || SEASONAL_PACKS.spring || {name:'春季',emoji:'🌸',focus:'',months:[],habits:[],quote:'',tip:''};
   }
 
   function getLunarDate(date) {
+    if (typeof LUNAR_INFO === 'undefined' || typeof LUNAR_MONTHS === 'undefined' || typeof LUNAR_DAYS === 'undefined') {
+      return {year: date.getFullYear(), month: date.getMonth()+1, day: date.getDate(), monthStr: '', dayStr: '', isLeap: false};
+    }
     const y = date.getFullYear(), m = date.getMonth(), d = date.getDate();
     let year = y, month = m + 1, day = d;
     let offset = (Date.UTC(y, m, d) - Date.UTC(1900, 0, 31)) / 86400000;
@@ -102,6 +109,7 @@
 
   function showToast(msg) {
     const t = document.getElementById('toast');
+    if (!t) return;
     t.textContent = msg;
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2500);
@@ -146,16 +154,15 @@
     } catch(e) {}
   }
 
+  const isChecked = App.Core.Storage.isHabitChecked;
+
   function getCurrentStreak() {
     let streak = 0;
     const d = new Date();
     while (true) {
       const key = formatDate(d);
       const rec = checkinRecords[key];
-      const hasAny = rec && habitsConfig.some(h => {
-        if (h.type === 'water') return ((rec[h.id] && rec[h.id].value) || 0) >= ((h.waterConfig && h.waterConfig.dailyGoal) || 2000);
-        return (rec[h.id] && rec[h.id].done);
-      });
+      const hasAny = rec && habitsConfig.some(h => isChecked(h, rec));
       if (hasAny) { streak++; d.setDate(d.getDate() - 1); }
       else break;
     }
@@ -163,6 +170,7 @@
   }
 
   function getCurrentLevel() {
+    if (typeof LEVELS === 'undefined' || !Array.isArray(LEVELS) || LEVELS.length === 0) return {level:1,name:'新手',icon:'🌱',minDays:0};
     const streak = getCurrentStreak();
     let current = LEVELS[0];
     for (const lv of LEVELS) {
@@ -172,6 +180,7 @@
   }
 
   function getNextLevel() {
+    if (typeof LEVELS === 'undefined' || !Array.isArray(LEVELS)) return null;
     const current = getCurrentLevel();
     const idx = LEVELS.findIndex(l => l.level === current.level);
     return LEVELS[idx + 1] || null;
@@ -191,15 +200,7 @@
     let total = 0;
     for (const key in checkinRecords) {
       const rec = checkinRecords[key];
-      habitsConfig.forEach(h => {
-        if (h.type === 'water') {
-          if (((rec[h.id] && rec[h.id].value) || 0) >= ((h.waterConfig && h.waterConfig.dailyGoal) || 2000)) total++;
-        } else if (h.type === 'select') {
-          if ((rec[h.id] && rec[h.id].value)) total++;
-        } else {
-          if ((rec[h.id] && rec[h.id].done)) total++;
-        }
-      });
+      habitsConfig.forEach(h => { if (isChecked(h, rec)) total++; });
     }
     return total;
   }
@@ -211,15 +212,7 @@
     const rec = checkinRecords[key];
     if (!habitsConfig.length) return 0;
     let done = 0;
-    habitsConfig.forEach(h => {
-      if (h.type === 'water') {
-        if (((rec && rec[h.id] && rec[h.id].value) || 0) >= ((h.waterConfig && h.waterConfig.dailyGoal) || 2000)) done++;
-      } else if (h.type === 'select') {
-        if ((rec && rec[h.id] && rec[h.id].value)) done++;
-      } else {
-        if ((rec && rec[h.id] && rec[h.id].done)) done++;
-      }
-    });
+    habitsConfig.forEach(h => { if (isChecked(h, rec)) done++; });
     return Math.round((done / habitsConfig.length) * 100);
   }
 

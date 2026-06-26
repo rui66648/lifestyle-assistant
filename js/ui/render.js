@@ -50,21 +50,25 @@
     const solarTerm = getCurrentSolarTerm();
 
     const card = document.getElementById('todayCard');
-    card.className = 'mini-header';
+    if (card) card.className = 'mini-header';
 
     // 日期行：日期 + 农历 + 节气
     let dateExtras = `${lunar.monthStr}月${lunar.dayStr}`;
     if (solarTerm) {
       dateExtras += ` · ${solarTerm.emoji} ${solarTerm.name}`;
     }
-    document.getElementById('todayDate').innerHTML = `<span class="day-num">${d.getDate()}</span><span class="weekday">日 ${d.getMonth()+1}月 · 周${weekDay}</span>`;
-    document.getElementById('todayLunar').textContent = dateExtras;
+    const dateEl = document.getElementById('todayDate');
+    if (dateEl) dateEl.innerHTML = `<span class="day-num">${d.getDate()}</span><span class="weekday">日 ${d.getMonth()+1}月 · 周${weekDay}</span>`;
+    const lunarEl = document.getElementById('todayLunar');
+    if (lunarEl) lunarEl.textContent = dateExtras;
 
     // 清除 badges（节气已合并到日期行）
-    document.getElementById('todayBadges').innerHTML = '';
+    const badgesEl = document.getElementById('todayBadges');
+    if (badgesEl) badgesEl.innerHTML = '';
 
     let tipText = pack.quote || (solarTerm ? solarTerm.tip : pack.tip);
-    document.getElementById('todaySeasonTip').innerHTML = tipText;
+    const tipEl = document.getElementById('todaySeasonTip');
+    if (tipEl) tipEl.innerHTML = tipText;
 
     refreshQuote();
   }
@@ -77,8 +81,10 @@
       qTip = HEALTH_TIPS[Math.floor(Math.random() * HEALTH_TIPS.length)];
       attempts++;
     }
-    document.getElementById('quoteText').textContent = qTip.source.split('--')[0];
-    document.getElementById('quoteSource').textContent = '--' + (qTip.source.split('--')[1] || '');
+    const quoteTextEl = document.getElementById('quoteText');
+    const quoteSourceEl = document.getElementById('quoteSource');
+    if (quoteTextEl) quoteTextEl.textContent = qTip.source.split('--')[0];
+    if (quoteSourceEl) quoteSourceEl.textContent = '--' + (qTip.source.split('--')[1] || '');
   }
 
   function toggleQuoteExpand() {
@@ -91,6 +97,7 @@
     const total = getTodayTotal();
     const el = document.getElementById('reminderText');
     const shareBtn = document.getElementById('sharePosterBtn');
+    if (!el) return;
     if (total === 0) {
       el.textContent = '还没有添加习惯，点击 + 开始吧';
       if (shareBtn) shareBtn.style.display = 'none';
@@ -108,6 +115,7 @@
 
   function renderCheckin() {
     const container = document.getElementById('checkinContent');
+    if (!container) return;
     const rec = checkinRecords[today()] || {};
     const now = new Date();
     const nowMinutes = now.getHours() * 60 + now.getMinutes();
@@ -146,10 +154,7 @@
       return defaults[tp] || 720;
     }
 
-    function isChecked(h) {
-      if (h.type === 'water') return ((rec[h.id] && rec[h.id].value) || 0) >= ((h.waterConfig && h.waterConfig.dailyGoal) || 2000);
-      return rec[h.id] && rec[h.id].done;
-    }
+    const isChecked = App.Core.Storage.isHabitChecked;
 
     const items = [];
     const todayDow = now.getDay();
@@ -157,7 +162,7 @@
       if (h.enabled === false) return;
       const repeat = h.repeat || [0,1,2,3,4,5,6];
       if (!repeat.includes(todayDow)) return;
-      const checked = isChecked(h);
+      const checked = isChecked(h, rec);
       const nextTime = getNextTime(h);
       const overdue = !checked && nextTime < nowMinutes;
       const soon = !checked && !overdue && nextTime <= nowMinutes + 60;
@@ -279,19 +284,24 @@
 
     const circumference = 2 * Math.PI * 68;
     const offset = circumference - (pct / 100) * circumference;
-    document.getElementById('ringFg').style.strokeDashoffset = offset;
-    document.getElementById('ringPct').textContent = pct + '%';
+    const ringFg = document.getElementById('ringFg');
+    const ringPct = document.getElementById('ringPct');
+    if (ringFg) ringFg.style.strokeDashoffset = offset;
+    if (ringPct) ringPct.textContent = pct + '%';
 
     let maxStreakAll = 0;
     habitsConfig.forEach(h => {
       maxStreakAll = Math.max(maxStreakAll, getMaxStreak(h.id));
     });
-    document.getElementById('statsGrid').innerHTML = `
-      <div class="stat-card"><div class="stat-val">${done}/${total}</div><div class="stat-label">今日完成</div></div>
-      <div class="stat-card"><div class="stat-val">${maxStreakAll}</div><div class="stat-label">最长连续</div></div>
-      <div class="stat-card"><div class="stat-val">${getWeekRate()}%</div><div class="stat-label">本周率</div></div>
-      <div class="stat-card"><div class="stat-val">${getMonthRate()}%</div><div class="stat-label">本月率</div></div>
-    `;
+    const statsGrid = document.getElementById('statsGrid');
+    if (statsGrid) {
+      statsGrid.innerHTML = `
+        <div class="stat-card"><div class="stat-val">${done}/${total}</div><div class="stat-label">今日完成</div></div>
+        <div class="stat-card"><div class="stat-val">${maxStreakAll}</div><div class="stat-label">最长连续</div></div>
+        <div class="stat-card"><div class="stat-val">${getWeekRate()}%</div><div class="stat-label">本周率</div></div>
+        <div class="stat-card"><div class="stat-val">${getMonthRate()}%</div><div class="stat-label">本月率</div></div>
+      `;
+    }
 
     const rankHtml = habitsConfig.map((h, i) => {
       const rate = getCompletionRate(h.id, 30);
@@ -306,7 +316,8 @@
         <div class="ranking-bar"><div class="ranking-fill ${cls}" style="width:${rate}%"></div></div>
       </div>`;
     }).join('');
-    document.getElementById('rankingList').innerHTML = rankHtml || '<div style="text-align:center;color:var(--muted);font-size:13px;padding:20px">暂无数据</div>';
+    const rankingList = document.getElementById('rankingList');
+    if (rankingList) rankingList.innerHTML = rankHtml || '<div style="text-align:center;color:var(--muted);font-size:13px;padding:20px">暂无数据</div>';
 
     renderWeekBarChart();
     renderHeatmap();
@@ -316,8 +327,10 @@
   function renderHeatmap() {
     const year = heatmapDate.getFullYear();
     const month = heatmapDate.getMonth();
-    document.getElementById('heatmapMonth').textContent = `${year}年${month+1}月`;
+    const monthEl = document.getElementById('heatmapMonth');
+    if (monthEl) monthEl.textContent = `${year}年${month+1}月`;
     const grid = document.getElementById('heatmapGrid');
+    if (!grid) return;
     const dayLabels = ['一','二','三','四','五','六','日'];
     let html = dayLabels.map(l => `<div class="heatmap-day-label">${l}</div>`).join('');
 
@@ -360,13 +373,14 @@
 
   function renderAchievements() {
     const container = document.getElementById('achievements');
+    if (!container) return;
     const badges = [
       {id:'streak7',label:'7天连续',icon:'🔥',check: () => habitsConfig.some(h => getMaxStreak(h.id) >= 7)},
       {id:'streak14',label:'14天连续',icon:'🔥',check: () => habitsConfig.some(h => getMaxStreak(h.id) >= 14)},
       {id:'streak30',label:'30天连续',icon:'⭐',check: () => habitsConfig.some(h => getMaxStreak(h.id) >= 30)},
       {id:'all_done',label:'全部完成',icon:'🏆',check: () => {
         const rec = checkinRecords[today()] || {};
-        return habitsConfig.length > 0 && habitsConfig.every(h => rec[h.id] && rec[h.id].done);
+        return habitsConfig.length > 0 && habitsConfig.every(h => App.Core.Storage.isHabitChecked(h, rec));
       }}
     ];
 
@@ -529,8 +543,6 @@
               </div>
             </div>
             <div class="mg-item-actions">
-              <button class="mg-item-edit" onclick="event.stopPropagation();openHabitEditPanel('${h.id}')" title="编辑">✏️</button>
-              <button class="mg-item-delete" onclick="event.stopPropagation();window.deleteHabitFromManage('${h.id}')" title="删除">🗑️</button>
               <div class="mg-item-toggle ${enabled ? 'on' : ''}" onclick="event.stopPropagation();toggleHabitEnabled('${h.id}')"></div>
             </div>
           </div>`;
@@ -831,17 +843,26 @@
     const progress = getLevelProgress();
     const next = getNextLevel();
 
-    document.getElementById('profileAvatar').textContent = lv.icon;
-    document.getElementById('levelName').textContent = lv.name;
-    document.getElementById('levelProgressText').textContent = `连续打卡 ${streak} 天`;
-    document.getElementById('levelProgressBar').style.width = progress + '%';
-    document.getElementById('levelProgressPct').textContent = progress + '%';
+    const avatarEl = document.getElementById('profileAvatar');
+    const nameEl = document.getElementById('levelName');
+    const textEl = document.getElementById('levelProgressText');
+    const barEl = document.getElementById('levelProgressBar');
+    const pctEl = document.getElementById('levelProgressPct');
+    const nextEl = document.getElementById('levelNext');
 
-    if (next) {
-      const need = next.minDays - streak;
-      document.getElementById('levelNext').textContent = `再打卡 ${need} 天升级为「${next.name}」`;
-    } else {
-      document.getElementById('levelNext').textContent = '已达最高等级，继续保持！';
+    if (avatarEl) avatarEl.textContent = lv.icon;
+    if (nameEl) nameEl.textContent = lv.name;
+    if (textEl) textEl.textContent = `连续打卡 ${streak} 天`;
+    if (barEl) barEl.style.width = progress + '%';
+    if (pctEl) pctEl.textContent = progress + '%';
+
+    if (nextEl) {
+      if (next) {
+        const need = next.minDays - streak;
+        nextEl.textContent = `再打卡 ${need} 天升级为「${next.name}」`;
+      } else {
+        nextEl.textContent = '已达最高等级，继续保持！';
+      }
     }
   }
 
@@ -851,10 +872,15 @@
     const rate = habitsConfig.length ? Math.round(getTodayCompletionRate()) : 0;
     const count = habitsConfig.length;
 
-    document.getElementById('psStreak').textContent = streak;
-    document.getElementById('psTotal').textContent = total;
-    document.getElementById('psRate').textContent = rate + '%';
-    document.getElementById('psHabits').textContent = count;
+    const streakEl = document.getElementById('psStreak');
+    const totalEl = document.getElementById('psTotal');
+    const rateEl = document.getElementById('psRate');
+    const habitsEl = document.getElementById('psHabits');
+
+    if (streakEl) streakEl.textContent = streak;
+    if (totalEl) totalEl.textContent = total;
+    if (rateEl) rateEl.textContent = rate + '%';
+    if (habitsEl) habitsEl.textContent = count;
   }
 
   /* ========== Profile Grid (图标宫格) ========== */

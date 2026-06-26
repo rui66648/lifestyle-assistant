@@ -9,15 +9,18 @@
   let pendingTimeHabitId = null;
 
   function openPanel(id) {
-    document.getElementById('panelOverlay').classList.add('show');
+    const overlay = document.getElementById('panelOverlay');
+    if (overlay) overlay.classList.add('show');
     const panel = document.getElementById(id);
+    if (!panel) return;
     panel.classList.add('show');
     document.body.style.overflow = 'hidden';
     attachPanelGesture(panel);
   }
 
   function closeAllPanels() {
-    document.getElementById('panelOverlay').classList.remove('show');
+    const overlay = document.getElementById('panelOverlay');
+    if (overlay) overlay.classList.remove('show');
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('show'));
     document.body.style.overflow = '';
     pendingCheckinHabitId = null;
@@ -30,15 +33,15 @@
 
     let startY = 0, startX = 0, currentY = 0;
 
-    panel.addEventListener('touchstart', e => {
+    const onTouchStart = e => {
       if (e.touches.length !== 1) return;
       startY = e.touches[0].clientY;
       startX = e.touches[0].clientX;
       currentY = startY;
       panel.style.transition = 'none';
-    }, { passive: true });
+    };
 
-    panel.addEventListener('touchmove', e => {
+    const onTouchMove = e => {
       if (startY === 0) return;
       currentY = e.touches[0].clientY;
       const deltaY = currentY - startY;
@@ -46,9 +49,9 @@
       if (deltaY > 0 && deltaY > deltaX) {
         panel.style.transform = `translateY(${deltaY}px)`;
       }
-    }, { passive: true });
+    };
 
-    panel.addEventListener('touchend', () => {
+    const onTouchEnd = () => {
       const deltaY = currentY - startY;
       panel.style.transition = 'transform .25s ease';
       if (deltaY > 100) {
@@ -61,7 +64,20 @@
         panel.style.transform = '';
       }
       startY = 0;
-    });
+    };
+
+    panel.addEventListener('touchstart', onTouchStart, { passive: true });
+    panel.addEventListener('touchmove', onTouchMove, { passive: true });
+    panel.addEventListener('touchend', onTouchEnd);
+
+    // 存储清理函数，避免内存泄漏
+    panel._gestureCleanup = () => {
+      panel.removeEventListener('touchstart', onTouchStart);
+      panel.removeEventListener('touchmove', onTouchMove);
+      panel.removeEventListener('touchend', onTouchEnd);
+      panel._gestureAttached = false;
+      panel._gestureCleanup = null;
+    };
   }
 
   function openLibraryPanel() {
@@ -71,6 +87,7 @@
 
   function renderLibraryPanel(search) {
     const body = document.getElementById('libraryPanelBody');
+    if (!body) return;
     const myIds = new Set(habitsConfig.map(h => h.id));
     const q = search.toLowerCase();
 
@@ -609,14 +626,151 @@
   }
 
   /* ========== 皮肤面板 ========== */
-  const SKINS = [
-    { id:'default', name:'竹青', emoji:'🌿', vars:{accent:'#5BB98A',accent2:'#FF9F67','accent-light':'#D4F0E4','accent2-light':'#FFE2CC',bg:'#FFFCF7',bg2:'#F7F3ED'} },
-    { id:'ocean', name:'海蓝', emoji:'🌊', vars:{accent:'#4A90D9',accent2:'#48C9B0','accent-light':'#D6EAF8','accent2-light':'#D1F2EB',bg:'#F5F9FC',bg2:'#EBF2F8'} },
-    { id:'rose', name:'桃粉', emoji:'🌸', vars:{accent:'#E07B8C',accent2:'#D4A0B5','accent-light':'#FADBD8','accent2-light':'#F5EEF8',bg:'#FFF5F7',bg2:'#FEF0F3'} },
-    { id:'sunset', name:'暖橘', emoji:'🌅', vars:{accent:'#E8913A',accent2:'#E05A4B','accent-light':'#FDEBD0','accent2-light':'#FADBD8',bg:'#FFFBF5',bg2:'#FFF3E6'} },
-    { id:'lavender', name:'紫韵', emoji:'💜', vars:{accent:'#7B6CB8',accent2:'#9B8EC4','accent-light':'#E8E5F5','accent2-light':'#F0EEF8',bg:'#FAFAFE',bg2:'#F2F1FA'} },
-    { id:'forest', name:'墨绿', emoji:'🌲', vars:{accent:'#2E7D5B',accent2:'#8D9B6A','accent-light':'#D4EDDA','accent2-light':'#E8ECD6',bg:'#F5FAF6',bg2:'#EBF4EE'} },
+  const SKIN_CATEGORIES = [
+    {
+      id: 'theme',
+      label: '主题',
+      emoji: '🎨',
+      items: [
+        { id:'default', name:'竹青', emoji:'🌿', vars:{accent:'#5BB98A',accent2:'#FF9F67','accent-light':'#D4F0E4','accent2-light':'#FFE2CC',bg:'#FFFCF7',bg2:'#F7F3ED'} },
+        { id:'ocean', name:'海蓝', emoji:'🌊', vars:{accent:'#4A90D9',accent2:'#48C9B0','accent-light':'#D6EAF8','accent2-light':'#D1F2EB',bg:'#F5F9FC',bg2:'#EBF2F8'} },
+        { id:'rose', name:'桃粉', emoji:'🌸', vars:{accent:'#E07B8C',accent2:'#D4A0B5','accent-light':'#FADBD8','accent2-light':'#F5EEF8',bg:'#FFF5F7',bg2:'#FEF0F3'} },
+        { id:'sunset', name:'暖橘', emoji:'🌅', vars:{accent:'#E8913A',accent2:'#E05A4B','accent-light':'#FDEBD0','accent2-light':'#FADBD8',bg:'#FFFBF5',bg2:'#FFF3E6'} },
+        { id:'lavender', name:'紫韵', emoji:'💜', vars:{accent:'#7B6CB8',accent2:'#9B8EC4','accent-light':'#E8E5F5','accent2-light':'#F0EEF8',bg:'#FAFAFE',bg2:'#F2F1FA'} },
+        { id:'forest', name:'墨绿', emoji:'🌲', vars:{accent:'#2E7D5B',accent2:'#8D9B6A','accent-light':'#D4EDDA','accent2-light':'#E8ECD6',bg:'#F5FAF6',bg2:'#EBF4EE'} },
+      ]
+    },
+    {
+      id: 'button',
+      label: '按钮',
+      emoji: '🔘',
+      items: [
+        { id:'btn-default', name:'圆角', emoji:'🟢', style:{'btn-style':'default'} },
+        { id:'btn-pill', name:'胶囊', emoji:'💊', style:{'btn-style':'pill'} },
+        { id:'btn-square', name:'方形', emoji:'⬜', style:{'btn-style':'square'} },
+        { id:'btn-star', name:'星光', emoji:'⭐', style:{'btn-style':'star'} },
+        { id:'btn-modern', name:'现代', emoji:'🔲', style:{'btn-style':'modern'} },
+      ]
+    },
+    {
+      id: 'checkbox',
+      label: '复选框',
+      emoji: '☑️',
+      items: [
+        { id:'cb-default', name:'标准', emoji:'✅', style:{'cb-radius':'4px','cb-border':'2px solid var(--accent)'} },
+        { id:'cb-round', name:'圆形', emoji:'⭕', style:{'cb-radius':'50%','cb-border':'2px solid var(--accent)'} },
+        { id:'cb-fill', name:'填充', emoji:'🔲', style:{'cb-radius':'6px','cb-border':'none'} },
+        { id:'cb-svg', name:'SVG描边动画', emoji:'🌀', style:{'cb-style':'svg'} },
+      ]
+    },
+    {
+      id: 'toggle',
+      label: '开关',
+      emoji: '🎚️',
+      items: [
+        { id:'tg-uiverse', name:'Uiverse日夜间', emoji:'🌓', style:{'tg-style':'uiverse'} },
+        { id:'tg-svg', name:'SVG描边动画', emoji:'🌀', style:{'tg-style':'svg'} },
+        { id:'tg-default', name:'标准开关', emoji:'🔘', style:{'tg-style':'default'} },
+      ]
+    },
+    {
+      id: 'radio',
+      label: '单选按钮',
+      emoji: '🔘',
+      items: [
+        { id:'rb-default', name:'标准圆形', emoji:'⭕', style:{'rb-radius':'50%','rb-border':'2px solid var(--rule)','rb-dot-size':'12px','rb-size':'22px'} },
+        { id:'rb-square', name:'方形', emoji:'⬜', style:{'rb-radius':'4px','rb-border':'2px solid var(--rule)','rb-dot-size':'10px','rb-size':'22px'} },
+        { id:'rb-pill', name:'圆角填充', emoji:'🔴', style:{'rb-radius':'6px','rb-border':'none','rb-dot-size':'22px','rb-size':'22px'} },
+        { id:'rb-thick', name:'粗边框', emoji:'🎯', style:{'rb-radius':'50%','rb-border':'3px solid var(--rule)','rb-dot-size':'14px','rb-size':'24px'} },
+        { id:'rb-segment', name:'分段选择器', emoji:'🧩', style:{'rb-style':'segment'} },
+      ]
+    },
   ];
+
+  // 默认皮肤样式（用于重置）
+  const SKIN_DEFAULTS = {
+    'btn-radius': '14px',
+    'btn-shadow': '0 2px 8px rgba(0,0,0,.08)',
+    'cb-radius': '4px',
+    'cb-border': '2px solid var(--accent)',
+    'rb-radius': '50%',
+    'rb-border': '2px solid var(--rule)',
+    'rb-dot-size': '12px',
+    'rb-size': '22px',
+  };
+
+  /**
+   * 初始化所有皮肤设置（主题 + 组件样式）
+   * 应在页面启动时调用
+   */
+  function initAllSkins() {
+    const root = document.documentElement;
+    // 1. 应用主题皮肤
+    const skinId = getCurrentSkin();
+    applySkin(skinId);
+    // 2. 应用所有组件类皮肤（按钮、复选框、开关等）
+    SKIN_CATEGORIES.forEach(cat => {
+      if (cat.id === 'theme') return; // 主题已在上面处理
+      const saved = localStorage.getItem('skin_' + cat.id);
+
+      // toggle / button / checkbox 分类：通过 body class 切换（各自独立处理）
+      if (cat.id === 'toggle' && saved) {
+        const item = cat.items.find(i => i.id === saved);
+        if (item && item.style) {
+          if (item.style['tg-style'] === 'uiverse') document.body.classList.add('tg-uiverse');
+          if (item.style['tg-style'] === 'svg') document.body.classList.add('tg-svg');
+        }
+        return;
+      }
+      if (cat.id === 'button') {
+        if (saved) {
+          const item = cat.items.find(i => i.id === saved);
+          if (item && item.style && item.style['btn-style']) {
+            const btnClassMap = { default:'btn-default', pill:'btn-pill', square:'btn-square', star:'btn-star', modern:'btn-modern' };
+            document.body.classList.add(btnClassMap[item.style['btn-style']] || 'btn-default');
+          }
+        } else {
+          document.body.classList.add('btn-default');
+        }
+        return;
+      }
+      if (cat.id === 'checkbox' && saved) {
+        const item = cat.items.find(i => i.id === saved);
+        if (item && item.style) {
+          if (item.style['cb-style'] === 'svg') document.body.classList.add('cb-svg');
+          for (const [key, val] of Object.entries(item.style)) {
+            if (key !== 'cb-style') root.style.setProperty('--' + key, val);
+          }
+        }
+        return;
+      }
+      if (cat.id === 'radio' && saved) {
+        const item = cat.items.find(i => i.id === saved);
+        if (item && item.style) {
+          if (item.style['rb-style'] === 'segment') {
+            document.body.classList.add('rb-segment');
+          } else {
+            for (const [key, val] of Object.entries(item.style)) {
+              if (key !== 'rb-style') root.style.setProperty('--' + key, val);
+            }
+          }
+        }
+        return;
+      }
+
+      if (saved) {
+        const item = cat.items.find(i => i.id === saved);
+        if (item && item.style) {
+          for (const [key, val] of Object.entries(item.style)) {
+            root.style.setProperty('--' + key, val);
+          }
+        }
+      }
+    });
+  }
+
+  // 扁平化所有皮肤项（主题类），供 applySkin 查找
+  const SKINS = SKIN_CATEGORIES.find(c => c.id === 'theme').items;
 
   function getCurrentSkin() {
     const saved = localStorage.getItem('app_skin');
@@ -632,38 +786,160 @@
     }
     localStorage.setItem('app_skin', skinId);
     // 更新选中态
-    document.querySelectorAll('.skin-option').forEach(el => {
-      el.classList.toggle('active', el.dataset.skin === skinId);
+    document.querySelectorAll('.skin-toggle-row').forEach(el => {
+      el.classList.toggle('active', el.querySelector('input')?.checked);
     });
   }
 
+  function applyComponentStyle(catId, itemId) {
+    const cat = SKIN_CATEGORIES.find(c => c.id === catId);
+    if (!cat) return;
+    const item = cat.items.find(i => i.id === itemId);
+    if (!item) return;
+
+    // 特殊处理：toggle / button / checkbox / radio 分类通过 body class 切换
+    if (catId === 'toggle' || catId === 'button' || catId === 'checkbox' || catId === 'radio') {
+      // 只处理当前分类，不清除其他分类的 class
+      if (catId === 'toggle') {
+        document.body.classList.remove('tg-uiverse', 'tg-svg');
+        if (item.style['tg-style'] === 'uiverse') document.body.classList.add('tg-uiverse');
+        if (item.style['tg-style'] === 'svg') document.body.classList.add('tg-svg');
+      }
+      if (catId === 'button') {
+        document.body.classList.remove('btn-default', 'btn-pill', 'btn-square', 'btn-star', 'btn-modern');
+        if (item.style['btn-style']) {
+          const btnClassMap = { default:'btn-default', pill:'btn-pill', square:'btn-square', star:'btn-star', modern:'btn-modern' };
+          document.body.classList.add(btnClassMap[item.style['btn-style']] || 'btn-default');
+        }
+      }
+      if (catId === 'checkbox') {
+        document.body.classList.remove('cb-svg');
+        const root = document.documentElement;
+        if (item.style['cb-style'] === 'svg') document.body.classList.add('cb-svg');
+        for (const [key, val] of Object.entries(item.style || {})) {
+          if (key !== 'cb-style') root.style.setProperty('--' + key, val);
+        }
+      }
+      if (catId === 'radio') {
+        document.body.classList.remove('rb-segment');
+        const root = document.documentElement;
+        if (item.style['rb-style'] === 'segment') {
+          document.body.classList.add('rb-segment');
+        } else {
+          // 非 segment 皮肤：走 CSS 变量
+          for (const [key, val] of Object.entries(item.style || {})) {
+            if (key !== 'rb-style') root.style.setProperty('--' + key, val);
+          }
+        }
+      }
+
+      localStorage.setItem('skin_' + catId, itemId);
+      if (typeof renderLevelCard === 'function') renderLevelCard();
+      return;
+    }
+
+    const root = document.documentElement;
+    for (const [key, val] of Object.entries(item.style || {})) {
+      root.style.setProperty('--' + key, val);
+    }
+    localStorage.setItem('skin_' + catId, itemId);
+    // 更新该分类下的选中态
+    document.querySelectorAll('.skin-toggle-row').forEach(el => {
+      const input = el.querySelector('input');
+      if (input && input.name === 'skin_' + catId) {
+        el.classList.toggle('active', input.checked);
+      }
+    });
+    // 刷新 profile 卡片
+    if (typeof renderLevelCard === 'function') renderLevelCard();
+  }
+
+  function getCurrentComponentStyle(catId) {
+    const saved = localStorage.getItem('skin_' + catId);
+    const cat = SKIN_CATEGORIES.find(c => c.id === catId);
+    if (!cat) return null;
+    const def = cat.items[0];
+    return saved ? (cat.items.find(i => i.id === saved) || def) : def;
+  }
+
+  let currentSkinTab = 'theme';
+
   function openSkinPanel() {
-    const current = getCurrentSkin();
     const panel = document.getElementById('skinPanel');
     if (panel) {
       const body = panel.querySelector('.panel-body');
       if (body) {
-        body.innerHTML = `
-          <div style="font-size:16px;font-weight:700;margin-bottom:16px;text-align:center">🎨 选择皮肤</div>
-          <div class="skin-grid">
-            ${SKINS.map(s => `
-              <button class="skin-option${s.id === current ? ' active' : ''}" data-skin="${s.id}" onclick="App.UI.Panels.selectSkin('${s.id}')">
-                <div class="skin-preview" style="background:linear-gradient(135deg,${s.vars.accent},${s.vars.accent2})">
-                  <div class="skin-swatch" style="background:${s.vars.bg}"></div>
-                </div>
-                <span class="skin-name">${s.emoji} ${s.name}</span>
-              </button>
-            `).join('')}
-          </div>`;
+        renderSkinPanel(body);
       }
     }
     openPanel('skinPanel');
   }
 
+  function renderSkinPanel(body) {
+    const cat = SKIN_CATEGORIES.find(c => c.id === currentSkinTab);
+    if (!cat) return;
+
+    let html = `
+      <div style="font-size:16px;font-weight:700;margin-bottom:16px;text-align:center">🎨 皮肤设置</div>
+      <div class="skin-tabs">`;
+    SKIN_CATEGORIES.forEach((c, idx) => {
+      html += `<button class="skin-tab ${c.id === currentSkinTab ? 'active' : ''}" onclick="App.UI.Panels.switchSkinTab('${c.id}')">${c.emoji} ${c.label}</button>`;
+    });
+    html += `</div>
+      <div class="skin-toggle-list" id="skinCat_${cat.id}">`;
+
+    if (cat.id === 'theme') {
+      const current = getCurrentSkin();
+      cat.items.forEach(s => {
+        const isActive = s.id === current;
+        html += `
+          <div class="skin-toggle-row ${isActive ? 'active' : ''}">
+            <div class="skin-toggle-info">
+              <div class="skin-toggle-preview" style="background:linear-gradient(135deg,${s.vars.accent},${s.vars.accent2})">
+                <div class="skin-toggle-swatch" style="background:${s.vars.bg}"></div>
+              </div>
+              <span class="skin-toggle-name">${s.emoji} ${s.name}</span>
+            </div>
+            <label class="theme-toggle" for="skinToggle_${s.id}">
+              <input class="theme-checkbox" type="radio" name="skin_theme" id="skinToggle_${s.id}" ${isActive ? 'checked' : ''} onchange="App.UI.Panels.selectSkin('${s.id}')">
+              <span class="theme-slider"></span>
+            </label>
+          </div>`;
+      });
+    } else {
+      const currentItem = getCurrentComponentStyle(cat.id);
+      cat.items.forEach(s => {
+        const isActive = currentItem && currentItem.id === s.id;
+        html += `
+          <div class="skin-toggle-row ${isActive ? 'active' : ''}">
+            <div class="skin-toggle-info">
+              <span class="skin-toggle-name">${s.emoji} ${s.name}</span>
+            </div>
+            <label class="theme-toggle" for="skinComp_${s.id}">
+              <input class="theme-checkbox" type="radio" name="skin_${cat.id}" id="skinComp_${s.id}" ${isActive ? 'checked' : ''} onchange="App.UI.Panels.selectComponentStyle('${cat.id}','${s.id}')">
+              <span class="theme-slider"></span>
+            </label>
+          </div>`;
+      });
+    }
+
+    html += `</div>`;
+    body.innerHTML = html;
+  }
+
+  function switchSkinTab(tabId) {
+    currentSkinTab = tabId;
+    const body = document.getElementById('skinPanel').querySelector('.panel-body');
+    if (body) renderSkinPanel(body);
+  }
+
   function selectSkin(skinId) {
     applySkin(skinId);
-    // 刷新 profile 卡片以应用新配色
     if (typeof renderLevelCard === 'function') renderLevelCard();
+  }
+
+  function selectComponentStyle(catId, itemId) {
+    applyComponentStyle(catId, itemId);
   }
 
   function toggleGroup(period) {
@@ -1089,7 +1365,10 @@
     toggleGroup,
     renderWulaoPanel,
     openSkinPanel,
+    switchSkinTab,
     selectSkin,
+    selectComponentStyle,
+    initAllSkins,
     openHealthReportPanel,
     renderHealthReport,
     openDataPanel,

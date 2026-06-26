@@ -60,19 +60,25 @@
       render();
     } else {
       pendingCheckinHabitId = habitId;
-      document.getElementById('checkinPanelTitle').textContent = `${h.icon} ${h.name}`;
-      document.getElementById('checkinInputLabel').textContent = h.type === 'count' ? '请输入数量' : '请输入时长';
-      document.getElementById('checkinInputUnit').textContent = h.unit;
+      const titleEl = document.getElementById('checkinPanelTitle');
+      const labelEl = document.getElementById('checkinInputLabel');
+      const unitEl = document.getElementById('checkinInputUnit');
       const field = document.getElementById('checkinInputField');
-      field.value = (rec[habitId] && rec[habitId].done) ? rec[habitId].value : '';
-      field.placeholder = h.type === 'count' ? '0' : '0';
+      if (titleEl) titleEl.textContent = `${h.icon} ${h.name}`;
+      if (labelEl) labelEl.textContent = h.type === 'count' ? '请输入数量' : '请输入时长';
+      if (unitEl) unitEl.textContent = h.unit;
+      if (field) {
+        field.value = (rec[habitId] && rec[habitId].done) ? rec[habitId].value : '';
+        field.placeholder = h.type === 'count' ? '0' : '0';
+      }
       openPanel('checkinPanel');
-      setTimeout(() => field.focus(), 300);
+      if (field) setTimeout(() => field.focus(), 300);
     }
   }
 
   function confirmCheckinInput() {
     const field = document.getElementById('checkinInputField');
+    if (!field) return;
     const val = parseInt(field.value);
     if (isNaN(val) || val < 0) {
       showToast('请输入有效的数值');

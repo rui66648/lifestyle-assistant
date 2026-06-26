@@ -20,6 +20,14 @@
   --shadow-md:0 4px 20px rgba(0,0,0,.08);
   --shadow-lg:0 8px 32px rgba(0,0,0,.12);
   --font-mono:'GeistMono',monospace;
+  /* 皮肤-复选框 */
+  --cb-radius:4px;
+  --cb-border:2px solid var(--accent);
+  /* 皮肤-单选按钮 */
+  --rb-radius:50%;
+  --rb-border:2px solid var(--rule);
+  --rb-dot-size:12px;
+  --rb-size:22px;
   /* 年度热力图颜色 */
   --yh-0:#EBEDF0;
   --yh-1:#C6E48B;
@@ -72,7 +80,7 @@ img{max-width:100%;display:block}
 .mini-quote-text{font-size:14px;font-weight:500;color:var(--ink);line-height:1.8;padding-left:12px;border-left:3px solid var(--accent-light)}
 .mini-quote-source{font-size:11px;color:var(--accent);font-weight:600;text-align:right;margin-top:6px}
 .mini-quote-actions{display:flex;justify-content:space-between;margin-top:10px;padding-top:8px;border-top:1px dashed var(--rule)}
-.mini-quote-refresh,.mini-quote-ref{font-size:11px;color:var(--accent);cursor:pointer;font-weight:600;padding:4px 8px;border-radius:var(--radius-sm);transition:all .2s}
+.mini-quote-refresh,.mini-quote-ref{font-size:11px;color:var(--accent);cursor:pointer;font-weight:600;padding:4px 8px;border-radius:14px;transition:all .2s}
 .mini-quote-refresh:active,.mini-quote-ref:active{background:var(--accent-light);opacity:.8}
 
 /* Today Card (hidden in minimal mode, kept for reference) */
@@ -113,7 +121,7 @@ img{max-width:100%;display:block}
 
 /* Tabs */
 .tabs{display:none}
-.tab{flex:1;text-align:center;padding:10px 0;font-size:14px;font-weight:600;color:var(--muted);background:var(--bg2);border-radius:12px;border-bottom:none;transition:all .2s}
+.tab{flex:1;text-align:center;padding:10px 0;font-size:14px;font-weight:600;color:var(--muted);background:var(--bg2);border-radius:14px;border-bottom:none;transition:all .2s}
 .tab.active{color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 2px 8px rgba(124,182,157,0.3)}
 .tab:active{opacity:.7}
 
@@ -351,12 +359,12 @@ img{max-width:100%;display:block}
 .lib-custom{margin-top:12px;background:linear-gradient(135deg,var(--accent-light),var(--accent2-light));border-radius:16px;padding:16px}
 .lib-custom-title{font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:10px}
 .lib-custom-input{display:flex;gap:8px}
-.lib-custom-input input{flex:1;padding:10px 14px;border:2px solid var(--rule);border-radius:12px;font-size:14px;background:#fff;outline:none}
+.lib-custom-input input{flex:1;padding:10px 14px;border:2px solid var(--rule);border-radius:14px;font-size:14px;background:#fff;outline:none}
 .lib-custom-input input:focus{border-color:var(--accent)}
-.lib-custom-input button{padding:10px 16px;border-radius:12px;background:var(--accent);color:#fff;font-weight:600;font-size:13px;white-space:nowrap}
+.lib-custom-input button{padding:10px 16px;border-radius:14px;background:var(--accent);color:#fff;font-weight:600;font-size:13px;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.08)}
 .lib-custom-input button:active{background:#6aa88a}
 .lib-custom-type{display:flex;gap:8px;margin-top:8px}
-.lib-custom-type button{padding:6px 14px;border-radius:10px;font-size:12px;background:rgba(255,255,255,.7);font-weight:600;color:var(--ink2)}
+.lib-custom-type button{padding:6px 14px;border-radius:14px;font-size:12px;background:rgba(255,255,255,.7);font-weight:600;color:var(--ink2)}
 .lib-custom-type button.active{background:var(--accent);color:#fff}
 
 /* 自定义习惯 - 图标选择器 */
@@ -423,7 +431,7 @@ img{max-width:100%;display:block}
 .health-pack-habit span:nth-child(2){flex:1;font-weight:500}
 .health-pack-add-btn{width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
 .health-pack-footer{display:flex;justify-content:space-between;align-items:center;padding:10px 16px 16px}
-.health-pack-btn{padding:6px 16px;border-radius:16px;font-size:13px;font-weight:600;background:var(--accent);color:#fff;border:none;cursor:pointer}
+.health-pack-btn{padding:6px 16px;border-radius:14px;font-size:13px;font-weight:600;background:var(--accent);color:#fff;border:none;cursor:pointer}
 .health-pack-btn:active{opacity:.8}
 .health-pack-btn.added{background:var(--bg2);color:var(--muted)}
 
@@ -434,15 +442,15 @@ img{max-width:100%;display:block}
 .checkin-input-field:focus{border-color:var(--accent)}
 .checkin-input-unit{font-size:14px;color:var(--muted);margin-top:8px}
 .checkin-input-actions{display:flex;gap:12px;justify-content:center;margin-top:20px}
-.checkin-input-actions button{padding:12px 32px;border-radius:20px;font-size:15px;font-weight:600}
+.checkin-input-actions button{padding:12px 32px;border-radius:14px;font-size:15px;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.08)}
 .checkin-input-actions .cancel{background:var(--bg2);color:var(--muted)}
 .checkin-input-actions .confirm{background:var(--accent);color:#fff}
 
 /* Reminder Settings */
 .reminder-option{display:flex;align-items:center;gap:12px;padding:14px;background:#fff;border-radius:12px;margin-bottom:8px;box-shadow:var(--shadow)}
-.reminder-option .radio{width:22px;height:22px;border-radius:50%;border:2px solid var(--rule);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.reminder-option .radio{width:var(--rb-size);height:var(--rb-size);border-radius:var(--rb-radius);border:var(--rb-border);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .reminder-option .radio.active{border-color:var(--accent)}
-.reminder-option .radio.active::after{content:'';width:12px;height:12px;border-radius:50%;background:var(--accent)}
+.reminder-option .radio.active::after{content:'';width:var(--rb-dot-size);height:var(--rb-dot-size);border-radius:50%;background:var(--accent)}
 .reminder-option .label{font-size:14px;flex:1}
 .reminder-option .desc{font-size:12px;color:var(--muted)}
 
@@ -456,10 +464,10 @@ img{max-width:100%;display:block}
 .day-btn.active{background:var(--accent);color:#fff}
 .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
 .toggle-label{font-size:14px;font-weight:600}
-.toggle-switch{width:48px;height:26px;border-radius:13px;background:var(--rule);position:relative;transition:background .2s}
+.toggle-switch{width:54px;height:28px;border-radius:14px;background:var(--rule);position:relative;transition:background .2s}
 .toggle-switch.on{background:var(--accent)}
 .toggle-switch::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
-.toggle-switch.on::after{transform:translateX(22px)}
+.toggle-switch.on::after{transform:translateX(26px)}
 
 /* From Uiverse.io by Madflows - Theme Toggle */
 .theme-toggle{position:relative;width:54px;height:28px}
@@ -471,6 +479,524 @@ img{max-width:100%;display:block}
 .theme-toggle-wrapper{display:flex;align-items:center;gap:10px;justify-content:flex-end;padding:0 4px;margin-bottom:12px}
 .theme-toggle-label{font-size:12px;color:var(--muted);font-weight:600}
 .theme-toggle-icon{font-size:16px;transition:.3s}
+
+/* From Uiverse.io by Madflows - 日夜间开关（皮肤-tg-uiverse） */
+body.tg-uiverse .theme-toggle{position:relative;width:54px;height:28px}
+body.tg-uiverse .theme-toggle .theme-checkbox{position:absolute;display:none}
+body.tg-uiverse .theme-toggle .theme-slider{position:absolute;width:100%;height:100%;border-radius:14px;cursor:pointer;background:#28292c;border:2px solid #28292c;transition:.3s}
+body.tg-uiverse .theme-toggle .theme-checkbox:checked~.theme-slider{background:#d8dbe0}
+body.tg-uiverse .theme-toggle .theme-slider::before{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;box-shadow:inset 7px -2px 0 0 #d8dbe0;background:#28292c;transition:.3s}
+body.tg-uiverse .theme-toggle .theme-checkbox:checked~.theme-slider::before{transform:translateX(26px);background:#28292c;box-shadow:none}
+/* toggle-switch / mg-item-toggle — Uiverse 皮肤 */
+body.tg-uiverse .toggle-switch,
+body.tg-uiverse .mg-item-toggle{width:54px;height:28px;border-radius:14px;cursor:pointer;background:#28292c;border:2px solid #28292c;transition:.3s;flex-shrink:0}
+body.tg-uiverse .toggle-switch.on,
+body.tg-uiverse .mg-item-toggle.on{background:#d8dbe0}
+body.tg-uiverse .toggle-switch::after,
+body.tg-uiverse .mg-item-toggle::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;box-shadow:inset 10px -3px 0 0 #d8dbe0;background:#28292c;transition:.3s}
+body.tg-uiverse .toggle-switch.on::after,
+body.tg-uiverse .mg-item-toggle.on::after{transform:translateX(26px);background:#28292c;box-shadow:none}
+
+/* SVG 描边动画开关（皮肤-tg-svg） — 使用 stroke-dashoffset 动画 */
+body.tg-svg .theme-toggle{
+  --tg-a:.5s ease-out;
+  cursor:pointer;position:relative;display:inline-flex;
+  width:54px;height:28px;border-radius:14px;
+  box-shadow:0 0 0 2px var(--rule);
+  background:var(--rule);flex-shrink:0;
+}
+body.tg-svg .theme-toggle .theme-checkbox{
+  opacity:0;width:0;height:0;position:absolute;
+}
+body.tg-svg .theme-toggle .theme-slider{
+  position:static;width:auto;height:auto;
+  border-radius:0;cursor:auto;background:transparent;border:none;
+}
+body.tg-svg .theme-toggle .theme-slider::before{display:none}
+body.tg-svg .theme-toggle .theme-slider::after{
+  content:"";display:block;height:100%;
+  mask:url("data:image/svg+xml,%3Csvg viewBox='0 0 212.5 84.5' overflow='visible' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' stroke='%23000' stroke-width='16' stroke-linecap='round' stroke-linejoin='round' d='M42.25 0A42.24 42.24 90 000 42.25 42.24 42.24 90 0042.25 84.47 42.24 42.24 90 0084.5 42.25 42.24 42.24 90 0042.25 0 42.24 42.24 90 000 42.25 42.24 42.24 90 0042.25 84.47l128 0a42.24 42.24 90 0042.25-42.25 42.24 42.24 90 00-42.25-42.25 42.24 42.24 90 00-42.25 42.25 42.24 42.24 90 0042.25 42.25 42.24 42.24 90 0042.25-42.25 42.24 42.24 90 00-42.25-42.25l-128 0'/%3E%3C/svg%3E") no-repeat center;
+  mask-size:contain;-webkit-mask-size:contain;
+  background:#fff;
+  transition:background var(--tg-a);
+}
+body.tg-svg .theme-toggle .theme-checkbox:checked~.theme-slider::after{
+  background:var(--accent);
+}
+
+/* toggle-switch / mg-item-toggle — 内联 SVG + stroke-dashoffset 动画 */
+body.tg-svg .toggle-switch,
+body.tg-svg .mg-item-toggle{
+  --tg-a:.5s ease-out;
+  cursor:pointer;position:relative;
+  width:54px;height:28px;border-radius:14px;
+  box-shadow:0 0 0 2px var(--rule);
+  background:var(--rule);flex-shrink:0;
+  transition:box-shadow var(--tg-a);
+}
+body.tg-svg .toggle-switch::after,
+body.tg-svg .mg-item-toggle::after{display:none}
+body.tg-svg .toggle-switch::before,
+body.tg-svg .mg-item-toggle::before{
+  content:"";position:absolute;inset:0;
+  mask:url("data:image/svg+xml,%3Csvg viewBox='0 0 212.5 84.5' overflow='visible' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' stroke='%23000' stroke-width='16' stroke-linecap='round' stroke-linejoin='round' d='M42.25 0A42.24 42.24 90 000 42.25 42.24 42.24 90 0042.25 84.47 42.24 42.24 90 0084.5 42.25 42.24 42.24 90 0042.25 0 42.24 42.24 90 000 42.25 42.24 42.24 90 0042.25 84.47l128 0a42.24 42.24 90 0042.25-42.25 42.24 42.24 90 00-42.25-42.25 42.24 42.24 90 00-42.25 42.25 42.24 42.24 90 0042.25 42.25 42.24 42.24 90 0042.25-42.25 42.24 42.24 90 00-42.25-42.25l-128 0'/%3E%3C/svg%3E") no-repeat center;
+  mask-size:contain;-webkit-mask-size:contain;
+  background:#fff;
+  transition:background var(--tg-a);
+}
+body.tg-svg .toggle-switch.on::before,
+body.tg-svg .mg-item-toggle.on::before{
+  background:var(--accent);
+}
+
+/* 圆角按钮（皮肤-btn-default）— 默认圆角风格，覆盖所有可点击按钮元素 */
+body.btn-default .const-btn,
+body.btn-default .tab,
+body.btn-default .health-pack-btn,
+body.btn-default .profile-grid-item,
+body.btn-default .mg-add-btn,
+body.btn-default .settings-btn,
+body.btn-default .checkin-input-actions button,
+body.btn-default .mini-quote-refresh,
+body.btn-default .mini-quote-ref,
+body.btn-default .skin-tab,
+body.btn-default .export-btn,
+body.btn-default .day-btn,
+body.btn-default .panel-close,
+body.btn-default .bnav-item,
+body.btn-default .bnav-center,
+body.btn-default .fab,
+body.btn-default .lib-tab,
+body.btn-default .lib-custom-input button,
+body.btn-default .lib-custom-type button,
+body.btn-default .lib-custom-reminder-add,
+body.btn-default .lib-custom-freq .weekdays button,
+body.btn-default .lib-item .add-btn,
+body.btn-default .health-pack-add-btn,
+body.btn-default .season-pack-btn,
+body.btn-default .season-pack-add-btn,
+body.btn-default .water-quick-btn,
+body.btn-default .water-qty-btn,
+body.btn-default .water-custom-btn,
+body.btn-default .heatmap-nav button,
+body.btn-default .edit-bar button,
+body.btn-default .emotion-btn,
+body.btn-default .ref-tab,
+body.btn-default .ref-lib-btn,
+body.btn-default .sd-tab,
+body.btn-default .he-btn,
+body.btn-default .he-btn-save,
+body.btn-default .he-btn-delete,
+body.btn-default .skin-option,
+body.btn-default .rh-btn,
+body.btn-default .habit-card .checkin-btn,
+body.btn-default .reminder-option{border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+
+/* 胶囊按钮（皮肤-btn-pill）— 全圆角风格，覆盖所有可点击按钮元素 */
+body.btn-pill .const-btn,
+body.btn-pill .tab,
+body.btn-pill .health-pack-btn,
+body.btn-pill .profile-grid-item,
+body.btn-pill .mg-add-btn,
+body.btn-pill .settings-btn,
+body.btn-pill .checkin-input-actions button,
+body.btn-pill .mini-quote-refresh,
+body.btn-pill .mini-quote-ref,
+body.btn-pill .skin-tab,
+body.btn-pill .export-btn,
+body.btn-pill .day-btn,
+body.btn-pill .panel-close,
+body.btn-pill .bnav-item,
+body.btn-pill .bnav-center,
+body.btn-pill .fab,
+body.btn-pill .lib-tab,
+body.btn-pill .lib-custom-input button,
+body.btn-pill .lib-custom-type button,
+body.btn-pill .lib-custom-reminder-add,
+body.btn-pill .lib-custom-freq .weekdays button,
+body.btn-pill .lib-item .add-btn,
+body.btn-pill .health-pack-add-btn,
+body.btn-pill .season-pack-btn,
+body.btn-pill .season-pack-add-btn,
+body.btn-pill .water-quick-btn,
+body.btn-pill .water-qty-btn,
+body.btn-pill .water-custom-btn,
+body.btn-pill .heatmap-nav button,
+body.btn-pill .edit-bar button,
+body.btn-pill .emotion-btn,
+body.btn-pill .ref-tab,
+body.btn-pill .ref-lib-btn,
+body.btn-pill .sd-tab,
+body.btn-pill .he-btn,
+body.btn-pill .he-btn-save,
+body.btn-pill .he-btn-delete,
+body.btn-pill .skin-option,
+body.btn-pill .rh-btn,
+body.btn-pill .habit-card .checkin-btn,
+body.btn-pill .reminder-option{border-radius:999px;box-shadow:0 2px 12px rgba(0,0,0,.1)}
+
+/* 方形按钮（皮肤-btn-square）— 小圆角无阴影，覆盖所有可点击按钮元素 */
+body.btn-square .const-btn,
+body.btn-square .tab,
+body.btn-square .health-pack-btn,
+body.btn-square .profile-grid-item,
+body.btn-square .mg-add-btn,
+body.btn-square .settings-btn,
+body.btn-square .checkin-input-actions button,
+body.btn-square .mini-quote-refresh,
+body.btn-square .mini-quote-ref,
+body.btn-square .skin-tab,
+body.btn-square .export-btn,
+body.btn-square .day-btn,
+body.btn-square .panel-close,
+body.btn-square .bnav-item,
+body.btn-square .bnav-center,
+body.btn-square .fab,
+body.btn-square .lib-tab,
+body.btn-square .lib-custom-input button,
+body.btn-square .lib-custom-type button,
+body.btn-square .lib-custom-reminder-add,
+body.btn-square .lib-custom-freq .weekdays button,
+body.btn-square .lib-item .add-btn,
+body.btn-square .health-pack-add-btn,
+body.btn-square .season-pack-btn,
+body.btn-square .season-pack-add-btn,
+body.btn-square .water-quick-btn,
+body.btn-square .water-qty-btn,
+body.btn-square .water-custom-btn,
+body.btn-square .heatmap-nav button,
+body.btn-square .edit-bar button,
+body.btn-square .emotion-btn,
+body.btn-square .ref-tab,
+body.btn-square .ref-lib-btn,
+body.btn-square .sd-tab,
+body.btn-square .he-btn,
+body.btn-square .he-btn-save,
+body.btn-square .he-btn-delete,
+body.btn-square .skin-option,
+body.btn-square .rh-btn,
+body.btn-square .habit-card .checkin-btn,
+body.btn-square .reminder-option{border-radius:4px;box-shadow:none}
+
+/* 星光按钮（皮肤-btn-star） — 覆盖所有可点击按钮元素 */
+body.btn-star .const-btn,
+body.btn-star .tab,
+body.btn-star .health-pack-btn,
+body.btn-star .profile-grid-item,
+body.btn-star .mg-add-btn,
+body.btn-star .settings-btn,
+body.btn-star .checkin-input-actions button,
+body.btn-star .mini-quote-refresh,
+body.btn-star .mini-quote-ref,
+body.btn-star .skin-tab,
+body.btn-star .export-btn,
+body.btn-star .day-btn,
+body.btn-star .panel-close,
+body.btn-star .bnav-item,
+body.btn-star .bnav-center,
+body.btn-star .fab,
+body.btn-star .lib-tab,
+body.btn-star .lib-custom-input button,
+body.btn-star .lib-custom-type button,
+body.btn-star .lib-custom-reminder-add,
+body.btn-star .lib-custom-freq .weekdays button,
+body.btn-star .lib-item .add-btn,
+body.btn-star .health-pack-add-btn,
+body.btn-star .season-pack-btn,
+body.btn-star .season-pack-add-btn,
+body.btn-star .water-quick-btn,
+body.btn-star .water-qty-btn,
+body.btn-star .water-custom-btn,
+body.btn-star .heatmap-nav button,
+body.btn-star .edit-bar button,
+body.btn-star .emotion-btn,
+body.btn-star .ref-tab,
+body.btn-star .ref-lib-btn,
+body.btn-star .sd-tab,
+body.btn-star .he-btn,
+body.btn-star .he-btn-save,
+body.btn-star .he-btn-delete,
+body.btn-star .skin-option,
+body.btn-star .rh-btn,
+body.btn-star .habit-card .checkin-btn,
+body.btn-star .reminder-option{position:relative;overflow:visible;transition:all .3s ease-in-out}
+body.btn-star .const-btn:hover,
+body.btn-star .tab:hover,
+body.btn-star .health-pack-btn:hover,
+body.btn-star .profile-grid-item:hover,
+body.btn-star .mg-add-btn:hover,
+body.btn-star .settings-btn:hover,
+body.btn-star .checkin-input-actions button:hover,
+body.btn-star .mini-quote-refresh:hover,
+body.btn-star .mini-quote-ref:hover,
+body.btn-star .skin-tab:hover,
+body.btn-star .export-btn:hover,
+body.btn-star .day-btn:hover,
+body.btn-star .panel-close:hover,
+body.btn-star .bnav-item:hover,
+body.btn-star .bnav-center:hover,
+body.btn-star .fab:hover,
+body.btn-star .lib-tab:hover,
+body.btn-star .lib-custom-input button:hover,
+body.btn-star .lib-custom-type button:hover,
+body.btn-star .lib-custom-reminder-add:hover,
+body.btn-star .lib-custom-freq .weekdays button:hover,
+body.btn-star .lib-item .add-btn:hover,
+body.btn-star .health-pack-add-btn:hover,
+body.btn-star .season-pack-btn:hover,
+body.btn-star .season-pack-add-btn:hover,
+body.btn-star .water-quick-btn:hover,
+body.btn-star .water-qty-btn:hover,
+body.btn-star .water-custom-btn:hover,
+body.btn-star .heatmap-nav button:hover,
+body.btn-star .edit-bar button:hover,
+body.btn-star .emotion-btn:hover,
+body.btn-star .ref-tab:hover,
+body.btn-star .ref-lib-btn:hover,
+body.btn-star .sd-tab:hover,
+body.btn-star .he-btn:hover,
+body.btn-star .he-btn-save:hover,
+body.btn-star .he-btn-delete:hover,
+body.btn-star .skin-option:hover,
+body.btn-star .rh-btn:hover,
+body.btn-star .habit-card .checkin-btn:hover,
+body.btn-star .reminder-option:hover{box-shadow:0 0 25px #fec1958c}
+
+/* 现代按钮（皮肤-btn-modern）— 边框+缩放风格，覆盖所有可点击按钮元素 */
+body.btn-modern .const-btn,
+body.btn-modern .tab,
+body.btn-modern .health-pack-btn,
+body.btn-modern .profile-grid-item,
+body.btn-modern .mg-add-btn,
+body.btn-modern .settings-btn,
+body.btn-modern .checkin-input-actions button,
+body.btn-modern .mini-quote-refresh,
+body.btn-modern .mini-quote-ref,
+body.btn-modern .skin-tab,
+body.btn-modern .export-btn,
+body.btn-modern .day-btn,
+body.btn-modern .panel-close,
+body.btn-modern .bnav-item,
+body.btn-modern .bnav-center,
+body.btn-modern .fab,
+body.btn-modern .lib-tab,
+body.btn-modern .lib-custom-input button,
+body.btn-modern .lib-custom-type button,
+body.btn-modern .lib-custom-reminder-add,
+body.btn-modern .lib-custom-freq .weekdays button,
+body.btn-modern .lib-item .add-btn,
+body.btn-modern .health-pack-add-btn,
+body.btn-modern .season-pack-btn,
+body.btn-modern .season-pack-add-btn,
+body.btn-modern .water-quick-btn,
+body.btn-modern .water-qty-btn,
+body.btn-modern .water-custom-btn,
+body.btn-modern .heatmap-nav button,
+body.btn-modern .edit-bar button,
+body.btn-modern .emotion-btn,
+body.btn-modern .ref-tab,
+body.btn-modern .ref-lib-btn,
+body.btn-modern .sd-tab,
+body.btn-modern .he-btn,
+body.btn-modern .he-btn-save,
+body.btn-modern .he-btn-delete,
+body.btn-modern .skin-option,
+body.btn-modern .rh-btn,
+body.btn-modern .habit-card .checkin-btn,
+body.btn-modern .reminder-option{border-radius:5px;border:2.5px solid #E0E1E4;background-color:#fff;box-shadow:0 0 20px -20px;transition:all .2s ease-in-out}
+body.btn-modern .const-btn:hover,
+body.btn-modern .tab:hover,
+body.btn-modern .health-pack-btn:hover,
+body.btn-modern .profile-grid-item:hover,
+body.btn-modern .mg-add-btn:hover,
+body.btn-modern .settings-btn:hover,
+body.btn-modern .checkin-input-actions button:hover,
+body.btn-modern .mini-quote-refresh:hover,
+body.btn-modern .mini-quote-ref:hover,
+body.btn-modern .skin-tab:hover,
+body.btn-modern .export-btn:hover,
+body.btn-modern .day-btn:hover,
+body.btn-modern .panel-close:hover,
+body.btn-modern .bnav-item:hover,
+body.btn-modern .bnav-center:hover,
+body.btn-modern .fab:hover,
+body.btn-modern .lib-tab:hover,
+body.btn-modern .lib-custom-input button:hover,
+body.btn-modern .lib-custom-type button:hover,
+body.btn-modern .lib-custom-reminder-add:hover,
+body.btn-modern .lib-custom-freq .weekdays button:hover,
+body.btn-modern .lib-item .add-btn:hover,
+body.btn-modern .health-pack-add-btn:hover,
+body.btn-modern .season-pack-btn:hover,
+body.btn-modern .season-pack-add-btn:hover,
+body.btn-modern .water-quick-btn:hover,
+body.btn-modern .water-qty-btn:hover,
+body.btn-modern .water-custom-btn:hover,
+body.btn-modern .heatmap-nav button:hover,
+body.btn-modern .edit-bar button:hover,
+body.btn-modern .emotion-btn:hover,
+body.btn-modern .ref-tab:hover,
+body.btn-modern .ref-lib-btn:hover,
+body.btn-modern .sd-tab:hover,
+body.btn-modern .he-btn:hover,
+body.btn-modern .he-btn-save:hover,
+body.btn-modern .he-btn-delete:hover,
+body.btn-modern .skin-option:hover,
+body.btn-modern .rh-btn:hover,
+body.btn-modern .habit-card .checkin-btn:hover,
+body.btn-modern .reminder-option:hover{background-color:#F2F2F2;box-shadow:0 0 20px -18px}
+body.btn-modern .const-btn:active,
+body.btn-modern .tab:active,
+body.btn-modern .health-pack-btn:active,
+body.btn-modern .profile-grid-item:active,
+body.btn-modern .mg-add-btn:active,
+body.btn-modern .settings-btn:active,
+body.btn-modern .checkin-input-actions button:active,
+body.btn-modern .mini-quote-refresh:active,
+body.btn-modern .mini-quote-ref:active,
+body.btn-modern .skin-tab:active,
+body.btn-modern .export-btn:active,
+body.btn-modern .day-btn:active,
+body.btn-modern .panel-close:active,
+body.btn-modern .bnav-item:active,
+body.btn-modern .bnav-center:active,
+body.btn-modern .fab:active,
+body.btn-modern .lib-tab:active,
+body.btn-modern .lib-custom-input button:active,
+body.btn-modern .lib-custom-type button:active,
+body.btn-modern .lib-custom-reminder-add:active,
+body.btn-modern .lib-custom-freq .weekdays button:active,
+body.btn-modern .lib-item .add-btn:active,
+body.btn-modern .health-pack-add-btn:active,
+body.btn-modern .season-pack-btn:active,
+body.btn-modern .season-pack-add-btn:active,
+body.btn-modern .water-quick-btn:active,
+body.btn-modern .water-qty-btn:active,
+body.btn-modern .water-custom-btn:active,
+body.btn-modern .heatmap-nav button:active,
+body.btn-modern .edit-bar button:active,
+body.btn-modern .emotion-btn:active,
+body.btn-modern .ref-tab:active,
+body.btn-modern .ref-lib-btn:active,
+body.btn-modern .sd-tab:active,
+body.btn-modern .he-btn:active,
+body.btn-modern .he-btn-save:active,
+body.btn-modern .he-btn-delete:active,
+body.btn-modern .skin-option:active,
+body.btn-modern .rh-btn:active,
+body.btn-modern .habit-card .checkin-btn:active,
+body.btn-modern .reminder-option:active{transform:scale(.95)}
+
+/* SVG 描边动画复选框（皮肤-cb-svg）— 覆盖所有复选框/选中态元素 */
+/* 1. 提醒面板 radio */
+body.cb-svg .reminder-option .radio{
+  width:18px;height:18px;border-radius:0;border:none;background:transparent;
+  cursor:pointer;position:relative;-webkit-tap-highlight-color:transparent;
+}
+body.cb-svg .reminder-option .radio::before{
+  content:"";position:absolute;top:-15px;left:-15px;width:48px;height:48px;
+  border-radius:50%;background:rgba(34,50,84,.03);opacity:0;transition:opacity .2s ease;
+}
+body.cb-svg .reminder-option .radio:hover::before{opacity:1}
+body.cb-svg .reminder-option .radio svg{display:none}
+body.cb-svg .reminder-option .radio::after{
+  content:"";position:absolute;top:0;left:0;width:18px;height:18px;
+  background:url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z' stroke='%23c8ccd4' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center;
+  background-size:contain;transition:all .2s ease;
+}
+body.cb-svg .reminder-option .radio:hover::after{
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z' stroke='%23a3e583' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+body.cb-svg .reminder-option .radio.active::after{
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z' stroke='%23a3e583' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpolyline points='8 12 11 15 16 9' stroke='%23a3e583' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-size:contain;animation:checkmark .3s ease;
+}
+
+/* 2. 情绪按钮 — SVG 边框动画 */
+body.cb-svg .emotion-btn{
+  border:2px solid var(--rule);transition:all .3s ease;
+}
+body.cb-svg .emotion-btn.active{
+  border-color:var(--accent);
+  box-shadow:inset 0 0 0 1px var(--accent),0 0 12px rgba(124,182,157,.15);
+}
+
+/* 3. 参考文献标签 — SVG 风格选中态 */
+body.cb-svg .ref-tab{
+  border-radius:14px;transition:all .3s ease;
+}
+body.cb-svg .ref-tab.active{
+  background:var(--accent);color:#fff;
+  box-shadow:0 0 16px rgba(124,182,157,.2);
+}
+
+/* 4. 皮肤选项 — SVG 风格选中态 */
+body.cb-svg .skin-option{
+  border-radius:var(--radius);border:2px solid transparent;transition:all .3s ease;
+}
+body.cb-svg .skin-option.active{
+  border-color:var(--accent);background:var(--accent-light);
+  box-shadow:0 0 16px rgba(124,182,157,.15);
+}
+
+/* 5. 星期按钮 — SVG 风格选中态 */
+body.cb-svg .day-btn{
+  border-radius:50%;transition:all .3s ease;
+}
+body.cb-svg .day-btn.active{
+  background:var(--accent);color:#fff;
+  box-shadow:0 0 14px rgba(124,182,157,.25);
+}
+
+/* 6. 习惯库标签 — SVG 风格选中态 */
+body.cb-svg .lib-tab{
+  border-radius:20px;transition:all .3s ease;
+}
+body.cb-svg .lib-tab.active{
+  background:var(--accent);color:#fff;
+  box-shadow:0 0 14px rgba(124,182,157,.25);
+}
+
+/* 7. 习惯打卡按钮 — SVG 风格状态切换 */
+body.cb-svg .habit-card .checkin-btn{
+  border-radius:50%;transition:all .3s ease;
+}
+body.cb-svg .habit-card .checkin-btn.pending{
+  background:var(--accent);color:#fff;
+}
+body.cb-svg .habit-card .checkin-btn.done{
+  background:var(--accent);color:#fff;
+  box-shadow:0 0 14px rgba(124,182,157,.25);
+}
+
+/* 8. 底部导航选中指示条 — SVG 风格 */
+body.cb-svg .bnav-item.active::after{
+  border-radius:3px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  box-shadow:0 0 8px rgba(124,182,157,.3);
+}
+
+/* 9. 统计面板 tab 选中指示条 — SVG 风格 */
+body.cb-svg .sd-tab.active::after{
+  border-radius:3px;
+  background:var(--accent);
+  box-shadow:0 0 8px rgba(124,182,157,.3);
+}
+
+/* 10. 皮肤切换行 — SVG 风格选中态 */
+body.cb-svg .skin-toggle-row{
+  border-radius:var(--radius);transition:all .3s ease;
+}
+body.cb-svg .skin-toggle-row.active{
+  background:var(--accent-light);
+  box-shadow:0 0 12px rgba(124,182,157,.1);
+}
+
+/* 11. 饮水杯选中 — SVG 风格 */
+body.cb-svg .water-cup.next{
+  box-shadow:0 0 0 2px var(--accent),0 0 14px rgba(124,182,157,.25);
+  animation:pulse 2s infinite;
+}
 
 /* Weekly Report */
 .report-card{background:linear-gradient(135deg,var(--accent-light),var(--accent2-light));border-radius:var(--radius);padding:20px;margin-bottom:12px}
@@ -503,7 +1029,7 @@ img{max-width:100%;display:block}
 .clock-card .shi-action{font-size:12px;color:var(--ink);line-height:1.4;margin-top:2px}
 .edit-bar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--bg2);border-radius:var(--radius);margin:0 16px 12px}
 .edit-bar .label{font-size:13px;font-weight:600;color:var(--muted)}
-.edit-bar button{padding:8px 16px;border-radius:16px;font-size:13px;font-weight:600}
+.edit-bar button{padding:8px 16px;border-radius:14px;font-size:13px;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.08)}
 .edit-bar .edit-on{background:var(--accent2);color:#fff}
 .edit-bar .edit-off{background:var(--bg2);color:var(--muted)}
 
@@ -517,7 +1043,7 @@ img{max-width:100%;display:block}
 @media(max-width:480px){.fab{right:20px}}
 
 /* Export */
-.export-btn{width:100%;padding:14px;border-radius:var(--radius);background:var(--bg2);font-size:14px;font-weight:600;color:var(--muted);margin-top:16px}
+.export-btn{width:100%;padding:14px;border-radius:14px;background:var(--bg2);font-size:14px;font-weight:600;color:var(--muted);margin-top:16px}
 .export-btn:active{background:var(--rule)}
 
 /* Water Tracker */
@@ -543,7 +1069,7 @@ img{max-width:100%;display:block}
 .water-record-time{min-width:45px}
 .water-record-amount{color:var(--accent);font-weight:600}
 .water-quick-btns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-.water-quick-btn{padding:8px 16px;border-radius:12px;font-size:13px;font-weight:600;background:var(--bg2);color:var(--ink);transition:all .2s}
+.water-quick-btn{padding:8px 16px;border-radius:14px;font-size:13px;font-weight:600;background:var(--bg2);color:var(--ink);transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.08)}
 .water-quick-btn:active{background:var(--accent);color:#fff}
 .water-quick-btn.primary{background:var(--accent);color:#fff}
 .water-quick-btn.primary:active{background:#6aa88a}
@@ -776,7 +1302,7 @@ body.dark .wuse-card,body.dark .emotion-mini-card,body.dark .wulao-mini-card{bac
 .const-result-habit .rh-icon{font-size:20px}
 .const-result-habit .rh-name{flex:1;font-size:14px;font-weight:600}
 .const-result-habit .rh-btn{font-size:12px;color:var(--accent);font-weight:600;cursor:pointer}
-.const-btn{width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:15px;font-weight:700;border:none;cursor:pointer;margin-top:12px}
+.const-btn{width:100%;padding:14px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:15px;font-weight:700;border:none;cursor:pointer;margin-top:12px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
 
 /* Health Report */
 .report-section{padding:16px;border-bottom:1px solid var(--rule)}
@@ -810,7 +1336,7 @@ body.dark .wuse-card,body.dark .emotion-mini-card,body.dark .wulao-mini-card{bac
 .ref-panel-header h3{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px}
 .ref-panel-header p{font-size:12px;color:var(--muted)}
 .ref-tabs{display:flex;gap:8px;margin:12px 0;background:var(--bg2);border-radius:12px;padding:4px}
-.ref-tab{flex:1;padding:10px;text-align:center;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--muted)}
+.ref-tab{flex:1;padding:10px;text-align:center;border-radius:14px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--muted)}
 .ref-tab.active{background:var(--accent);color:#fff}
 .ref-section-title{font-size:13px;font-weight:700;color:var(--muted);margin:16px 0 8px;display:flex;align-items:center;gap:6px}
 .ref-card{display:flex;align-items:center;gap:12px;padding:12px;background:#fff;border-radius:12px;margin-bottom:8px;box-shadow:var(--shadow);transition:all .2s;text-decoration:none;color:var(--ink)}
@@ -822,7 +1348,7 @@ body.dark .wuse-card,body.dark .emotion-mini-card,body.dark .wulao-mini-card{bac
 .ref-card .ref-name{font-size:14px;font-weight:700;margin-bottom:2px}
 .ref-card .ref-author{font-size:11px;color:var(--muted)}
 .ref-card .ref-arrow{font-size:16px;color:var(--muted);flex-shrink:0}
-.ref-lib-btn{display:block;width:100%;padding:14px;border-radius:14px;text-align:center;font-size:14px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));margin-top:12px;text-decoration:none;box-shadow:var(--shadow)}
+.ref-lib-btn{display:block;width:100%;padding:14px;border-radius:14px;text-align:center;font-size:14px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));margin-top:12px;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.08)}
 .ref-lib-btn:active{opacity:.8}
 
 /* Emotion Panel */
@@ -832,7 +1358,7 @@ body.dark .wuse-card,body.dark .emotion-mini-card,body.dark .wulao-mini-card{bac
 .emotion-current .emo-organ{font-size:13px;color:var(--muted);margin:4px 0}
 .emotion-current .emo-quote{font-size:14px;color:var(--accent);font-style:italic;margin-top:8px}
 .emotion-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px}
-.emotion-btn{background:#fff;border:2px solid var(--rule);border-radius:12px;padding:10px 4px;text-align:center;cursor:pointer;transition:all .2s}
+.emotion-btn{background:#fff;border:var(--cb-border);border-color:var(--rule);border-radius:var(--cb-radius);padding:10px 4px;text-align:center;cursor:pointer;transition:all .2s}
 .emotion-btn.active{border-color:var(--accent);background:var(--accent-light)}
 .emotion-btn .emo-icon{font-size:28px;display:block;margin-bottom:4px}
 .emotion-btn .emo-label{font-size:12px;font-weight:600;color:var(--ink)}
@@ -954,10 +1480,11 @@ body.dark .wuse-card,body.dark .emotion-mini-card,body.dark .wulao-mini-card{bac
 }
 .mg-search:focus{border-color:var(--accent)}
 .mg-add-btn{
-  width:42px;height:42px;border-radius:12px;
+  width:42px;height:42px;border-radius:14px;
   background:linear-gradient(135deg,var(--accent),var(--accent2));
   color:#fff;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;
   white-space:nowrap;transition:transform .15s;flex-shrink:0;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
 }
 .mg-add-btn:active{transform:scale(.9)}
 
@@ -1036,20 +1563,8 @@ body.dark .wuse-card,body.dark .emotion-mini-card,body.dark .wulao-mini-card{bac
 .mg-item-actions{
   display:flex;align-items:center;gap:8px;flex-shrink:0;
 }
-.mg-item-edit{
-  width:32px;height:32px;border-radius:10px;
-  background:var(--bg);display:flex;align-items:center;justify-content:center;
-  font-size:16px;cursor:pointer;transition:background .15s;border:none;
-}
-.mg-item-edit:active{background:var(--accent-light)}
-.mg-item-delete{
-  width:32px;height:32px;border-radius:10px;
-  background:var(--bg);display:flex;align-items:center;justify-content:center;
-  font-size:16px;cursor:pointer;transition:background .15s;border:none;
-}
-.mg-item-delete:active{background:#ffe0e0}
 .mg-item-toggle{
-  width:44px;height:26px;border-radius:13px;
+  width:54px;height:28px;border-radius:14px;
   background:var(--rule);position:relative;
   transition:background .2s;flex-shrink:0;cursor:pointer;
 }
@@ -1060,7 +1575,7 @@ body.dark .wuse-card,body.dark .emotion-mini-card,body.dark .wulao-mini-card{bac
   background:#fff;transition:transform .25s;
   box-shadow:0 1px 4px rgba(0,0,0,.15);
 }
-.mg-item-toggle.on::after{transform:translateX(18px)}
+.mg-item-toggle.on::after{transform:translateX(26px)}
 
 /* Manage empty state */
 .mg-empty{
@@ -1361,8 +1876,8 @@ body.dark .he-switch-row{border-color:var(--rule)}
 }
 .skin-option{
   display:flex;flex-direction:column;align-items:center;gap:10px;
-  padding:14px 8px;border-radius:var(--radius);
-  border:2px solid transparent;background:var(--bg2);
+  padding:14px 8px;border-radius:var(--cb-radius);
+  border:var(--cb-border);border-color:transparent;background:var(--bg2);
   cursor:pointer;transition:all .2s ease;
   font-family:inherit;font-size:inherit;width:100%;
 }
@@ -1378,6 +1893,104 @@ body.dark .he-switch-row{border-color:var(--rule)}
   border:2px solid rgba(255,255,255,.6);
 }
 .skin-name{font-size:12px;font-weight:600;color:var(--ink)}
+
+/* 皮肤分类标签 */
+.skin-tabs{
+  display:flex;gap:6px;margin-bottom:16px;
+  padding:4px;background:var(--bg2);border-radius:var(--radius);
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+}
+.skin-tab{
+  flex:1;min-width:fit-content;padding:8px 12px;
+  border-radius:var(--radius-sm);font-size:13px;font-weight:600;
+  color:var(--muted);background:transparent;
+  transition:all .2s ease;white-space:nowrap;
+  font-variant-emoji:text;line-height:1.4;
+}
+.skin-tab.active{
+  background:#fff;color:var(--accent);
+  box-shadow:0 1px 4px rgba(0,0,0,.08);
+}
+
+/* 皮肤-单选按钮：分段选择器 (rb-segment) */
+body.rb-segment .skin-tabs{
+  padding:5px;gap:0;background:rgba(0,0,0,.16);border-radius:0;
+}
+body.rb-segment .skin-tab{
+  flex:1;min-width:55px;height:32px;display:flex;align-items:center;justify-content:center;
+  padding:2px 8px;border-radius:0;font-size:13px;font-weight:900;
+  color:rgba(255,255,255,.7);background:rgba(0,0,0,.16);
+  box-shadow:rgba(0,0,0,.15) 0px 2px 1px 0px inset,rgba(255,255,255,.17) 0px 1px 1px 0px;
+  transition:color .3s cubic-bezier(.25,.8,.25,1),background-color .3s cubic-bezier(.25,.8,.25,1),box-shadow .3s cubic-bezier(.25,.8,.25,1),transform .3s cubic-bezier(.25,.8,.25,1);
+  transform:translateY(0);font-variant-emoji:text;line-height:1.4;
+}
+body.rb-segment .skin-tab:hover{
+  background:#2c2c2c;color:#fff;
+  box-shadow:rgba(0,0,0,.23) 0px -4px 1px 0px inset,rgba(255,255,255,.17) 0px -1px 1px 0px,rgba(0,0,0,.17) 0px 2px 4px 1px;
+  transform:translateY(-2px);
+}
+body.rb-segment .skin-tab:first-of-type{
+  border-bottom-left-radius:5px;border-top-left-radius:5px;
+}
+body.rb-segment .skin-tab:last-of-type{
+  border-bottom-right-radius:5px;border-top-right-radius:5px;
+}
+body.rb-segment .skin-tab.active{
+  background:#2d6737;color:#fff;
+  box-shadow:rgba(0,0,0,.23) 0px -4px 1px 0px inset,rgba(255,255,255,.17) 0px -1px 1px 0px,rgba(0,0,0,.17) 0px 2px 4px 1px;
+  transform:translateY(-2px);
+}
+body.rb-segment .skin-tab.active:hover{
+  background:#34723f;
+  box-shadow:rgba(0,0,0,.26) 0px -4px 1px 0px inset,rgba(255,255,255,.17) 0px -1px 1px 0px,rgba(0,0,0,.15) 0px 3px 6px 2px;
+}
+
+/* 皮肤 Toggle 列表（Uiverse 风格开关） */
+.skin-toggle-list{
+  display:flex;flex-direction:column;gap:8px;
+  padding:8px 0;
+}
+.skin-toggle-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;border-radius:var(--rb-radius,var(--radius));
+  background:var(--bg2);transition:all .2s ease;
+  border:2px solid transparent;
+}
+.skin-toggle-row.active{
+  border-color:var(--accent);background:var(--accent-light);
+  border-radius:var(--rb-radius,var(--radius));
+}
+
+/* 皮肤-单选按钮：控制 skin-toggle-row 选中态 */
+body.rb-segment .skin-toggle-row{
+  border-radius:0;border:none;background:rgba(0,0,0,.16);
+  padding:8px 16px;margin-bottom:0;
+}
+body.rb-segment .skin-toggle-row.active{
+  background:#2d6737;
+}
+body.rb-segment .skin-toggle-row .skin-toggle-name{
+  color:rgba(255,255,255,.7);font-weight:900;
+}
+body.rb-segment .skin-toggle-row.active .skin-toggle-name{
+  color:#fff;
+}
+.skin-toggle-info{
+  display:flex;align-items:center;gap:12px;
+}
+.skin-toggle-preview{
+  width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.1);flex-shrink:0;
+}
+.skin-toggle-swatch{
+  width:16px;height:16px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.6);
+}
+.skin-toggle-name{
+  font-size:14px;font-weight:600;color:var(--ink);
+  font-variant-emoji:text;line-height:1.4;
+}
 
 @media (prefers-color-scheme: dark){
   .profile-grid-item{background:var(--bg2)}

@@ -1,22 +1,24 @@
 (function() {
+  const isChecked = App.Core.Storage.isHabitChecked;
+
   function getStreak(habitId) {
     let streak = 0;
     const d = new Date();
+    const h = habitsConfig.find(x => x.id === habitId);
+    if (!h) return 0;
     while (true) {
       const key = formatDate(d);
       const rec = checkinRecords[key];
-      if (rec && rec[habitId] && rec[habitId].done) {
-        streak++;
-        d.setDate(d.getDate() - 1);
-      } else {
-        break;
-      }
+      if (isChecked(h, rec)) { streak++; d.setDate(d.getDate() - 1); }
+      else break;
     }
     return streak;
   }
 
   function getMaxStreak(habitId) {
     let max = 0, cur = 0;
+    const h = habitsConfig.find(x => x.id === habitId);
+    if (!h) return 0;
     const dates = Object.keys(checkinRecords).sort();
     if (dates.length === 0) return 0;
     const start = new Date(dates[0]);
@@ -25,12 +27,8 @@
     while (d <= end) {
       const key = formatDate(d);
       const rec = checkinRecords[key];
-      if (rec && rec[habitId] && rec[habitId].done) {
-        cur++;
-        max = Math.max(max, cur);
-      } else {
-        cur = 0;
-      }
+      if (isChecked(h, rec)) { cur++; max = Math.max(max, cur); }
+      else cur = 0;
       d.setDate(d.getDate() + 1);
     }
     return max;
@@ -38,11 +36,13 @@
 
   function getCompletionRate(habitId, days) {
     let done = 0;
+    const h = habitsConfig.find(x => x.id === habitId);
+    if (!h) return 0;
     const d = new Date();
     for (let i = 0; i < days; i++) {
       const key = formatDate(d);
       const rec = checkinRecords[key];
-      if (rec && rec[habitId] && rec[habitId].done) done++;
+      if (isChecked(h, rec)) done++;
       d.setDate(d.getDate() - 1);
     }
     return Math.round((done / days) * 100);
@@ -57,7 +57,7 @@
       const rec = checkinRecords[key];
       habitsConfig.forEach(h => {
         total++;
-        if (rec && rec[h.id] && rec[h.id].done) done++;
+        if (isChecked(h, rec)) done++;
       });
       d.setDate(d.getDate() - 1);
     }
@@ -74,7 +74,7 @@
       const rec = checkinRecords[key];
       habitsConfig.forEach(h => {
         total++;
-        if (rec && rec[h.id] && rec[h.id].done) done++;
+        if (isChecked(h, rec)) done++;
       });
     }
     return total > 0 ? Math.round((done / total) * 100) : 0;
@@ -82,7 +82,7 @@
 
   function getTodayDone() {
     const rec = checkinRecords[today()] || {};
-    return habitsConfig.filter(h => h.enabled !== false && rec[h.id] && rec[h.id].done).length;
+    return habitsConfig.filter(h => h.enabled !== false && isChecked(h, rec)).length;
   }
 
   function getTodayTotal() {
@@ -99,12 +99,9 @@
     while (d <= end) {
       const key = formatDate(d);
       const rec = checkinRecords[key];
-      const hasAny = rec && habitsConfig.some(h => {
-        if (h.type === 'water') return ((rec[h.id] && rec[h.id].value) || 0) >= ((h.waterConfig && h.waterConfig.dailyGoal) || 2000);
-        return (rec[h.id] && rec[h.id].done);
-      });
+      const hasAny = rec && habitsConfig.some(h => isChecked(h, rec));
       if (hasAny) { cur++; max = Math.max(max, cur); }
-      else { cur = 0; }
+      else cur = 0;
       d.setDate(d.getDate() + 1);
     }
     return max;
