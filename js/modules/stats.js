@@ -1,8 +1,8 @@
 // stats.js - 统计模块（函数定义已统一至 js/ui/render.js 和 js/ui/events.js）
 // 仅保留 renderWeekBarChart（唯一未被重复定义的函数）
 (function() {
-  function renderWeekBarChart() {
-    const container = document.getElementById('weekBarChart');
+  function renderWeekBarChart(containerId) {
+    const container = document.getElementById(containerId || 'weekBarChart');
     if (!container) return;
 
     const dayNames = ['日','一','二','三','四','五','六'];

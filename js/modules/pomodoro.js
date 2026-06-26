@@ -10,6 +10,16 @@
   const POMO_LONG = 15 * 60;
 
   function openPomodoroPanel() {
+    // 防御：确保 openPanel 可用
+    if (typeof openPanel !== 'function') {
+      console.error('[pomodoro] openPanel 不可用，尝试从 App.UI.Panels 获取');
+      if (window.App && App.UI && App.UI.Panels && App.UI.Panels.openPanel) {
+        window.openPanel = App.UI.Panels.openPanel;
+      } else {
+        alert('番茄钟面板加载失败，请刷新页面重试');
+        return;
+      }
+    }
     populatePomoHabits();
     updatePomoStats();
     openPanel('pomodoroPanel');
@@ -182,4 +192,11 @@
     updatePomoStats,
     getPomoTotalStats
   };
+
+  // 直接暴露到 window，确保 HTML onclick 能调用
+  window.openPomodoroPanel = openPomodoroPanel;
+  window.startPomodoro = startPomodoro;
+  window.pausePomodoro = pausePomodoro;
+  window.resumePomodoro = resumePomodoro;
+  window.stopPomodoro = stopPomodoro;
 })();

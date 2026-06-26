@@ -1,0 +1,107 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e8] [cursor=pointer]:
+    - generic [ref=e9]: 🔄 换一条
+    - generic [ref=e10]: 📚 参考文献
+  - button "+" [ref=e12] [cursor=pointer]
+  - generic [ref=e13]:
+    - generic [ref=e15]:
+      - generic [ref=e16]: 输入数值
+      - button "✕" [ref=e17] [cursor=pointer]
+    - generic [ref=e19]:
+      - spinbutton [ref=e20]
+      - generic [ref=e21]:
+        - button "取消" [ref=e22] [cursor=pointer]
+        - button "确认打卡" [ref=e23] [cursor=pointer]
+  - generic [ref=e26]:
+    - generic [ref=e27]: 提醒设置
+    - button "✕" [ref=e28] [cursor=pointer]
+  - generic [ref=e32]:
+    - generic [ref=e33]: 设置提醒时间
+    - button "✕" [ref=e34] [cursor=pointer]
+  - generic [ref=e38]:
+    - generic [ref=e39]: 习惯库
+    - button "✕" [ref=e40] [cursor=pointer]
+  - generic [ref=e44]:
+    - generic [ref=e45]: 📋 本周总结
+    - button "✕" [ref=e46] [cursor=pointer]
+  - generic [ref=e50]:
+    - generic [ref=e51]: 💧 饮水设置
+    - button "✕" [ref=e52] [cursor=pointer]
+  - generic [ref=e56]:
+    - generic [ref=e57]: ⏳ 子午流注 · 十二时辰
+    - button "✕" [ref=e58] [cursor=pointer]
+  - generic [ref=e62]:
+    - generic [ref=e63]: 📚 养生参考文献
+    - button "✕" [ref=e64] [cursor=pointer]
+  - generic [ref=e68]:
+    - generic [ref=e69]: 💭 情志养生 · 五脏与情绪
+    - button "✕" [ref=e70] [cursor=pointer]
+  - generic [ref=e74]:
+    - generic [ref=e75]: 🛡️ 五劳所伤 · 防护指南
+    - button "✕" [ref=e76] [cursor=pointer]
+  - generic [ref=e78]:
+    - generic [ref=e80]:
+      - generic [ref=e81]: 🤖 AI 养生顾问
+      - button "✕" [ref=e82] [cursor=pointer]
+    - generic [ref=e85]:
+      - textbox "输入养生问题，如：失眠怎么调理？" [ref=e86]
+      - button "发送" [ref=e87] [cursor=pointer]
+  - generic [ref=e90]:
+    - generic [ref=e91]: 🩺 体质测试 · 九种体质辨识
+    - button "✕" [ref=e92] [cursor=pointer]
+  - generic [ref=e95]:
+    - generic [ref=e96]: 📊 健康报告 · 本周养生总结
+    - button "✕" [ref=e97] [cursor=pointer]
+  - generic [ref=e98]:
+    - generic [ref=e100]:
+      - generic [ref=e101]: 🎉 打卡海报
+      - button "✕" [ref=e102] [cursor=pointer]
+    - generic [ref=e103]:
+      - generic [ref=e105]: 长按图片保存到相册
+      - button "💾 下载海报" [ref=e106] [cursor=pointer]
+  - generic [ref=e107]:
+    - generic [ref=e109]:
+      - generic [ref=e110]: 💾 数据管理
+      - button "✕" [ref=e111] [cursor=pointer]
+    - generic [ref=e112]:
+      - generic [ref=e113]: 导出数据
+      - generic [ref=e114]: 将所有习惯配置和打卡记录导出为 JSON 文件，可作为备份或在其他设备上恢复。
+      - button "📥 导出数据" [ref=e115] [cursor=pointer]
+      - generic [ref=e117]: 导入数据
+      - generic [ref=e118]: 选择之前导出的 JSON 文件，恢复习惯配置和打卡记录。
+      - button "📤 导入数据" [ref=e119] [cursor=pointer]
+  - generic [ref=e120]:
+    - generic [ref=e122]:
+      - generic [ref=e123]: 🍅 番茄专注钟
+      - button "✕" [ref=e124] [cursor=pointer]
+    - generic [ref=e125]:
+      - generic [ref=e126]: 专注25分钟，休息5分钟，循环4次后长休息15分钟
+      - generic [ref=e127]: 25:00
+      - generic [ref=e128]: 准备开始专注
+      - combobox [ref=e131]:
+        - option "-- 选择要专注的习惯 --" [selected]
+      - button "▶️ 开始专注" [ref=e133] [cursor=pointer]
+      - generic [ref=e134]: 今日专注：0 次 · 0 分钟
+  - generic [ref=e137]:
+    - generic [ref=e138]: 📅 养生回顾
+    - button "✕" [ref=e139] [cursor=pointer]
+  - generic [ref=e143]:
+    - generic [ref=e144]: 📅 补签
+    - button "✕" [ref=e145] [cursor=pointer]
+  - generic [ref=e149]:
+    - generic [ref=e150]: 🏆 每日成就
+    - button "✕" [ref=e151] [cursor=pointer]
+  - generic [ref=e153]:
+    - button "📋 打卡" [ref=e154] [cursor=pointer]:
+      - generic [ref=e155]: 📋
+      - generic [ref=e156]: 打卡
+    - button "📊 统计" [ref=e157] [cursor=pointer]:
+      - generic [ref=e158]: 📊
+      - generic [ref=e159]: 统计
+    - button "🍅" [ref=e160] [cursor=pointer]
+    - button "⚙️ 管理" [ref=e161] [cursor=pointer]:
+      - generic [ref=e162]: ⚙️
+      - generic [ref=e163]: 管理
+    - button "🤖 AI" [ref=e164] [cursor=pointer]:
+      - generic [ref=e165]: 🤖
+      - generic [ref=e166]: AI

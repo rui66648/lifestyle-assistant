@@ -14,12 +14,45 @@
     enumerable: true
   });
 
+  // 安全引用 utils.js 中的函数（兼容 compat.js 未生效的情况）
+  var _U = (App.Core && App.Core.Utils) || {};
+  var getCurrentShichen = _U.getCurrentShichen || function(){ return null; };
+  var getCurrentSolarTerm = _U.getCurrentSolarTerm || function(){ return null; };
+  var getCurrentSeason = _U.getCurrentSeason || function(){
+    var m = new Date().getMonth() + 1;
+    if (m >= 2 && m <= 4) return 'spring';
+    if (m >= 5 && m <= 7) return 'summer';
+    if (m >= 8 && m <= 10) return 'autumn';
+    return 'winter';
+  };
+  var getSeasonPack = _U.getSeasonPack || function(s){
+    // fallback: 内置四季原文，防止 packs.js/utils.js 加载异常时原文不显示
+    var packs = {
+      spring: {name:'春季',emoji:'🌿',focus:'养肝舒展，夜卧早起',months:[2,3,4],quote:'春三月，此谓发陈。天地俱生，万物以荣。夜卧早起，广步于庭，被发缓形，以使志生，生而勿杀，予而勿夺，赏而勿罚，此春气之应，养生之道也；逆之则伤肝。',tip:'春季养生重在养肝。夜卧早起（不超23点），广步于庭（户外散步舒展），使志生（精神舒展不压抑），省酸增甘（多吃甘味养肝脾）。逆之伤肝。'},
+      summer: {name:'夏季',emoji:'☀️',focus:'养心静心，无厌于日',months:[5,6,7],quote:'夏三月，此谓蕃秀。天地气交，万物华实。夜卧早起，无厌于日，使志无怒，使华英成秀，使气得泄，若所爱在外，此夏气之应，养长之道也；逆之则伤心。',tip:'夏季养生重在养心。夜卧早起，无厌于日（适当晒太阳不出汗），使志无怒（保持心情愉快不郁怒），饮食清淡多食苦（清心火）。逆之伤心。'},
+      autumn: {name:'秋季',emoji:'🍂',focus:'养肺润燥，早卧早起',months:[8,9,10],quote:'秋三月，此谓容平。天气以急，地气以明。早卧早起，与鸡俱兴，使志安宁，以缓秋刑，收敛神气，使秋气平，无外其志，使肺气清，此秋气之应，养收之道也；逆之则伤肺。',tip:'秋季养生重在养肺。早卧早起（与鸡俱兴），使志安宁（保持内心宁静），食酸敛肺防秋燥（多吃白色食物）。逆之伤肺。'},
+      winter: {name:'冬季',emoji:'❄️',focus:'养肾保暖，早卧晚起',months:[11,12,1],quote:'冬三月，此谓闭藏。水冰地坼，无扰乎阳。早卧晚起，必待日光，使志若伏若匿，若有私意，若已有得，去寒就温，无泄皮肤，使气亟夺，此冬气之应，养藏之道也；逆之则伤肾。',tip:'冬季养生重在养肾。早卧晚起（必待日光，等太阳升起再起床），使志若伏若匿（情志内藏不外露），食咸补肾（温补食物），去寒就温（注意保暖），无泄皮肤（减少户外出汗）。逆之伤肾。'}
+    };
+    return packs[s] || packs.spring;
+  };
+  var getLunarDate = _U.getLunarDate || function(d){ return {monthStr:'',dayStr:''}; };
+  var today = _U.today || function(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
+  var formatDate = _U.formatDate || function(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
+  var getCurrentStreak = _U.getCurrentStreak || function(){ return 0; };
+  var getCurrentLevel = _U.getCurrentLevel || function(){ return {level:1,name:'新手',icon:'🌱',minDays:0}; };
+  var getNextLevel = _U.getNextLevel || function(){ return null; };
+  var getLevelProgress = _U.getLevelProgress || function(){ return 0; };
+  var getTotalCheckins = _U.getTotalCheckins || function(){ return 0; };
+  var getTodayCompletionRate = _U.getTodayCompletionRate || function(){ return 0; };
+  var showToast = _U.showToast || function(){};
+  var getUserPoints = _U.getUserPoints || function(){ return 0; };
+
   function render() {
-    renderTodayCard();
-    renderReminderBanner();
-    renderCheckin();
-    renderProfile();
-    renderManage();
+    try { renderTodayCard(); } catch(e) { console.error('[render] renderTodayCard 出错:', e); }
+    try { renderReminderBanner(); } catch(e) { console.error('[render] renderReminderBanner 出错:', e); }
+    try { renderCheckin(); } catch(e) { console.error('[render] renderCheckin 出错:', e); }
+    try { renderProfile(); } catch(e) { console.error('[render] renderProfile 出错:', e); }
+    try { renderManage(); } catch(e) { console.error('[render] renderManage 出错:', e); }
   }
 
   function renderAmbientBg() {
@@ -62,9 +95,12 @@
     const lunarEl = document.getElementById('todayLunar');
     if (lunarEl) lunarEl.textContent = dateExtras;
 
-    // 清除 badges（节气已合并到日期行）
+    // 清除 badges（节气已合并到日期行），改为显示积分
     const badgesEl = document.getElementById('todayBadges');
-    if (badgesEl) badgesEl.innerHTML = '';
+    if (badgesEl) {
+      const points = getUserPoints();
+      badgesEl.innerHTML = `<span class="mini-points-badge" title="累计积分">⭐ ${points} 积分</span>`;
+    }
 
     let tipText = pack.quote || (solarTerm ? solarTerm.tip : pack.tip);
     const tipEl = document.getElementById('todaySeasonTip');
@@ -116,7 +152,17 @@
   function renderCheckin() {
     const container = document.getElementById('checkinContent');
     if (!container) return;
-    const rec = checkinRecords[today()] || {};
+    // 防御：确保 checkinRecords 存在
+    if (typeof checkinRecords === 'undefined') { window.checkinRecords = {}; }
+    if (typeof habitsConfig === 'undefined' || !Array.isArray(habitsConfig)) {
+      console.warn('[renderCheckin] habitsConfig 无效，尝试从 localStorage 恢复');
+      try {
+        var cfg = localStorage.getItem('habits_config');
+        if (cfg) window.habitsConfig = JSON.parse(cfg);
+        else window.habitsConfig = [];
+      } catch(e) { window.habitsConfig = []; }
+    }
+    const rec = (typeof checkinRecords !== 'undefined' ? checkinRecords : {})[today()] || {};
     const now = new Date();
     const nowMinutes = now.getHours() * 60 + now.getMinutes();
 
@@ -295,29 +341,42 @@
     });
     const statsGrid = document.getElementById('statsGrid');
     if (statsGrid) {
-      statsGrid.innerHTML = `
-        <div class="stat-card"><div class="stat-val">${done}/${total}</div><div class="stat-label">今日完成</div></div>
-        <div class="stat-card"><div class="stat-val">${maxStreakAll}</div><div class="stat-label">最长连续</div></div>
-        <div class="stat-card"><div class="stat-val">${getWeekRate()}%</div><div class="stat-label">本周率</div></div>
-        <div class="stat-card"><div class="stat-val">${getMonthRate()}%</div><div class="stat-label">本月率</div></div>
-      `;
+      if (total === 0) {
+        statsGrid.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:16px;grid-column:1/-1">还没有习惯数据</div>';
+      } else {
+        const points = getUserPoints();
+        statsGrid.innerHTML = `
+          <div class="stat-card"><div class="stat-val">${done}/${total}</div><div class="stat-label">今日完成</div></div>
+          <div class="stat-card"><div class="stat-val">${maxStreakAll}</div><div class="stat-label">最长连续</div></div>
+          <div class="stat-card"><div class="stat-val">${getWeekRate()}%</div><div class="stat-label">本周率</div></div>
+          <div class="stat-card"><div class="stat-val">${getMonthRate()}%</div><div class="stat-label">本月率</div></div>
+          <div class="stat-card" style="background:linear-gradient(135deg,rgba(255,215,0,0.08),rgba(255,215,0,0.02));border-color:rgba(255,215,0,0.2)"><div class="stat-val">⭐${points}</div><div class="stat-label">累计积分</div></div>
+        `;
+      }
     }
 
-    const rankHtml = habitsConfig.map((h, i) => {
-      const rate = getCompletionRate(h.id, 30);
-      const cls = rate >= 70 ? 'high' : rate >= 40 ? 'mid' : 'low';
-      let rankClass = 'normal';
-      if (i === 0) rankClass = 'gold';
-      else if (i === 1) rankClass = 'silver';
-      else if (i === 2) rankClass = 'bronze';
-      return `<div class="ranking-item">
-        <div class="ranking-rank ${rankClass}">${i < 3 ? ['🥇','🥈','🥉'][i] : i+1}</div>
-        <div class="ranking-header"><span class="ranking-name">${h.icon} ${h.name}</span><span class="ranking-pct">${rate}%</span></div>
-        <div class="ranking-bar"><div class="ranking-fill ${cls}" style="width:${rate}%"></div></div>
-      </div>`;
-    }).join('');
     const rankingList = document.getElementById('rankingList');
-    if (rankingList) rankingList.innerHTML = rankHtml || '<div style="text-align:center;color:var(--muted);font-size:13px;padding:20px">暂无数据</div>';
+    if (rankingList) {
+      if (habitsConfig.length === 0) {
+        rankingList.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:20px">还没有习惯，点击 + 开始添加吧</div>';
+      } else {
+        const sorted = [...habitsConfig].sort((a, b) => getCompletionRate(b.id, 30) - getCompletionRate(a.id, 30));
+        const rankHtml = sorted.map((h, i) => {
+          const rate = getCompletionRate(h.id, 30);
+          const cls = rate >= 70 ? 'high' : rate >= 40 ? 'mid' : 'low';
+          let rankClass = 'normal';
+          if (i === 0) rankClass = 'gold';
+          else if (i === 1) rankClass = 'silver';
+          else if (i === 2) rankClass = 'bronze';
+          return `<div class="ranking-item">
+            <div class="ranking-rank ${rankClass}">${i < 3 ? ['🥇','🥈','🥉'][i] : i+1}</div>
+            <div class="ranking-header"><span class="ranking-name">${h.icon} ${h.name}</span><span class="ranking-pct">${rate}%</span></div>
+            <div class="ranking-bar"><div class="ranking-fill ${cls}" style="width:${rate}%"></div></div>
+          </div>`;
+        }).join('');
+        rankingList.innerHTML = rankHtml || '<div style="text-align:center;color:var(--muted);font-size:13px;padding:20px">暂无数据</div>';
+      }
+    }
 
     renderWeekBarChart();
     renderHeatmap();
@@ -397,6 +456,7 @@
     renderLevelCard();
     renderProfileStats();
     renderProfileGrid();
+    renderStats();
     renderDailyCardPreview();
   }
 
@@ -852,7 +912,10 @@
 
     if (avatarEl) avatarEl.textContent = lv.icon;
     if (nameEl) nameEl.textContent = lv.name;
-    if (textEl) textEl.textContent = `连续打卡 ${streak} 天`;
+    if (textEl) {
+      const points = getUserPoints();
+      textEl.textContent = `连续打卡 ${streak} 天 · ⭐ ${points} 积分`;
+    }
     if (barEl) barEl.style.width = progress + '%';
     if (pctEl) pctEl.textContent = progress + '%';
 
@@ -1134,7 +1197,7 @@
     const monthsEl = document.getElementById('yearHeatmapMonths');
     if (!grid) return;
 
-    const fmt = App.Core.Utils.formatDate;
+    const fmt = formatDate;
     const today = new Date();
     const endDate = new Date(today);
     const startDate = new Date(today);

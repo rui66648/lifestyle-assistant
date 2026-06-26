@@ -1,4 +1,10 @@
 (function() {
+  // 安全引用积分规则常量（防止 utils.js 加载失败导致整个 events.js 崩溃）
+  function getCheckinReward() {
+    try { return App.Core.Utils.checkinReward || { perHabit: 1, allDoneBonus: 5 }; }
+    catch(e) { return { perHabit: 1, allDoneBonus: 5 }; }
+  }
+
   function switchTab(tab) {
     currentTab = tab;
     document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
@@ -33,7 +39,9 @@
         showToast(`❌ 今天${h.name}了，明天加油`);
       } else {
         rec[habitId] = {done: true, failed: false, value: 1};
-        showToast(`✅ ${h.icon} 今天没${h.name}，继续保持！`);
+        const reward = getCheckinReward();
+        const pts = App.Core.Utils.addPoints(reward.perHabit, `${h.name} 克制成功`);
+        showToast(`✅ ${h.icon} 今天没${h.name}，继续保持！+${reward.perHabit}积分 (总:${pts})`);
         playSound('checkin');
         checkLevelUp();
       }
@@ -50,7 +58,10 @@
         showToast('已撤销打卡');
       } else {
         rec[habitId] = {done: true, value: 1};
-        showToast(`${h.icon} ${h.name} 打卡成功！`);
+        // 打卡积分奖励
+        const reward1 = getCheckinReward();
+        const pts = App.Core.Utils.addPoints(reward1.perHabit, `${h.name} 打卡`);
+        showToast(`${h.icon} ${h.name} 打卡成功！+${reward1.perHabit}积分 (总:${pts})`);
         playSound('checkin');
         animateCheckin(habitId);
         checkLevelUp();
@@ -94,7 +105,10 @@
       showToast('已撤销记录');
     } else {
       rec[habitId] = {done: true, value: val};
-      showToast(`${h.icon} ${h.name} 记录 ${val}${h.unit}！`);
+      // 打卡积分奖励
+      const reward2 = getCheckinReward();
+      const pts = App.Core.Utils.addPoints(reward2.perHabit, `${h.name} 记录`);
+      showToast(`${h.icon} ${h.name} 记录 ${val}${h.unit}！+${reward2.perHabit}积分 (总:${pts})`);
       playSound('checkin');
       checkLevelUp();
     }
@@ -116,6 +130,14 @@
     const done = getTodayDone();
     const total = getTodayTotal();
     if (done === total && total > 0) {
+      // 检查全部完成额外积分奖励
+      const bonusKey = 'all_done_bonus_' + today();
+      if (localStorage.getItem(bonusKey) !== 'true') {
+        localStorage.setItem(bonusKey, 'true');
+        const reward3 = getCheckinReward();
+        const newTotal = App.Core.Utils.addPoints(reward3.allDoneBonus, '完成所有任务额外奖励');
+        showToast(`🎉 全部完成！获得 +${reward3.allDoneBonus} 额外积分！当前积分：${newTotal}`);
+      }
       setTimeout(() => {
         playSound('complete');
         showAllDoneCelebration();
@@ -533,11 +555,19 @@
     checkinRecords[today()] = rec;
     saveRecords();
     if (waterRec.done) {
+      // 饮水目标达成积分奖励
+      const wasDone = ((rec[habitId] && rec[habitId]._doneRewarded));
+      if (!wasDone) {
+        waterRec._doneRewarded = true;
+        rec[habitId] = waterRec;
+        const reward4 = getCheckinReward();
+        const pts = App.Core.Utils.addPoints(reward4.perHabit, `${h.name} 目标达成`);
+        showToast(`💧 今日饮水目标达成！+${reward4.perHabit}积分 (总:${pts})`);
+      }
       playSound('checkin');
       checkLevelUp();
     }
     render();
-    showToast(`💧 +${amount}ml，已喝 ${waterRec.value}ml`);
   }
 
   function quickAddWaterFromPanel(amount) {

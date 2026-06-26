@@ -24,20 +24,28 @@
       const cfg = localStorage.getItem('habits_config');
       if (cfg) {
         _habitsConfig = JSON.parse(cfg);
-      } else if (typeof DEFAULT_HABITS !== 'undefined' && typeof HABIT_LIBRARY !== 'undefined') {
-        _habitsConfig = DEFAULT_HABITS.map(id => {
-          const lib = HABIT_LIBRARY.find(h => h.id === id);
-          if (!lib) return null;
-          return {
-            id: lib.id, name: lib.name, icon: lib.icon,
-            category: lib.category, timePeriod: lib.timePeriod || 'daytime',
-            type: lib.type, unit: lib.unit,
-            reminder: {enabled:false, time:'08:00', days:[0,1,2,3,4,5,6], method:'in-app'}
-          };
-        }).filter(Boolean);
-        saveConfig();
       } else {
-        _habitsConfig = [];
+        // 尝试从全局或 App.Data 获取默认习惯列表
+        var defaults = (typeof DEFAULT_HABITS !== 'undefined') ? DEFAULT_HABITS
+          : (window.App && App.Data && App.Data.DEFAULT_HABITS) ? App.Data.DEFAULT_HABITS : null;
+        var library = (typeof HABIT_LIBRARY !== 'undefined') ? HABIT_LIBRARY
+          : (window.App && App.Data && App.Data.HABIT_LIBRARY) ? App.Data.HABIT_LIBRARY : null;
+        if (defaults && library) {
+          _habitsConfig = defaults.map(function(id) {
+            var lib = library.find(function(h) { return h.id === id; });
+            if (!lib) return null;
+            return {
+              id: lib.id, name: lib.name, icon: lib.icon,
+              category: lib.category, timePeriod: lib.timePeriod || 'daytime',
+              type: lib.type, unit: lib.unit,
+              reminder: {enabled:false, time:'08:00', days:[0,1,2,3,4,5,6], method:'in-app'}
+            };
+          }).filter(Boolean);
+          saveConfig();
+        } else {
+          console.warn('[loadData] 无法找到默认习惯数据，habitsConfig 将为空');
+          _habitsConfig = [];
+        }
       }
       const rec = localStorage.getItem('checkin_records');
       if (rec) {
