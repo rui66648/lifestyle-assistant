@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -10,7 +10,7 @@
 <link rel="manifest" href="./manifest.json">
 <title>生活习惯小助手 V2</title>
 <style>
-@font-face{font-family:'InstrumentSans';src:url('./_shared/fonts/InstrumentSans-Regular.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'InstrumentSans';src:url('./_shared/fonts/InstrumentSans-Regular.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}@font-face{font-family:'InstrumentSans';src:url('./_shared/fonts/InstrumentSans-Bold.ttf') format('truetype');font-weight:700;font-style:normal;font-display:swap}@font-face{font-family:'GeistMono';src:url('./_shared/fonts/GeistMono-Regular.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
 :root{--bg:#FDF8F0;--bg2:#F5EDE0;--ink:#2D3436;--muted:#8D9196;--rule:#E0D8CC;--accent:#7CB69D;--accent2:#F4A683;--accent-light:#B8DCC9;--accent2-light:#FBD5C0;--radius:14px;--shadow:0 2px 12px rgba(0,0,0,.06)}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{font-family:'InstrumentSans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:70px;overflow-x:hidden}
@@ -5028,7 +5028,26 @@ function updatePomoStats() {
 // ===================== SERVICE WORKER =====================
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch(err => {
+  navigator.serviceWorker.register('./sw.js').then(reg => {
+    // Force update if a new SW is waiting
+    reg.addEventListener('updatefound', () => {
+      const newWorker = reg.installing;
+      if (newWorker) {
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // New SW available, reload to activate
+            newWorker.postMessage({type:'SKIP_WAITING'});
+            window.location.reload();
+          }
+        });
+      }
+    });
+    // If there's already a waiting SW, skip waiting
+    if (reg.waiting) {
+      reg.waiting.postMessage({type:'SKIP_WAITING'});
+      window.location.reload();
+    }
+  }).catch(err => {
     console.log('SW registration failed:', err);
   });
 }
@@ -5036,8 +5055,14 @@ if ('serviceWorker' in navigator) {
 // ===================== INIT =====================
 // v2.0 stable
 
-loadData();
-render();
+try {
+  loadData();
+  render();
+  console.log('App initialized successfully. Config:', habitsConfig.length, 'habits');
+} catch(e) {
+  console.error('Init error:', e.message, e.stack);
+  document.body.innerHTML += '<div style="position:fixed;top:10px;left:10px;right:10px;background:#ffe0e0;color:#c00;padding:16px;border-radius:8px;z-index:9999;font-size:13px;font-family:monospace;white-space:pre-wrap;max-height:80vh;overflow:auto">' + e.message + '\n\n' + e.stack + '</div>';
+}
 </script>
 </body>
 </html>

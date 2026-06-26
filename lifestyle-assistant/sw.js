@@ -3,14 +3,8 @@ const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './assets/hero_1280x720.jpg',
   './assets/icon-192.jpg',
-  './assets/icon-512.jpg',
-  './assets/charts.js',
-  './_shared/js/echarts.min.js',
-  './_shared/fonts/InstrumentSans-Regular.ttf',
-  './_shared/fonts/InstrumentSans-Bold.ttf',
-  './_shared/fonts/GeistMono-Regular.ttf'
+  './assets/icon-512.jpg'
 ];
 
 self.addEventListener('install', event => {

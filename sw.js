@@ -1,12 +1,10 @@
-const CACHE_NAME = 'lifestyle-assistant-v2';
+const CACHE_NAME = 'lifestyle-assistant-v3';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './assets/hero_1280x720.jpg',
   './assets/icon-192.jpg',
   './assets/icon-512.jpg',
-  './assets/charts.js',
   './_shared/fonts/InstrumentSans-Regular.ttf',
   './_shared/fonts/InstrumentSans-Bold.ttf',
   './_shared/fonts/GeistMono-Regular.ttf'
@@ -14,7 +12,15 @@ const ASSETS = [
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+    caches.open(CACHE_NAME).then(cache => {
+      return Promise.allSettled(
+        ASSETS.map(url =>
+          cache.add(url).catch(err => {
+            console.warn('SW: failed to cache', url, err);
+          })
+        )
+      );
+    })
   );
   self.skipWaiting();
 });
@@ -22,10 +28,9 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    )
+      Promise.all(keys.map(k => caches.delete(k)))
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
 self.addEventListener('fetch', event => {
