@@ -2,5 +2,5 @@ name = "ai-proxy"
 main = "ai-proxy.js"
 compatibility_date = "2024-07-29"
 
-[vars]
-QWEN_API_KEY = "sk-e4e4564ddd9d41b098dcdda040d4f025"
+# 启用 workers.dev 子域
+workers_dev = true
