@@ -67,6 +67,13 @@
       <span class="theme-slider"></span>
     </label>
   </div>
+  <!-- 设置入口 -->
+  <div class="profile-settings-entry" onclick="openSettingsPanel()">
+    <span class="pse-icon">⚙️</span>
+    <span class="pse-label">设置</span>
+    <span class="pse-desc" id="pseAiStatus">AI 配置</span>
+    <span class="pse-arrow">›</span>
+  </div>
   <!-- 个人信息卡片 -->
   <div class="profile-card" id="profileCard">
     <div class="profile-avatar" id="profileAvatar">🌱</div>
@@ -307,18 +314,39 @@
       <input type="text" id="aiChatInput" placeholder="输入养生问题，如：失眠怎么调理？" onkeydown="if(event.key==='Enter')sendAiMessage()">
       <button id="aiSendBtn" onclick="sendAiMessage()" title="发送">➤</button>
     </div>
-    <!-- 配置提示区域 -->
-    <div id="aiChatConfig" style="display:none">
-      <div class="config-icon">🤖</div>
-      <div class="config-title">AI 养生顾问</div>
-      <div style="font-size:13px;color:var(--muted);margin-bottom:12px">需要配置 Cloudflare Workers 代理才能使用</div>
-      <div class="config-desc">
-        <strong>部署步骤：</strong><br>
-        1. 注册 Cloudflare 账号<br>
-        2. 注册阿里百炼获取 API Key<br>
-        3. 部署 workers/ai-proxy.js<br>
-        4. 在代码中配置 AI_WORKER_URL
+    <!-- 未配置提示 -->
+    <div id="aiChatUnconfigured" style="display:none;padding:24px 20px;text-align:center">
+      <div style="font-size:40px;margin-bottom:10px">🔒</div>
+      <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:6px">尚未配置 API</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:16px">请先在设置中配置 AI API Key</div>
+      <button class="const-btn" onclick="closeAllPanels();openSettingsPanel()" style="margin-top:0">⚙️ 前往设置</button>
+    </div>
+  </div>
+</div>
+
+<!-- 设置 Panel -->
+<div class="panel" id="settingsPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title">⚙️ 设置</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body" style="padding:20px">
+    <!-- AI 配置区 -->
+    <div class="settings-section">
+      <div class="settings-section-title">🤖 AI 养生顾问配置</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6">配置阿里百炼 API 以启用 AI 养生顾问功能</div>
+      <div class="config-desc" style="font-size:12px;color:var(--muted);line-height:1.6;background:var(--bg2);padding:12px;border-radius:12px;margin-bottom:16px">
+        <strong>方式1（推荐）：Cloudflare Workers 代理</strong><br>
+        1. 注册 Cloudflare 账号 → 2. 注册阿里百炼获取 API Key → 3. 部署 workers/ai-proxy.js → 4. 填入 Worker URL 和 API Key
       </div>
+      <div class="he-label">Worker URL（可选）</div>
+      <input class="config-input" id="configWorkerUrl" type="text" placeholder="https://your-worker.workers.dev">
+      <div class="he-label" style="margin-top:12px">阿里百炼 API Key（必填）</div>
+      <input class="config-input" id="configApiKey" type="password" placeholder="sk-...">
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">获取地址：<a href="https://bailian.console.aliyun.com/" target="_blank" style="color:var(--accent)">阿里百炼控制台</a> → 模型广场 → API Key 管理</div>
+      <button class="const-btn" onclick="saveAiConfig()" style="margin-top:14px">✅ 保存 AI 配置</button>
+      <div id="settingsAiStatus" style="margin-top:10px;font-size:12px;text-align:center"></div>
     </div>
   </div>
 </div>

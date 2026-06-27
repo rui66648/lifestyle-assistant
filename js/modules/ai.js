@@ -4,24 +4,52 @@
   // ============================================================
   // 配置说明
   // ============================================================
-  // 方式1（推荐）：使用 Cloudflare Workers 代理
-  //   1. 按 workers/部署说明.md 部署 ai-proxy.js
-  //   2. 获取 Worker URL，填入 AI_WORKER_URL
-  //   3. 不需要填 API Key（Key 在 Worker 环境变量里，更安全）
-  //
-  // 方式2（临时测试）：直接调用阿里百炼 API
-  //   1. 在阿里百炼获取 API Key
-  //   2. 填入 DASHSCOPE_API_KEY
-  //   ⚠️ 注意：API Key 会暴露在前端代码中，仅限临时测试！
+  // 用户可在 AI 面板配置界面自行填写 API Key
+  // 配置信息存储在 localStorage 中，不会暴露在代码里
   // ============================================================
 
-  // 方式1：Worker 代理 URL（推荐）
-  // 本地开发用 http://127.0.0.1:8787，部署后改成 Worker URL
-  const AI_WORKER_URL = 'http://127.0.0.1:8787';
+  // 从 localStorage 读取配置
+  function getConfig() {
+    try {
+      const saved = localStorage.getItem('ai_config');
+      if (saved) {
+        const config = JSON.parse(saved);
+        return {
+          workerUrl: config.workerUrl || '',
+          apiKey: config.apiKey || ''
+        };
+      }
+    } catch (e) {
+      console.warn('[AI] 读取配置失败:', e);
+    }
+    return { workerUrl: '', apiKey: '' };
+  }
 
-  // 方式2：直接调用 API（仅临时测试用）
-  // ⚠️ API Key 会暴露在前端，不要在正式环境使用！
-  const DASHSCOPE_API_KEY = '';
+  function saveConfig(workerUrl, apiKey) {
+    try {
+      localStorage.setItem('ai_config', JSON.stringify({
+        workerUrl: workerUrl || '',
+        apiKey: apiKey || ''
+      }));
+    } catch (e) {
+      console.warn('[AI] 保存配置失败:', e);
+    }
+  }
+
+  // 获取当前配置
+  let currentConfig = getConfig();
+
+  // 动态获取 Worker URL
+  function getWorkerUrl() {
+    currentConfig = getConfig();
+    return currentConfig.workerUrl;
+  }
+
+  // 动态获取 API Key
+  function getApiKey() {
+    currentConfig = getConfig();
+    return currentConfig.apiKey;
+  }
 
   // AI 系统提示词
   const SYSTEM_PROMPT = `你是一位精通以下9部中医古籍和15部现代养生著作的养生顾问。
@@ -106,11 +134,13 @@
   // 验证配置
   // ============================================================
   function isConfigured() {
-    return AI_WORKER_URL.trim() !== '' || DASHSCOPE_API_KEY.trim() !== '';
+    const cfg = getConfig();
+    return cfg.apiKey.trim() !== '';
   }
 
   function isUsingWorker() {
-    return AI_WORKER_URL.trim() !== '';
+    const cfg = getConfig();
+    return cfg.workerUrl.trim() !== '' && cfg.apiKey.trim() !== '';
   }
 
   // ============================================================
@@ -118,17 +148,17 @@
   // ============================================================
   function openAiChatPanel() {
     const inputArea = document.getElementById('aiChatInputArea');
-    const configArea = document.getElementById('aiChatConfig');
+    const unconfiguredArea = document.getElementById('aiChatUnconfigured');
     const msgContainer = document.getElementById('aiChatMessages');
 
     // 检查配置状态
     if (!isConfigured()) {
       if (inputArea) inputArea.style.display = 'none';
-      if (configArea) configArea.style.display = 'block';
+      if (unconfiguredArea) unconfiguredArea.style.display = 'block';
       if (msgContainer) msgContainer.innerHTML = '';
     } else {
       if (inputArea) inputArea.style.display = 'flex';
-      if (configArea) configArea.style.display = 'none';
+      if (unconfiguredArea) unconfiguredArea.style.display = 'none';
     }
 
     // 渲染历史消息或欢迎语
@@ -290,6 +320,7 @@
     isLoading = true;
     if (sendBtn) {
       sendBtn.disabled = true;
+      sendBtn._originalHTML = sendBtn.innerHTML;
       sendBtn.innerHTML = '⏳';
     }
 
@@ -306,13 +337,15 @@
 
       if (isUsingWorker()) {
         // 方式1：使用 Worker 代理（安全）
-        // 注意：Worker 会自动添加 system prompt，前端只需传对话历史
+        const workerUrl = getWorkerUrl();
+        const apiKey = getApiKey();
         const userMessages = aiChatHistory;
 
-        response = await fetch(AI_WORKER_URL, {
+        response = await fetch(workerUrl, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + apiKey
           },
           body: JSON.stringify({
             model: MODEL,
@@ -342,7 +375,8 @@
         aiChatHistory.push({ role: 'assistant', content: reply });
 
       } else {
-        // 方式2：直接调用 API（仅测试用）
+        // 方式2：直接调用阿里百炼 API
+        const apiKey = getApiKey();
         const messages = [
           { role: 'system', content: SYSTEM_PROMPT },
           ...aiChatHistory
@@ -352,7 +386,7 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + DASHSCOPE_API_KEY
+            'Authorization': 'Bearer ' + apiKey
           },
           body: JSON.stringify({
             model: MODEL,
@@ -410,7 +444,7 @@
       // 恢复发送按钮（使用函数开头已获取的 sendBtn 变量）
       if (sendBtn) {
         sendBtn.disabled = false;
-        sendBtn.innerHTML = '➤';
+        sendBtn.innerHTML = sendBtn._originalHTML || '➤';
       }
       // 重新聚焦输入框
       if (input) input.focus();
@@ -467,6 +501,77 @@
   }
 
   // ============================================================
+  // 保存用户配置
+  // ============================================================
+  function saveAiConfig() {
+    const workerUrl = document.getElementById('configWorkerUrl');
+    const apiKey = document.getElementById('configApiKey');
+
+    const url = workerUrl ? workerUrl.value.trim() : '';
+    const key = apiKey ? apiKey.value.trim() : '';
+
+    if (!key) {
+      alert('请填写 API Key');
+      return;
+    }
+
+    saveConfig(url, key);
+    currentConfig = getConfig();
+
+    // 更新设置面板状态
+    const statusEl = document.getElementById('settingsAiStatus');
+    if (statusEl) {
+      statusEl.textContent = '✅ 已配置 · API Key: ' + key.substring(0, 6) + '...';
+      statusEl.style.color = 'var(--accent)';
+    }
+    updateProfileAiStatus();
+
+    alert('配置已保存！AI 养生顾问已就绪。');
+  }
+
+  // ============================================================
+  // 更新"我的"页面设置入口状态
+  // ============================================================
+  function updateProfileAiStatus() {
+    const cfg = getConfig();
+    const el = document.getElementById('pseAiStatus');
+    if (!el) return;
+    if (cfg.apiKey) {
+      el.textContent = 'AI 已配置 ✅';
+      el.style.color = 'var(--accent)';
+    } else {
+      el.textContent = 'AI 未配置';
+      el.style.color = 'var(--muted)';
+    }
+  }
+
+  // ============================================================
+  // 设置面板
+  // ============================================================
+  function openSettingsPanel() {
+    // 回填已保存的配置
+    const cfg = getConfig();
+    const workerEl = document.getElementById('configWorkerUrl');
+    const apiKeyEl = document.getElementById('configApiKey');
+    if (workerEl) workerEl.value = cfg.workerUrl || '';
+    if (apiKeyEl) apiKeyEl.value = cfg.apiKey || '';
+
+    // 显示配置状态
+    const statusEl = document.getElementById('settingsAiStatus');
+    if (statusEl) {
+      if (cfg.apiKey) {
+        statusEl.textContent = '✅ 已配置 · API Key: ' + cfg.apiKey.substring(0, 6) + '...';
+        statusEl.style.color = 'var(--accent)';
+      } else {
+        statusEl.textContent = '⚠️ 尚未配置 API Key';
+        statusEl.style.color = 'var(--muted)';
+      }
+    }
+
+    openPanel('settingsPanel');
+  }
+
+  // ============================================================
   // 导出模块
   // ============================================================
   if (!window.App) window.App = {};
@@ -474,21 +579,26 @@
 
   App.Modules.AI = {
     openAiChatPanel,
+    openSettingsPanel,
     sendAiMessage,
     clearAiChat,
+    saveAiConfig,
     isConfigured,
     isUsingWorker
   };
 
   // 全局暴露（兼容 HTML onclick）
   window.openAiChatPanel = openAiChatPanel;
+  window.openSettingsPanel = openSettingsPanel;
   window.sendAiMessage = sendAiMessage;
   window.clearAiChat = clearAiChat;
+  window.saveAiConfig = saveAiConfig;
   window.scrollAiToBottom = scrollAiToBottom;
 
-  // 初始化：加载历史记录 + 滚动监听
+  // 初始化：加载历史记录 + 滚动监听 + 更新状态
   loadHistory();
   initAiScrollListener();
+  updateProfileAiStatus();
 
   if (App.registerModule) {
     App.registerModule('modules.ai', 'modules', null);
