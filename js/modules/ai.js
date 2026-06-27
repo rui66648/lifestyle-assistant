@@ -17,11 +17,11 @@
 
   // 方式1：Worker 代理 URL（推荐）
   // 部署 ai-proxy.js 后填入，如：'https://ai-proxy.3487331518.workers.dev'
-  const AI_WORKER_URL = ''; // 临时置空，测试直接调用 API
+  const AI_WORKER_URL = 'https://ai-proxy.3487331518.workers.dev';
 
   // 方式2：直接调用 API（仅临时测试用）
   // ⚠️ API Key 会暴露在前端，不要在正式环境使用！
-  const DASHSCOPE_API_KEY = 'sk-e4e4564ddd9d41b098dcdda040d4f025';
+  const DASHSCOPE_API_KEY = '';
 
   // AI 系统提示词
   const SYSTEM_PROMPT = '你是一位精通《黄帝内经》等14部中医养生经典的养生顾问。回答用户健康问题时，请结合中医经典理论给出建议，并尽可能注明引用的古籍出处（如《素问》《灵枢》等）。回答要简洁实用，适合普通用户理解，每次回答控制在200字以内。';
