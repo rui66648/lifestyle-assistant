@@ -196,7 +196,7 @@ const CONSTITUTION_QUIZ = [
       {text:'心情平和，情绪稳定',scores:{pinghe:2,qiyu:0,qixu:0,xueyu:0}},
       {text:'容易抑郁，闷闷不乐',scores:{pinghe:0,qiyu:2,qixu:0,xueyu:0}},
       {text:'容易烦躁，易怒',scores:{pinghe:0,qiyu:0,qixu:0,xueyu:0,yinxu:2}},
-      {text:'容易紧张，焦虑不安',scores:{pinghe:0,qiyu:1,qixu:0,xueyu:0,qiyu:1}}
+      {text:'容易紧张，焦虑不安',scores:{pinghe:0,qiyu:2,qixu:0,xueyu:0}}
     ]
   },
   {

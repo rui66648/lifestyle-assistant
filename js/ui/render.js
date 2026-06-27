@@ -117,7 +117,7 @@
 
     // 原文引用
     let tipText = pack.quote || (solarTerm ? solarTerm.tip : pack.tip);
-    tipEl = document.getElementById('todaySeasonTip');
+    const tipEl = document.getElementById('todaySeasonTip');
     if (tipEl) tipEl.innerHTML = tipText;
 
     refreshQuote();

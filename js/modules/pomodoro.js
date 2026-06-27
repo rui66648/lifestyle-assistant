@@ -117,11 +117,26 @@
       savePomoStats(25);
       const habitId = document.getElementById('pomoHabit').value;
       if (habitId) {
-        const rec = checkinRecords[today()] || {};
-        rec[habitId] = {done: true, value: 1};
-        checkinRecords[today()] = rec;
-        saveRecords();
-        render(['today','checkin']);
+        const habit = habitsConfig.find(h => h.id === habitId);
+        if (habit) {
+          const key = today();
+          const rec = checkinRecords[key] || {};
+          const existing = rec[habitId] || {done: false, value: 0};
+          if (habit.type === 'timer') {
+            existing.value = (existing.value || 0) + 25;
+            existing.done = true;
+          } else if (habit.type === 'count') {
+            existing.value = (existing.value || 0) + 1;
+            existing.done = true;
+          } else {
+            existing.done = true;
+            existing.value = existing.value || 1;
+          }
+          rec[habitId] = existing;
+          checkinRecords[key] = rec;
+          saveRecords();
+          render(['today','checkin']);
+        }
       }
       if (pomoCycle % 4 === 0) {
         pomoMode = 'longBreak';
