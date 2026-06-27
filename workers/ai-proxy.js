@@ -13,10 +13,9 @@
 // ============================================================
 // 配置
 // ============================================================
-const RATE_LIMIT = parseInt(env.RATE_LIMIT) || 50;  // 每小时最大请求数
 const RATE_WINDOW = 60 * 60 * 1000;  // 时间窗口：1小时（毫秒）
 
-// API 端点
+// API 端点（阿里百炼兼容模式）
 const API_BASE = 'https://dashscope.aliyuncs.com/compatible-mode/v1';
 
 // 默认模型
@@ -95,16 +94,15 @@ function validateRequest(body) {
 // 如需精确限流，可使用 Cloudflare KV 或 Durable Objects
 const rateLimitMap = new Map();
 
-function checkRateLimit(ip) {
+function checkRateLimit(ip, limit) {
   const now = Date.now();
-  const key = ip;
 
   // 获取或初始化记录
-  if (!rateLimitMap.has(key)) {
-    rateLimitMap.set(key, { count: 0, windowStart: now });
+  if (!rateLimitMap.has(ip)) {
+    rateLimitMap.set(ip, { count: 0, windowStart: now });
   }
 
-  const record = rateLimitMap.get(key);
+  const record = rateLimitMap.get(ip);
 
   // 如果时间窗口已过，重置
   if (now - record.windowStart > RATE_WINDOW) {
@@ -113,7 +111,7 @@ function checkRateLimit(ip) {
   }
 
   // 检查是否超限
-  if (record.count >= RATE_LIMIT) {
+  if (record.count >= limit) {
     return {
       allowed: false,
       remaining: 0,
@@ -126,7 +124,7 @@ function checkRateLimit(ip) {
 
   return {
     allowed: true,
-    remaining: RATE_LIMIT - record.count,
+    remaining: limit - record.count,
     resetTime: Math.ceil((record.windowStart + RATE_WINDOW - now) / 1000)
   };
 }
@@ -161,23 +159,26 @@ export default {
       }, 500);
     }
 
+    // 获取限流配置
+    const rateLimit = parseInt(env.RATE_LIMIT) || 50;
+
     // 获取客户端 IP 并检查限流
     const clientIP = getClientIP(request);
-    const rateLimit = checkRateLimit(clientIP);
+    const rateCheck = checkRateLimit(clientIP, rateLimit);
 
     // 添加限流头
     const headers = {
-      'X-RateLimit-Limit': RATE_LIMIT.toString(),
-      'X-RateLimit-Remaining': rateLimit.remaining.toString(),
-      'X-RateLimit-Reset': rateLimit.resetTime.toString()
+      'X-RateLimit-Limit': rateLimit.toString(),
+      'X-RateLimit-Remaining': rateCheck.remaining.toString(),
+      'X-RateLimit-Reset': rateCheck.resetTime.toString()
     };
 
     // 超限
-    if (!rateLimit.allowed) {
+    if (!rateCheck.allowed) {
       return jsonResponse({
         error: '请求过于频繁',
-        message: `已达每小时 ${RATE_LIMIT} 次请求上限，请稍后再试`,
-        retryAfter: rateLimit.resetTime
+        message: `已达每小时 ${rateLimit} 次请求上限，请稍后再试`,
+        retryAfter: rateCheck.resetTime
       }, 429, headers);
     }
 
@@ -208,7 +209,7 @@ export default {
     ];
 
     try {
-      // 调用阿里百炼 API
+      // 调用阿里百炼 API（兼容模式）
       const response = await fetch(`${API_BASE}/chat/completions`, {
         method: 'POST',
         headers: {
