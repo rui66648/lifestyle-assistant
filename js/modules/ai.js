@@ -21,7 +21,7 @@
 
   // 方式2：直接调用 API（仅临时测试用）
   // ⚠️ API Key 会暴露在前端，不要在正式环境使用！
-  const DASHSCOPE_API_KEY = '';
+  const DASHSCOPE_API_KEY = 'sk-e4e4564ddd9d41b098dcdda040d4f025';
 
   // AI 系统提示词
   const SYSTEM_PROMPT = '你是一位精通《黄帝内经》等14部中医养生经典的养生顾问。回答用户健康问题时，请结合中医经典理论给出建议，并尽可能注明引用的古籍出处（如《素问》《灵枢》等）。回答要简洁实用，适合普通用户理解，每次回答控制在200字以内。';
@@ -245,24 +245,22 @@
     renderAiLoading();
 
     try {
-      const messages = [
-        { role: 'system', content: SYSTEM_PROMPT },
-        ...aiChatHistory
-      ];
-
       let response;
       let data;
 
       if (isUsingWorker()) {
         // 方式1：使用 Worker 代理（安全）
-        response = await fetch(AI_WORKER_URL + '/v1/chat/completions', {
+        // 注意：Worker 会自动添加 system prompt，前端只需传对话历史
+        const userMessages = aiChatHistory;
+
+        response = await fetch(AI_WORKER_URL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             model: MODEL,
-            messages: messages,
+            messages: userMessages,
             max_tokens: MAX_TOKENS,
             temperature: TEMPERATURE
           })
@@ -272,7 +270,8 @@
 
         // 检查业务错误
         if (data.error) {
-          throw new Error(data.error.message || 'AI 服务返回错误');
+          const errMsg = typeof data.error === 'string' ? data.error : (data.error.message || data.error);
+          throw new Error(errMsg || 'AI 服务返回错误');
         }
 
         // 解析 OpenAI 格式响应
@@ -288,6 +287,11 @@
 
       } else {
         // 方式2：直接调用 API（仅测试用）
+        const messages = [
+          { role: 'system', content: SYSTEM_PROMPT },
+          ...aiChatHistory
+        ];
+
         response = await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', {
           method: 'POST',
           headers: {
