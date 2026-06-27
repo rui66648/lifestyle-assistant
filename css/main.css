@@ -145,14 +145,14 @@ img{max-width:100%;display:block}
   background:linear-gradient(90deg,var(--accent),var(--accent2));
   transition:all .25s ease;
 }
-.bnav-icon{font-size:22px;line-height:1;transition:transform .25s ease}
+.bnav-icon{font-size:18px;line-height:1;transition:transform .25s ease}
 .bnav-item.active .bnav-icon{transform:scale(1.1)}
 .bnav-label{font-size:10px;font-weight:600;color:var(--muted);transition:color .25s}
 .bnav-item.active .bnav-label{color:var(--accent)}
 .bnav-center{
-  width:52px;height:52px;border-radius:50%;
+  width:44px;height:44px;border-radius:50%;
   background:linear-gradient(135deg,var(--accent),var(--accent2));
-  color:#fff;font-size:22px;
+  color:#fff;font-size:18px;
   display:flex;align-items:center;justify-content:center;
   border:none;cursor:pointer;
   box-shadow:0 4px 16px rgba(91,185,138,.35);
@@ -192,15 +192,15 @@ img{max-width:100%;display:block}
 .habit-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
 .habit-card:active{transform:scale(.98)}
 .habit-card.done-card{opacity:0.55}
-.habit-card .icon{font-size:24px;width:32px;text-align:center;flex-shrink:0}
+.habit-card .icon{font-size:20px;width:28px;text-align:center;flex-shrink:0}
 .habit-card .info{flex:1;min-width:0}
 .habit-card .name{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .habit-card .meta{font-size:11px;color:var(--muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .habit-card .streak{font-size:10px;color:var(--accent);background:var(--accent-light);padding:1px 6px;border-radius:8px;font-weight:600}
 /* Checkin Button */
 .habit-card .checkin-btn{
-  width:42px;height:42px;border-radius:50%;
-  font-size:16px;font-weight:700;
+  width:36px;height:36px;border-radius:50%;
+  font-size:14px;font-weight:700;
   transition:all .25s ease;
   flex-shrink:0;display:flex;align-items:center;justify-content:center;
   box-shadow:var(--shadow-sm);
@@ -209,7 +209,7 @@ img{max-width:100%;display:block}
 .habit-card .checkin-btn.pending:active{transform:scale(.85);background:#4a9878}
 .habit-card .checkin-btn.done{background:var(--accent-light);color:var(--accent);font-size:18px}
 .habit-card .checkin-btn.done{background:var(--accent);color:#fff}
-.habit-card .checkin-btn.skip{background:var(--bg2);color:var(--muted);width:32px;height:32px;font-size:13px}
+.habit-card .checkin-btn.skip{background:var(--bg2);color:var(--muted);width:28px;height:28px;font-size:12px}
 .habit-card .checkin-btn.failed{background:#fde2e2;color:#c0392b}
 .habit-card.negative{border-left:3px solid #e74c3c}
 .habit-card.negative .checkin-btn.pending{background:#e74c3c}
@@ -244,7 +244,7 @@ img{max-width:100%;display:block}
 .star-particle{position:absolute;pointer-events:none;font-size:16px;animation:starBurst .6s ease forwards;z-index:10}
 .confetti-particle{position:fixed;pointer-events:none;width:8px;height:8px;border-radius:2px;animation:confetti 1s ease forwards;z-index:999}
 .all-done-banner{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:999;text-align:center;pointer-events:none;animation:checkinPop .5s ease}
-.all-done-banner .emoji{font-size:64px;display:block;margin-bottom:8px}
+.all-done-banner .emoji{font-size:48px;display:block;margin-bottom:8px}
 .all-done-banner .text{font-size:24px;font-weight:800;color:var(--accent)}
 
 /* Ring Progress */
@@ -329,7 +329,7 @@ img{max-width:100%;display:block}
 .panel-handle{width:40px;height:4px;background:var(--rule);border-radius:2px;margin:10px auto 6px}
 .panel-header{display:flex;justify-content:space-between;align-items:center;padding:8px 16px 12px;border-bottom:1px solid var(--rule)}
 .panel-title{font-size:16px;font-weight:700}
-.panel-close{font-size:20px;padding:4px 8px;border-radius:8px}
+.panel-close{font-size:18px;padding:4px 8px;border-radius:8px}
 .panel-close:active{background:var(--rule)}
 .panel-body{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch}
 
@@ -586,7 +586,6 @@ body.btn-default .ref-lib-btn,
 body.btn-default .sd-tab,
 body.btn-default .he-btn,
 body.btn-default .he-btn-save,
-body.btn-default .he-btn-delete,
 body.btn-default .skin-option,
 body.btn-default .rh-btn,
 body.btn-default .habit-card .checkin-btn,
@@ -629,7 +628,6 @@ body.btn-pill .ref-lib-btn,
 body.btn-pill .sd-tab,
 body.btn-pill .he-btn,
 body.btn-pill .he-btn-save,
-body.btn-pill .he-btn-delete,
 body.btn-pill .skin-option,
 body.btn-pill .rh-btn,
 body.btn-pill .habit-card .checkin-btn,
@@ -672,7 +670,6 @@ body.btn-square .ref-lib-btn,
 body.btn-square .sd-tab,
 body.btn-square .he-btn,
 body.btn-square .he-btn-save,
-body.btn-square .he-btn-delete,
 body.btn-square .skin-option,
 body.btn-square .rh-btn,
 body.btn-square .habit-card .checkin-btn,
@@ -715,7 +712,6 @@ body.btn-star .ref-lib-btn,
 body.btn-star .sd-tab,
 body.btn-star .he-btn,
 body.btn-star .he-btn-save,
-body.btn-star .he-btn-delete,
 body.btn-star .skin-option,
 body.btn-star .rh-btn,
 body.btn-star .habit-card .checkin-btn,
@@ -756,7 +752,6 @@ body.btn-star .ref-lib-btn:hover,
 body.btn-star .sd-tab:hover,
 body.btn-star .he-btn:hover,
 body.btn-star .he-btn-save:hover,
-body.btn-star .he-btn-delete:hover,
 body.btn-star .skin-option:hover,
 body.btn-star .rh-btn:hover,
 body.btn-star .habit-card .checkin-btn:hover,
@@ -799,7 +794,6 @@ body.btn-modern .ref-lib-btn,
 body.btn-modern .sd-tab,
 body.btn-modern .he-btn,
 body.btn-modern .he-btn-save,
-body.btn-modern .he-btn-delete,
 body.btn-modern .skin-option,
 body.btn-modern .rh-btn,
 body.btn-modern .habit-card .checkin-btn,
@@ -840,7 +834,6 @@ body.btn-modern .ref-lib-btn:hover,
 body.btn-modern .sd-tab:hover,
 body.btn-modern .he-btn:hover,
 body.btn-modern .he-btn-save:hover,
-body.btn-modern .he-btn-delete:hover,
 body.btn-modern .skin-option:hover,
 body.btn-modern .rh-btn:hover,
 body.btn-modern .habit-card .checkin-btn:hover,
@@ -881,7 +874,6 @@ body.btn-modern .ref-lib-btn:active,
 body.btn-modern .sd-tab:active,
 body.btn-modern .he-btn:active,
 body.btn-modern .he-btn-save:active,
-body.btn-modern .he-btn-delete:active,
 body.btn-modern .skin-option:active,
 body.btn-modern .rh-btn:active,
 body.btn-modern .habit-card .checkin-btn:active,
@@ -1237,21 +1229,375 @@ body.dark .wuse-card,body.dark .emotion-mini-card,body.dark .wulao-mini-card{bac
 .time-group.collapsed-group .time-group-label{opacity:.6}
 .time-group.collapsed-group .habit-card:not(.collapsed){margin-top:6px}
 
-/* AI Chat */
-#aiChatPanel{max-height:100vh;height:100vh;border-radius:0}
-.ai-msg{display:flex;gap:8px;max-width:85%}
-.ai-msg.user{align-self:flex-end;flex-direction:row-reverse}
-.ai-msg .ai-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.ai-msg.ai .ai-avatar{background:linear-gradient(135deg,var(--accent),var(--accent2))}
-.ai-msg.user .ai-avatar{background:var(--accent-light)}
-.ai-msg .ai-bubble{padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.6;word-break:break-word}
-.ai-msg.ai .ai-bubble{background:#fff;border:1px solid var(--rule);border-top-left-radius:4px}
-.ai-msg.user .ai-bubble{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-top-right-radius:4px}
-.ai-loading{display:flex;align-items:center;gap:6px;padding:10px 14px;background:#fff;border-radius:14px;border:1px solid var(--rule);width:fit-content}
-.ai-loading span{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:aiBounce 1.4s infinite ease-in-out both}
+/* ========== AI Chat (Trae Style) ========== */
+#aiChatPanel{
+  max-height:100vh;
+  height:100vh;
+  border-radius:0;
+  display:flex;
+  flex-direction:column;
+}
+
+/* 对话容器 */
+#aiChatMessages{
+  flex:1;
+  overflow-y:auto;
+  padding:20px 16px 12px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  scroll-behavior:smooth;
+}
+
+/* 时间分隔线 */
+.ai-divider{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:8px 0;
+  align-self:center;
+}
+.ai-divider::before,
+.ai-divider::after{
+  content:'';
+  flex:1;
+  height:1px;
+  background:var(--rule);
+}
+.ai-divider span{
+  font-size:11px;
+  color:var(--muted);
+  white-space:nowrap;
+  padding:2px 10px;
+  background:var(--bg2);
+  border-radius:10px;
+}
+
+/* 消息行 */
+.ai-msg{
+  display:flex;
+  gap:10px;
+  max-width:88%;
+  animation:msgFadeIn .35s ease-out both;
+}
+@keyframes msgFadeIn{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.ai-msg.user{
+  align-self:flex-end;
+  flex-direction:row-reverse;
+}
+
+/* 头像 */
+.ai-msg .ai-avatar{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
+  flex-shrink:0;
+  position:relative;
+}
+.ai-msg.ai .ai-avatar{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  box-shadow:0 2px 8px rgba(91,185,138,0.3);
+}
+.ai-msg.user .ai-avatar{
+  background:var(--accent-light);
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+}
+
+/* 气泡 */
+.ai-msg .ai-bubble{
+  padding:12px 16px;
+  border-radius:18px;
+  font-size:14.5px;
+  line-height:1.7;
+  word-break:break-word;
+  position:relative;
+  box-shadow:var(--shadow-sm);
+}
+.ai-msg.ai .ai-bubble{
+  background:#fff;
+  border:1px solid var(--rule);
+  border-top-left-radius:6px;
+  color:var(--ink);
+}
+.ai-msg.user .ai-bubble{
+  background:linear-gradient(135deg,var(--accent),#4CAF87);
+  color:#fff;
+  border-top-right-radius:6px;
+  box-shadow:0 2px 12px rgba(91,185,138,0.25);
+}
+
+/* 气泡尾巴（小三角） */
+.ai-msg.ai .ai-bubble::before{
+  content:'';
+  position:absolute;
+  left:-6px;
+  top:14px;
+  width:0;height:0;
+  border-top:6px solid transparent;
+  border-bottom:6px solid transparent;
+  border-right:6px solid var(--rule);
+}
+.ai-msg.ai .ai-bubble::after{
+  content:'';
+  position:absolute;
+  left:-5px;
+  top:14px;
+  width:0;height:0;
+  border-top:6px solid transparent;
+  border-bottom:6px solid transparent;
+  border-right:6px solid #fff;
+}
+.ai-msg.user .ai-bubble::before{
+  content:'';
+  position:absolute;
+  right:-6px;
+  top:14px;
+  width:0;height:0;
+  border-top:6px solid transparent;
+  border-bottom:6px solid transparent;
+  border-left:6px solid var(--accent);
+}
+.ai-msg.user .ai-bubble::after{
+  content:'';
+  position:absolute;
+  right:-5px;
+  top:14px;
+  width:0;height:0;
+  border-top:6px solid transparent;
+  border-bottom:6px solid transparent;
+  border-left:6px solid var(--accent);
+}
+
+/* 欢迎消息特殊样式 */
+.ai-msg.ai.welcome-msg .ai-bubble{
+  background:linear-gradient(135deg,#f0faf5,#fefffe);
+  border-color:var(--accent-light);
+}
+
+/* 错误信息 */
+.ai-msg.ai.ai-error .ai-bubble{
+  background:#FFF5F5;
+  border-color:#FED7D7;
+  color:#C53030;
+}
+
+/* Loading 动画（打字效果） */
+.ai-loading{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  padding:14px 18px;
+  background:#fff;
+  border-radius:18px;
+  border:1px solid var(--rule);
+  border-top-left-radius:6px;
+  width:fit-content;
+  box-shadow:var(--shadow-sm);
+}
+.ai-loading span{
+  width:7px;
+  height:7px;
+  background:var(--accent);
+  border-radius:50%;
+  animation:aiTyping 1.4s infinite ease-in-out both;
+  opacity:0.4;
+}
 .ai-loading span:nth-child(1){animation-delay:-0.32s}
 .ai-loading span:nth-child(2){animation-delay:-0.16s}
-@keyframes aiBounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+.ai-loading span:nth-child(3){animation-delay:0s}
+@keyframes aiTyping{
+  0%,80%,100%{transform:scale(0.6);opacity:0.4}
+  40%{transform:scale(1);opacity:1}
+}
+
+/* 输入区域（Trae 风格） */
+#aiChatInputArea{
+  padding:12px 16px 16px;
+  border-top:1px solid var(--rule);
+  background:rgba(255,255,255,0.95);
+  backdrop-filter:blur(10px);
+  display:flex;
+  gap:10px;
+  align-items:flex-end;
+}
+#aiChatInput{
+  flex:1;
+  padding:12px 16px;
+  border:1.5px solid var(--rule);
+  border-radius:22px;
+  font-size:14.5px;
+  background:var(--bg);
+  outline:none;
+  transition:all .25s;
+  resize:none;
+  min-height:44px;
+  max-height:120px;
+  line-height:1.5;
+}
+#aiChatInput:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(91,185,138,0.12);
+  background:#fff;
+}
+#aiChatInput::placeholder{
+  color:var(--muted);
+  font-size:13.5px;
+}
+
+/* 发送按钮 */
+#aiSendBtn{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;
+  font-size:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  transition:all .25s;
+  box-shadow:0 2px 10px rgba(91,185,138,0.3);
+  border:none;
+  cursor:pointer;
+}
+#aiSendBtn:hover{
+  transform:scale(1.05);
+  box-shadow:0 4px 16px rgba(91,185,138,0.4);
+}
+#aiSendBtn:active{
+  transform:scale(0.95);
+}
+#aiSendBtn:disabled{
+  opacity:0.5;
+  cursor:not-allowed;
+  transform:none;
+}
+
+/* ========== 删除按钮（通用） ========== */
+.delete-btn{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background-color:rgb(20,20,20);
+  border:none;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 0 20px rgba(0,0,0,.164);
+  cursor:pointer;
+  transition-duration:.3s;
+  overflow:hidden;
+  position:relative;
+  flex-shrink:0;
+}
+.delete-btn .svgIcon{
+  width:14px;
+  height:14px;
+  transition-duration:.3s;
+  flex-shrink:0;
+}
+.delete-btn .svgIcon path{
+  fill:white;
+}
+.delete-btn:hover{
+  width:140px;
+  border-radius:50px;
+  background-color:rgb(255,69,69);
+}
+.delete-btn:hover .svgIcon{
+  width:46px;
+  height:46px;
+  transform:translateY(60%);
+}
+.delete-btn::before{
+  position:absolute;
+  top:-20px;
+  content:"Delete";
+  color:white;
+  transition-duration:.3s;
+  font-size:2px;
+  pointer-events:none;
+}
+.delete-btn:hover::before{
+  font-size:13px;
+  opacity:1;
+  transform:translateY(30px);
+}
+
+/* AI 清空按钮定位 */
+#aiClearBtn{
+  position:absolute;
+  top:50%;
+  right:54px;
+  transform:translateY(-50%);
+  z-index:2;
+}
+#aiClearBtn:hover{
+  transform:translateY(-50%);
+}
+
+/* 滚动到底部按钮 */
+#aiScrollBottom{
+  position:absolute;
+  bottom:80px;
+  right:20px;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:var(--shadow-md);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
+  cursor:pointer;
+  opacity:0;
+  transform:translateY(10px);
+  transition:all .3s;
+  pointer-events:none;
+  z-index:10;
+  border:1px solid var(--rule);
+}
+#aiScrollBottom.show{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+
+/* 配置提示区域 */
+#aiChatConfig{
+  padding:24px 20px;
+  text-align:center;
+}
+#aiChatConfig .config-icon{
+  font-size:48px;
+  margin-bottom:12px;
+}
+#aiChatConfig .config-title{
+  font-size:16px;
+  font-weight:700;
+  color:var(--ink);
+  margin-bottom:8px;
+}
+#aiChatConfig .config-desc{
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.6;
+  background:var(--bg2);
+  padding:14px;
+  border-radius:12px;
+  text-align:left;
+  margin-top:12px;
+}
 /* Manage Heatmap (GitHub-style) */
 .gm-heatmap-card{background:#fff;border-radius:14px;padding:16px;margin:12px 16px;box-shadow:var(--shadow)}
 .gm-heatmap-title{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
@@ -1388,10 +1734,10 @@ body.dark .wuse-card,body.dark .emotion-mini-card,body.dark .wulao-mini-card{bac
   margin-bottom:16px;box-shadow:var(--shadow-sm);
 }
 .profile-avatar{
-  width:64px;height:64px;border-radius:50%;
+  width:56px;height:56px;border-radius:50%;
   background:rgba(255,255,255,.8);
   display:flex;align-items:center;justify-content:center;
-  font-size:32px;flex-shrink:0;
+  font-size:28px;flex-shrink:0;
   box-shadow:var(--shadow-sm);
 }
 .profile-info{flex:1;min-width:0}
@@ -1481,9 +1827,9 @@ body.dark .wuse-card,body.dark .emotion-mini-card,body.dark .wulao-mini-card{bac
 }
 .mg-search:focus{border-color:var(--accent)}
 .mg-add-btn{
-  width:42px;height:42px;border-radius:14px;
+  width:36px;height:36px;border-radius:12px;
   background:linear-gradient(135deg,var(--accent),var(--accent2));
-  color:#fff;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;
   white-space:nowrap;transition:transform .15s;flex-shrink:0;
   box-shadow:0 2px 8px rgba(0,0,0,.08);
 }
@@ -1644,7 +1990,10 @@ body.dark .wuse-card,body.dark .emotion-mini-card,body.dark .wulao-mini-card{bac
   color:#fff;
 }
 .he-btn-delete{
-  background:var(--bg2);color:#e74c3c;
+  /* 继承 .delete-btn 样式，覆盖 flex:1 */
+  flex:0 0 auto;
+  padding:0;
+  background-color:rgb(20,20,20);
 }
 
 /* ========== Daily Card Collection ========== */
@@ -1804,9 +2153,9 @@ body.dark .he-switch-row{border-color:var(--rule)}
 }
 .profile-grid-item:active{transform:scale(.92);background:var(--bg2)}
 .pg-icon{
-  width:48px;height:48px;border-radius:14px;
+  width:42px;height:42px;border-radius:12px;
   display:flex;align-items:center;justify-content:center;
-  font-size:26px;
+  font-size:22px;
   background:linear-gradient(135deg,var(--accent-light),rgba(255,159,103,.12));
   box-shadow:0 2px 8px rgba(91,185,138,.15);
   transition:all .2s ease;

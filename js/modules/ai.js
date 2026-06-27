@@ -103,16 +103,6 @@
   }
 
   // ============================================================
-  // XSS 安全：转义 HTML 特殊字符
-  // ============================================================
-  function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
-  // ============================================================
   // 验证配置
   // ============================================================
   function isConfigured() {
@@ -135,6 +125,7 @@
     if (!isConfigured()) {
       if (inputArea) inputArea.style.display = 'none';
       if (configArea) configArea.style.display = 'block';
+      if (msgContainer) msgContainer.innerHTML = '';
     } else {
       if (inputArea) inputArea.style.display = 'flex';
       if (configArea) configArea.style.display = 'none';
@@ -145,25 +136,53 @@
       msgContainer.innerHTML = '';
 
       if (aiChatHistory.length === 0) {
-        // 欢迎语
-        renderAiMessage('ai', '你好！我是你的AI养生顾问，精通《黄帝内经》等14部中医经典。有任何养生问题都可以问我，比如：\n• 失眠怎么调理？\n• 夏天应该注意什么？\n• 久坐怎么保护身体？');
+        // 添加日期分隔线
+        renderDateDivider();
+        // 欢迎语（带特殊样式）
+        renderAiMessage('ai', '你好！我是你的 AI 养生顾问 🌿\n\n精通《黄帝内经》等24部中医经典与现代养生著作，有任何养生问题都可以问我：\n\n• 失眠怎么调理？\n• 夏天应该注意什么？\n• 久坐怎么保护身体？', true);
       } else {
         // 渲染历史消息
+        renderDateDivider();
         aiChatHistory.forEach(msg => {
-          renderAiMessage(msg.role === 'user' ? 'user' : 'ai', msg.content);
+          renderAiMessage(msg.role === 'user' ? 'user' : 'ai', msg.content, false);
         });
       }
     }
 
     openPanel('aiChatPanel');
+
+    // 聚焦输入框
+    setTimeout(() => {
+      const input = document.getElementById('aiChatInput');
+      if (input) input.focus();
+    }, 300);
   }
 
-  function renderAiMessage(role, text) {
+  // 日期分隔线
+  function renderDateDivider() {
     const container = document.getElementById('aiChatMessages');
     if (!container) return;
 
     const div = document.createElement('div');
-    div.className = 'ai-msg ' + role;
+    div.className = 'ai-divider';
+    const now = new Date();
+    const hours = now.getHours();
+    let timeStr = '今天 ';
+    if (hours < 6) timeStr += '凌晨';
+    else if (hours < 12) timeStr += '上午';
+    else if (hours < 14) timeStr += '中午';
+    else if (hours < 18) timeStr += '下午';
+    else timeStr += '晚上';
+    div.innerHTML = '<span>' + timeStr + '</span>';
+    container.appendChild(div);
+  }
+
+  function renderAiMessage(role, text, isWelcome = false) {
+    const container = document.getElementById('aiChatMessages');
+    if (!container) return;
+
+    const div = document.createElement('div');
+    div.className = 'ai-msg ' + role + (isWelcome ? ' welcome-msg' : '');
 
     // XSS 安全：使用 textContent 转义用户内容和 AI 回复
     const avatar = role === 'ai' ? '🤖' : '👤';
@@ -184,7 +203,9 @@
     container.appendChild(div);
 
     // 滚动到底部
-    container.scrollTop = container.scrollHeight;
+    setTimeout(() => {
+      container.scrollTop = container.scrollHeight;
+    }, 50);
   }
 
   function renderAiError(text) {
@@ -199,8 +220,8 @@
     avatarEl.textContent = '🤖';
 
     const bubbleEl = document.createElement('div');
-    bubbleEl.className = 'ai-bubble ai-error-text';
-    bubbleEl.textContent = text;
+    bubbleEl.className = 'ai-bubble';
+    bubbleEl.textContent = '⚠️ ' + text;
     bubbleEl.innerHTML = bubbleEl.innerHTML.replace(/\n/g, '<br>');
 
     div.appendChild(avatarEl);
@@ -249,6 +270,7 @@
     }
 
     const input = document.getElementById('aiChatInput');
+    const sendBtn = document.getElementById('aiSendBtn');
     if (!input) return;
 
     let text = input.value.trim();
@@ -263,9 +285,13 @@
       return;
     }
 
-    // 清空输入框
+    // 清空输入框并禁用按钮
     input.value = '';
     isLoading = true;
+    if (sendBtn) {
+      sendBtn.disabled = true;
+      sendBtn.innerHTML = '⏳';
+    }
 
     // 显示用户消息
     renderAiMessage('user', text);
@@ -381,7 +407,48 @@
       renderAiError(errorMsg);
     } finally {
       isLoading = false;
+      // 恢复发送按钮（使用函数开头已获取的 sendBtn 变量）
+      if (sendBtn) {
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = '➤';
+      }
+      // 重新聚焦输入框
+      if (input) input.focus();
     }
+  }
+
+  // 滚动到底部
+  function scrollAiToBottom() {
+    const container = document.getElementById('aiChatMessages');
+    if (container) {
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+    // 隐藏滚动按钮
+    const btn = document.getElementById('aiScrollBottom');
+    if (btn) btn.classList.remove('show');
+  }
+
+  // 监听滚动，显示/隐藏"回到底部"按钮
+  function initAiScrollListener() {
+    const container = document.getElementById('aiChatMessages');
+    if (!container) return;
+
+    container.addEventListener('scroll', function() {
+      const btn = document.getElementById('aiScrollBottom');
+      if (!btn) return;
+
+      const threshold = 100;
+      const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
+
+      if (isNearBottom) {
+        btn.classList.remove('show');
+      } else {
+        btn.classList.add('show');
+      }
+    });
   }
 
   // ============================================================
@@ -393,7 +460,8 @@
       const msgContainer = document.getElementById('aiChatMessages');
       if (msgContainer) {
         msgContainer.innerHTML = '';
-        renderAiMessage('ai', '对话记录已清空。有任何养生问题都可以问我！');
+        renderDateDivider();
+        renderAiMessage('ai', '对话记录已清空，有任何养生问题都可以问我！', true);
       }
     }
   }
@@ -416,9 +484,11 @@
   window.openAiChatPanel = openAiChatPanel;
   window.sendAiMessage = sendAiMessage;
   window.clearAiChat = clearAiChat;
+  window.scrollAiToBottom = scrollAiToBottom;
 
-  // 初始化：加载历史记录
+  // 初始化：加载历史记录 + 滚动监听
   loadHistory();
+  initAiScrollListener();
 
   if (App.registerModule) {
     App.registerModule('modules.ai', 'modules', null);
