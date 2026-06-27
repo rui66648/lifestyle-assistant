@@ -4,3 +4,6 @@ compatibility_date = "2024-07-29"
 
 # 启用 workers.dev 子域
 workers_dev = true
+
+# API Key 通过 Cloudflare Dashboard 设置 Secret: QWEN_API_KEY
+# 或通过 CLI: npx wrangler secret put QWEN_API_KEY
