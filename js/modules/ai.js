@@ -17,7 +17,7 @@
 
   // 方式1：Worker 代理 URL（推荐）
   // 部署 ai-proxy.js 后填入，如：'https://ai-proxy.3487331518.workers.dev'
-  const AI_WORKER_URL = 'https://ai-proxy.3487331518.workers.dev';
+  const AI_WORKER_URL = 'https://restless-dust-14f2.3487331518.workers.dev';
 
   // 方式2：直接调用 API（仅临时测试用）
   // ⚠️ API Key 会暴露在前端，不要在正式环境使用！
