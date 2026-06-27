@@ -14,6 +14,7 @@ package.json
 .playwright-cli/
 .codebuddy/plans/
 workers/.wrangler/cache/
+workers/.wrangler/tmp/
 
 # 临时截图
 *.png

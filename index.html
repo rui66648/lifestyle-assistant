@@ -19,8 +19,8 @@
 <div class="ambient-bg" id="ambientBg"></div>
 <!-- 极简顶栏 -->
 <div class="mini-header" id="todayCard">
-  <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px">
-    <div style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap">
+  <div class="mini-header-row">
+    <div class="mini-date-row">
       <span class="mini-date" id="todayDate"></span>
       <span class="mini-lunar" id="todayLunar"></span>
     </div>
@@ -47,11 +47,11 @@
 
 <!-- Checkin Section -->
 <div class="section active" id="sec-checkin">
-  <div id="dateNavigator" style="display:none;text-align:center;padding:8px 16px;margin:0 16px;background:var(--bg2);border-radius:10px;margin-bottom:10px">
-    <button onclick="swipeDate(-1)" style="background:none;border:none;font-size:18px;cursor:pointer;padding:4px 12px">◀</button>
-    <span id="dateNavLabel" style="font-size:14px;font-weight:700;color:var(--ink);margin:0 12px">今天</span>
-    <button onclick="swipeDate(1)" style="background:none;border:none;font-size:18px;cursor:pointer;padding:4px 12px">▶</button>
-    <button onclick="swipeDate(0)" style="background:none;border:none;font-size:11px;color:var(--accent);cursor:pointer;margin-left:8px;text-decoration:underline">回到今天</button>
+  <div id="dateNavigator" class="date-nav">
+    <button onclick="swipeDate(-1)" class="date-nav-btn">◀</button>
+    <span id="dateNavLabel" class="date-nav-label">今天</span>
+    <button onclick="swipeDate(1)" class="date-nav-btn">▶</button>
+    <button onclick="swipeDate(0)" class="date-nav-home">回到今天</button>
   </div>
   <div id="checkinContent"></div>
 </div>
@@ -163,7 +163,7 @@
   <!-- 顶部搜索和添加 -->
   <div class="mg-header">
     <div class="mg-search-wrap">
-      <input class="mg-search" id="mgSearch" placeholder="🔍 搜索习惯..." oninput="renderManage()">
+      <input class="mg-search" id="mgSearch" placeholder="🔍 搜索习惯..." oninput="debouncedRenderManage()">
     </div>
     <button class="mg-add-btn" onclick="openLibraryPanel()">＋</button>
   </div>
@@ -304,7 +304,7 @@
     </button>
     <button class="panel-close" onclick="closeAllPanels()">✕</button>
   </div>
-  <div class="panel-body" id="aiChatPanelBody" style="display:flex;flex-direction:column;height:calc(100vh - 60px);padding:0;position:relative">
+  <div class="panel-body panel-body-chat" id="aiChatPanelBody">
     <!-- 消息区域 -->
     <div id="aiChatMessages"></div>
     <!-- 滚动到底部按钮 -->
@@ -316,10 +316,10 @@
     </div>
     <!-- 未配置提示 -->
     <div id="aiChatUnconfigured" style="display:none;padding:24px 20px;text-align:center">
-      <div style="font-size:40px;margin-bottom:10px">🔒</div>
-      <div style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:6px">尚未配置 API</div>
-      <div style="font-size:13px;color:var(--muted);margin-bottom:16px">请先在设置中配置 AI API Key</div>
-      <button class="const-btn" onclick="closeAllPanels();openSettingsPanel()" style="margin-top:0">⚙️ 前往设置</button>
+      <div class="ai-unconfigured-icon">🔒</div>
+      <div class="ai-unconfigured-title">尚未配置 API</div>
+      <div class="ai-unconfigured-desc">请先在设置中配置 AI API Key</div>
+      <button class="const-btn" onclick="closeAllPanels();openSettingsPanel()">⚙️ 前往设置</button>
     </div>
   </div>
 </div>
@@ -331,12 +331,12 @@
     <span class="panel-title">⚙️ 设置</span>
     <button class="panel-close" onclick="closeAllPanels()">✕</button>
   </div>
-  <div class="panel-body" style="padding:20px">
+  <div class="panel-body panel-body-p20">
     <!-- AI 配置区 -->
     <div class="settings-section">
       <div class="settings-section-title">🤖 AI 养生顾问配置</div>
-      <div style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6">配置阿里百炼 API 以启用 AI 养生顾问功能</div>
-      <div class="config-desc" style="font-size:12px;color:var(--muted);line-height:1.6;background:var(--bg2);padding:12px;border-radius:12px;margin-bottom:16px">
+      <div class="settings-section-desc">配置阿里百炼 API 以启用 AI 养生顾问功能</div>
+      <div class="settings-config-desc">
         <strong>方式1（推荐）：Cloudflare Workers 代理</strong><br>
         1. 注册 Cloudflare 账号 → 2. 注册阿里百炼获取 API Key → 3. 部署 workers/ai-proxy.js → 4. 填入 Worker URL 和 API Key
       </div>
@@ -344,7 +344,7 @@
       <input class="config-input" id="configWorkerUrl" type="text" placeholder="https://your-worker.workers.dev">
       <div class="he-label" style="margin-top:12px">阿里百炼 API Key（必填）</div>
       <input class="config-input" id="configApiKey" type="password" placeholder="sk-...">
-      <div style="font-size:11px;color:var(--muted);margin-top:4px">获取地址：<a href="https://bailian.console.aliyun.com/" target="_blank" style="color:var(--accent)">阿里百炼控制台</a> → 模型广场 → API Key 管理</div>
+      <div class="settings-api-hint">获取地址：<a href="https://bailian.console.aliyun.com/" target="_blank" style="color:var(--accent)">阿里百炼控制台</a> → 模型广场 → API Key 管理</div>
       <button class="const-btn" onclick="saveAiConfig()" style="margin-top:14px">✅ 保存 AI 配置</button>
       <div id="settingsAiStatus" style="margin-top:10px;font-size:12px;text-align:center"></div>
     </div>
@@ -358,7 +358,7 @@
     <span class="panel-title">🩺 体质测试 · 九种体质辨识</span>
     <button class="panel-close" onclick="closeAllPanels()">✕</button>
   </div>
-  <div class="panel-body" id="constitutionPanelBody" style="padding:0"></div>
+  <div class="panel-body panel-body-p0" id="constitutionPanelBody"></div>
 </div>
 
 <!-- 健康报告 Panel -->
@@ -368,7 +368,7 @@
     <span class="panel-title">📊 健康报告 · 本周养生总结</span>
     <button class="panel-close" onclick="closeAllPanels()">✕</button>
   </div>
-  <div class="panel-body" id="healthReportPanelBody" style="padding:0"></div>
+  <div class="panel-body panel-body-p0" id="healthReportPanelBody"></div>
 </div>
 
 <!-- 分享海报 Panel -->
@@ -378,7 +378,7 @@
     <span class="panel-title">🎉 打卡海报</span>
     <button class="panel-close" onclick="closeAllPanels()">✕</button>
   </div>
-  <div class="panel-body" id="posterPanelBody" style="padding:16px;text-align:center">
+  <div class="panel-body panel-body-center" id="posterPanelBody">
     <canvas id="posterCanvas" style="width:100%;max-width:320px;border-radius:12px;box-shadow:var(--shadow)"></canvas>
     <div style="margin-top:12px;font-size:13px;color:var(--muted)">长按图片保存到相册</div>
     <button class="const-btn" onclick="downloadPoster()" style="margin-top:12px">💾 下载海报</button>
@@ -411,22 +411,22 @@
     <span class="panel-title">🍅 番茄专注钟</span>
     <button class="panel-close" onclick="closeAllPanels()">✕</button>
   </div>
-  <div class="panel-body" style="padding:24px;text-align:center">
-    <div style="font-size:13px;color:var(--muted);margin-bottom:16px">专注25分钟，休息5分钟，循环4次后长休息15分钟</div>
-    <div id="pomoTimer" style="font-size:64px;font-weight:800;font-family:'GeistMono',monospace;color:var(--accent);letter-spacing:2px;margin:20px 0">25:00</div>
-    <div id="pomoStatus" style="font-size:16px;font-weight:600;color:var(--muted);margin-bottom:20px">准备开始专注</div>
-    <div id="pomoProgress" style="width:100%;height:8px;background:var(--rule);border-radius:4px;margin-bottom:24px;overflow:hidden"><div id="pomoProgressBar" style="width:0%;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .3s"></div></div>
-    <div id="pomoHabitSelect" style="margin-bottom:16px">
-      <select id="pomoHabit" style="padding:10px 14px;border:1px solid var(--rule);border-radius:10px;font-size:14px;background:var(--bg);width:100%;max-width:280px">
+  <div class="panel-body panel-body-p24">
+    <div class="pomo-timer-desc">专注25分钟，休息5分钟，循环4次后长休息15分钟</div>
+    <div id="pomoTimer" class="pomo-timer-display">25:00</div>
+    <div id="pomoStatus" class="pomo-status">准备开始专注</div>
+    <div id="pomoProgress" class="pomo-progress-wrap"><div id="pomoProgressBar" class="pomo-progress-bar"></div></div>
+    <div id="pomoHabitSelect" class="pomo-habit-selector">
+      <select id="pomoHabit">
         <option value="">-- 选择要专注的习惯 --</option>
       </select>
     </div>
-    <div style="display:flex;gap:12px;justify-content:center">
+    <div class="pomo-btn-row">
       <button id="pomoStartBtn" class="const-btn" onclick="startPomodoro()" style="margin:0">▶️ 开始专注</button>
       <button id="pomoPauseBtn" class="const-btn" onclick="pausePomodoro()" style="margin:0;background:linear-gradient(135deg,var(--accent2),var(--accent));display:none">⏸️ 暂停</button>
       <button id="pomoStopBtn" class="const-btn" onclick="stopPomodoro()" style="margin:0;background:var(--muted);display:none">⏹️ 结束</button>
     </div>
-    <div id="pomoStats" style="margin-top:20px;font-size:13px;color:var(--muted)">今日专注：0 次 · 0 分钟</div>
+    <div id="pomoStats" class="pomo-stats-footer">今日专注：0 次 · 0 分钟</div>
   </div>
 </div>
 

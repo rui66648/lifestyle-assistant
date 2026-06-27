@@ -48,7 +48,7 @@
       checkinRecords[today()] = rec;
       saveRecords();
       animateCheckin(habitId);
-      render();
+      render(['today','checkin']);
       return;
     }
 
@@ -68,7 +68,7 @@
       }
       checkinRecords[today()] = rec;
       saveRecords();
-      render();
+      render(['today','checkin']);
     } else {
       pendingCheckinHabitId = habitId;
       const titleEl = document.getElementById('checkinPanelTitle');
@@ -115,7 +115,7 @@
     checkinRecords[today()] = rec;
     saveRecords();
     closeAllPanels();
-    render();
+    render(['today','checkin']);
   }
 
   function checkLevelUp() {
@@ -140,7 +140,8 @@
       }
       setTimeout(() => {
         playSound('complete');
-        showAllDoneCelebration();
+        if (App.UI.Render && App.UI.Render.showCelebration) App.UI.Render.showCelebration();
+        else showAllDoneCelebration();
       }, 300);
     }
   }
@@ -156,7 +157,7 @@
     }
     checkinRecords[today()] = rec;
     saveRecords();
-    render();
+    render(['today','checkin']);
   }
 
   function doRetroactiveCheckin(habitId, dateKey, alreadyDone) {

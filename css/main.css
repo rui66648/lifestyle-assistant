@@ -11,6 +11,16 @@
   --accent2-light:#FFE2CC;
   --danger:#FF6B6B;
   --info:#74B9FF;
+  --on-accent:#fff;
+  /* 庆祝烟花色板 */
+  --fw-1:#5BB98A;
+  --fw-2:#FF9F67;
+  --fw-3:#4CAF50;
+  --fw-4:#FF9800;
+  --fw-5:#74B9FF;
+  --fw-6:#FFD700;
+  --fw-7:#E74C3C;
+  --fw-8:#C19A6B;
   --radius-sm:8px;
   --radius:14px;
   --radius-lg:20px;
@@ -51,10 +61,16 @@ img{max-width:100%;display:block}
 .mini-date .day-num{font-size:42px;font-weight:800;color:var(--accent);line-height:1;letter-spacing:-1px}
 .mini-date .weekday{font-size:13px;font-weight:600;color:var(--ink2);margin-left:4px}
 .mini-lunar{font-size:11px;color:var(--muted);background:rgba(255,255,255,.7);padding:2px 8px;border-radius:var(--radius-sm);backdrop-filter:blur(4px);white-space:nowrap}
+.mini-header-row{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.mini-date-row{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
 .mini-badges{display:flex;gap:4px;flex-wrap:wrap}
 .mini-badge{font-size:10px;font-weight:600;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));padding:2px 8px;border-radius:var(--radius-sm)}
 .mini-points-badge{font-size:12px;font-weight:700;color:#b8860b;background:linear-gradient(135deg,#fff8e1,#fff3cd);padding:3px 10px;border-radius:var(--radius-sm);border:1px solid rgba(255,215,0,.3);white-space:nowrap}
-.mini-tip{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.9;text-align:justify;padding:0 16px}
+
+/* 原文引用区（作为正文卡片） */
+.mini-tip{font-size:15px;color:var(--ink);margin-top:10px;line-height:2.1;text-align:justify;padding:0 8px;font-weight:500}
+.sugar-quote{font-size:15px;font-weight:600;color:var(--ink);display:block;margin-top:6px}
+.sugar-source{font-size:12px;font-style:italic;color:var(--accent);display:block;margin-top:2px}
 
 /* Quote Card */
 .mini-quote{
@@ -192,11 +208,24 @@ img{max-width:100%;display:block}
 .habit-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
 .habit-card:active{transform:scale(.98)}
 .habit-card.done-card{opacity:0.55}
-.habit-card .icon{font-size:20px;width:28px;text-align:center;flex-shrink:0}
+.habit-time-hint{font-size:11px;flex-shrink:0}
+.habit-time-hint.overdue{color:#e74c3c}
+.habit-time-hint.soon{color:#f39c12}
+/* 图标区域：彩色圆角背景 */
+.habit-card .icon{
+  width:40px;height:40px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+  background:linear-gradient(135deg,rgba(91,185,138,.15),rgba(91,185,138,.08));
+}
+.habit-card:nth-child(odd) .icon{background:linear-gradient(135deg,rgba(91,185,138,.15),rgba(91,185,138,.08))}
+.habit-card:nth-child(even) .icon{background:linear-gradient(135deg,rgba(91,168,185,.15),rgba(120,168,200,.08))}
 .habit-card .info{flex:1;min-width:0}
 .habit-card .name{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .habit-card .meta{font-size:11px;color:var(--muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .habit-card .streak{font-size:10px;color:var(--accent);background:var(--accent-light);padding:1px 6px;border-radius:8px;font-weight:600}
+/* 习惯描述小字 */
+.habit-card .habit-desc{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.4;opacity:.8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px}
 /* Checkin Button */
 .habit-card .checkin-btn{
   width:36px;height:36px;border-radius:50%;
@@ -266,6 +295,13 @@ img{max-width:100%;display:block}
   box-shadow:var(--shadow-sm);transition:all .25s ease;
 }
 .stat-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.stat-card.points-card{
+  background:linear-gradient(135deg,rgba(255,215,0,.08),rgba(255,215,0,.02));
+  border-color:rgba(255,215,0,.2);
+}
+.stat-card.points-card .stat-val{
+  -webkit-text-fill-color:var(--accent2);
+}
 .stat-val{
   font-size:24px;font-weight:800;
   background:linear-gradient(135deg,var(--accent),var(--accent2));
@@ -332,6 +368,11 @@ img{max-width:100%;display:block}
 .panel-close{font-size:18px;padding:4px 8px;border-radius:8px}
 .panel-close:active{background:var(--rule)}
 .panel-body{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch}
+.panel-body-p0{padding:0}
+.panel-body-p20{padding:20px}
+.panel-body-p24{text-align:center;padding:24px}
+.panel-body-chat{display:flex;flex-direction:column;height:calc(100vh - 60px);padding:0;position:relative}
+.panel-body-center{padding:16px;text-align:center}
 
 /* Habit Library Panel */
 .lib-search{width:100%;padding:10px 14px;border:2px solid var(--rule);border-radius:12px;font-size:14px;background:#fff;outline:none;margin-bottom:12px}
@@ -445,6 +486,33 @@ img{max-width:100%;display:block}
 .checkin-input-actions button{padding:12px 32px;border-radius:14px;font-size:15px;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.08)}
 .checkin-input-actions .cancel{background:var(--bg2);color:var(--muted)}
 .checkin-input-actions .confirm{background:var(--accent);color:#fff}
+
+/* Date Navigator */
+.date-nav{display:none;text-align:center;padding:8px 16px;margin:0 16px;background:var(--bg2);border-radius:10px;margin-bottom:10px}
+.date-nav-btn{background:none;border:none;font-size:18px;cursor:pointer;padding:4px 12px}
+.date-nav-label{font-size:14px;font-weight:700;color:var(--ink);margin:0 12px}
+.date-nav-home{background:none;border:none;font-size:11px;color:var(--accent);cursor:pointer;margin-left:8px;text-decoration:underline}
+
+/* Settings Section (aux) */
+.settings-section-desc{font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6}
+.settings-config-desc{font-size:12px;color:var(--muted);line-height:1.6;background:var(--bg2);padding:12px;border-radius:12px;margin-bottom:16px}
+.settings-api-hint{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* AI Chat */
+.ai-unconfigured-icon{font-size:40px;margin-bottom:10px}
+.ai-unconfigured-title{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.ai-unconfigured-desc{font-size:13px;color:var(--muted);margin-bottom:16px}
+
+/* Pomodoro Timer */
+.pomo-timer-desc{font-size:13px;color:var(--muted);margin-bottom:16px}
+.pomo-timer-display{font-size:64px;font-weight:800;font-family:'GeistMono',monospace;color:var(--accent);letter-spacing:2px;margin:20px 0}
+.pomo-status{font-size:16px;font-weight:600;color:var(--muted);margin-bottom:20px}
+.pomo-progress-wrap{width:100%;height:8px;background:var(--rule);border-radius:4px;margin-bottom:24px;overflow:hidden}
+.pomo-progress-bar{width:0%;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .3s}
+.pomo-habit-selector{margin-bottom:16px}
+.pomo-habit-selector select{padding:10px 14px;border:1px solid var(--rule);border-radius:10px;font-size:14px;background:var(--bg);width:100%;max-width:280px}
+.pomo-btn-row{display:flex;gap:12px;justify-content:center}
+.pomo-stats-footer{margin-top:20px;font-size:13px;color:var(--muted)}
 
 /* Reminder Settings */
 .reminder-option{display:flex;align-items:center;gap:12px;padding:14px;background:#fff;border-radius:12px;margin-bottom:8px;box-shadow:var(--shadow)}
@@ -1221,15 +1289,6 @@ body.cb-svg .water-cup.next{
 .wulao-mini-scene{font-size:11px;color:var(--muted);margin-bottom:2px}
 .wulao-mini-action{font-size:11px;color:var(--accent);font-weight:600;line-height:1.4}
 
-/* 暗色模式适配 */
-@media (prefers-color-scheme: dark){
-  .neijing-pack{background:linear-gradient(135deg,#2a2418,#252018);border-color:rgba(193,154,107,.15)}
-  .neijing-pack-master-title{color:#d4b87a}
-  .neijing-pack-master-arrow{color:#d4b87a}
-  .neijing-pack-body{border-color:rgba(193,154,107,.1)}
-  .neijing-sub-pack{background:var(--bg2)}
-  .wuse-card,.emotion-mini-card,.wulao-mini-card{background:rgba(255,255,255,.04)}
-}
 body.dark .neijing-pack{background:linear-gradient(135deg,#2a2418,#252018);border-color:rgba(193,154,107,.15)}
 body.dark .neijing-pack-master-title{color:#d4b87a}
 body.dark .neijing-pack-master-arrow{color:#d4b87a}
@@ -2156,49 +2215,8 @@ body.dark .he-input,body.dark .he-select,body.dark .he-time-input{background:var
 body.dark .he-icon-opt{background:var(--bg)}
 body.dark .he-switch-row{border-color:var(--rule)}
 
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg:#1A1A2E;
-    --bg2:#23233A;
-    --ink:#E8E8E8;
-    --ink2:#B0B0B0;
-    --muted:#6A6A6A;
-    --rule:#2E2E4A;
-    --accent:#5BB98A;
-    --accent2:#FF9F67;
-    --accent-light:rgba(91,185,138,.15);
-    --accent2-light:rgba(255,159,103,.12);
-    --danger:#FF6B6B;
-    --info:#74B9FF;
-    --shadow-sm:0 1px 4px rgba(0,0,0,.2);
-    --shadow:0 2px 12px rgba(0,0,0,.25);
-    --shadow-md:0 4px 20px rgba(0,0,0,.3);
-    --shadow-lg:0 8px 32px rgba(0,0,0,.4);
-  }
-  body{background:var(--bg);color:var(--ink)}
-  .habit-card{background:var(--bg2)}
-  .stat-card{background:var(--bg2)}
-  .mini-header{background:linear-gradient(180deg,rgba(91,185,138,.1) 0%,transparent 100%)}
-  .mini-quote{background:var(--bg2)}
-  #bottomNav{background:rgba(26,26,46,.9)}
-  .panel{background:var(--bg)}
-  .lib-item{background:var(--bg2)}
-  .ranking-rank.normal{background:var(--bg2)}
-  .badge-icon.locked{background:var(--bg2)}
-  .profile-stat-item{background:var(--bg2)}
-  .menu-item{background:var(--bg2)}
-  .profile-avatar{background:rgba(35,35,58,.6)}
-  .mg-group{background:var(--bg2)}
-  .mg-group-header{background:var(--bg)}
-  .mg-item{background:var(--bg2)}
-  .mg-search{background:var(--bg)}
-  .mg-stat-card{background:var(--bg2)}
-  .daily-cards-entry{background:var(--bg2)}
-  .dc-full-card{background:linear-gradient(135deg,var(--bg2),var(--bg))}
-  .he-input,.he-select,.he-time-input{background:var(--bg);color:var(--ink);border-color:var(--rule)}
-  .he-icon-opt{background:var(--bg)}
-  .he-switch-row{border-color:var(--rule)}
-}
+
+
 
 /* ========== Profile Grid (图标宫格) ========== */
 .profile-grid{
@@ -2224,6 +2242,17 @@ body.dark .he-switch-row{border-color:var(--rule)}
   box-shadow:0 2px 8px rgba(91,185,138,.15);
   transition:all .2s ease;
 }
+/* 宫格10色渐变 — 替代内联硬编码 */
+.pg-i-0 .pg-icon{background:linear-gradient(135deg,#e8f5e9,#c8e6c9)}
+.pg-i-1 .pg-icon{background:linear-gradient(135deg,#e3f2fd,#bbdefb)}
+.pg-i-2 .pg-icon{background:linear-gradient(135deg,#fff3e0,#ffe0b2)}
+.pg-i-3 .pg-icon{background:linear-gradient(135deg,#fce4ec,#f8bbd0)}
+.pg-i-4 .pg-icon{background:linear-gradient(135deg,#ede7f6,#d1c4e9)}
+.pg-i-5 .pg-icon{background:linear-gradient(135deg,#e8eaf6,#c5cae9)}
+.pg-i-6 .pg-icon{background:linear-gradient(135deg,#f1f8e9,#dcedc8)}
+.pg-i-7 .pg-icon{background:linear-gradient(135deg,#efebe9,#d7ccc8)}
+.pg-i-8 .pg-icon{background:linear-gradient(135deg,#fff8e1,#ffecb3)}
+.pg-i-9 .pg-icon{background:linear-gradient(135deg,#f9fbe7,#f0f4c3)}
 .profile-grid-item:active .pg-icon{transform:scale(.9)}
 .pg-label{font-size:11px;font-weight:600;color:var(--ink);line-height:1.2}
 .pg-badge{
@@ -2406,12 +2435,104 @@ body.rb-segment .skin-toggle-row.active .skin-toggle-name{
   font-variant-emoji:text;line-height:1.4;
 }
 
-@media (prefers-color-scheme: dark){
-  .profile-grid-item{background:var(--bg2)}
-  .profile-grid-item:active{background:var(--rule)}
-  .pg-icon{background:linear-gradient(135deg,rgba(91,185,138,.2),rgba(255,159,103,.18))}
-}
 body.dark .profile-grid-item{background:var(--bg2)}
 body.dark .profile-grid-item:active{background:var(--rule)}
 body.dark .pg-icon{background:linear-gradient(135deg,rgba(91,185,138,.2),rgba(255,159,103,.18))}
+
+/* 重复日按钮 */
+.repeat-day-btn{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;background:var(--bg);color:var(--muted)}
+.repeat-day-btn.active{background:var(--accent);color:var(--on-accent)}
+
+/* 一键全选按钮 */
+.batch-complete-btn{
+  display:block;margin:0 16px 12px;padding:10px 16px;
+  border-radius:var(--radius);border:2px dashed var(--accent);
+  background:var(--accent-light);color:var(--accent);
+  font-size:13px;font-weight:700;text-align:center;cursor:pointer;
+  transition:all .2s;width:calc(100% - 32px);
+}
+.batch-complete-btn:active{background:var(--accent);color:var(--on-accent);border-style:solid}
+
+/* ========== 习惯卡片状态色带 ========== */
+.habit-card .status-ribbon{
+  position:absolute;left:0;top:6px;bottom:6px;
+  width:4px;border-radius:0 2px 2px 0;
+  transition:background .25s ease;
+}
+.habit-card .status-ribbon.done{background:#4CAF50}
+.habit-card .status-ribbon.skipped{background:#FF9800}
+.habit-card .status-ribbon.overdue{background:#E74C3C}
+.habit-card .status-ribbon.pending{background:var(--rule)}
+
+/* ========== 全屏庆祝动画（薄荷健康风格） ========== */
+.celebration-overlay{
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,.75);z-index:9999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  animation:mhFadeIn .3s ease;pointer-events:auto;
+}
+.celebration-overlay.fading{animation:mhFadeOut .5s ease forwards}
+@keyframes mhFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes mhFadeOut{from{opacity:1}to{opacity:0}}
+.celebration-overlay .ce-text{
+  font-size:32px;font-weight:800;color:#fff;
+  margin-top:16px;text-shadow:0 2px 8px rgba(0,0,0,.3);
+  animation:mhBounceIn .5s cubic-bezier(.18,.89,.32,1.28);
+}
+.celebration-overlay .ce-sub{
+  font-size:15px;color:rgba(255,255,255,.85);
+  margin-top:6px;animation:mhBounceIn .6s cubic-bezier(.18,.89,.32,1.28);
+}
+.celebration-overlay .ce-badge{
+  margin-top:12px;padding:6px 18px;border-radius:20px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;font-size:14px;font-weight:700;
+  animation:mhBounceIn .7s cubic-bezier(.18,.89,.32,1.28);
+}
+.celebration-overlay .ce-close{
+  margin-top:24px;font-size:12px;color:rgba(255,255,255,.5);
+  cursor:pointer;border:none;background:none;padding:8px 16px;
+}
+@keyframes mhBounceIn{
+  0%{opacity:0;transform:scale(.5)}
+  70%{transform:scale(1.08)}
+  100%{opacity:1;transform:scale(1)}
+}
+/* 烟花粒子 */
+.mh-firework{
+  position:absolute;width:6px;height:6px;border-radius:50%;
+  pointer-events:none;animation:mhFireworkPop .8s ease-out forwards;
+}
+@keyframes mhFireworkPop{
+  0%{transform:translate(0,0) scale(1);opacity:1}
+  100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}
+}
+
+/* ========== 体质推荐区块 ========== */
+.constitution-tips{
+  margin:6px 16px 12px;padding:0;
+}
+.constitution-tips .ct-card{
+  padding:14px 16px;border-radius:var(--radius);
+  box-shadow:var(--shadow-sm);
+  border-left:3px solid;
+  transition:border-color .3s;
+}
+.constitution-tips .ct-header{
+  display:flex;align-items:center;gap:8px;margin-bottom:8px;
+}
+.constitution-tips .ct-emoji{font-size:24px}
+.constitution-tips .ct-name{font-size:15px;font-weight:700}
+.constitution-tips .ct-desc{font-size:12px;color:var(--ink2);line-height:1.6;margin-bottom:8px}
+.constitution-tips .ct-habits{display:flex;flex-wrap:wrap;gap:6px}
+.constitution-tips .ct-habit-tag{
+  font-size:11px;padding:3px 10px;border-radius:12px;
+  font-weight:600;cursor:pointer;transition:all .15s;
+  background:var(--accent-light);color:var(--accent);
+}
+.constitution-tips .ct-habit-tag:active{transform:scale(.95)}
+.constitution-tips .ct-habit-tag.recommended{
+  background:var(--accent);color:#fff;
+}
+
 

@@ -1,15 +1,11 @@
 (function() {
-  window.__utilsStarted = true;
   let viewDateOffset = 0;
-  try {
   Object.defineProperty(window, 'viewDateOffset', {
     get: () => viewDateOffset,
     set: (val) => { viewDateOffset = val; },
     configurable: true,
     enumerable: true
   });
-  window.__utilsStep1 = true;
-  } catch(e) { window.__utilsError1 = e.message; }
 
   function getCurrentShichen() {
     if (typeof BODY_CLOCK === 'undefined' || !Array.isArray(BODY_CLOCK) || BODY_CLOCK.length === 0) return {icon:'⏳',name:'未知时辰',meridian:'',action:'',detail:'',start:0,end:24,id:'unknown'};
@@ -59,17 +55,17 @@
   }
 
   function getSeasonPack(season) {
-    // 内置四季原文 fallback，防止 packs.js 加载异常时原文不显示
-    var builtin = {
-      spring: {name:'春季',emoji:'🌿',focus:'养肝舒展，夜卧早起',months:[2,3,4],quote:'春三月，此谓发陈。天地俱生，万物以荣。夜卧早起，广步于庭，被发缓形，以使志生，生而勿杀，予而勿夺，赏而勿罚，此春气之应，养生之道也；逆之则伤肝。',tip:'春季养生重在养肝。夜卧早起（不超23点），广步于庭（户外散步舒展），使志生（精神舒展不压抑），省酸增甘（多吃甘味养肝脾）。逆之伤肝。'},
-      summer: {name:'夏季',emoji:'☀️',focus:'养心静心，无厌于日',months:[5,6,7],quote:'夏三月，此谓蕃秀。天地气交，万物华实。夜卧早起，无厌于日，使志无怒，使华英成秀，使气得泄，若所爱在外，此夏气之应，养长之道也；逆之则伤心。',tip:'夏季养生重在养心。夜卧早起，无厌于日（适当晒太阳不出汗），使志无怒（保持心情愉快不郁怒），饮食清淡多食苦（清心火）。逆之伤心。'},
-      autumn: {name:'秋季',emoji:'🍂',focus:'养肺润燥，早卧早起',months:[8,9,10],quote:'秋三月，此谓容平。天气以急，地气以明。早卧早起，与鸡俱兴，使志安宁，以缓秋刑，收敛神气，使秋气平，无外其志，使肺气清，此秋气之应，养收之道也；逆之则伤肺。',tip:'秋季养生重在养肺。早卧早起（与鸡俱兴），使志安宁（保持内心宁静），食酸敛肺防秋燥（多吃白色食物）。逆之伤肺。'},
-      winter: {name:'冬季',emoji:'❄️',focus:'养肾保暖，早卧晚起',months:[11,12,1],quote:'冬三月，此谓闭藏。水冰地坼，无扰乎阳。早卧晚起，必待日光，使志若伏若匿，若有私意，若已有得，去寒就温，无泄皮肤，使气亟夺，此冬气之应，养藏之道也；逆之则伤肾。',tip:'冬季养生重在养肾。早卧晚起（必待日光，等太阳升起再起床），使志若伏若匿（情志内藏不外露），食咸补肾（温补食物），去寒就温（注意保暖），无泄皮肤（减少户外出汗）。逆之伤肾。'}
-    };
-    if (typeof SEASONAL_PACKS === 'undefined' || !SEASONAL_PACKS || typeof SEASONAL_PACKS !== 'object') {
-      return builtin[season] || builtin.spring;
+    if (typeof SEASONAL_PACKS !== 'undefined' && SEASONAL_PACKS && typeof SEASONAL_PACKS === 'object') {
+      return SEASONAL_PACKS[season] || SEASONAL_PACKS.spring;
     }
-    return SEASONAL_PACKS[season] || SEASONAL_PACKS.spring || builtin[season] || builtin.spring;
+    // packs.js 未加载时的最小占位（完整数据见 js/data/packs.js）
+    var stub = {
+      spring: {name:'春季',emoji:'🌿',focus:'养肝',months:[2,3,4],quote:'',tip:'春季养生重在养肝。'},
+      summer: {name:'夏季',emoji:'☀️',focus:'养心',months:[5,6,7],quote:'',tip:'夏季养生重在养心。'},
+      autumn: {name:'秋季',emoji:'🍂',focus:'养肺',months:[8,9,10],quote:'',tip:'秋季养生重在养肺。'},
+      winter: {name:'冬季',emoji:'❄️',focus:'养肾',months:[11,12,1],quote:'',tip:'冬季养生重在养肾。'}
+    };
+    return stub[season] || stub.spring;
   }
 
   function getLunarDate(date) {
@@ -131,7 +127,7 @@
   function playSound(type) {
     try {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (!AudioCtx) return;
+      if (!AudioCtx) { console.warn('[playSound] 浏览器不支持 Web Audio API'); return; }
       const ctx = new AudioCtx();
       const now = ctx.currentTime;
 
@@ -164,17 +160,15 @@
           osc.start(now + i * 0.1); osc.stop(now + i * 0.1 + 0.4);
         });
       }
-    } catch(e) {}
+    } catch(e) {
+      // 音频播放失败不阻塞主流程，仅记录日志
+      console.warn('[playSound] 音频播放失败:', e.message);
+    }
   }
 
   function _isChecked(habit, rec) {
     if (App.Core && App.Core.Storage && App.Core.Storage.isHabitChecked) {
       return App.Core.Storage.isHabitChecked(habit, rec);
-    }
-    if (rec && rec[habit.id] !== undefined) {
-      if (habit.type === 'boolean') return rec[habit.id] === true || rec[habit.id] === 1;
-      if (habit.type === 'number') return (rec[habit.id] || 0) >= (habit.goal || 1);
-      return !!rec[habit.id];
     }
     return false;
   }
@@ -289,6 +283,14 @@
     window.viewDateOffset = viewDateOffset;
   }
 
+  function getHeatmapLevel(ratio) {
+    if (ratio <= 0) return 0;
+    if (ratio <= 0.25) return 1;
+    if (ratio <= 0.5) return 2;
+    if (ratio <= 0.75) return 3;
+    return 4;
+  }
+
   if (!window.App) window.App = {};
   if (!App.Core) App.Core = {};
 
@@ -318,10 +320,9 @@
     checkinReward,
     getUserPoints,
     addPoints,
-    checkAllDoneBonus
+    checkAllDoneBonus,
+    getHeatmapLevel
   };
-  window.__utilsDone = true;
-
   if (App.registerModule) {
     App.registerModule('core.utils', 'core', null);
   }

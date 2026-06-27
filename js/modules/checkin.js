@@ -120,6 +120,21 @@
     return '建议';
   }
 
+  /** 一键完成：为各类型习惯生成打卡记录；select 需手动选择，返回 null */
+  function buildBatchCompleteRecord(h) {
+    if (!h || h.type === 'select') return null;
+    if (h.type === 'water') {
+      var goal = (h.waterConfig && h.waterConfig.dailyGoal) || 2000;
+      return { done: true, value: goal };
+    }
+    if (h.negative) return { done: true, failed: false, value: 1 };
+    if (h.type === 'boolean') return { done: true, value: 1 };
+    if (h.type === 'count' || h.type === 'timer') {
+      return { done: true, value: h.goal || 1 };
+    }
+    return { done: true, value: 1 };
+  }
+
   if (!window.App) window.App = {};
   if (!App.Modules) App.Modules = {};
 
@@ -133,7 +148,8 @@
     getTodayTotal,
     getMaxStreakAll,
     getHealthTipText,
-    getHealthTipSource
+    getHealthTipSource,
+    buildBatchCompleteRecord
   };
 
   if (App.registerModule) {

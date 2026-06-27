@@ -16,12 +16,9 @@
       const rec = checkinRecords[key] || {};
       let done = 0, total = 0;
       habitsConfig.forEach(h => {
+        if (h.enabled === false) return;
         total++;
-        if (h.type === 'water') {
-          if (((rec[h.id] && rec[h.id].value) || 0) >= ((h.waterConfig && h.waterConfig.dailyGoal) || 2000)) done++;
-        } else if (h.negative) {
-          if ((rec[h.id] && rec[h.id].done) && !rec[h.id].failed) done++;
-        } else if ((rec[h.id] && rec[h.id].done)) done++;
+        if (App.Core.Storage && App.Core.Storage.isHabitChecked && App.Core.Storage.isHabitChecked(h, rec)) done++;
       });
       const pct = total > 0 ? Math.round((done / total) * 100) : 0;
       data.push({ day: dayNames[d.getDay()], date: `${d.getMonth()+1}/${d.getDate()}`, pct, isToday: i === 0 });

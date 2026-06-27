@@ -121,7 +121,7 @@
         rec[habitId] = {done: true, value: 1};
         checkinRecords[today()] = rec;
         saveRecords();
-        render();
+        render(['today','checkin']);
       }
       if (pomoCycle % 4 === 0) {
         pomoMode = 'longBreak';

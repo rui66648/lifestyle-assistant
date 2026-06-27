@@ -3,7 +3,16 @@
     const saved = localStorage.getItem('dark_mode');
     const checkbox = document.getElementById('themeCheckbox');
     const icon = document.getElementById('themeIcon');
-    if (saved === 'true') {
+
+    // 确定实际暗黑模式状态：优先用户手动设置，其次系统偏好
+    let useDark;
+    if (saved !== null) {
+      useDark = saved === 'true';
+    } else {
+      useDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+
+    if (useDark) {
       if (document.body) document.body.classList.add('dark');
       if (checkbox) checkbox.checked = true;
       if (icon) icon.textContent = '🌙';
