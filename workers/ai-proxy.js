@@ -1,10 +1,139 @@
 // Cloudflare Workers - AI 养生顾问代理
+// 功能：隐藏 API Key + 请求限流 + 统一接口
+//
 // 部署步骤：
 // 1. 注册 Cloudflare 账号 https://dash.cloudflare.com
 // 2. 注册阿里百炼 https://bailian.console.aliyun.com 获取 API Key
 // 3. 在 Cloudflare Workers 控制台创建新 Worker，粘贴此代码
-// 4. 在 Worker 设置中添加环境变量 QWEN_API_KEY = 你的阿里百炼API Key
-// 5. 部署后复制 Worker URL，填入 index.html 的 AI_WORKER_URL 配置
+// 4. 在 Worker 设置中添加环境变量：
+//    - QWEN_API_KEY = 你的阿里百炼 API Key
+//    - RATE_LIMIT = 每小时最大请求数（默认 50）
+// 5. 部署后复制 Worker URL，填入前端 AI_WORKER_URL
+
+// ============================================================
+// 配置
+// ============================================================
+const RATE_LIMIT = parseInt(env.RATE_LIMIT) || 50;  // 每小时最大请求数
+const RATE_WINDOW = 60 * 60 * 1000;  // 时间窗口：1小时（毫秒）
+
+// API 端点
+const API_BASE = 'https://dashscope.aliyuncs.com/compatible-mode/v1';
+
+// 默认模型
+const DEFAULT_MODEL = 'qwen-turbo';
+const MAX_TOKENS = 500;
+const TEMPERATURE = 0.7;
+
+// 系统提示词
+const SYSTEM_PROMPT = '你是一位精通《黄帝内经》等14部中医养生经典的养生顾问。回答用户健康问题时，请结合中医经典理论给出建议，并尽可能注明引用的古籍出处（如《素问》《灵枢》等）。回答要简洁实用，适合普通用户理解，每次回答控制在200字以内。';
+
+// ============================================================
+// 工具函数
+// ============================================================
+
+// 获取客户端 IP
+function getClientIP(request) {
+  return request.headers.get('CF-Connecting-IP') ||
+         request.headers.get('X-Forwarded-For') ||
+         request.headers.get('X-Real-IP') ||
+         'unknown';
+}
+
+// 创建 JSON 响应
+function jsonResponse(data, status = 200, headers = {}) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      ...headers
+    }
+  });
+}
+
+// 创建文本响应
+function textResponse(text, status = 200) {
+  return new Response(text, {
+    status,
+    headers: {
+      'Content-Type': 'text/plain',
+      'Access-Control-Allow-Origin': '*'
+    }
+  });
+}
+
+// 验证请求体
+function validateRequest(body) {
+  if (!body.messages || !Array.isArray(body.messages)) {
+    return { valid: false, error: 'messages 字段是必需的' };
+  }
+
+  for (const msg of body.messages) {
+    if (!msg.role || !msg.content) {
+      return { valid: false, error: '每条消息必须包含 role 和 content' };
+    }
+    if (typeof msg.content !== 'string') {
+      return { valid: false, error: '消息内容必须是字符串' };
+    }
+    // 限制单条消息长度
+    if (msg.content.length > 2000) {
+      return { valid: false, error: '单条消息内容不能超过 2000 字符' };
+    }
+  }
+
+  return { valid: true };
+}
+
+// ============================================================
+// 限流逻辑
+// ============================================================
+
+// 简单的内存限流（适用于单实例场景）
+// 注意：Workers 是无状态的，多实例部署时此限流可能不准确
+// 如需精确限流，可使用 Cloudflare KV 或 Durable Objects
+const rateLimitMap = new Map();
+
+function checkRateLimit(ip) {
+  const now = Date.now();
+  const key = ip;
+
+  // 获取或初始化记录
+  if (!rateLimitMap.has(key)) {
+    rateLimitMap.set(key, { count: 0, windowStart: now });
+  }
+
+  const record = rateLimitMap.get(key);
+
+  // 如果时间窗口已过，重置
+  if (now - record.windowStart > RATE_WINDOW) {
+    record.count = 0;
+    record.windowStart = now;
+  }
+
+  // 检查是否超限
+  if (record.count >= RATE_LIMIT) {
+    return {
+      allowed: false,
+      remaining: 0,
+      resetTime: Math.ceil((record.windowStart + RATE_WINDOW - now) / 1000)
+    };
+  }
+
+  // 允许，增加计数
+  record.count++;
+
+  return {
+    allowed: true,
+    remaining: RATE_LIMIT - record.count,
+    resetTime: Math.ceil((record.windowStart + RATE_WINDOW - now) / 1000)
+  };
+}
+
+// ============================================================
+// 主处理函数
+// ============================================================
 
 export default {
   async fetch(request, env, ctx) {
@@ -13,72 +142,125 @@ export default {
       return new Response(null, {
         headers: {
           'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS, GET',
           'Access-Control-Allow-Headers': 'Content-Type',
         }
       });
     }
 
+    // 只允许 POST
     if (request.method !== 'POST') {
-      return new Response('Method not allowed', { status: 405 });
+      return textResponse('Method not allowed', 405);
     }
 
+    // 检查 API Key
+    if (!env.QWEN_API_KEY) {
+      return jsonResponse({
+        error: 'API Key 未配置',
+        message: '请在 Worker 设置中添加环境变量 QWEN_API_KEY'
+      }, 500);
+    }
+
+    // 获取客户端 IP 并检查限流
+    const clientIP = getClientIP(request);
+    const rateLimit = checkRateLimit(clientIP);
+
+    // 添加限流头
+    const headers = {
+      'X-RateLimit-Limit': RATE_LIMIT.toString(),
+      'X-RateLimit-Remaining': rateLimit.remaining.toString(),
+      'X-RateLimit-Reset': rateLimit.resetTime.toString()
+    };
+
+    // 超限
+    if (!rateLimit.allowed) {
+      return jsonResponse({
+        error: '请求过于频繁',
+        message: `已达每小时 ${RATE_LIMIT} 次请求上限，请稍后再试`,
+        retryAfter: rateLimit.resetTime
+      }, 429, headers);
+    }
+
+    // 解析请求体
+    let body;
     try {
-      const body = await request.json();
-      const { messages } = body;
+      body = await request.json();
+    } catch (e) {
+      return jsonResponse({ error: '无效的 JSON 请求体' }, 400);
+    }
 
-      if (!env.QWEN_API_KEY) {
-        return new Response(JSON.stringify({ error: 'API Key not configured' }), {
-          status: 500,
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-          }
-        });
-      }
+    // 验证请求
+    const validation = validateRequest(body);
+    if (!validation.valid) {
+      return jsonResponse({ error: validation.error }, 400, headers);
+    }
 
-      // 调用通义千问 API（阿里百炼）
-      const response = await fetch('https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation', {
+    // 提取参数
+    const model = body.model || DEFAULT_MODEL;
+    const messages = body.messages || [];
+    const maxTokens = body.max_tokens || MAX_TOKENS;
+    const temperature = body.temperature || TEMPERATURE;
+
+    // 添加系统提示词
+    const fullMessages = [
+      { role: 'system', content: SYSTEM_PROMPT },
+      ...messages
+    ];
+
+    try {
+      // 调用阿里百炼 API
+      const response = await fetch(`${API_BASE}/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${env.QWEN_API_KEY}`
         },
         body: JSON.stringify({
-          model: 'qwen-turbo',
-          input: {
-            messages: [
-              {
-                role: 'system',
-                content: '你是一位精通《黄帝内经》等14部中医养生经典的养生顾问。回答用户健康问题时，请结合中医经典理论给出建议，并尽可能注明引用的古籍出处（如《素问》《灵枢》等）。回答要简洁实用，适合普通用户理解，每次回答控制在200字以内。'
-              },
-              ...messages
-            ]
-          },
-          parameters: {
-            result_format: 'message',
-            max_tokens: 500,
-            temperature: 0.7
-          }
+          model: model,
+          messages: fullMessages,
+          max_tokens: maxTokens,
+          temperature: temperature,
+          stream: false
         })
       });
 
       const data = await response.json();
-      
-      return new Response(JSON.stringify(data), {
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
+
+      // API 返回错误
+      if (!response.ok) {
+        console.error('[AI Proxy] API Error:', response.status, data);
+
+        let errorMsg = 'AI 服务暂时不可用';
+        let statusCode = 500;
+
+        if (response.status === 401 || response.status === 403) {
+          errorMsg = 'API 认证失败，请检查配置';
+          statusCode = 401;
+        } else if (response.status === 429) {
+          errorMsg = 'API 请求配额已用完，请稍后再试';
+          statusCode = 429;
+        } else if (response.status === 400) {
+          errorMsg = data.error?.message || '请求参数错误';
+          statusCode = 400;
+        } else if (data.error?.message) {
+          errorMsg = data.error.message;
         }
-      });
+
+        return jsonResponse({
+          error: errorMsg,
+          code: response.status
+        }, statusCode, headers);
+      }
+
+      // 返回成功响应
+      return jsonResponse(data, 200, headers);
+
     } catch (err) {
-      return new Response(JSON.stringify({ error: err.message }), {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
-      });
+      console.error('[AI Proxy] Fetch Error:', err);
+      return jsonResponse({
+        error: '网络请求失败',
+        message: err.message
+      }, 500, headers);
     }
   }
 };
