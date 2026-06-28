@@ -694,6 +694,39 @@
         { id:'rb-segment', name:'分段选择器', emoji:'🧩', style:{'rb-style':'segment'} },
       ]
     },
+    {
+      id: 'card',
+      label: '卡片',
+      emoji: '🃏',
+      items: [
+        { id:'cd-default', name:'毛玻璃', emoji:'✨', style:{'cd-style':'glass'} },
+        { id:'cd-flat', name:'扁平', emoji:'📄', style:{'cd-style':'flat'} },
+        { id:'cd-gradient', name:'渐变边框', emoji:'🌈', style:{'cd-style':'gradient'} },
+        { id:'cd-elevated', name:'立体', emoji:'📦', style:{'cd-style':'elevated'} },
+      ]
+    },
+    {
+      id: 'input',
+      label: '输入框',
+      emoji: '📝',
+      items: [
+        { id:'in-default', name:'毛玻璃', emoji:'✨', style:{'in-style':'glass'} },
+        { id:'in-flat', name:'扁平', emoji:'📄', style:{'in-style':'flat'} },
+        { id:'in-float', name:'浮动标签', emoji:'🏷️', style:{'in-style':'float'} },
+        { id:'in-outline', name:'描边', emoji:'📐', style:{'in-style':'outline'} },
+      ]
+    },
+    {
+      id: 'badge',
+      label: '徽章',
+      emoji: '🏷️',
+      items: [
+        { id:'bd-default', name:'药丸', emoji:'💊', style:{'bd-style':'pill'} },
+        { id:'bd-square', name:'方形', emoji:'⬜', style:{'bd-style':'square'} },
+        { id:'bd-pulse', name:'脉冲', emoji:'💓', style:{'bd-style':'pulse'} },
+        { id:'bd-glow', name:'发光', emoji:'🌟', style:{'bd-style':'glow'} },
+      ]
+    },
   ];
 
   // 默认皮肤样式（用于重置）
@@ -763,6 +796,30 @@
               if (key !== 'rb-style') root.style.setProperty('--' + key, val);
             }
           }
+        }
+        return;
+      }
+      if (cat.id === 'card' && saved) {
+        const item = cat.items.find(i => i.id === saved);
+        if (item && item.style) {
+          const cdClassMap = { glass:'cd-glass', flat:'cd-flat', gradient:'cd-gradient', elevated:'cd-elevated' };
+          document.body.classList.add(cdClassMap[item.style['cd-style']] || 'cd-glass');
+        }
+        return;
+      }
+      if (cat.id === 'input' && saved) {
+        const item = cat.items.find(i => i.id === saved);
+        if (item && item.style) {
+          const inClassMap = { glass:'in-glass', flat:'in-flat', float:'in-float', outline:'in-outline' };
+          document.body.classList.add(inClassMap[item.style['in-style']] || 'in-glass');
+        }
+        return;
+      }
+      if (cat.id === 'badge' && saved) {
+        const item = cat.items.find(i => i.id === saved);
+        if (item && item.style) {
+          const bdClassMap = { pill:'bd-pill', square:'bd-square', pulse:'bd-pulse', glow:'bd-glow' };
+          document.body.classList.add(bdClassMap[item.style['bd-style']] || 'bd-pill');
         }
         return;
       }
