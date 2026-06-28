@@ -582,20 +582,40 @@
 <!-- 底部导航栏 -->
 <div id="bottomNav" style="position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--rule);display:flex;justify-content:space-around;align-items:center;padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom));z-index:100">
   <button class="bnav-item active" data-tab="checkin" onclick="switchTab('checkin')">
-    <span class="bnav-icon">☑️</span>
+    <svg class="bnav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="4"/>
+      <path d="M9 12l2 2 4-4"/>
+    </svg>
     <span class="bnav-label">打卡</span>
   </button>
   <button class="bnav-item" data-tab="manage" onclick="switchTab('manage')">
-    <span class="bnav-icon">▦</span>
+    <svg class="bnav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+      <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+      <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+      <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+    </svg>
     <span class="bnav-label">管理</span>
   </button>
-  <button class="bnav-center" onclick="openPomodoroPanel()">🍅</button>
+  <button class="bnav-center" onclick="openPomodoroPanel()">
+    <svg class="bnav-center-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"/>
+      <path d="M12 7v5l3 2"/>
+    </svg>
+  </button>
   <button class="bnav-item" onclick="openAiChatPanel()">
-    <span class="bnav-icon">💡</span>
+    <svg class="bnav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 18h6"/>
+      <path d="M10 22h4"/>
+      <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/>
+    </svg>
     <span class="bnav-label">AI</span>
   </button>
   <button class="bnav-item" data-tab="profile" onclick="switchTab('profile')">
-    <span class="bnav-icon">👤</span>
+    <svg class="bnav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+      <circle cx="12" cy="7" r="4"/>
+    </svg>
     <span class="bnav-label">我的</span>
   </button>
 </div>
