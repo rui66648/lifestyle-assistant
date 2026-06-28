@@ -2613,4 +2613,111 @@ body.dark .pg-icon{background:linear-gradient(135deg,rgba(91,185,138,.2),rgba(25
   background:var(--accent);color:#fff;
 }
 
+/* ========== 饮食建议模块 ========== */
+.diet-panel{padding:4px 2px 20px}
+.diet-tip-card{
+  background:linear-gradient(135deg,var(--accent-light),var(--accent2-light));
+  border-radius:16px;padding:16px;margin-bottom:16px;
+  display:flex;gap:12px;align-items:flex-start;
+  position:relative;overflow:hidden;
+}
+.diet-tip-card::before{
+  content:'';position:absolute;top:-30px;right:-30px;
+  width:100px;height:100px;border-radius:50%;
+  background:rgba(255,255,255,.3);
+}
+.diet-tip-icon{font-size:32px;flex-shrink:0;position:relative;z-index:1}
+.diet-tip-content{flex:1;position:relative;z-index:1}
+.diet-tip-text{
+  font-size:14px;line-height:1.7;font-weight:500;
+  color:var(--ink);margin-bottom:6px;
+}
+.diet-tip-source{font-size:11px;color:var(--muted);text-align:right}
+
+.diet-summary{
+  display:flex;align-items:center;justify-content:space-around;
+  background:var(--bg);border-radius:14px;padding:16px;
+  margin-bottom:16px;box-shadow:var(--shadow-sm);
+}
+.diet-summary-item{display:flex;flex-direction:column;align-items:center;gap:4px}
+.diet-summary-val{font-size:20px;font-weight:800;color:var(--accent)}
+.diet-summary-label{font-size:11px;color:var(--muted)}
+.diet-summary-divider{width:1px;height:30px;background:var(--rule)}
+
+.diet-section-title{
+  font-size:14px;font-weight:700;color:var(--ink);
+  margin:18px 0 10px;display:flex;align-items:center;gap:6px;
+}
+
+.diet-seasonal-card{
+  display:flex;align-items:center;gap:12px;
+  background:var(--bg);border-radius:12px;padding:14px;
+  margin-bottom:8px;box-shadow:var(--shadow-sm);
+  border-left:3px solid var(--accent2);
+}
+.diet-seasonal-icon{font-size:28px;flex-shrink:0}
+.diet-seasonal-text{font-size:13px;line-height:1.6;color:var(--ink2)}
+
+.diet-meal-card{
+  background:var(--bg);border-radius:14px;padding:14px;
+  margin-bottom:8px;box-shadow:var(--shadow-sm);
+  border-left:3px solid var(--accent);
+}
+.diet-meal-header{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.diet-meal-icon{font-size:32px}
+.diet-meal-title{font-size:15px;font-weight:700;color:var(--ink)}
+.diet-meal-desc{font-size:11px;color:var(--muted);margin-top:2px}
+.diet-meal-tips{display:flex;flex-direction:column;gap:6px}
+.diet-meal-tip{font-size:12px;color:var(--ink2);line-height:1.5}
+
+.diet-colors-grid{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:8px;
+  margin-bottom:8px;
+}
+.diet-color-card{
+  background:var(--bg);border-radius:12px;padding:10px 6px;
+  text-align:center;box-shadow:var(--shadow-sm);
+  transition:all .2s ease;
+}
+.diet-color-card:active{transform:scale(.95)}
+.diet-color-icon{font-size:24px;margin-bottom:4px}
+.diet-color-name{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.diet-color-foods{font-size:9px;color:var(--muted);line-height:1.4}
+
+.diet-habits-list{
+  display:flex;flex-direction:column;gap:8px;
+}
+.diet-habit-item{
+  display:flex;align-items:center;gap:12px;
+  background:var(--bg);border-radius:12px;padding:12px 14px;
+  cursor:pointer;transition:all .2s ease;
+  box-shadow:var(--shadow-sm);
+}
+.diet-habit-item:active{transform:scale(.98)}
+.diet-habit-item.done{opacity:.7}
+.diet-habit-icon{font-size:22px}
+.diet-habit-name{flex:1;font-size:13px;font-weight:600;color:var(--ink)}
+.diet-habit-check{
+  font-size:11px;font-weight:700;padding:4px 12px;border-radius:12px;
+  background:var(--accent-light);color:var(--accent);
+  transition:all .2s;
+}
+.diet-habit-item.done .diet-habit-check{
+  background:var(--accent);color:#fff;
+}
+
+.diet-books-list{display:flex;flex-direction:column;gap:8px}
+.diet-book-item{
+  display:flex;align-items:center;gap:12px;
+  background:var(--bg);border-radius:12px;padding:12px 14px;
+  cursor:pointer;transition:all .2s ease;
+  box-shadow:var(--shadow-sm);
+}
+.diet-book-item:active{transform:scale(.98)}
+.diet-book-emoji{font-size:28px}
+.diet-book-info{flex:1}
+.diet-book-name{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.diet-book-desc{font-size:11px;color:var(--muted)}
+.diet-book-arrow{font-size:20px;color:var(--muted)}
+
 
