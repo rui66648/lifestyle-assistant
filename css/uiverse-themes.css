@@ -51,12 +51,18 @@ body.btn-aurora .skin-option,
 body.btn-aurora .rh-btn,
 body.btn-aurora .habit-card .checkin-btn,
 body.btn-aurora .reminder-option{
-  background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+  background:linear-gradient(135deg,var(--accent),#8F51EA,var(--accent2),var(--accent));
+  background-size:300% 300%;
+  animation:auroraGradientBtn 5s ease infinite;
   color:#fff;
   border:none;
   position:relative;
   overflow:hidden;
-  box-shadow:0 4px 15px rgba(102,126,234,.4);
+  box-shadow:0 4px 16px rgba(16,185,129,.35);
+}
+@keyframes auroraGradientBtn{
+  0%,100%{background-position:0% 50%}
+  50%{background-position:100% 50%}
 }
 body.btn-aurora .const-btn::before,
 body.btn-aurora .tab::before,
