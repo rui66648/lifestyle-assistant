@@ -644,8 +644,6 @@
         { id:'ocean', name:'海蓝', emoji:'🌊', vars:{accent:'#4A90D9',accent2:'#48C9B0','accent-light':'#D6EAF8','accent2-light':'#D1F2EB',bg:'#F5F9FC',bg2:'#EBF2F8'} },
         { id:'rose', name:'桃粉', emoji:'🌸', vars:{accent:'#E07B8C',accent2:'#D4A0B5','accent-light':'#FADBD8','accent2-light':'#F5EEF8',bg:'#FFF5F7',bg2:'#FEF0F3'} },
         { id:'sunset', name:'暖橘', emoji:'🌅', vars:{accent:'#E8913A',accent2:'#E05A4B','accent-light':'#FDEBD0','accent2-light':'#FADBD8',bg:'#FFFBF5',bg2:'#FFF3E6'} },
-        { id:'lavender', name:'紫韵', emoji:'💜', vars:{accent:'#7B6CB8',accent2:'#9B8EC4','accent-light':'#E8E5F5','accent2-light':'#F0EEF8',bg:'#FAFAFE',bg2:'#F2F1FA'} },
-        { id:'forest', name:'墨绿', emoji:'🌲', vars:{accent:'#2E7D5B',accent2:'#8D9B6A','accent-light':'#D4EDDA','accent2-light':'#E8ECD6',bg:'#F5FAF6',bg2:'#EBF4EE'} },
         { id:'modern', name:'现代简约', emoji:'✨', vars:{accent:'#10B981',accent2:'#F59E0B','accent-light':'#D1FAE5','accent2-light':'#FEF3C7',bg:'#F8FAFC',bg2:'#F1F5F9'} },
       ]
     },
@@ -654,11 +652,11 @@
       label: '按钮',
       emoji: '🔘',
       items: [
-        { id:'btn-default', name:'圆角', emoji:'🟢', style:{'btn-style':'default'} },
+        { id:'btn-default', name:'圆角渐变', emoji:'🟢', style:{'btn-style':'default'} },
         { id:'btn-pill', name:'胶囊', emoji:'💊', style:{'btn-style':'pill'} },
-        { id:'btn-square', name:'方形', emoji:'⬜', style:{'btn-style':'square'} },
-        { id:'btn-star', name:'星光', emoji:'⭐', style:{'btn-style':'star'} },
-        { id:'btn-modern', name:'现代', emoji:'🔲', style:{'btn-style':'modern'} },
+        { id:'btn-glass', name:'毛玻璃', emoji:'✨', style:{'btn-style':'glass'} },
+        { id:'btn-gradient', name:'双色渐变', emoji:'🌈', style:{'btn-style':'gradient'} },
+        { id:'btn-3d', name:'3D立体', emoji:'📦', style:{'btn-style':'3d'} },
       ]
     },
     {
@@ -666,10 +664,9 @@
       label: '复选框',
       emoji: '☑️',
       items: [
-        { id:'cb-default', name:'标准', emoji:'✅', style:{'cb-radius':'4px','cb-border':'2px solid var(--accent)'} },
-        { id:'cb-round', name:'圆形', emoji:'⭕', style:{'cb-radius':'50%','cb-border':'2px solid var(--accent)'} },
-        { id:'cb-fill', name:'填充', emoji:'🔲', style:{'cb-radius':'6px','cb-border':'none'} },
-        { id:'cb-svg', name:'SVG描边动画', emoji:'🌀', style:{'cb-style':'svg'} },
+        { id:'cb-default', name:'圆角', emoji:'✅', style:{'cb-style':'default'} },
+        { id:'cb-round', name:'圆形', emoji:'⭕', style:{'cb-style':'round'} },
+        { id:'cb-neu', name:'拟态', emoji:'🎯', style:{'cb-style':'neu'} },
       ]
     },
     {
@@ -677,21 +674,9 @@
       label: '开关',
       emoji: '🎚️',
       items: [
-        { id:'tg-uiverse', name:'Uiverse日夜间', emoji:'🌓', style:{'tg-style':'uiverse'} },
-        { id:'tg-svg', name:'SVG描边动画', emoji:'🌀', style:{'tg-style':'svg'} },
-        { id:'tg-default', name:'标准开关', emoji:'🔘', style:{'tg-style':'default'} },
-      ]
-    },
-    {
-      id: 'radio',
-      label: '单选按钮',
-      emoji: '🔘',
-      items: [
-        { id:'rb-default', name:'标准圆形', emoji:'⭕', style:{'rb-radius':'50%','rb-border':'2px solid var(--rule)','rb-dot-size':'12px','rb-size':'22px'} },
-        { id:'rb-square', name:'方形', emoji:'⬜', style:{'rb-radius':'4px','rb-border':'2px solid var(--rule)','rb-dot-size':'10px','rb-size':'22px'} },
-        { id:'rb-pill', name:'圆角填充', emoji:'🔴', style:{'rb-radius':'6px','rb-border':'none','rb-dot-size':'22px','rb-size':'22px'} },
-        { id:'rb-thick', name:'粗边框', emoji:'🎯', style:{'rb-radius':'50%','rb-border':'3px solid var(--rule)','rb-dot-size':'14px','rb-size':'24px'} },
-        { id:'rb-segment', name:'分段选择器', emoji:'🧩', style:{'rb-style':'segment'} },
+        { id:'tg-default', name:'标准', emoji:'🔘', style:{'tg-style':'default'} },
+        { id:'tg-daynight', name:'日夜切换', emoji:'🌓', style:{'tg-style':'daynight'} },
+        { id:'tg-neon', name:'霓虹', emoji:'💡', style:{'tg-style':'neon'} },
       ]
     },
     {
@@ -699,10 +684,9 @@
       label: '卡片',
       emoji: '🃏',
       items: [
-        { id:'cd-default', name:'毛玻璃', emoji:'✨', style:{'cd-style':'glass'} },
-        { id:'cd-flat', name:'扁平', emoji:'📄', style:{'cd-style':'flat'} },
+        { id:'cd-glass', name:'毛玻璃', emoji:'✨', style:{'cd-style':'glass'} },
         { id:'cd-gradient', name:'渐变边框', emoji:'🌈', style:{'cd-style':'gradient'} },
-        { id:'cd-elevated', name:'立体', emoji:'📦', style:{'cd-style':'elevated'} },
+        { id:'cd-neu', name:'拟态', emoji:'🎯', style:{'cd-style':'neu'} },
       ]
     },
     {
@@ -710,10 +694,9 @@
       label: '输入框',
       emoji: '📝',
       items: [
-        { id:'in-default', name:'毛玻璃', emoji:'✨', style:{'in-style':'glass'} },
-        { id:'in-flat', name:'扁平', emoji:'📄', style:{'in-style':'flat'} },
+        { id:'in-glass', name:'毛玻璃', emoji:'✨', style:{'in-style':'glass'} },
         { id:'in-float', name:'浮动标签', emoji:'🏷️', style:{'in-style':'float'} },
-        { id:'in-outline', name:'描边', emoji:'📐', style:{'in-style':'outline'} },
+        { id:'in-underline', name:'下划线', emoji:'📏', style:{'in-style':'underline'} },
       ]
     },
     {
@@ -721,10 +704,10 @@
       label: '徽章',
       emoji: '🏷️',
       items: [
-        { id:'bd-default', name:'药丸', emoji:'💊', style:{'bd-style':'pill'} },
-        { id:'bd-square', name:'方形', emoji:'⬜', style:{'bd-style':'square'} },
-        { id:'bd-pulse', name:'脉冲', emoji:'💓', style:{'bd-style':'pulse'} },
+        { id:'bd-pill', name:'药丸', emoji:'💊', style:{'bd-style':'pill'} },
+        { id:'bd-gradient', name:'渐变', emoji:'🌈', style:{'bd-style':'gradient'} },
         { id:'bd-glow', name:'发光', emoji:'🌟', style:{'bd-style':'glow'} },
+        { id:'bd-dot', name:'圆点', emoji:'🔵', style:{'bd-style':'dot'} },
       ]
     },
   ];
@@ -747,87 +730,26 @@
    */
   function initAllSkins() {
     const root = document.documentElement;
-    // 1. 应用主题皮肤
+    const body = document.body;
+    const prefixesToClear = ['btn-', 'cb-', 'tg-', 'cd-', 'in-', 'bd-'];
+    prefixesToClear.forEach(prefix => {
+      [...body.classList].forEach(cls => {
+        if (cls.startsWith(prefix)) body.classList.remove(cls);
+      });
+    });
     const skinId = getCurrentSkin();
     applySkin(skinId);
-    // 2. 应用所有组件类皮肤（按钮、复选框、开关等）
     SKIN_CATEGORIES.forEach(cat => {
-      if (cat.id === 'theme') return; // 主题已在上面处理
+      if (cat.id === 'theme') return;
       const saved = localStorage.getItem('skin_' + cat.id);
-
-      // toggle / button / checkbox 分类：通过 body class 切换（各自独立处理）
-      if (cat.id === 'toggle' && saved) {
-        const item = cat.items.find(i => i.id === saved);
-        if (item && item.style) {
-          if (item.style['tg-style'] === 'uiverse') document.body.classList.add('tg-uiverse');
-          if (item.style['tg-style'] === 'svg') document.body.classList.add('tg-svg');
-        }
-        return;
-      }
-      if (cat.id === 'button') {
-        if (saved) {
-          const item = cat.items.find(i => i.id === saved);
-          if (item && item.style && item.style['btn-style']) {
-            const btnClassMap = { default:'btn-default', pill:'btn-pill', square:'btn-square', star:'btn-star', modern:'btn-modern' };
-            document.body.classList.add(btnClassMap[item.style['btn-style']] || 'btn-default');
-          }
-        } else {
-          document.body.classList.add('btn-default');
-        }
-        return;
-      }
-      if (cat.id === 'checkbox' && saved) {
-        const item = cat.items.find(i => i.id === saved);
-        if (item && item.style) {
-          if (item.style['cb-style'] === 'svg') document.body.classList.add('cb-svg');
-          for (const [key, val] of Object.entries(item.style)) {
-            if (key !== 'cb-style') root.style.setProperty('--' + key, val);
-          }
-        }
-        return;
-      }
-      if (cat.id === 'radio' && saved) {
-        const item = cat.items.find(i => i.id === saved);
-        if (item && item.style) {
-          if (item.style['rb-style'] === 'segment') {
-            document.body.classList.add('rb-segment');
+      const defaultItem = cat.items[0];
+      const item = saved ? cat.items.find(i => i.id === saved) || defaultItem : defaultItem;
+      if (item && item.style) {
+        for (const [key, val] of Object.entries(item.style)) {
+          if (key.endsWith('-style')) {
+            const prefix = key.replace('-style', '');
+            body.classList.add(prefix + '-' + val);
           } else {
-            for (const [key, val] of Object.entries(item.style)) {
-              if (key !== 'rb-style') root.style.setProperty('--' + key, val);
-            }
-          }
-        }
-        return;
-      }
-      if (cat.id === 'card' && saved) {
-        const item = cat.items.find(i => i.id === saved);
-        if (item && item.style) {
-          const cdClassMap = { glass:'cd-glass', flat:'cd-flat', gradient:'cd-gradient', elevated:'cd-elevated' };
-          document.body.classList.add(cdClassMap[item.style['cd-style']] || 'cd-glass');
-        }
-        return;
-      }
-      if (cat.id === 'input' && saved) {
-        const item = cat.items.find(i => i.id === saved);
-        if (item && item.style) {
-          const inClassMap = { glass:'in-glass', flat:'in-flat', float:'in-float', outline:'in-outline' };
-          document.body.classList.add(inClassMap[item.style['in-style']] || 'in-glass');
-        }
-        return;
-      }
-      if (cat.id === 'badge' && saved) {
-        const item = cat.items.find(i => i.id === saved);
-        if (item && item.style) {
-          const bdClassMap = { pill:'bd-pill', square:'bd-square', pulse:'bd-pulse', glow:'bd-glow' };
-          document.body.classList.add(bdClassMap[item.style['bd-style']] || 'bd-pill');
-        }
-        return;
-      }
-
-      if (saved) {
-        const item = cat.items.find(i => i.id === saved);
-        if (item && item.style) {
-          for (const [key, val] of Object.entries(item.style)) {
             root.style.setProperty('--' + key, val);
           }
         }
@@ -864,61 +786,36 @@
     if (!cat) return;
     const item = cat.items.find(i => i.id === itemId);
     if (!item) return;
-
-    // 特殊处理：toggle / button / checkbox / radio 分类通过 body class 切换
-    if (catId === 'toggle' || catId === 'button' || catId === 'checkbox' || catId === 'radio') {
-      // 只处理当前分类，不清除其他分类的 class
-      if (catId === 'toggle') {
-        document.body.classList.remove('tg-uiverse', 'tg-svg');
-        if (item.style['tg-style'] === 'uiverse') document.body.classList.add('tg-uiverse');
-        if (item.style['tg-style'] === 'svg') document.body.classList.add('tg-svg');
-      }
-      if (catId === 'button') {
-        document.body.classList.remove('btn-default', 'btn-pill', 'btn-square', 'btn-star', 'btn-modern');
-        if (item.style['btn-style']) {
-          const btnClassMap = { default:'btn-default', pill:'btn-pill', square:'btn-square', star:'btn-star', modern:'btn-modern' };
-          document.body.classList.add(btnClassMap[item.style['btn-style']] || 'btn-default');
-        }
-      }
-      if (catId === 'checkbox') {
-        document.body.classList.remove('cb-svg');
-        const root = document.documentElement;
-        if (item.style['cb-style'] === 'svg') document.body.classList.add('cb-svg');
-        for (const [key, val] of Object.entries(item.style || {})) {
-          if (key !== 'cb-style') root.style.setProperty('--' + key, val);
-        }
-      }
-      if (catId === 'radio') {
-        document.body.classList.remove('rb-segment');
-        const root = document.documentElement;
-        if (item.style['rb-style'] === 'segment') {
-          document.body.classList.add('rb-segment');
-        } else {
-          // 非 segment 皮肤：走 CSS 变量
-          for (const [key, val] of Object.entries(item.style || {})) {
-            if (key !== 'rb-style') root.style.setProperty('--' + key, val);
-          }
-        }
-      }
-
-      localStorage.setItem('skin_' + catId, itemId);
-      if (typeof renderLevelCard === 'function') renderLevelCard();
-      return;
-    }
-
     const root = document.documentElement;
+    const body = document.body;
+    const prefixMap = {
+      button: 'btn-',
+      checkbox: 'cb-',
+      toggle: 'tg-',
+      card: 'cd-',
+      input: 'in-',
+      badge: 'bd-'
+    };
+    const prefix = prefixMap[catId];
+    if (prefix) {
+      [...body.classList].forEach(cls => {
+        if (cls.startsWith(prefix)) body.classList.remove(cls);
+      });
+    }
     for (const [key, val] of Object.entries(item.style || {})) {
-      root.style.setProperty('--' + key, val);
+      if (key.endsWith('-style') && prefix) {
+        body.classList.add(prefix + val);
+      } else {
+        root.style.setProperty('--' + key, val);
+      }
     }
     localStorage.setItem('skin_' + catId, itemId);
-    // 更新该分类下的选中态
     document.querySelectorAll('.skin-toggle-row').forEach(el => {
       const input = el.querySelector('input');
       if (input && input.name === 'skin_' + catId) {
         el.classList.toggle('active', input.checked);
       }
     });
-    // 刷新 profile 卡片
     if (typeof renderLevelCard === 'function') renderLevelCard();
   }
 
