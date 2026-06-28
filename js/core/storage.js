@@ -24,6 +24,7 @@
       const cfg = localStorage.getItem('habits_config');
       if (cfg) {
         _habitsConfig = JSON.parse(cfg);
+        syncHabitIcons();
       } else {
         // 尝试从全局或 App.Data 获取默认习惯列表
         var defaults = (typeof DEFAULT_HABITS !== 'undefined') ? DEFAULT_HABITS
@@ -77,6 +78,21 @@
 
   function saveConfig() { localStorage.setItem('habits_config', JSON.stringify(_habitsConfig)); }
   function saveRecords() { localStorage.setItem('checkin_records', JSON.stringify(_checkinRecords)); }
+
+  function syncHabitIcons() {
+    var library = (typeof HABIT_LIBRARY !== 'undefined') ? HABIT_LIBRARY
+      : (window.App && App.Data && App.Data.HABIT_LIBRARY) ? App.Data.HABIT_LIBRARY : null;
+    if (!library || !_habitsConfig || !_habitsConfig.length) return;
+    var changed = false;
+    _habitsConfig.forEach(function(h) {
+      var lib = library.find(function(l) { return l.id === h.id; });
+      if (lib && lib.icon && lib.icon !== h.icon) {
+        h.icon = lib.icon;
+        changed = true;
+      }
+    });
+    if (changed) saveConfig();
+  }
   function saveData() { saveConfig(); saveRecords(); }
 
   function exportData() {
