@@ -1025,6 +1025,7 @@
 
     const items = [
       { icon:'📊', label:'统计', action:'stats' },
+      { icon:'🥗', label:'饮食建议', action:'diet' },
       { icon:'⏳', label:'子午流注', action:'clock' },
       { icon:'🛡️', label:'五劳防护', action:'wulao' },
       { icon:'🩺', label:'体质测试', action:'constitution' },
@@ -1047,6 +1048,7 @@
   window.handleProfileGridClick = function(action) {
     switch(action) {
       case 'stats': openStatsDetailPanel(); break;
+      case 'diet': App.UI.Panels.openDietPanel(); break;
       case 'clock': App.UI.Panels.openClockPanel(); break;
       case 'wulao': App.UI.Panels.openWulaoPanel(); break;
       case 'constitution': App.Modules.Constitution.openConstitutionPanel(); break;

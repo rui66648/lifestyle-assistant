@@ -625,6 +625,14 @@
     openPanel('wulaoPanel');
   }
 
+  function openDietPanel() {
+    const body = document.getElementById('dietPanelBody');
+    if (body && App.Modules.Diet) {
+      body.innerHTML = App.Modules.Diet.renderDietPanel();
+    }
+    openPanel('dietPanel');
+  }
+
   /* ========== 皮肤面板 ========== */
   const SKIN_CATEGORIES = [
     {
@@ -1362,6 +1370,7 @@
     selectEmotion,
     openClockPanel,
     openWulaoPanel,
+    openDietPanel,
     toggleGroup,
     renderWulaoPanel,
     openSkinPanel,
