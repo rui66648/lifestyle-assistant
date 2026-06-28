@@ -2549,13 +2549,16 @@ body.dark #aiChatInput{background:rgba(30,41,59,.8);border-color:var(--rule);col
   display:flex;gap:6px;margin-bottom:16px;
   padding:4px;background:var(--bg2);border-radius:var(--radius);
   overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
 }
+.skin-tabs::-webkit-scrollbar{display:none}
 .skin-tab{
-  flex:1;min-width:fit-content;padding:8px 12px;
+  flex:0 0 auto;padding:8px 14px;
   border-radius:var(--radius-sm);font-size:13px;font-weight:600;
   color:var(--muted);background:transparent;
   transition:all .2s ease;white-space:nowrap;
   font-variant-emoji:text;line-height:1.4;
+  cursor:pointer;
 }
 .skin-tab.active{
   background:#fff;color:var(--accent);
