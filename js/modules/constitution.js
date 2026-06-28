@@ -138,6 +138,39 @@
     var result = constitutionResult;
     var mainType = CONSTITUTION_TYPES.find(function(c) { return c.id === result.typeId; });
 
+    // 计算所有体质的倾向等级
+    function getTendencyLevel(score, typeId) {
+      if (typeId === 'pinghe') {
+        if (score >= 60) return '是';
+        if (score >= 40) return '倾向';
+        return '否';
+      } else {
+        if (score >= 60) return '重度倾向';
+        if (score >= 40) return '中度倾向';
+        if (score >= 30) return '轻度倾向';
+        return '否';
+      }
+    }
+
+    // 对所有体质按得分降序排列
+    var allTypes = CONSTITUTION_TYPES.map(function(c) {
+      var score = result.convertedScores[c.id] || 0;
+      var level = getTendencyLevel(score, c.id);
+      return {
+        id: c.id,
+        name: c.name,
+        emoji: c.emoji,
+        color: c.color,
+        desc: c.desc,
+        score: score,
+        level: level
+      };
+    }).sort(function(a, b) {
+      if (a.id === 'pinghe') return 1;
+      if (b.id === 'pinghe') return -1;
+      return b.score - a.score;
+    });
+
     var html = '<div class="const-result">' +
       '<div style="text-align:center;padding:1rem 0">' +
         '<div class="const-result-emoji" style="font-size:3rem">' + mainType.emoji + '</div>' +
@@ -145,18 +178,25 @@
         '<div class="const-result-desc" style="margin:0.5rem 0;color:var(--muted);font-size:0.9rem">' + mainType.desc + '</div>' +
       '</div>';
 
-    // 多体质结果展示
-    if (result.resultTypes && result.resultTypes.length > 0) {
-      html += '<div style="background:var(--bg2);border-radius:10px;padding:0.8rem;margin:0.5rem 0">' +
-        '<div style="font-size:13px;font-weight:700;margin-bottom:0.5rem">📊 体质分析详情</div>';
-      result.resultTypes.forEach(function(rt) {
-        html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:0.3rem 0;font-size:0.85rem">' +
-          '<span>' + rt.emoji + ' ' + rt.name + '</span>' +
-          '<span style="color:' + rt.color + ';font-weight:600">' + rt.score + '分 ' + rt.level + '</span>' +
-          '</div>';
-      });
-      html += '</div>';
-    }
+    // 全部九种体质得分详情
+    html += '<div style="background:var(--bg2);border-radius:10px;padding:0.8rem;margin:0.5rem 0">' +
+      '<div style="font-size:13px;font-weight:700;margin-bottom:0.5rem">📊 九种体质得分详情</div>';
+    allTypes.forEach(function(t, i) {
+      var isMain = t.id === result.typeId;
+      var barWidth = Math.max(5, Math.min(100, t.score));
+      var barColor = t.score >= 40 ? t.color : '#ccc';
+      html += '<div style="margin-bottom:0.6rem' + (i < allTypes.length - 1 ? ';padding-bottom:0.6rem;border-bottom:1px solid var(--border)' : '') + '">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25rem">' +
+          '<span style="font-size:0.85rem;font-weight:' + (isMain ? '700' : '400') + '">' + t.emoji + ' ' + t.name + (isMain ? ' ★' : '') + '</span>' +
+          '<span style="font-size:0.8rem;color:' + (t.level === '否' ? 'var(--muted)' : t.color) + ';font-weight:600">' + t.score + '分 <span style="font-weight:400">' + t.level + '</span></span>' +
+        '</div>' +
+        '<div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden">' +
+          '<div style="height:100%;width:' + barWidth + '%;background:' + barColor + ';border-radius:3px;transition:width 0.3s"></div>' +
+        '</div>' +
+        '<div style="font-size:0.75rem;color:var(--muted);margin-top:0.2rem">' + t.desc + '</div>' +
+      '</div>';
+    });
+    html += '</div>';
 
     // 调理建议
     html += '<div class="const-result-advice" style="margin:0.8rem 0">' +
