@@ -102,7 +102,7 @@ a{color:var(--accent);text-decoration:none}
   line-height:1;
   font-weight:900;
 }
-.mini-quote-text{font-size:14px;font-weight:500;color:var(--ink);line-height:1.8;padding-left:12px;border-left:3px solid var(--accent-light)}
+.mini-quote-text{font-size:14px;font-weight:500;color:var(--ink);line-height:1.8;padding-left:12px;border-left:3px solid var(--accent-light);font-style:italic}
 .mini-quote-source{font-size:11px;color:var(--accent);font-weight:600;text-align:right;margin-top:8px;opacity:.8}
 .mini-quote-actions{display:flex;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px dashed var(--rule)}
 .mini-quote-refresh,.mini-quote-ref{font-size:11px;color:var(--accent);cursor:pointer;font-weight:600;padding:5px 10px;border-radius:14px;transition:all .2s}
