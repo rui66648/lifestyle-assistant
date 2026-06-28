@@ -3251,4 +3251,728 @@ body.dark.theme-modern .diet-book-item{
   background:rgba(30,41,59,.8);
 }
 
+/* ========== 皮肤：按钮 - 毛玻璃 ========== */
+body.btn-glass .const-btn,
+body.btn-glass .tab,
+body.btn-glass .health-pack-btn,
+body.btn-glass .profile-grid-item,
+body.btn-glass .mg-add-btn,
+body.btn-glass .settings-btn,
+body.btn-glass .checkin-input-actions button,
+body.btn-glass .mini-quote-refresh,
+body.btn-glass .mini-quote-ref,
+body.btn-glass .skin-tab,
+body.btn-glass .export-btn,
+body.btn-glass .day-btn,
+body.btn-glass .panel-close,
+body.btn-glass .bnav-item,
+body.btn-glass .bnav-center,
+body.btn-glass .fab,
+body.btn-glass .lib-tab,
+body.btn-glass .lib-custom-input button,
+body.btn-glass .lib-custom-type button,
+body.btn-glass .lib-custom-reminder-add,
+body.btn-glass .lib-custom-freq .weekdays button,
+body.btn-glass .lib-item .add-btn,
+body.btn-glass .health-pack-add-btn,
+body.btn-glass .season-pack-btn,
+body.btn-glass .season-pack-add-btn,
+body.btn-glass .water-quick-btn,
+body.btn-glass .water-qty-btn,
+body.btn-glass .water-custom-btn,
+body.btn-glass .heatmap-nav button,
+body.btn-glass .edit-bar button,
+body.btn-glass .emotion-btn,
+body.btn-glass .ref-tab,
+body.btn-glass .ref-lib-btn,
+body.btn-glass .sd-tab,
+body.btn-glass .he-btn,
+body.btn-glass .he-btn-save,
+body.btn-glass .skin-option,
+body.btn-glass .rh-btn,
+body.btn-glass .habit-card .checkin-btn,
+body.btn-glass .reminder-option{
+  background:rgba(255,255,255,.7);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.6);
+  box-shadow:0 4px 16px rgba(0,0,0,.06);
+}
+body.btn-glass .const-btn:hover,
+body.btn-glass .tab:hover,
+body.btn-glass .health-pack-btn:hover,
+body.btn-glass .profile-grid-item:hover,
+body.btn-glass .mg-add-btn:hover,
+body.btn-glass .settings-btn:hover,
+body.btn-glass .checkin-input-actions button:hover,
+body.btn-glass .mini-quote-refresh:hover,
+body.btn-glass .mini-quote-ref:hover,
+body.btn-glass .skin-tab:hover,
+body.btn-glass .export-btn:hover,
+body.btn-glass .day-btn:hover,
+body.btn-glass .panel-close:hover,
+body.btn-glass .bnav-item:hover,
+body.btn-glass .bnav-center:hover,
+body.btn-glass .fab:hover,
+body.btn-glass .lib-tab:hover,
+body.btn-glass .lib-custom-input button:hover,
+body.btn-glass .lib-custom-type button:hover,
+body.btn-glass .lib-custom-reminder-add:hover,
+body.btn-glass .lib-custom-freq .weekdays button:hover,
+body.btn-glass .lib-item .add-btn:hover,
+body.btn-glass .health-pack-add-btn:hover,
+body.btn-glass .season-pack-btn:hover,
+body.btn-glass .season-pack-add-btn:hover,
+body.btn-glass .water-quick-btn:hover,
+body.btn-glass .water-qty-btn:hover,
+body.btn-glass .water-custom-btn:hover,
+body.btn-glass .heatmap-nav button:hover,
+body.btn-glass .edit-bar button:hover,
+body.btn-glass .emotion-btn:hover,
+body.btn-glass .ref-tab:hover,
+body.btn-glass .ref-lib-btn:hover,
+body.btn-glass .sd-tab:hover,
+body.btn-glass .he-btn:hover,
+body.btn-glass .he-btn-save:hover,
+body.btn-glass .skin-option:hover,
+body.btn-glass .rh-btn:hover,
+body.btn-glass .habit-card .checkin-btn:hover,
+body.btn-glass .reminder-option:hover{
+  background:rgba(255,255,255,.85);
+  transform:translateY(-1px);
+  box-shadow:0 6px 20px rgba(0,0,0,.08);
+}
+body.dark.btn-glass .const-btn,
+body.dark.btn-glass .tab,
+body.dark.btn-glass .health-pack-btn,
+body.dark.btn-glass .profile-grid-item,
+body.dark.btn-glass .mg-add-btn,
+body.dark.btn-glass .settings-btn,
+body.dark.btn-glass .checkin-input-actions button,
+body.dark.btn-glass .mini-quote-refresh,
+body.dark.btn-glass .mini-quote-ref,
+body.dark.btn-glass .skin-tab,
+body.dark.btn-glass .export-btn,
+body.dark.btn-glass .day-btn,
+body.dark.btn-glass .panel-close,
+body.dark.btn-glass .bnav-item,
+body.dark.btn-glass .bnav-center,
+body.dark.btn-glass .fab,
+body.dark.btn-glass .lib-tab,
+body.dark.btn-glass .lib-custom-input button,
+body.dark.btn-glass .lib-custom-type button,
+body.dark.btn-glass .lib-custom-reminder-add,
+body.dark.btn-glass .lib-custom-freq .weekdays button,
+body.dark.btn-glass .lib-item .add-btn,
+body.dark.btn-glass .health-pack-add-btn,
+body.dark.btn-glass .season-pack-btn,
+body.dark.btn-glass .season-pack-add-btn,
+body.dark.btn-glass .water-quick-btn,
+body.dark.btn-glass .water-qty-btn,
+body.dark.btn-glass .water-custom-btn,
+body.dark.btn-glass .heatmap-nav button,
+body.dark.btn-glass .edit-bar button,
+body.dark.btn-glass .emotion-btn,
+body.dark.btn-glass .ref-tab,
+body.dark.btn-glass .ref-lib-btn,
+body.dark.btn-glass .sd-tab,
+body.dark.btn-glass .he-btn,
+body.dark.btn-glass .he-btn-save,
+body.dark.btn-glass .skin-option,
+body.dark.btn-glass .rh-btn,
+body.dark.btn-glass .habit-card .checkin-btn,
+body.dark.btn-glass .reminder-option{
+  background:rgba(30,41,59,.7);
+  border-color:rgba(255,255,255,.08);
+}
+
+/* ========== 皮肤：按钮 - 双色渐变 ========== */
+body.btn-gradient .const-btn,
+body.btn-gradient .tab,
+body.btn-gradient .health-pack-btn,
+body.btn-gradient .profile-grid-item,
+body.btn-gradient .mg-add-btn,
+body.btn-gradient .settings-btn,
+body.btn-gradient .checkin-input-actions button,
+body.btn-gradient .mini-quote-refresh,
+body.btn-gradient .mini-quote-ref,
+body.btn-gradient .skin-tab,
+body.btn-gradient .export-btn,
+body.btn-gradient .day-btn,
+body.btn-gradient .panel-close,
+body.btn-gradient .bnav-item,
+body.btn-gradient .bnav-center,
+body.btn-gradient .fab,
+body.btn-gradient .lib-tab,
+body.btn-gradient .lib-custom-input button,
+body.btn-gradient .lib-custom-type button,
+body.btn-gradient .lib-custom-reminder-add,
+body.btn-gradient .lib-custom-freq .weekdays button,
+body.btn-gradient .lib-item .add-btn,
+body.btn-gradient .health-pack-add-btn,
+body.btn-gradient .season-pack-btn,
+body.btn-gradient .season-pack-add-btn,
+body.btn-gradient .water-quick-btn,
+body.btn-gradient .water-qty-btn,
+body.btn-gradient .water-custom-btn,
+body.btn-gradient .heatmap-nav button,
+body.btn-gradient .edit-bar button,
+body.btn-gradient .emotion-btn,
+body.btn-gradient .ref-tab,
+body.btn-gradient .ref-lib-btn,
+body.btn-gradient .sd-tab,
+body.btn-gradient .he-btn,
+body.btn-gradient .he-btn-save,
+body.btn-gradient .skin-option,
+body.btn-gradient .rh-btn,
+body.btn-gradient .habit-card .checkin-btn,
+body.btn-gradient .reminder-option{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;
+  box-shadow:0 4px 16px rgba(16,185,129,.25);
+  position:relative;
+  overflow:hidden;
+}
+body.btn-gradient .const-btn::before,
+body.btn-gradient .tab::before,
+body.btn-gradient .health-pack-btn::before,
+body.btn-gradient .profile-grid-item::before,
+body.btn-gradient .mg-add-btn::before,
+body.btn-gradient .settings-btn::before,
+body.btn-gradient .checkin-input-actions button::before,
+body.btn-gradient .mini-quote-refresh::before,
+body.btn-gradient .mini-quote-ref::before,
+body.btn-gradient .skin-tab::before,
+body.btn-gradient .export-btn::before,
+body.btn-gradient .day-btn::before,
+body.btn-gradient .panel-close::before,
+body.btn-gradient .bnav-item::before,
+body.btn-gradient .bnav-center::before,
+body.btn-gradient .fab::before,
+body.btn-gradient .lib-tab::before,
+body.btn-gradient .lib-custom-input button::before,
+body.btn-gradient .lib-custom-type button::before,
+body.btn-gradient .lib-custom-reminder-add::before,
+body.btn-gradient .lib-custom-freq .weekdays button::before,
+body.btn-gradient .lib-item .add-btn::before,
+body.btn-gradient .health-pack-add-btn::before,
+body.btn-gradient .season-pack-btn::before,
+body.btn-gradient .season-pack-add-btn::before,
+body.btn-gradient .water-quick-btn::before,
+body.btn-gradient .water-qty-btn::before,
+body.btn-gradient .water-custom-btn::before,
+body.btn-gradient .heatmap-nav button::before,
+body.btn-gradient .edit-bar button::before,
+body.btn-gradient .emotion-btn::before,
+body.btn-gradient .ref-tab::before,
+body.btn-gradient .ref-lib-btn::before,
+body.btn-gradient .sd-tab::before,
+body.btn-gradient .he-btn::before,
+body.btn-gradient .he-btn-save::before,
+body.btn-gradient .skin-option::before,
+body.btn-gradient .rh-btn::before,
+body.btn-gradient .habit-card .checkin-btn::before,
+body.btn-gradient .reminder-option::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:50%;
+  background:linear-gradient(to bottom,rgba(255,255,255,.2),transparent);
+  pointer-events:none;
+}
+body.btn-gradient .skin-tab{
+  background:transparent;
+  color:var(--muted);
+  box-shadow:none;
+}
+body.btn-gradient .skin-tab.active{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;
+  box-shadow:0 2px 8px rgba(16,185,129,.3);
+}
+body.btn-gradient .bnav-item{
+  background:transparent;
+  color:var(--muted);
+  box-shadow:none;
+}
+body.btn-gradient .bnav-item.active{
+  color:var(--accent);
+  background:transparent;
+  box-shadow:none;
+}
+
+/* ========== 皮肤：按钮 - 3D立体 ========== */
+body.btn-3d .const-btn,
+body.btn-3d .tab,
+body.btn-3d .health-pack-btn,
+body.btn-3d .profile-grid-item,
+body.btn-3d .mg-add-btn,
+body.btn-3d .settings-btn,
+body.btn-3d .checkin-input-actions button,
+body.btn-3d .mini-quote-refresh,
+body.btn-3d .mini-quote-ref,
+body.btn-3d .skin-tab,
+body.btn-3d .export-btn,
+body.btn-3d .day-btn,
+body.btn-3d .panel-close,
+body.btn-3d .bnav-item,
+body.btn-3d .bnav-center,
+body.btn-3d .fab,
+body.btn-3d .lib-tab,
+body.btn-3d .lib-custom-input button,
+body.btn-3d .lib-custom-type button,
+body.btn-3d .lib-custom-reminder-add,
+body.btn-3d .lib-custom-freq .weekdays button,
+body.btn-3d .lib-item .add-btn,
+body.btn-3d .health-pack-add-btn,
+body.btn-3d .season-pack-btn,
+body.btn-3d .season-pack-add-btn,
+body.btn-3d .water-quick-btn,
+body.btn-3d .water-qty-btn,
+body.btn-3d .water-custom-btn,
+body.btn-3d .heatmap-nav button,
+body.btn-3d .edit-bar button,
+body.btn-3d .emotion-btn,
+body.btn-3d .ref-tab,
+body.btn-3d .ref-lib-btn,
+body.btn-3d .sd-tab,
+body.btn-3d .he-btn,
+body.btn-3d .he-btn-save,
+body.btn-3d .skin-option,
+body.btn-3d .rh-btn,
+body.btn-3d .habit-card .checkin-btn,
+body.btn-3d .reminder-option{
+  transform:translateY(0);
+  box-shadow:0 4px 0 var(--accent-700,#047857),0 6px 12px rgba(0,0,0,.15);
+  transition:all .1s ease;
+}
+body.btn-3d .const-btn:active,
+body.btn-3d .tab:active,
+body.btn-3d .health-pack-btn:active,
+body.btn-3d .profile-grid-item:active,
+body.btn-3d .mg-add-btn:active,
+body.btn-3d .settings-btn:active,
+body.btn-3d .checkin-input-actions button:active,
+body.btn-3d .mini-quote-refresh:active,
+body.btn-3d .mini-quote-ref:active,
+body.btn-3d .skin-tab:active,
+body.btn-3d .export-btn:active,
+body.btn-3d .day-btn:active,
+body.btn-3d .panel-close:active,
+body.btn-3d .bnav-item:active,
+body.btn-3d .bnav-center:active,
+body.btn-3d .fab:active,
+body.btn-3d .lib-tab:active,
+body.btn-3d .lib-custom-input button:active,
+body.btn-3d .lib-custom-type button:active,
+body.btn-3d .lib-custom-reminder-add:active,
+body.btn-3d .lib-custom-freq .weekdays button:active,
+body.btn-3d .lib-item .add-btn:active,
+body.btn-3d .health-pack-add-btn:active,
+body.btn-3d .season-pack-btn:active,
+body.btn-3d .season-pack-add-btn:active,
+body.btn-3d .water-quick-btn:active,
+body.btn-3d .water-qty-btn:active,
+body.btn-3d .water-custom-btn:active,
+body.btn-3d .heatmap-nav button:active,
+body.btn-3d .edit-bar button:active,
+body.btn-3d .emotion-btn:active,
+body.btn-3d .ref-tab:active,
+body.btn-3d .ref-lib-btn:active,
+body.btn-3d .sd-tab:active,
+body.btn-3d .he-btn:active,
+body.btn-3d .he-btn-save:active,
+body.btn-3d .skin-option:active,
+body.btn-3d .rh-btn:active,
+body.btn-3d .habit-card .checkin-btn:active,
+body.btn-3d .reminder-option:active{
+  transform:translateY(4px);
+  box-shadow:0 0 0 var(--accent-700,#047857),0 2px 6px rgba(0,0,0,.1);
+}
+body.btn-3d .skin-tab{
+  box-shadow:none;
+}
+body.btn-3d .skin-tab.active{
+  box-shadow:0 3px 0 var(--accent-700,#047857);
+}
+
+/* ========== 皮肤：复选框 - 圆形 ========== */
+body.cb-round .theme-toggle,
+body.cb-round .theme-toggle .theme-slider{
+  width:24px;height:24px;
+}
+body.cb-round .theme-toggle .theme-slider{
+  border-radius:50%;
+  background:transparent;
+  border:2px solid var(--rule);
+}
+body.cb-round .theme-toggle .theme-checkbox:checked~.theme-slider{
+  background:var(--accent);
+  border-color:var(--accent);
+}
+body.cb-round .theme-toggle .theme-slider::before{
+  top:4px;left:4px;width:12px;height:12px;border-radius:50%;
+  background:#fff;box-shadow:none;opacity:0;transform:scale(0);
+}
+body.cb-round .theme-toggle .theme-checkbox:checked~.theme-slider::before{
+  opacity:1;transform:scale(1);box-shadow:none;
+}
+
+/* ========== 皮肤：复选框 - 拟态 ========== */
+body.cb-neu .theme-toggle,
+body.cb-neu .theme-toggle .theme-slider{
+  width:28px;height:28px;
+}
+body.cb-neu .theme-toggle .theme-slider{
+  border-radius:8px;
+  background:var(--bg2);
+  border:none;
+  box-shadow:inset 3px 3px 6px rgba(0,0,0,.1),inset -3px -3px 6px rgba(255,255,255,.8);
+}
+body.cb-neu .theme-toggle .theme-checkbox:checked~.theme-slider{
+  background:var(--accent-light);
+  box-shadow:inset 3px 3px 6px rgba(0,0,0,.1),inset -3px -3px 6px rgba(255,255,255,.8);
+}
+body.cb-neu .theme-toggle .theme-slider::before{
+  top:6px;left:6px;width:16px;height:16px;border-radius:4px;
+  background:var(--accent);box-shadow:none;opacity:0;transform:scale(0);
+}
+body.cb-neu .theme-toggle .theme-checkbox:checked~.theme-slider::before{
+  opacity:1;transform:scale(1);box-shadow:0 2px 4px rgba(0,0,0,.15);
+}
+
+/* ========== 皮肤：开关 - 日夜切换 ========== */
+body.tg-daynight .theme-toggle{width:60px;height:30px}
+body.tg-daynight .theme-toggle .theme-slider{
+  border-radius:15px;background:linear-gradient(180deg,#1a1a2e,#16213e);
+  border:2px solid #0f3460;transition:all .4s ease;overflow:hidden;
+}
+body.tg-daynight .theme-toggle .theme-checkbox:checked~.theme-slider{
+  background:linear-gradient(180deg,#87ceeb,#f0e68c);
+  border-color:#4a90d9;
+}
+body.tg-daynight .theme-toggle .theme-slider::before{
+  top:2px;left:2px;width:22px;height:22px;border-radius:50%;
+  background:radial-gradient(circle at 30% 30%,#fffacd,#ffd700);
+  box-shadow:0 0 10px rgba(255,215,0,.5);
+  transition:all .4s cubic-bezier(.68,-.55,.265,1.55);
+}
+body.tg-daynight .theme-toggle .theme-checkbox:checked~.theme-slider::before{
+  transform:translateX(30px);
+  background:radial-gradient(circle at 30% 30%,#f5f5f5,#e0e0e0);
+  box-shadow:0 0 8px rgba(255,255,255,.3);
+}
+body.tg-daynight .toggle-switch{
+  width:60px;height:30px;border-radius:15px;
+  background:linear-gradient(180deg,#1a1a2e,#16213e);
+  border:2px solid #0f3460;overflow:hidden;
+}
+body.tg-daynight .toggle-switch.on{
+  background:linear-gradient(180deg,#87ceeb,#f0e68c);
+  border-color:#4a90d9;
+}
+body.tg-daynight .toggle-switch::after{
+  top:2px;left:2px;width:22px;height:22px;border-radius:50%;
+  background:radial-gradient(circle at 30% 30%,#fffacd,#ffd700);
+  box-shadow:0 0 10px rgba(255,215,0,.5);
+  transition:all .4s cubic-bezier(.68,-.55,.265,1.55);
+}
+body.tg-daynight .toggle-switch.on::after{
+  transform:translateX(30px);
+  background:radial-gradient(circle at 30% 30%,#f5f5f5,#e0e0e0);
+  box-shadow:0 0 8px rgba(255,255,255,.3);
+}
+
+/* ========== 皮肤：开关 - 霓虹 ========== */
+body.tg-neon .theme-toggle{width:56px;height:28px}
+body.tg-neon .theme-toggle .theme-slider{
+  border-radius:14px;background:#1a1a2e;border:2px solid #2d2d44;
+  transition:all .3s ease;
+}
+body.tg-neon .theme-toggle .theme-checkbox:checked~.theme-slider{
+  background:transparent;border-color:var(--accent);
+  box-shadow:0 0 10px var(--accent),inset 0 0 10px rgba(16,185,129,.2);
+}
+body.tg-neon .theme-toggle .theme-slider::before{
+  top:3px;left:3px;width:18px;height:18px;border-radius:50%;
+  background:#555;box-shadow:none;transition:all .3s ease;
+}
+body.tg-neon .theme-toggle .theme-checkbox:checked~.theme-slider::before{
+  transform:translateX(28px);
+  background:var(--accent);
+  box-shadow:0 0 8px var(--accent),0 0 16px var(--accent);
+}
+body.tg-neon .toggle-switch{
+  width:56px;height:28px;border-radius:14px;
+  background:#1a1a2e;border:2px solid #2d2d44;
+}
+body.tg-neon .toggle-switch.on{
+  background:transparent;border-color:var(--accent);
+  box-shadow:0 0 10px var(--accent),inset 0 0 10px rgba(16,185,129,.2);
+}
+body.tg-neon .toggle-switch::after{
+  top:3px;left:3px;width:18px;height:18px;border-radius:50%;
+  background:#555;box-shadow:none;transition:all .3s ease;
+}
+body.tg-neon .toggle-switch.on::after{
+  transform:translateX(28px);
+  background:var(--accent);
+  box-shadow:0 0 8px var(--accent),0 0 16px var(--accent);
+}
+
+/* ========== 皮肤：卡片 - 毛玻璃 ========== */
+body.cd-glass .habit-card,
+body.cd-glass .stat-card,
+body.cd-glass .mini-quote,
+body.cd-glass .profile-stat-item,
+body.cd-glass .mg-group,
+body.cd-glass .mg-stat-card,
+body.cd-glass .ai-message-bubble,
+body.cd-glass .water-tracker,
+body.cd-glass .diet-tip-card,
+body.cd-glass .diet-meal-card,
+body.cd-glass .diet-seasonal-card,
+body.cd-glass .diet-color-card,
+body.cd-glass .diet-habit-item,
+body.cd-glass .diet-book-item,
+body.cd-glass .panel-content,
+body.cd-glass .panel,
+body.cd-glass .lib-item{
+  background:rgba(255,255,255,.8);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.6);
+}
+body.dark.cd-glass .habit-card,
+body.dark.cd-glass .stat-card,
+body.dark.cd-glass .mini-quote,
+body.dark.cd-glass .profile-stat-item,
+body.dark.cd-glass .mg-group,
+body.dark.cd-glass .mg-stat-card,
+body.dark.cd-glass .ai-message-bubble,
+body.dark.cd-glass .water-tracker,
+body.dark.cd-glass .diet-tip-card,
+body.dark.cd-glass .diet-meal-card,
+body.dark.cd-glass .diet-seasonal-card,
+body.dark.cd-glass .diet-color-card,
+body.dark.cd-glass .diet-habit-item,
+body.dark.cd-glass .diet-book-item,
+body.dark.cd-glass .panel-content,
+body.dark.cd-glass .panel,
+body.dark.cd-glass .lib-item{
+  background:rgba(30,41,59,.8);
+  border-color:rgba(255,255,255,.08);
+}
+
+/* ========== 皮肤：卡片 - 渐变边框 ========== */
+body.cd-gradient .habit-card,
+body.cd-gradient .stat-card,
+body.cd-gradient .mini-quote,
+body.cd-gradient .profile-stat-item,
+body.cd-gradient .mg-group,
+body.cd-gradient .mg-stat-card,
+body.cd-gradient .ai-message-bubble,
+body.cd-gradient .water-tracker,
+body.cd-gradient .diet-tip-card,
+body.cd-gradient .diet-meal-card,
+body.cd-gradient .diet-seasonal-card,
+body.cd-gradient .diet-color-card,
+body.cd-gradient .diet-habit-item,
+body.cd-gradient .diet-book-item,
+body.cd-gradient .panel-content,
+body.cd-gradient .panel,
+body.cd-gradient .lib-item{
+  position:relative;
+  background:var(--bg);
+  border:2px solid transparent;
+  background-clip:padding-box;
+}
+body.cd-gradient .habit-card::before,
+body.cd-gradient .stat-card::before,
+body.cd-gradient .mini-quote::before,
+body.cd-gradient .profile-stat-item::before,
+body.cd-gradient .mg-group::before,
+body.cd-gradient .mg-stat-card::before,
+body.cd-gradient .ai-message-bubble::before,
+body.cd-gradient .water-tracker::before,
+body.cd-gradient .diet-tip-card::before,
+body.cd-gradient .diet-meal-card::before,
+body.cd-gradient .diet-seasonal-card::before,
+body.cd-gradient .diet-color-card::before,
+body.cd-gradient .diet-habit-item::before,
+body.cd-gradient .diet-book-item::before,
+body.cd-gradient .panel-content::before,
+body.cd-gradient .panel::before,
+body.cd-gradient .lib-item::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;bottom:0;
+  border-radius:inherit;
+  padding:2px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  pointer-events:none;
+  opacity:.4;
+}
+body.cd-gradient .habit-card:hover::before,
+body.cd-gradient .stat-card:hover::before,
+body.cd-gradient .lib-item:hover::before{
+  opacity:.8;
+}
+
+/* ========== 皮肤：卡片 - 拟态 ========== */
+body.cd-neu .habit-card,
+body.cd-neu .stat-card,
+body.cd-neu .mini-quote,
+body.cd-neu .profile-stat-item,
+body.cd-neu .mg-group,
+body.cd-neu .mg-stat-card,
+body.cd-neu .ai-message-bubble,
+body.cd-neu .water-tracker,
+body.cd-neu .diet-tip-card,
+body.cd-neu .diet-meal-card,
+body.cd-neu .diet-seasonal-card,
+body.cd-neu .diet-color-card,
+body.cd-neu .diet-habit-item,
+body.cd-neu .diet-book-item,
+body.cd-neu .panel-content,
+body.cd-neu .panel,
+body.cd-neu .lib-item{
+  background:var(--bg2);
+  box-shadow:8px 8px 16px rgba(0,0,0,.08),-8px -8px 16px rgba(255,255,255,.9);
+  border:none;
+}
+body.cd-neu .habit-card:hover,
+body.cd-neu .stat-card:hover,
+body.cd-neu .lib-item:hover{
+  box-shadow:12px 12px 24px rgba(0,0,0,.1),-12px -12px 24px rgba(255,255,255,.95);
+}
+
+/* ========== 皮肤：输入框 - 毛玻璃 ========== */
+body.in-glass input[type="text"],
+body.in-glass input[type="number"],
+body.in-glass input[type="password"],
+body.in-glass input[type="time"],
+body.in-glass textarea,
+body.in-glass select,
+body.in-glass .mg-search{
+  background:rgba(255,255,255,.7);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.6);
+}
+body.dark.in-glass input[type="text"],
+body.dark.in-glass input[type="number"],
+body.dark.in-glass input[type="password"],
+body.dark.in-glass input[type="time"],
+body.dark.in-glass textarea,
+body.dark.in-glass select,
+body.dark.in-glass .mg-search{
+  background:rgba(30,41,59,.7);
+  border-color:rgba(255,255,255,.08);
+}
+
+/* ========== 皮肤：输入框 - 下划线 ========== */
+body.in-underline input[type="text"],
+body.in-underline input[type="number"],
+body.in-underline input[type="password"],
+body.in-underline input[type="time"],
+body.in-underline textarea,
+body.in-underline select,
+body.in-underline .mg-search{
+  border-radius:0;
+  border:none;
+  border-bottom:2px solid var(--rule);
+  background:transparent;
+  box-shadow:none;
+  transition:border-color .2s;
+}
+body.in-underline input[type="text"]:focus,
+body.in-underline input[type="number"]:focus,
+body.in-underline input[type="password"]:focus,
+body.in-underline input[type="time"]:focus,
+body.in-underline textarea:focus,
+body.in-underline select:focus,
+body.in-underline .mg-search:focus{
+  border-bottom-color:var(--accent);
+  box-shadow:none;
+  outline:none;
+}
+
+/* ========== 皮肤：输入框 - 浮动标签 ========== */
+body.in-float input[type="text"],
+body.in-float input[type="number"],
+body.in-float input[type="password"],
+body.in-float input[type="time"],
+body.in-float textarea,
+body.in-float select,
+body.in-float .mg-search{
+  border:2px solid var(--rule);
+  transition:border-color .2s;
+}
+body.in-float input[type="text"]:focus,
+body.in-float input[type="number"]:focus,
+body.in-float input[type="password"]:focus,
+body.in-float input[type="time"]:focus,
+body.in-float textarea:focus,
+body.in-float select:focus,
+body.in-float .mg-search:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-light);
+}
+
+/* ========== 皮肤：徽章 - 药丸 ========== */
+body.bd-pill .level-badge,
+body.bd-pill .streak-badge,
+body.bd-pill .badge,
+body.bd-pill .habit-tag{
+  border-radius:999px;
+  padding:4px 12px;
+}
+
+/* ========== 皮肤：徽章 - 渐变 ========== */
+body.bd-gradient .level-badge,
+body.bd-gradient .streak-badge,
+body.bd-gradient .badge,
+body.bd-gradient .habit-tag{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;
+  border:none;
+}
+
+/* ========== 皮肤：徽章 - 发光 ========== */
+body.bd-glow .level-badge,
+body.bd-glow .streak-badge,
+body.bd-glow .badge,
+body.bd-glow .habit-tag{
+  box-shadow:0 0 8px var(--accent),0 0 16px rgba(16,185,129,.3);
+}
+
+/* ========== 皮肤：徽章 - 圆点 ========== */
+body.bd-dot .level-badge,
+body.bd-dot .streak-badge,
+body.bd-dot .badge,
+body.bd-dot .habit-tag{
+  position:relative;
+  background:transparent;
+  color:var(--ink);
+  border:none;
+  padding-left:18px;
+}
+body.bd-dot .level-badge::before,
+body.bd-dot .streak-badge::before,
+body.bd-dot .badge::before,
+body.bd-dot .habit-tag::before{
+  content:'';
+  position:absolute;
+  left:0;top:50%;
+  transform:translateY(-50%);
+  width:8px;height:8px;
+  border-radius:50%;
+  background:var(--accent);
+}
+
 
