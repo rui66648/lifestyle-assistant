@@ -230,12 +230,94 @@ const THEME_CONFIG = {
 
 ---
 
+## 七、已实施的架构优化
+
+### 1. 设计令牌系统 (Design Tokens) ✅
+
+| 类别 | 令牌数量 | 说明 |
+|-----|---------|------|
+| 颜色系统 | 50+ | 主色阶(accent-50~900)、次色阶、语义色、五行色 |
+| 间距系统 | 11 | space-1 ~ space-16 (4px基准) |
+| 圆角系统 | 8 | xs ~ 2xl + full |
+| 阴影系统 | 7 | xs ~ xl + float |
+| 字体系统 | 15 | 字号8级 + 字重4级 + 行高3级 |
+| 动画系统 | 10 | 缓动4种 + 时长6级 |
+| 层级系统 | 8 | base ~ tooltip |
+
+**文件**: [main.css](file:///workspace/css/main.css#L1-L156) (`:root` 变量定义)
+
+### 2. 工具类系统 (Utility Classes) ✅
+
+| 类别 | 数量 | 示例 |
+|-----|------|------|
+| Flex布局 | 8 | `.u-flex`, `.u-flex-center`, `.u-flex-between` |
+| 间距 | 16 | `.u-mt-4`, `.u-p-3`, `.u-gap-2` |
+| 文字 | 10 | `.u-text-lg`, `.u-font-semibold`, `.u-text-muted` |
+| 圆角 | 4 | `.u-rounded-sm`, `.u-rounded-full` |
+| 阴影 | 2 | `.u-shadow-sm`, `.u-shadow-md` |
+| 其他 | 5 | `.u-truncate`, `.u-text-center`, `.u-transition` |
+
+**文件**: [main.css](file:///workspace/css/main.css#L164-L204) (Utility Classes)
+
+### 3. 微动效系统 (Motion System) ✅
+
+| 效果 | 说明 | 类名 |
+|-----|------|------|
+| 点击反馈 | scale(0.97) 150ms | 全局 button:active |
+| 淡入动画 | 上移+淡入 | `.fade-in` |
+| 滑入动画 | 从下方滑入 | `.slide-up` |
+| 缩放动画 | 弹性缩放进入 | `.scale-in` |
+| 呼吸动画 | 2s循环闪烁 | `.pulse` |
+| 全局过渡 | 所有按钮统一过渡 | button, [role="button"] |
+
+**文件**: [main.css](file:///workspace/css/main.css#L206-L239) (Motion System)
+
+### 4. 性能优化 ✅
+
+| 优化项 | 说明 | 影响元素 |
+|-------|------|---------|
+| contain: layout paint | 隔离重绘区域 | .habit-card, .stat-card, .lib-item |
+| will-change: transform | 提前声明变化属性 | 同上 |
+| GPU加速动画 | translateZ(0) 开启硬件加速 | .animate-transform |
+| 统一过渡属性 | 只过渡transform/box-shadow/background-color/opacity | 所有按钮 |
+
+**文件**: [main.css](file:///workspace/css/main.css#L241-L249) (Performance)
+
+### 5. 可访问性优化 ✅
+
+| 优化项 | 说明 |
+|-------|------|
+| prefers-reduced-motion | 尊重系统减少动效设置 |
+| :focus-visible | 键盘焦点可见样式 |
+| .sr-only | 屏幕阅读器专用隐藏类 |
+| 语义化HTML | 使用正确的button/nav/section标签 |
+
+**文件**: [main.css](file:///workspace/css/main.css#L251-L287) (Accessibility)
+
+### 6. 暗色模式深化 ✅
+
+| 优化项 | 说明 |
+|-------|------|
+| 完整色阶 | accent-50~900 暗色版 |
+| 三级背景 | --bg / --bg2 / --surface / --surface-variant |
+| 语义色暗色版 | success/warning/danger/info |
+| 系统跟随 | `prefers-color-scheme` 自动检测 |
+| 用户优先 | localStorage 手动设置优先级更高 |
+
+**文件**: 
+- [main.css](file:///workspace/css/main.css#L2523-L2591) (Dark Mode)
+- [main.js](file:///workspace/js/main.js#L2-L24) (Dark Mode Init)
+
+---
+
 ## 相关文件
 
 | 文件 | 说明 |
 |-----|------|
-| css/main.css | 主样式文件，包含所有皮肤样式定义 |
+| css/main.css | 主样式文件，包含所有皮肤样式定义、设计令牌、工具类、动效系统 |
 | css/components.css | UI组件库样式 |
 | js/ui/panels.js | 皮肤系统配置与切换逻辑 |
 | js/ui/components.js | UI组件创建函数 |
 | js/ui/render.js | 页面渲染函数 |
+| js/main.js | 应用入口，暗色模式初始化 |
+| docs/skin-component-mapping.md | 本文档 |

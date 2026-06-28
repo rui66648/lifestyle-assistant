@@ -1,20 +1,55 @@
 :root{
+  /* Color Tokens - 颜色系统 */
   --bg:#F8FAFC;
   --bg2:#F1F5F9;
+  --surface:#FFFFFF;
+  --surface-variant:#F8FAFC;
   --ink:#1E293B;
   --ink2:#475569;
   --muted:#94A3B8;
   --rule:#E2E8F0;
-  --accent:#10B981;
+  --border:#E2E8F0;
+  --border-light:#F1F5F9;
+
+  /* Accent Color Scale - 主色阶 */
+  --accent-50:#ECFDF5;
+  --accent-100:#D1FAE5;
+  --accent-200:#A7F3D0;
+  --accent-300:#6EE7B7;
+  --accent-400:#34D399;
+  --accent-500:#10B981;
   --accent-600:#059669;
   --accent-700:#047857;
-  --accent2:#F59E0B;
-  --accent-2-600:#D97706;
-  --accent-light:#D1FAE5;
-  --accent2-light:#FEF3C7;
+  --accent-800:#065F46;
+  --accent-900:#064E3B;
+  --accent:var(--accent-500);
+  --accent-light:var(--accent-100);
+
+  /* Secondary Accent - 次色阶 */
+  --accent2-50:#FFFBEB;
+  --accent2-100:#FEF3C7;
+  --accent2-200:#FDE68A;
+  --accent2-300:#FCD34D;
+  --accent2-400:#FBBF24;
+  --accent2-500:#F59E0B;
+  --accent2-600:#D97706;
+  --accent2-700:#B45309;
+  --accent2-800:#92400E;
+  --accent2-900:#78350F;
+  --accent2:var(--accent2-500);
+  --accent2-light:var(--accent2-100);
+
+  /* Semantic Colors - 语义色 */
+  --success:#10B981;
+  --success-light:#D1FAE5;
+  --warning:#F59E0B;
+  --warning-light:#FEF3C7;
   --danger:#EF4444;
+  --danger-light:#FEE2E2;
   --info:#3B82F6;
-  --on-accent:#fff;
+  --info-light:#DBEAFE;
+
+  /* Five Elements Colors - 五行五色 */
   --fw-1:#10B981;
   --fw-2:#F59E0B;
   --fw-3:#3B82F6;
@@ -23,35 +58,234 @@
   --fw-6:#FBBF24;
   --fw-7:#EF4444;
   --fw-8:#14B8A6;
+
+  --on-accent:#fff;
+
+  /* Spacing Tokens - 间距系统 (4px base) */
+  --space-1:4px;
+  --space-2:8px;
+  --space-3:12px;
+  --space-4:16px;
+  --space-5:20px;
+  --space-6:24px;
+  --space-8:32px;
+  --space-10:40px;
+  --space-12:48px;
+  --space-16:64px;
+
+  /* Radius Tokens - 圆角系统 */
+  --radius-xs:6px;
   --radius-sm:10px;
+  --radius-md:12px;
   --radius:16px;
   --radius-lg:20px;
   --radius-xl:28px;
+  --radius-2xl:32px;
+  --radius-full:9999px;
+
+  /* Shadow Tokens - 阴影系统 */
+  --shadow-xs:0 1px 2px rgba(15,23,42,.04);
   --shadow-sm:0 2px 8px rgba(15,23,42,.06);
   --shadow:0 4px 12px rgba(15,23,42,.08);
   --shadow-md:0 8px 24px rgba(15,23,42,.1);
   --shadow-lg:0 16px 48px rgba(15,23,42,.12);
+  --shadow-xl:0 24px 64px rgba(15,23,42,.15);
   --shadow-float:0 20px 60px rgba(15,23,42,.15);
+
+  /* Typography Tokens - 字体系统 */
+  --font-sans:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
   --font-mono:'GeistMono',monospace;
+
+  --text-xs:11px;
+  --text-sm:12px;
+  --text-base:14px;
+  --text-lg:16px;
+  --text-xl:18px;
+  --text-2xl:20px;
+  --text-3xl:24px;
+  --text-4xl:32px;
+
+  --font-normal:400;
+  --font-medium:500;
+  --font-semibold:600;
+  --font-bold:700;
+
+  --leading-tight:1.25;
+  --leading-normal:1.5;
+  --leading-relaxed:1.75;
+
+  /* Checkbox Tokens */
   --cb-radius:4px;
   --cb-border:2px solid var(--accent);
+
+  /* Radio Tokens */
   --rb-radius:50%;
   --rb-border:2px solid var(--rule);
   --rb-dot-size:12px;
   --rb-size:22px;
+
+  /* Heatmap Colors - 热力图色阶 */
   --yh-0:#EBEDF0;
   --yh-1:#C6E48B;
   --yh-2:#7BC96F;
   --yh-3:#239A3B;
   --yh-4:#196127;
+
+  /* Transition Tokens - 动画系统 */
   --ease:cubic-bezier(.4,0,.2,1);
+  --ease-out:cubic-bezier(0,0,.2,1);
+  --ease-in:cubic-bezier(.4,0,1,1);
+  --ease-bounce:cubic-bezier(.68,-.55,.265,1.55);
+
+  --duration-75:75ms;
+  --duration-100:100ms;
+  --duration-150:150ms;
+  --duration-200:200ms;
+  --duration-300:300ms;
+  --duration-500:500ms;
+
+  /* Z-index Scale - 层级系统 */
+  --z-base:0;
+  --z-dropdown:100;
+  --z-sticky:200;
+  --z-fixed:300;
+  --z-modal:400;
+  --z-popover:500;
+  --z-toast:600;
+  --z-tooltip:700;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--ink);max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:70px;overflow-x:hidden;line-height:1.5;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:70px;overflow-x:hidden;line-height:var(--leading-normal);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;font-size:inherit}
 input,textarea{font-family:inherit;font-size:inherit}
 img{max-width:100%;display:block}
 a{color:var(--accent);text-decoration:none}
+
+/* ========== Utility Classes - 工具类 ========== */
+.u-flex{display:flex}
+.u-flex-col{flex-direction:column}
+.u-flex-center{display:flex;align-items:center;justify-content:center}
+.u-flex-between{display:flex;align-items:center;justify-content:space-between}
+.u-items-center{align-items:center}
+.u-justify-between{justify-content:space-between}
+.u-gap-1{gap:var(--space-1)}
+.u-gap-2{gap:var(--space-2)}
+.u-gap-3{gap:var(--space-3)}
+.u-gap-4{gap:var(--space-4)}
+.u-mt-1{margin-top:var(--space-1)}
+.u-mt-2{margin-top:var(--space-2)}
+.u-mt-3{margin-top:var(--space-3)}
+.u-mt-4{margin-top:var(--space-4)}
+.u-mb-1{margin-bottom:var(--space-1)}
+.u-mb-2{margin-bottom:var(--space-2)}
+.u-mb-3{margin-bottom:var(--space-3)}
+.u-mb-4{margin-bottom:var(--space-4)}
+.u-p-2{padding:var(--space-2)}
+.u-p-3{padding:var(--space-3)}
+.u-p-4{padding:var(--space-4)}
+.u-text-sm{font-size:var(--text-sm)}
+.u-text-base{font-size:var(--text-base)}
+.u-text-lg{font-size:var(--text-lg)}
+.u-text-xl{font-size:var(--text-xl)}
+.u-font-medium{font-weight:var(--font-medium)}
+.u-font-semibold{font-weight:var(--font-semibold)}
+.u-font-bold{font-weight:var(--font-bold)}
+.u-text-muted{color:var(--muted)}
+.u-text-ink2{color:var(--ink2)}
+.u-text-accent{color:var(--accent)}
+.u-text-center{text-align:center}
+.u-truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.u-rounded-sm{border-radius:var(--radius-sm)}
+.u-rounded-md{border-radius:var(--radius-md)}
+.u-rounded-lg{border-radius:var(--radius-lg)}
+.u-rounded-full{border-radius:var(--radius-full)}
+.u-shadow-sm{box-shadow:var(--shadow-sm)}
+.u-shadow-md{box-shadow:var(--shadow-md)}
+.u-transition{transition:all var(--duration-200) var(--ease)}
+
+/* ========== Motion System - 微动效系统 ========== */
+button, [role="button"], .clickable{
+  transition:transform var(--duration-150) var(--ease),
+             box-shadow var(--duration-150) var(--ease),
+             background-color var(--duration-150) var(--ease),
+             opacity var(--duration-150) var(--ease);
+}
+button:active, [role="button"]:active, .clickable:active{
+  transform:scale(0.97);
+}
+
+.fade-in{animation:fadeIn var(--duration-200) var(--ease-out)}
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.slide-up{animation:slideUp var(--duration-300) var(--ease-out)}
+@keyframes slideUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.scale-in{animation:scaleIn var(--duration-200) var(--ease-bounce)}
+@keyframes scaleIn{
+  from{opacity:0;transform:scale(.8)}
+  to{opacity:1;transform:scale(1)}
+}
+
+.pulse{animation:pulse 2s infinite}
+@keyframes pulse{
+  0%,100%{opacity:1}
+  50%{opacity:.6}
+}
+
+/* ========== Performance - 性能优化 ========== */
+.habit-card, .stat-card, .lib-item{
+  contain:layout paint;
+  will-change:transform;
+}
+.animate-transform{
+  transform:translateZ(0);
+  backface-visibility:hidden;
+}
+
+/* ========== Accessibility - 可访问性 ========== */
+@media (prefers-reduced-motion: reduce){
+  *,
+  *::before,
+  *::after{
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+    scroll-behavior:auto !important;
+  }
+}
+
+:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:2px;
+  border-radius:4px;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:2px;
+}
+
+.sr-only{
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border-width:0;
+}
+
 
 /* ========== Mini Header ========== */
 .mini-header{
@@ -2325,26 +2559,68 @@ body.dark .wuse-card,body.dark .emotion-mini-card,body.dark .wulao-mini-card{bac
 
 /* ========== Dark Mode ========== */
 body.dark{
+  /* Dark Theme - 暗色模式色阶 */
   --bg:#0F172A;
   --bg2:#1E293B;
+  --surface:#1E293B;
+  --surface-variant:#334155;
   --ink:#F1F5F9;
   --ink2:#94A3B8;
   --muted:#64748B;
   --rule:#334155;
+  --border:#334155;
+  --border-light:#1E293B;
+
+  /* Accent Color Scale - Dark */
+  --accent-50:#022C22;
+  --accent-100:#064E3B;
+  --accent-200:#065F46;
+  --accent-300:#047857;
+  --accent-400:#059669;
+  --accent-500:#10B981;
+  --accent-600:#34D399;
+  --accent-700:#6EE7B7;
+  --accent-800:#A7F3D0;
+  --accent-900:#D1FAE5;
   --accent:#34D399;
-  --accent-600:#10B981;
-  --accent-700:#059669;
-  --accent2:#FBBF24;
-  --accent-2-600:#F59E0B;
   --accent-light:rgba(52,211,153,.15);
+
+  /* Secondary Accent - Dark */
+  --accent2-50:#451A03;
+  --accent2-100:#78350F;
+  --accent2-200:#92400E;
+  --accent2-300:#B45309;
+  --accent2-400:#D97706;
+  --accent2-500:#F59E0B;
+  --accent2-600:#FBBF24;
+  --accent2-700:#FCD34D;
+  --accent2-800:#FDE68A;
+  --accent2-900:#FEF3C7;
+  --accent2:#FBBF24;
   --accent2-light:rgba(251,191,36,.12);
+
+  /* Semantic Colors - Dark */
+  --success:#34D399;
+  --success-light:rgba(52,211,153,.15);
+  --warning:#FBBF24;
+  --warning-light:rgba(251,191,36,.12);
   --danger:#F87171;
+  --danger-light:rgba(248,113,113,.12);
   --info:#60A5FA;
+  --info-light:rgba(96,165,250,.12);
+
+  --on-accent:#0F172A;
+
+  /* Shadows - Dark */
+  --shadow-xs:0 1px 2px rgba(0,0,0,.3);
   --shadow-sm:0 2px 8px rgba(0,0,0,.3);
   --shadow:0 4px 12px rgba(0,0,0,.4);
   --shadow-md:0 8px 24px rgba(0,0,0,.5);
   --shadow-lg:0 16px 48px rgba(0,0,0,.6);
+  --shadow-xl:0 24px 64px rgba(0,0,0,.7);
   --shadow-float:0 20px 60px rgba(0,0,0,.7);
+
+  /* Heatmap - Dark */
   --yh-0:#1E293B;
   --yh-1:#166534;
   --yh-2:#15803D;
