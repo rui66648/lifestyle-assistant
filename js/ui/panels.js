@@ -654,9 +654,10 @@
       items: [
         { id:'btn-default', name:'圆角渐变', emoji:'🟢', style:{'btn-style':'default'} },
         { id:'btn-pill', name:'胶囊', emoji:'💊', style:{'btn-style':'pill'} },
-        { id:'btn-glass', name:'毛玻璃', emoji:'✨', style:{'btn-style':'glass'} },
-        { id:'btn-gradient', name:'双色渐变', emoji:'🌈', style:{'btn-style':'gradient'} },
         { id:'btn-3d', name:'3D立体', emoji:'📦', style:{'btn-style':'3d'} },
+        { id:'btn-aurora', name:'极光渐变', emoji:'🌌', style:{'btn-style':'aurora'} },
+        { id:'btn-neu', name:'拟态', emoji:'🎯', style:{'btn-style':'neu'} },
+        { id:'btn-minimal', name:'极简线条', emoji:'📏', style:{'btn-style':'minimal'} },
       ]
     },
     {
@@ -666,7 +667,9 @@
       items: [
         { id:'cb-default', name:'圆角', emoji:'✅', style:{'cb-style':'default'} },
         { id:'cb-round', name:'圆形', emoji:'⭕', style:{'cb-style':'round'} },
+        { id:'cb-aurora', name:'极光', emoji:'🌌', style:{'cb-style':'aurora'} },
         { id:'cb-neu', name:'拟态', emoji:'🎯', style:{'cb-style':'neu'} },
+        { id:'cb-minimal', name:'极简', emoji:'📏', style:{'cb-style':'minimal'} },
       ]
     },
     {
@@ -676,7 +679,9 @@
       items: [
         { id:'tg-default', name:'标准', emoji:'🔘', style:{'tg-style':'default'} },
         { id:'tg-daynight', name:'日夜切换', emoji:'🌓', style:{'tg-style':'daynight'} },
-        { id:'tg-neon', name:'霓虹', emoji:'💡', style:{'tg-style':'neon'} },
+        { id:'tg-aurora', name:'极光', emoji:'🌌', style:{'tg-style':'aurora'} },
+        { id:'tg-neu', name:'拟态', emoji:'🎯', style:{'tg-style':'neu'} },
+        { id:'tg-minimal', name:'极简', emoji:'📏', style:{'tg-style':'minimal'} },
       ]
     },
     {
@@ -686,7 +691,9 @@
       items: [
         { id:'cd-glass', name:'毛玻璃', emoji:'✨', style:{'cd-style':'glass'} },
         { id:'cd-gradient', name:'渐变边框', emoji:'🌈', style:{'cd-style':'gradient'} },
+        { id:'cd-aurora', name:'极光渐变', emoji:'🌌', style:{'cd-style':'aurora'} },
         { id:'cd-neu', name:'拟态', emoji:'🎯', style:{'cd-style':'neu'} },
+        { id:'cd-minimal', name:'极简线条', emoji:'📏', style:{'cd-style':'minimal'} },
       ]
     },
     {
@@ -695,8 +702,10 @@
       emoji: '📝',
       items: [
         { id:'in-glass', name:'毛玻璃', emoji:'✨', style:{'in-style':'glass'} },
-        { id:'in-float', name:'浮动标签', emoji:'🏷️', style:{'in-style':'float'} },
         { id:'in-underline', name:'下划线', emoji:'📏', style:{'in-style':'underline'} },
+        { id:'in-aurora', name:'极光发光', emoji:'🌌', style:{'in-style':'aurora'} },
+        { id:'in-neu', name:'拟态', emoji:'🎯', style:{'in-style':'neu'} },
+        { id:'in-minimal', name:'极简', emoji:'◻️', style:{'in-style':'minimal'} },
       ]
     },
     {
@@ -706,8 +715,9 @@
       items: [
         { id:'bd-pill', name:'药丸', emoji:'💊', style:{'bd-style':'pill'} },
         { id:'bd-gradient', name:'渐变', emoji:'🌈', style:{'bd-style':'gradient'} },
-        { id:'bd-glow', name:'发光', emoji:'🌟', style:{'bd-style':'glow'} },
-        { id:'bd-dot', name:'圆点', emoji:'🔵', style:{'bd-style':'dot'} },
+        { id:'bd-aurora', name:'极光', emoji:'🌌', style:{'bd-style':'aurora'} },
+        { id:'bd-neu', name:'拟态', emoji:'🎯', style:{'bd-style':'neu'} },
+        { id:'bd-minimal', name:'极简', emoji:'📏', style:{'bd-style':'minimal'} },
       ]
     },
   ];

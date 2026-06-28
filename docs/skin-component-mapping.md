@@ -1,5 +1,21 @@
 # 皮肤组件 → 实际UI位置对照表
 
+## UIverse 三套完整风格
+
+基于 uiverse.io 高质量组件设计，适配项目主题色和尺寸。
+
+| 风格名称 | 风格ID | 特点描述 | 灵感来源 |
+|:-------:|:------:|:--------:|:--------:|
+| **极光 Aurora** | `aurora` | 渐变背景、发光边框、梦幻流动效果 | uiverse.io 渐变发光系列 |
+| **拟态 Neumorphic** | `neu` | 柔和阴影、立体凸起、新拟态风格 | uiverse.io neumorphic 系列 |
+| **极简 Minimal** | `minimal` | 细线条、极简设计、干净利落 | uiverse.io minimal 系列 |
+
+**三套风格覆盖全部6大组件分类**：按钮、复选框、开关、卡片、输入框、徽章
+
+**文件**: [uiverse-themes.css](file:///workspace/css/uiverse-themes.css)
+
+---
+
 ## 一、按钮样式 (btn-*)
 
 | 皮肤选项 | 样式特点 | 实际影响的UI元素 |
