@@ -162,79 +162,148 @@ const CONSTITUTION_TYPES = [
   {id:'tebing',name:'特禀质',emoji:'🤧',color:'#B8B8D1',desc:'先天失常，过敏体质，易荨麻疹、哮喘、花粉症。',advice:'避免接触过敏原，饮食清淡，增强体质，注意季节变化。',habits:['early_rise','breakfast','walk','sunshine','healthy_diet','vitamin']}
 ];
 
+/* 王琦九种体质辨识量表（标准版67题） */
+const OPTS = [
+  {text:'没有(根本不会)',score:1},
+  {text:'很少(有一点)',score:2},
+  {text:'有时(有些)',score:3},
+  {text:'经常(相当)',score:4},
+  {text:'总是(非常)',score:5}
+];
+
 const CONSTITUTION_QUIZ = [
-  {
-    question:'你平时容易感到疲劳吗？',
-    options:[
-      {text:'精力充沛，很少疲劳',scores:{pinghe:2,qixu:0,yangxu:0,yinxu:0}},
-      {text:'容易疲劳，气短懒言',scores:{pinghe:0,qixu:2,yangxu:1,yinxu:0}},
-      {text:'容易疲劳，怕冷喜热',scores:{pinghe:0,qixu:1,yangxu:2,yinxu:0}},
-      {text:'容易疲劳，手足心热',scores:{pinghe:0,qixu:0,yangxu:0,yinxu:2}}
-    ]
-  },
-  {
-    question:'你的体型特征更接近哪种？',
-    options:[
-      {text:'体态适中，不胖不瘦',scores:{pinghe:2,tanshi:0,qixu:0,tebing:0}},
-      {text:'形体偏胖，腹部肥满',scores:{pinghe:0,tanshi:2,qixu:0,tebing:0}},
-      {text:'形体偏瘦，肌肉松软',scores:{pinghe:0,tanshi:0,qixu:2,tebing:0}},
-      {text:'体型正常但容易过敏',scores:{pinghe:0,tanshi:0,qixu:0,tebing:2}}
-    ]
-  },
-  {
-    question:'你的面色和皮肤状态如何？',
-    options:[
-      {text:'面色红润，皮肤正常',scores:{pinghe:2,xueyu:0,shire:0,yinxu:0}},
-      {text:'肤色晦暗，有色斑',scores:{pinghe:0,xueyu:2,shire:0,yinxu:0}},
-      {text:'面垢油光，易长痘',scores:{pinghe:0,xueyu:0,shire:2,yinxu:0}},
-      {text:'皮肤干燥，易起皮',scores:{pinghe:0,xueyu:0,shire:0,yinxu:2}}
-    ]
-  },
-  {
-    question:'你的情绪状态通常是？',
-    options:[
-      {text:'心情平和，情绪稳定',scores:{pinghe:2,qiyu:0,qixu:0,xueyu:0}},
-      {text:'容易抑郁，闷闷不乐',scores:{pinghe:0,qiyu:2,qixu:0,xueyu:0}},
-      {text:'容易烦躁，易怒',scores:{pinghe:0,qiyu:0,qixu:0,xueyu:0,yinxu:2}},
-      {text:'容易紧张，焦虑不安',scores:{pinghe:0,qiyu:2,qixu:0,xueyu:0}}
-    ]
-  },
-  {
-    question:'你的耐寒耐热情况如何？',
-    options:[
-      {text:'耐寒耐热，适应力好',scores:{pinghe:2,yangxu:0,yinxu:0,tanshi:0}},
-      {text:'特别怕冷，手足不温',scores:{pinghe:0,yangxu:2,yinxu:0,tanshi:0}},
-      {text:'怕热，手足心热',scores:{pinghe:0,yangxu:0,yinxu:2,tanshi:0}},
-      {text:'怕热又怕冷，不耐寒热',scores:{pinghe:0,yangxu:1,yinxu:1,tanshi:0}}
-    ]
-  },
-  {
-    question:'你的饮食偏好是？',
-    options:[
-      {text:'饮食均衡，不偏不挑',scores:{pinghe:2,tanshi:0,shire:0,yangxu:0}},
-      {text:'喜食油腻，口重',scores:{pinghe:0,tanshi:2,shire:1,yangxu:0}},
-      {text:'喜食辛辣，口渴想喝凉',scores:{pinghe:0,tanshi:0,shire:2,yangxu:0}},
-      {text:'喜食温热，不爱冷饮',scores:{pinghe:0,tanshi:0,shire:0,yangxu:2}}
-    ]
-  },
-  {
-    question:'你的大便情况通常是？',
-    options:[
-      {text:'正常成形，每日1次',scores:{pinghe:2,tanshi:0,shire:0,qixu:0}},
-      {text:'大便黏滞，不成形',scores:{pinghe:0,tanshi:2,shire:1,qixu:0}},
-      {text:'容易便秘，大便干结',scores:{pinghe:0,tanshi:0,shire:0,yinxu:2}},
-      {text:'容易腹泻，大便稀溏',scores:{pinghe:0,tanshi:0,shire:0,yangxu:2,qixu:1}}
-    ]
-  },
-  {
-    question:'你的睡眠情况如何？',
-    options:[
-      {text:'睡眠良好，入睡快',scores:{pinghe:2,qiyu:0,yinxu:0,qixu:0}},
-      {text:'入睡困难，多梦易醒',scores:{pinghe:0,qiyu:1,yinxu:1,qixu:0}},
-      {text:'睡眠质量差，早醒',scores:{pinghe:0,qiyu:0,yinxu:2,qixu:0}},
-      {text:'嗜睡，睡不醒',scores:{pinghe:0,qiyu:0,yinxu:0,qixu:2,tanshi:1}}
-    ]
-  }
+  /* ========== 一、阳虚质（Q1-Q7） ========== */
+  {type:'yangxu',num:1,question:'您手脚发凉吗？',options:[...OPTS]},
+  {type:'yangxu',num:2,question:'您胃脘部、背部或腰膝部怕冷吗？',options:[...OPTS]},
+  {type:'yangxu',num:3,question:'您感到怕冷、衣服比别人穿得多吗？',options:[...OPTS]},
+  {type:'yangxu',num:4,question:'您比一般人受不了寒冷（冬天的寒冷，夏天的冷空调、电扇等）吗？',options:[...OPTS]},
+  {type:'yangxu',num:5,question:'您比别人容易患感冒吗？',options:[...OPTS]},
+  {type:'yangxu',num:6,question:'您吃（喝）凉的东西会感到不舒服或者怕吃（喝）凉东西吗？',options:[...OPTS]},
+  {type:'yangxu',num:7,question:'您受凉或吃（喝）凉的东西后容易腹泻（拉肚子）吗？',options:[...OPTS]},
+
+  /* ========== 二、阴虚质（Q8-Q15） ========== */
+  {type:'yinxu',num:8,question:'您感到手脚心发热吗？',options:[...OPTS]},
+  {type:'yinxu',num:9,question:'您感觉身体、脸上发热吗？',options:[...OPTS]},
+  {type:'yinxu',num:10,question:'您皮肤或口唇干吗？',options:[...OPTS]},
+  {type:'yinxu',num:11,question:'您口唇的颜色比一般人红吗？',options:[...OPTS]},
+  {type:'yinxu',num:12,question:'您容易便秘或大便干燥吗？',options:[...OPTS]},
+  {type:'yinxu',num:13,question:'您面部两颧潮红或偏红吗？',options:[...OPTS]},
+  {type:'yinxu',num:14,question:'您感到眼睛干涩吗？',options:[...OPTS]},
+  {type:'yinxu',num:15,question:'您活动量稍大就容易出虚汗吗？',options:[...OPTS]},
+
+  /* ========== 三、气虚质（Q16-Q23） ========== */
+  {type:'qixu',num:16,question:'您容易疲乏吗？',options:[...OPTS]},
+  {type:'qixu',num:17,question:'您容易气短（呼吸短促，接不上气）吗？',options:[...OPTS]},
+  {type:'qixu',num:18,question:'您容易心慌吗？',options:[...OPTS]},
+  {type:'qixu',num:19,question:'您容易头晕或站起时晕眩吗？',options:[...OPTS]},
+  {type:'qixu',num:20,question:'您比别人容易患感冒吗？',options:[...OPTS]},
+  {type:'qixu',num:21,question:'您喜欢安静、懒得说话吗？',options:[...OPTS]},
+  {type:'qixu',num:22,question:'您说话声音无力吗？',options:[...OPTS]},
+  {type:'qixu',num:23,question:'您活动量稍大就容易出虚汗吗？',options:[...OPTS]},
+
+  /* ========== 四、痰湿质（Q24-Q31） ========== */
+  {type:'tanshi',num:24,question:'您感到胸闷或腹部胀满吗？',options:[...OPTS]},
+  {type:'tanshi',num:25,question:'您感到身体不轻松或不爽快吗？',options:[...OPTS]},
+  {type:'tanshi',num:26,question:'您腹部肥满松软吗？',options:[...OPTS]},
+  {type:'tanshi',num:27,question:'您有额部油脂分泌多的现象吗？',options:[...OPTS]},
+  {type:'tanshi',num:28,question:'您上眼睑比别人肿（有轻微隆起）吗？',options:[...OPTS]},
+  {type:'tanshi',num:29,question:'您嘴里有黏黏的感觉吗？',options:[...OPTS]},
+  {type:'tanshi',num:30,question:'您平时痰多，特别是咽喉部总感到有痰堵着吗？',options:[...OPTS]},
+  {type:'tanshi',num:31,question:'您舌苔厚腻或有舌苔厚厚的感觉吗？',options:[...OPTS]},
+
+  /* ========== 五、湿热质（Q32-Q37） ========== */
+  {type:'shire',num:32,question:'您面部或鼻部有油腻感或者油亮发光吗？',options:[...OPTS]},
+  {type:'shire',num:33,question:'您容易生痤疮或疮疖吗？',options:[...OPTS]},
+  {type:'shire',num:34,question:'您感到口苦或嘴里有异味吗？',options:[...OPTS]},
+  {type:'shire',num:35,question:'您大便黏滞不爽、有解不尽的感觉吗？',options:[...OPTS]},
+  {type:'shire',num:36,question:'您小便时尿道有发热感、尿色浓（深）吗？',options:[...OPTS]},
+  {type:'shire',num:37,gender:'female',question:'您带下色黄（白带颜色发黄）吗？（限女性回答）',options:[...OPTS]},
+  {type:'shire',num:38,gender:'male',question:'您阴囊潮湿吗？（限男性回答）',options:[...OPTS]},
+
+  /* ========== 六、血瘀质（Q39-Q45） ========== */
+  {type:'xueyu',num:39,question:'您的皮肤在不知不觉中会出现青紫瘀斑（皮下出血）吗？',options:[...OPTS]},
+  {type:'xueyu',num:40,question:'您两颧部有细微红丝吗？',options:[...OPTS]},
+  {type:'xueyu',num:41,question:'您身体上有哪里疼痛吗？',options:[...OPTS]},
+  {type:'xueyu',num:42,question:'您面色晦黯或容易出现褐斑吗？',options:[...OPTS]},
+  {type:'xueyu',num:43,question:'您容易有黑眼圈吗？',options:[...OPTS]},
+  {type:'xueyu',num:44,question:'您容易忘事（健忘）吗？',options:[...OPTS]},
+  {type:'xueyu',num:45,question:'您口唇颜色偏黯吗？',options:[...OPTS]},
+
+  /* ========== 七、特禀质（Q46-Q52） ========== */
+  {type:'tebing',num:46,question:'您没有感冒时也会打喷嚏吗？',options:[...OPTS]},
+  {type:'tebing',num:47,question:'您没有感冒时也会鼻塞、流鼻涕吗？',options:[...OPTS]},
+  {type:'tebing',num:48,question:'您有因季节变化、温度变化或异味等原因而咳喘的现象吗？',options:[...OPTS]},
+  {type:'tebing',num:49,question:'您容易过敏（对药物、食物、气味、花粉或在季节交替、气候变化时）吗？',options:[...OPTS]},
+  {type:'tebing',num:50,question:'您的皮肤容易起荨麻疹（风团、风疹块、风疙瘩）吗？',options:[...OPTS]},
+  {type:'tebing',num:51,question:'您因过敏出现过紫癜（紫红色瘀点、瘀斑）吗？',options:[...OPTS]},
+  {type:'tebing',num:52,question:'您的皮肤一抓就红，并出现抓痕吗？',options:[...OPTS]},
+
+  /* ========== 八、气郁质（Q53-Q59） ========== */
+  {type:'qiyu',num:53,question:'您感到闷闷不乐吗？',options:[...OPTS]},
+  {type:'qiyu',num:54,question:'您容易精神紧张、焦虑不安吗？',options:[...OPTS]},
+  {type:'qiyu',num:55,question:'您多愁善感、感情脆弱吗？',options:[...OPTS]},
+  {type:'qiyu',num:56,question:'您容易感到害怕或受到惊吓吗？',options:[...OPTS]},
+  {type:'qiyu',num:57,question:'您胁肋部或乳房胀痛吗？',options:[...OPTS]},
+  {type:'qiyu',num:58,question:'您无缘无故叹气吗？',options:[...OPTS]},
+  {type:'qiyu',num:59,question:'您咽喉部有异物感，且吐之不出、咽之不下吗？',options:[...OPTS]},
+
+  /* ========== 九、平和质（Q60-Q67，反向计分） ========== */
+  {type:'pinghe',num:60,question:'您精力充沛吗？',reverse:true,options:[
+    {text:'精力充沛',score:5},
+    {text:'比较充沛',score:4},
+    {text:'一般',score:3},
+    {text:'不太充沛',score:2},
+    {text:'很不充沛',score:1}
+  ]},
+  {type:'pinghe',num:61,question:'您容易疲乏吗？',reverse:true,options:[
+    {text:'不容易疲乏',score:5},
+    {text:'比较不容易疲乏',score:4},
+    {text:'有时容易疲乏',score:3},
+    {text:'比较容易疲乏',score:2},
+    {text:'非常容易疲乏',score:1}
+  ]},
+  {type:'pinghe',num:62,question:'您说话声音无力吗？',reverse:true,options:[
+    {text:'声音有力',score:5},
+    {text:'声音比较有力',score:4},
+    {text:'声音一般',score:3},
+    {text:'声音比较无力',score:2},
+    {text:'声音很无力',score:1}
+  ]},
+  {type:'pinghe',num:63,question:'您感到闷闷不乐吗？',reverse:true,options:[
+    {text:'不闷闷不乐',score:5},
+    {text:'比较不闷闷不乐',score:4},
+    {text:'有时闷闷不乐',score:3},
+    {text:'比较闷闷不乐',score:2},
+    {text:'非常闷闷不乐',score:1}
+  ]},
+  {type:'pinghe',num:64,question:'您比一般人耐受不了寒冷吗？',reverse:true,options:[
+    {text:'能耐受寒冷',score:5},
+    {text:'比较能耐受寒冷',score:4},
+    {text:'一般',score:3},
+    {text:'比较不能耐受寒冷',score:2},
+    {text:'很不能耐受寒冷',score:1}
+  ]},
+  {type:'pinghe',num:65,question:'您能适应外界自然和社会环境的变化吗？',reverse:true,options:[
+    {text:'能适应',score:5},
+    {text:'比较能适应',score:4},
+    {text:'一般',score:3},
+    {text:'比较不能适应',score:2},
+    {text:'不能适应',score:1}
+  ]},
+  {type:'pinghe',num:66,question:'您容易失眠吗？',reverse:true,options:[
+    {text:'不容易失眠',score:5},
+    {text:'比较不容易失眠',score:4},
+    {text:'有时失眠',score:3},
+    {text:'比较容易失眠',score:2},
+    {text:'非常容易失眠',score:1}
+  ]},
+  {type:'pinghe',num:67,question:'您容易忘事（健忘）吗？',reverse:true,options:[
+    {text:'不容易忘事',score:5},
+    {text:'比较不容易忘事',score:4},
+    {text:'有时容易忘事',score:3},
+    {text:'比较容易忘事',score:2},
+    {text:'非常容易忘事',score:1}
+  ]}
 ];
 
 const GUIDE_STEPS = [
