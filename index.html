@@ -138,8 +138,11 @@
   <div class="stats-grid" id="statsGrid"></div>
 
   <!-- 习惯排行榜 -->
-  <div class="ranking-section">
-    <div class="section-title">📊 习惯排名</div>
+  <div class="ranking-section collapsed" id="rankingSection">
+    <div class="section-title" onclick="toggleRanking()" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center">
+      <span>📊 习惯排名</span>
+      <span class="ranking-arrow" id="rankingArrow">▼</span>
+    </div>
     <div class="ranking-list" id="rankingList"></div>
   </div>
 

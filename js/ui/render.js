@@ -462,6 +462,14 @@
     renderAchievements();
   }
 
+  function toggleRanking() {
+    const section = document.getElementById('rankingSection');
+    if (section) {
+      section.classList.toggle('collapsed');
+    }
+  }
+  window.toggleRanking = toggleRanking;
+
   // ===== 共享月度热力图渲染（DRY掉 renderHeatmap 和 renderSdHeatmap 的80%重复） =====
   function _renderMonthlyHeatmap(gridEl, monthLabelEl, dateObj, todayStr) {
     if (!gridEl) return;
