@@ -646,6 +646,7 @@
         { id:'sunset', name:'暖橘', emoji:'🌅', vars:{accent:'#E8913A',accent2:'#E05A4B','accent-light':'#FDEBD0','accent2-light':'#FADBD8',bg:'#FFFBF5',bg2:'#FFF3E6'} },
         { id:'lavender', name:'紫韵', emoji:'💜', vars:{accent:'#7B6CB8',accent2:'#9B8EC4','accent-light':'#E8E5F5','accent2-light':'#F0EEF8',bg:'#FAFAFE',bg2:'#F2F1FA'} },
         { id:'forest', name:'墨绿', emoji:'🌲', vars:{accent:'#2E7D5B',accent2:'#8D9B6A','accent-light':'#D4EDDA','accent2-light':'#E8ECD6',bg:'#F5FAF6',bg2:'#EBF4EE'} },
+        { id:'modern', name:'现代简约', emoji:'✨', vars:{accent:'#10B981',accent2:'#F59E0B','accent-light':'#D1FAE5','accent2-light':'#FEF3C7',bg:'#F8FAFC',bg2:'#F1F5F9'} },
       ]
     },
     {
@@ -793,6 +794,8 @@
       root.style.setProperty('--' + key, val);
     }
     localStorage.setItem('app_skin', skinId);
+    // 现代简约主题添加 body class
+    document.body.classList.toggle('theme-modern', skinId === 'modern');
     // 更新选中态
     document.querySelectorAll('.skin-toggle-row').forEach(el => {
       el.classList.toggle('active', el.querySelector('input')?.checked);

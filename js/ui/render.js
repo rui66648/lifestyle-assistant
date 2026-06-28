@@ -260,6 +260,9 @@
     const skipped = rec2.skipped;
     const doneCardClass = (checked || skipped) ? 'done-card' : '';
     const ribbonCls = checked ? 'done' : skipped ? 'skipped' : overdue ? 'overdue' : 'pending';
+    // 时间段 class 映射（用于现代简约主题渐变边框）
+    const periodMap = { morning:'morning', forenoon:'morning', afternoon:'afternoon', evening:'evening', night:'night' };
+    const periodClass = h.timePeriod && periodMap[h.timePeriod] ? periodMap[h.timePeriod] + '-period' : '';
 
     // 查找习惯描述（从 HABIT_LIBRARY）
     var libTip = '';
@@ -269,14 +272,15 @@
     }
 
     if (h.type === 'water') {
-      return renderWaterTracker(h, rec).replace('class="water-tracker"', `class="water-tracker ${collapsedClass}"`);
+      return renderWaterTracker(h, rec).replace('class="water-tracker"', `class="water-tracker ${collapsedClass} ${periodClass}"`);
     }
 
     if (h.type === 'select') {
       const selected = rec[h.id] ? rec[h.id].value : '';
       const tipStr2 = h.tip || '';
       const timeHint = overdue ? '<span class="habit-time-hint overdue">已过期</span>' : soon ? '<span class="habit-time-hint soon">即将</span>' : '';
-      return `<div class="habit-card ${collapsedClass}" id="card-${h.id}" onclick="openEmotionPanel()">
+      const emotionPeriod = h.timePeriod && periodMap[h.timePeriod] ? periodMap[h.timePeriod] + '-period' : '';
+      return `<div class="habit-card ${collapsedClass} ${emotionPeriod}" id="card-${h.id}" onclick="openEmotionPanel()">
         <span class="status-ribbon ${ribbonCls}"></span>
         <span class="icon">${h.icon}</span>
         <div class="info">
@@ -301,7 +305,7 @@
     const btnText = skipped ? '⏭ 跳过' : failed ? '✗ 犯了' : checked ? '✓' : (isNegative ? '没犯' : '打卡');
     const skipBtn = !isNegative ? `<button class="checkin-btn ${skipped ? 'skip' : 'pending'}" onclick="event.stopPropagation();skipHabit('${h.id}')" title="跳过（不打断连续）">⏭</button>` : '';
 
-    return `<div class="habit-card ${collapsedClass} ${negClass} ${doneCardClass}" id="card-${h.id}" style="position:relative">
+    return `<div class="habit-card ${collapsedClass} ${negClass} ${doneCardClass} ${periodClass}" id="card-${h.id}" style="position:relative">
       <span class="status-ribbon ${ribbonCls}"></span>
       <span class="icon">${isNegative ? '❌' : h.icon}</span>
       <div class="info">
