@@ -3735,8 +3735,6 @@ body.cd-glass .diet-seasonal-card,
 body.cd-glass .diet-color-card,
 body.cd-glass .diet-habit-item,
 body.cd-glass .diet-book-item,
-body.cd-glass .panel-content,
-body.cd-glass .panel,
 body.cd-glass .lib-item{
   background:rgba(255,255,255,.8);
   backdrop-filter:blur(16px);
@@ -3757,8 +3755,6 @@ body.dark.cd-glass .diet-seasonal-card,
 body.dark.cd-glass .diet-color-card,
 body.dark.cd-glass .diet-habit-item,
 body.dark.cd-glass .diet-book-item,
-body.dark.cd-glass .panel-content,
-body.dark.cd-glass .panel,
 body.dark.cd-glass .lib-item{
   background:rgba(30,41,59,.8);
   border-color:rgba(255,255,255,.08);
@@ -3779,8 +3775,6 @@ body.cd-gradient .diet-seasonal-card,
 body.cd-gradient .diet-color-card,
 body.cd-gradient .diet-habit-item,
 body.cd-gradient .diet-book-item,
-body.cd-gradient .panel-content,
-body.cd-gradient .panel,
 body.cd-gradient .lib-item{
   position:relative;
   background:var(--bg);
@@ -3801,8 +3795,6 @@ body.cd-gradient .diet-seasonal-card::before,
 body.cd-gradient .diet-color-card::before,
 body.cd-gradient .diet-habit-item::before,
 body.cd-gradient .diet-book-item::before,
-body.cd-gradient .panel-content::before,
-body.cd-gradient .panel::before,
 body.cd-gradient .lib-item::before{
   content:'';
   position:absolute;
@@ -3838,8 +3830,6 @@ body.cd-neu .diet-seasonal-card,
 body.cd-neu .diet-color-card,
 body.cd-neu .diet-habit-item,
 body.cd-neu .diet-book-item,
-body.cd-neu .panel-content,
-body.cd-neu .panel,
 body.cd-neu .lib-item{
   background:var(--bg2);
   box-shadow:8px 8px 16px rgba(0,0,0,.08),-8px -8px 16px rgba(255,255,255,.9);
