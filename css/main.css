@@ -2720,4 +2720,403 @@ body.dark .pg-icon{background:linear-gradient(135deg,rgba(91,185,138,.2),rgba(25
 .diet-book-desc{font-size:11px;color:var(--muted)}
 .diet-book-arrow{font-size:20px;color:var(--muted)}
 
+/* ========== 现代简约主题 (theme-modern) ========== */
+
+/* 全局基础 */
+body.theme-modern{
+  --radius-sm:10px;
+  --radius:16px;
+  --radius-lg:20px;
+  --radius-xl:28px;
+  --shadow-sm:0 2px 8px rgba(15,23,42,.06);
+  --shadow:0 4px 12px rgba(15,23,42,.08);
+  --shadow-md:0 8px 24px rgba(15,23,42,.1);
+  --shadow-lg:0 16px 48px rgba(15,23,42,.12);
+}
+
+/* 习惯卡片 - 现代简约风格 */
+body.theme-modern .habit-card{
+  background:rgba(255,255,255,.85);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:none;
+  border-left:4px solid transparent;
+  box-shadow:var(--shadow-sm);
+  border-radius:var(--radius-lg);
+  padding:16px 18px;
+  margin-bottom:12px;
+  transition:all .3s cubic-bezier(.4,0,.2,1);
+}
+body.theme-modern .habit-card:hover{
+  box-shadow:var(--shadow-md);
+  transform:translateY(-2px);
+}
+body.theme-modern .habit-card:active{transform:scale(.98)}
+
+/* 按时间段区分左边框颜色 */
+body.theme-modern .habit-card[data-period="morning"],
+body.theme-modern .habit-card.morning-period{
+  border-left:4px solid #F59E0B;
+  background:linear-gradient(to right,rgba(245,158,11,.06),rgba(255,255,255,.85));
+}
+body.theme-modern .habit-card[data-period="afternoon"],
+body.theme-modern .habit-card.afternoon-period{
+  border-left:4px solid #10B981;
+  background:linear-gradient(to right,rgba(16,185,129,.06),rgba(255,255,255,.85));
+}
+body.theme-modern .habit-card[data-period="evening"],
+body.theme-modern .habit-card.evening-period{
+  border-left:4px solid #6366F1;
+  background:linear-gradient(to right,rgba(99,102,241,.06),rgba(255,255,255,.85));
+}
+body.theme-modern .habit-card[data-period="night"],
+body.theme-modern .habit-card.night-period{
+  border-left:4px solid #8B5CF6;
+  background:linear-gradient(to right,rgba(139,92,246,.06),rgba(255,255,255,.85));
+}
+
+/* 打卡按钮 - 圆形渐变 */
+body.theme-modern .habit-card .checkin-btn{
+  width:44px;height:44px;
+  border-radius:50%;
+  font-size:16px;
+  box-shadow:0 4px 12px rgba(16,185,129,.3);
+  transition:all .3s cubic-bezier(.4,0,.2,1);
+}
+body.theme-modern .habit-card .checkin-btn.pending{
+  background:linear-gradient(135deg,#10B981,#059669);
+  color:#fff;
+}
+body.theme-modern .habit-card .checkin-btn.pending:hover{
+  transform:scale(1.1);
+  box-shadow:0 6px 20px rgba(16,185,129,.4);
+}
+body.theme-modern .habit-card .checkin-btn.done{
+  background:linear-gradient(135deg,#10B981,#059669);
+  font-size:20px;
+  box-shadow:0 4px 12px rgba(16,185,129,.3);
+}
+body.theme-modern .habit-card .checkin-btn:active{
+  transform:scale(.9);
+}
+
+/* 习惯图标背景 */
+body.theme-modern .habit-card .icon{
+  width:48px;height:48px;
+  border-radius:14px;
+  font-size:24px;
+  background:linear-gradient(135deg,rgba(16,185,129,.15),rgba(16,185,129,.05));
+  box-shadow:0 2px 8px rgba(16,185,129,.1);
+}
+
+/* 每日经典 - 毛玻璃效果 */
+body.theme-modern .mini-quote{
+  background:rgba(255,255,255,.7);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.5);
+  box-shadow:var(--shadow-sm);
+  border-radius:var(--radius-xl);
+  padding:18px 20px;
+}
+
+/* 底部导航 - 毛玻璃 */
+body.theme-modern #bottomNav{
+  background:rgba(255,255,255,.85);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-top:1px solid rgba(0,0,0,.06);
+  box-shadow:0 -4px 20px rgba(0,0,0,.06);
+}
+body.theme-modern .nav-item.active .nav-icon{
+  background:linear-gradient(135deg,var(--accent),var(--accent-600));
+  color:#fff;
+  box-shadow:0 4px 12px rgba(16,185,129,.3);
+}
+
+/* 面板 - 现代风格 */
+body.theme-modern .panel{
+  background:var(--bg);
+  border-radius:var(--radius-xl) var(--radius-xl) 0 0;
+  box-shadow:0 -8px 32px rgba(0,0,0,.1);
+}
+body.theme-modern .panel-header{
+  border-bottom:1px solid rgba(0,0,0,.04);
+  padding:16px 20px;
+}
+
+/* 统计卡片 */
+body.theme-modern .stat-card{
+  background:rgba(255,255,255,.8);
+  backdrop-filter:blur(12px);
+  border:none;
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-sm);
+  padding:18px;
+  transition:all .3s ease;
+}
+body.theme-modern .stat-card:hover{
+  box-shadow:var(--shadow-md);
+  transform:translateY(-2px);
+}
+
+/* 个人中心 - 顶部Hero */
+body.theme-modern .mini-header{
+  background:linear-gradient(180deg,rgba(16,185,129,.12) 0%,transparent 100%);
+  border-radius:0 0 var(--radius-xl) var(--radius-xl);
+}
+
+/* 个人中心统计网格 */
+body.theme-modern .profile-stat-item{
+  background:rgba(255,255,255,.8);
+  backdrop-filter:blur(12px);
+  border:none;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-sm);
+  transition:all .3s ease;
+}
+body.theme-modern .profile-stat-item:hover{
+  box-shadow:var(--shadow);
+  transform:translateY(-2px);
+}
+
+/* 个人中心宫格 */
+body.theme-modern .profile-grid-item{
+  background:rgba(255,255,255,.8);
+  backdrop-filter:blur(12px);
+  border:none;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-sm);
+  transition:all .3s ease;
+}
+body.theme-modern .profile-grid-item:hover{
+  box-shadow:var(--shadow);
+  transform:translateY(-3px);
+}
+
+/* 成就徽章 */
+body.theme-modern .badge-icon{
+  background:linear-gradient(135deg,var(--accent-light),var(--accent2-light));
+  border:none;
+  box-shadow:0 4px 12px rgba(16,185,129,.15);
+  transition:all .3s ease;
+}
+body.theme-modern .badge-icon:hover{
+  transform:translateY(-3px) scale(1.05);
+  box-shadow:0 8px 24px rgba(16,185,129,.2);
+}
+body.theme-modern .badge-icon.locked{
+  background:rgba(241,245,249,.8);
+  box-shadow:none;
+}
+
+/* 环形进度 */
+body.theme-modern .ring-svg{
+  filter:drop-shadow(0 4px 12px rgba(16,185,129,.2));
+}
+
+/* AI聊天 - 欢迎消息气泡 */
+body.theme-modern .ai-msg.ai.welcome-msg .ai-bubble{
+  background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(245,158,11,.06));
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.6);
+  box-shadow:var(--shadow-sm);
+  border-radius:var(--radius-lg);
+}
+
+/* AI消息气泡 */
+body.theme-modern .ai-msg.ai .ai-bubble{
+  background:rgba(255,255,255,.9);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(0,0,0,.04);
+  box-shadow:var(--shadow-sm);
+}
+body.theme-modern .ai-msg.user .ai-bubble{
+  background:linear-gradient(135deg,var(--accent),var(--accent-600));
+  color:#fff;
+  box-shadow:0 4px 12px rgba(16,185,129,.25);
+}
+
+/* AI输入栏 */
+body.theme-modern #aiChatInputArea{
+  background:rgba(255,255,255,.9);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border-top:1px solid rgba(0,0,0,.06);
+}
+body.theme-modern #aiSendBtn{
+  background:linear-gradient(135deg,var(--accent),var(--accent-600));
+  box-shadow:0 4px 12px rgba(16,185,129,.3);
+  transition:all .3s ease;
+}
+body.theme-modern #aiSendBtn:hover{
+  transform:scale(1.1);
+  box-shadow:0 6px 20px rgba(16,185,129,.4);
+}
+
+/* 习惯管理 - 分组卡片 */
+body.theme-modern .mg-group{
+  background:rgba(255,255,255,.8);
+  backdrop-filter:blur(12px);
+  border:none;
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-sm);
+  overflow:hidden;
+}
+body.theme-modern .mg-group-header{
+  background:rgba(241,245,249,.6);
+  border-bottom:1px solid rgba(0,0,0,.04);
+  padding:14px 18px;
+}
+body.theme-modern .mg-item{
+  background:transparent;
+  border-bottom:1px solid rgba(0,0,0,.04);
+  padding:14px 18px;
+  transition:all .2s ease;
+}
+body.theme-modern .mg-item:hover{
+  background:rgba(16,185,129,.04);
+}
+body.theme-modern .mg-item:last-child{border-bottom:none}
+
+/* 习惯管理 - 搜索框 */
+body.theme-modern .mg-search{
+  background:rgba(255,255,255,.8);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(0,0,0,.08);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-sm);
+  transition:all .3s ease;
+}
+body.theme-modern .mg-search:focus-within{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-light),var(--shadow-sm);
+}
+
+/* 习惯管理 - 统计卡片 */
+body.theme-modern .mg-stat-card{
+  background:rgba(255,255,255,.8);
+  backdrop-filter:blur(12px);
+  border:none;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-sm);
+}
+
+/* 开关组件 - 现代风格 */
+body.theme-modern .he-switch-track{
+  background:linear-gradient(135deg,#CBD5E1,#94A3B8);
+  box-shadow:inset 0 2px 4px rgba(0,0,0,.1);
+}
+body.theme-modern .he-switch-track.on{
+  background:linear-gradient(135deg,var(--accent),var(--accent-600));
+}
+body.theme-modern .he-switch-thumb{
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+
+/* 按钮 - 现代渐变 */
+body.theme-modern .const-btn,
+body.theme-modern .tab,
+body.theme-modern .health-pack-btn,
+body.theme-modern .export-btn{
+  background:linear-gradient(135deg,var(--accent),var(--accent-600));
+  box-shadow:0 4px 12px rgba(16,185,129,.25);
+  transition:all .3s ease;
+}
+body.theme-modern .const-btn:hover,
+body.theme-modern .tab:hover,
+body.theme-modern .health-pack-btn:hover,
+body.theme-modern .export-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 6px 20px rgba(16,185,129,.35);
+}
+
+/* 饮食建议模块 - 现代风格 */
+body.theme-modern .diet-tip-card{
+  background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(245,158,11,.08));
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.5);
+}
+body.theme-modern .diet-meal-card,
+body.theme-modern .diet-seasonal-card,
+body.theme-modern .diet-color-card,
+body.theme-modern .diet-habit-item,
+body.theme-modern .diet-book-item{
+  background:rgba(255,255,255,.8);
+  backdrop-filter:blur(12px);
+  border:none;
+  box-shadow:var(--shadow-sm);
+}
+
+/* 暗黑模式下的现代简约 */
+body.dark.theme-modern{
+  --bg:#0F172A;
+  --bg2:#1E293B;
+  --ink:#F1F5F9;
+  --ink2:#94A3B8;
+  --muted:#64748B;
+  --rule:#334155;
+  --accent:#34D399;
+  --accent-600:#10B981;
+  --accent-700:#059669;
+  --accent2:#FBBF24;
+  --accent-2-600:#F59E0B;
+  --accent-light:rgba(52,211,153,.15);
+  --accent2-light:rgba(251,191,36,.12);
+}
+body.dark.theme-modern .habit-card{
+  background:rgba(30,41,59,.8);
+  border-left:4px solid transparent;
+}
+body.dark.theme-modern .habit-card[data-period="morning"],
+body.dark.theme-modern .habit-card.morning-period{
+  border-left:4px solid #F59E0B;
+  background:linear-gradient(to right,rgba(245,158,11,.08),rgba(30,41,59,.8));
+}
+body.dark.theme-modern .habit-card[data-period="afternoon"],
+body.dark.theme-modern .habit-card.afternoon-period{
+  border-left:4px solid #34D399;
+  background:linear-gradient(to right,rgba(52,211,153,.08),rgba(30,41,59,.8));
+}
+body.dark.theme-modern .habit-card[data-period="evening"],
+body.dark.theme-modern .habit-card.evening-period{
+  border-left:4px solid #818CF8;
+  background:linear-gradient(to right,rgba(129,140,248,.08),rgba(30,41,59,.8));
+}
+body.dark.theme-modern .habit-card[data-period="night"],
+body.dark.theme-modern .habit-card.night-period{
+  border-left:4px solid #A78BFA;
+  background:linear-gradient(to right,rgba(167,139,250,.08),rgba(30,41,59,.8));
+}
+body.dark.theme-modern #bottomNav{
+  background:rgba(15,23,42,.9);
+  border-top-color:rgba(255,255,255,.06);
+}
+body.dark.theme-modern .mini-quote,
+body.dark.theme-modern .stat-card,
+body.dark.theme-modern .profile-stat-item,
+body.dark.theme-modern .profile-grid-item,
+body.dark.theme-modern .mg-group,
+body.dark.theme-modern .mg-stat-card{
+  background:rgba(30,41,59,.8);
+}
+body.dark.theme-modern .ai-message-bubble{
+  background:rgba(30,41,59,.9);
+  border-color:rgba(255,255,255,.06);
+}
+body.dark.theme-modern .mg-search{
+  background:rgba(30,41,59,.8);
+  border-color:rgba(255,255,255,.08);
+}
+body.dark.theme-modern .diet-tip-card,
+body.dark.theme-modern .diet-meal-card,
+body.dark.theme-modern .diet-seasonal-card,
+body.dark.theme-modern .diet-color-card,
+body.dark.theme-modern .diet-habit-item,
+body.dark.theme-modern .diet-book-item{
+  background:rgba(30,41,59,.8);
+}
+
 
