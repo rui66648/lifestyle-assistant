@@ -680,6 +680,16 @@
     openPanel('dietPanel');
   }
 
+  function openSportsPanel() {
+    const body = document.getElementById('sportsPanelBody');
+    if (body && App.Modules.Sports) {
+      body.innerHTML = App.Modules.Sports.getPanelHTML();
+      App.Modules.Sports.bindPanelEvents();
+      App.Modules.Sports.render();
+    }
+    openPanel('sportsPanel');
+  }
+
   /* ========== 皮肤面板 ========== */
   const SKIN_CATEGORIES = [
     {
@@ -1369,6 +1379,7 @@
     openClockPanel,
     openWulaoPanel,
     openDietPanel,
+    openSportsPanel,
     toggleGroup,
     renderWulaoPanel,
     openSkinPanel,

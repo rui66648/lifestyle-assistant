@@ -1103,7 +1103,7 @@
     switch(action) {
       case 'stats': openStatsDetailPanel(); break;
       case 'diet': App.UI.Panels.openDietPanel(); break;
-      case 'sports': App.Modules.Sports.open(); break;
+      case 'sports': App.UI.Panels.openSportsPanel(); break;
       case 'clock': App.UI.Panels.openClockPanel(); break;
       case 'wulao': App.UI.Panels.openWulaoPanel(); break;
       case 'constitution': App.Modules.Constitution.openConstitutionPanel(); break;

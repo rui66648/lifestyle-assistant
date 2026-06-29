@@ -89,11 +89,6 @@ App.Modules.Sports = {
     const quote = quotes[Math.floor(Math.random() * quotes.length)];
 
     return `
-      <div class="panel-header">
-        <h2 class="panel-title">🏃 运动养生</h2>
-        <button class="panel-close" onclick="App.Modules.Sports.close()">✕</button>
-      </div>
-      <div class="panel-content">
         <!-- 今日处方 -->
         <div class="sports-prescription">
           <div class="sports-prescription-header">
@@ -252,18 +247,11 @@ App.Modules.Sports = {
             `).join('')}
           </div>
         </div>
-      </div>
     `;
   },
 
   // 绑定面板事件
   bindPanelEvents() {
-    // 关闭按钮
-    const closeBtn = document.querySelector(`#${this.panelId} .panel-close`);
-    if (closeBtn) {
-      closeBtn.addEventListener('click', () => this.close());
-    }
-
     // 快速打卡按钮
     document.querySelectorAll('.sports-quick-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
