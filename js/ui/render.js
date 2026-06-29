@@ -381,39 +381,6 @@
       ? items.filter(function(x) { return !x.checked && buildRecord(x.h); }).length
       : 0;
 
-    // 统计数据
-    const streak = getCurrentStreak();
-    const totalCheckins = getTotalCheckins();
-    const weekRate = getWeekRate();
-    const monthRate = getMonthRate();
-    const points = getUserPoints();
-    const pct = total > 0 ? Math.round((doneCount / total) * 100) : 0;
-
-    // 统计概览卡片（当天显示）
-    if (viewDateOffset === 0 && total > 0) {
-      html += `<div class="checkin-stats-card">
-        <div class="checkin-stat-item">
-          <div class="checkin-stat-num">${pct}%</div>
-          <div class="checkin-stat-label">今日完成</div>
-        </div>
-        <div class="checkin-stat-divider"></div>
-        <div class="checkin-stat-item">
-          <div class="checkin-stat-num">🔥${streak}</div>
-          <div class="checkin-stat-label">连续打卡</div>
-        </div>
-        <div class="checkin-stat-divider"></div>
-        <div class="checkin-stat-item">
-          <div class="checkin-stat-num">${totalCheckins}</div>
-          <div class="checkin-stat-label">累计打卡</div>
-        </div>
-        <div class="checkin-stat-divider"></div>
-        <div class="checkin-stat-item">
-          <div class="checkin-stat-num">⭐${points}</div>
-          <div class="checkin-stat-label">积分</div>
-        </div>
-      </div>`;
-    }
-
     // 一键全选按钮（当天且有可自动完成的习惯时显示）
     if (viewDateOffset === 0 && batchPending > 0) {
       html += '<button class="batch-complete-btn" onclick="App.UI.Render.batchCompleteAll()">✨ 一键全部完成（' + batchPending + '项）</button>';
