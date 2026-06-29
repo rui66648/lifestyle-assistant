@@ -391,8 +391,60 @@
       html += _renderEncourageRing(doneCount, total, firstId);
     }
 
-    items.forEach(({h, checked, overdue, soon}) => {
-      html += _renderHabitCardRow(h, checked, overdue, soon, rec);
+    // 按时间段分组
+    const periods = [
+      { id: 'morning', name: '早晨', icon: '🌅', emoji: '🌅', range: [4, 10] },
+      { id: 'forenoon', name: '上午', icon: '🌤️', emoji: '🌤️', range: [10, 12] },
+      { id: 'afternoon', name: '下午', icon: '☀️', emoji: '☀️', range: [12, 18] },
+      { id: 'evening', name: '晚上', icon: '🌙', emoji: '🌙', range: [18, 24] }
+    ];
+
+    const periodMap = { morning:'morning', forenoon:'morning', afternoon:'afternoon', evening:'evening', night:'evening' };
+
+    periods.forEach(period => {
+      const groupItems = items.filter(({h}) => {
+        const tp = h.timePeriod || 'daytime';
+        if (tp === period.id) return true;
+        if (periodMap[tp] === period.id) return true;
+        if (tp === 'daytime' && h.reminder && h.reminder.enabled && h.reminder.time) {
+          const [hr, min] = h.reminder.time.split(':').map(Number);
+          const minutes = hr * 60 + min;
+          const rangeStart = period.range[0] * 60;
+          const rangeEnd = period.range[1] * 60;
+          return minutes >= rangeStart && minutes < rangeEnd;
+        }
+        if (h.reminder && h.reminder.enabled && h.reminder.time) {
+          const [hr, min] = h.reminder.time.split(':').map(Number);
+          const minutes = hr * 60 + min;
+          const rangeStart = period.range[0] * 60;
+          const rangeEnd = period.range[1] * 60;
+          return minutes >= rangeStart && minutes < rangeEnd;
+        }
+        return false;
+      });
+
+      const doneInGroup = groupItems.filter(x => x.checked).length;
+      const totalInGroup = groupItems.length;
+
+      if (totalInGroup === 0 && total > 0) return;
+      if (totalInGroup === 0) return;
+
+      html += `<div class="time-group">
+        <div class="time-group-header">
+          <div class="time-group-left">
+            <span class="time-group-icon">${period.emoji}</span>
+            <span class="time-group-name">${period.name}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="time-group-count">${doneInGroup}/${totalInGroup}</span>
+          </div>
+        </div>`;
+
+      groupItems.forEach(({h, checked, overdue, soon}) => {
+        html += _renderHabitCardRow(h, checked, overdue, soon, rec);
+      });
+
+      html += `</div>`;
     });
 
     if (items.length === 0) {
