@@ -683,9 +683,7 @@
   function openSportsPanel() {
     const body = document.getElementById('sportsPanelBody');
     if (body && App.Modules.Sports) {
-      body.innerHTML = App.Modules.Sports.getPanelHTML();
-      App.Modules.Sports.bindPanelEvents();
-      App.Modules.Sports.render();
+      body.innerHTML = App.Modules.Sports.renderSportsPanel();
     }
     openPanel('sportsPanel');
   }

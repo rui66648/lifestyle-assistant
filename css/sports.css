@@ -500,6 +500,41 @@
   to{opacity:1;transform:translateY(0)}
 }
 
+/* ========== 运动摘要 ========== */
+.sports-summary{
+  display:flex;align-items:center;justify-content:center;gap:16px;
+  background:var(--bg2);border-radius:var(--radius-lg);padding:16px 20px;
+  margin-bottom:var(--space-4);
+}
+.sports-summary-item{display:flex;flex-direction:column;align-items:center;gap:4px}
+.sports-summary-val{font-size:20px;font-weight:800;color:var(--accent)}
+.sports-summary-label{font-size:11px;color:var(--muted)}
+.sports-summary-divider{width:1px;height:30px;background:var(--rule)}
+
+/* ========== 运动相关习惯 ========== */
+.sports-habits-list{
+  display:flex;flex-direction:column;gap:8px;
+  margin-bottom:var(--space-5);
+}
+.sports-habit-item{
+  display:flex;align-items:center;gap:12px;
+  background:var(--bg2);border-radius:var(--radius);padding:12px 14px;
+  cursor:pointer;transition:all .2s ease;
+  border:1px solid var(--rule);
+}
+.sports-habit-item:active{transform:scale(.98)}
+.sports-habit-item.done{opacity:.7}
+.sports-habit-icon{font-size:22px}
+.sports-habit-name{flex:1;font-size:13px;font-weight:600;color:var(--ink)}
+.sports-habit-check{
+  font-size:11px;font-weight:700;padding:4px 12px;border-radius:12px;
+  background:var(--accent-light);color:var(--accent);
+  transition:all .2s;
+}
+.sports-habit-item.done .sports-habit-check{
+  background:var(--accent);color:#fff;
+}
+
 /* ========== 响应式 ========== */
 @media (max-width:400px){
   .sports-quick-cards{
