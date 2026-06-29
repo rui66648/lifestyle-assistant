@@ -652,7 +652,7 @@
       label: '按钮',
       emoji: '🔘',
       items: [
-        { id:'btn-default', name:'圆角渐变', emoji:'🟢', style:{'btn-style':'default'} },
+{ id:'btn-default', name:'圆角渐变', emoji:'🟢', style:{'btn-style':'default'} },
         { id:'btn-pill', name:'胶囊', emoji:'💊', style:{'btn-style':'pill'} },
         { id:'btn-3d', name:'3D立体', emoji:'📦', style:{'btn-style':'3d'} },
         { id:'btn-aurora', name:'🌌 极光Aurora', emoji:'🌌', style:{'btn-style':'aurora'} },
@@ -820,6 +820,7 @@
       }
     }
     localStorage.setItem('skin_' + catId, itemId);
+    // 更新该分类下的选中态
     document.querySelectorAll('.skin-toggle-row').forEach(el => {
       const input = el.querySelector('input');
       if (input && input.name === 'skin_' + catId) {

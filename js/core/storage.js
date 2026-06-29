@@ -77,7 +77,7 @@
   }
 
   function saveConfig() { localStorage.setItem('habits_config', JSON.stringify(_habitsConfig)); }
-  function saveRecords() { localStorage.setItem('checkin_records', JSON.stringify(_checkinRecords)); }
+  function saveData() { saveConfig(); saveRecords(); }
 
   function syncHabitIcons() {
     var library = (typeof HABIT_LIBRARY !== 'undefined') ? HABIT_LIBRARY
@@ -93,7 +93,6 @@
     });
     if (changed) saveConfig();
   }
-  function saveData() { saveConfig(); saveRecords(); }
 
   function exportData() {
     const data = {
