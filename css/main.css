@@ -3897,29 +3897,6 @@ body.cb-round .theme-toggle .theme-checkbox:checked~.theme-slider::before{
   opacity:1;transform:scale(1);box-shadow:none;
 }
 
-/* ========== 皮肤：复选框 - 拟态 ========== */
-body.cb-neu .theme-toggle,
-body.cb-neu .theme-toggle .theme-slider{
-  width:28px;height:28px;
-}
-body.cb-neu .theme-toggle .theme-slider{
-  border-radius:8px;
-  background:var(--bg2);
-  border:none;
-  box-shadow:inset 3px 3px 6px rgba(0,0,0,.1),inset -3px -3px 6px rgba(255,255,255,.8);
-}
-body.cb-neu .theme-toggle .theme-checkbox:checked~.theme-slider{
-  background:var(--accent-light);
-  box-shadow:inset 3px 3px 6px rgba(0,0,0,.1),inset -3px -3px 6px rgba(255,255,255,.8);
-}
-body.cb-neu .theme-toggle .theme-slider::before{
-  top:6px;left:6px;width:16px;height:16px;border-radius:4px;
-  background:var(--accent);box-shadow:none;opacity:0;transform:scale(0);
-}
-body.cb-neu .theme-toggle .theme-checkbox:checked~.theme-slider::before{
-  opacity:1;transform:scale(1);box-shadow:0 2px 4px rgba(0,0,0,.15);
-}
-
 /* ========== 皮肤：开关 - 日夜切换 ========== */
 body.tg-daynight .theme-toggle{width:60px;height:30px}
 body.tg-daynight .theme-toggle .theme-slider{
@@ -4092,32 +4069,6 @@ body.cd-gradient .habit-card:hover::before,
 body.cd-gradient .stat-card:hover::before,
 body.cd-gradient .lib-item:hover::before{
   opacity:.8;
-}
-
-/* ========== 皮肤：卡片 - 拟态 ========== */
-body.cd-neu .habit-card,
-body.cd-neu .stat-card,
-body.cd-neu .mini-quote,
-body.cd-neu .profile-stat-item,
-body.cd-neu .mg-group,
-body.cd-neu .mg-stat-card,
-body.cd-neu .ai-message-bubble,
-body.cd-neu .water-tracker,
-body.cd-neu .diet-tip-card,
-body.cd-neu .diet-meal-card,
-body.cd-neu .diet-seasonal-card,
-body.cd-neu .diet-color-card,
-body.cd-neu .diet-habit-item,
-body.cd-neu .diet-book-item,
-body.cd-neu .lib-item{
-  background:var(--bg2);
-  box-shadow:8px 8px 16px rgba(0,0,0,.08),-8px -8px 16px rgba(255,255,255,.9);
-  border:none;
-}
-body.cd-neu .habit-card:hover,
-body.cd-neu .stat-card:hover,
-body.cd-neu .lib-item:hover{
-  box-shadow:12px 12px 24px rgba(0,0,0,.1),-12px -12px 24px rgba(255,255,255,.95);
 }
 
 /* ========== 皮肤：输入框 - 毛玻璃 ========== */

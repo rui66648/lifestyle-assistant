@@ -298,23 +298,6 @@ body.cb-round .ui-checkbox__box{
 }
 
 /* Checkbox Skin: Neumorphic */
-body.cb-neu .ui-checkbox__box{
-  border:none;
-  border-radius:8px;
-  background:var(--bg2);
-  box-shadow:
-    inset 2px 2px 5px rgba(0,0,0,.1),
-    inset -2px -2px 5px rgba(255,255,255,.8);
-}
-body.cb-neu .ui-checkbox__input:checked + .ui-checkbox__box{
-  background:var(--accent-light);
-  box-shadow:
-    inset 2px 2px 5px rgba(16,185,129,.15),
-    inset -2px -2px 5px rgba(255,255,255,.6);
-}
-body.cb-neu .ui-checkbox__input:checked + .ui-checkbox__box .ui-checkbox__check{
-  border-color:var(--accent-700);
-}
 
 /* ===== Card Component ===== */
 .ui-card{
@@ -391,23 +374,6 @@ body.cd-gradient .ui-card::after{
   background:rgba(255,255,255,.9);
   border-radius:inherit;
   z-index:-1;
-}
-
-/* Card Skin: Neumorphic */
-body.cd-neu .ui-card{
-  backdrop-filter:none;
-  -webkit-backdrop-filter:none;
-  background:var(--bg);
-  border:none;
-  box-shadow:
-    8px 8px 20px rgba(0,0,0,.06),
-    -8px -8px 20px rgba(255,255,255,.8);
-}
-body.cd-neu .ui-card:hover{
-  box-shadow:
-    12px 12px 28px rgba(0,0,0,.08),
-    -12px -12px 28px rgba(255,255,255,.9);
-  transform:translateY(-2px);
 }
 
 /* Card Skin: Glass Dark */
@@ -656,12 +622,6 @@ body.dark .ui-checkbox:hover .ui-checkbox__box{
 body.dark.cd-gradient .ui-card::after{
   background:rgba(30,41,59,.9);
 }
-body.dark.cd-neu .ui-card{
-  background:var(--bg);
-  box-shadow:
-    8px 8px 20px rgba(0,0,0,.3),
-    -8px -8px 20px rgba(255,255,255,.02);
-}
 body.dark.cd-glass .ui-card{
   background:rgba(30,41,59,.6);
   border-color:rgba(255,255,255,.08);
@@ -676,9 +636,3 @@ body.dark.in-float .ui-input__field:focus{
 }
 
 /* Dark Mode Checkbox Variants */
-body.dark.cb-neu .ui-checkbox__box{
-  background:var(--bg2);
-  box-shadow:
-    inset 2px 2px 5px rgba(0,0,0,.3),
-    inset -2px -2px 5px rgba(255,255,255,.03);
-}
