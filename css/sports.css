@@ -2,24 +2,26 @@
    运动养生模块样式 - 基于《运动改造大脑》等参考文献
    ================================================================ */
 
+.sports-panel{padding:8px 4px 24px}
+
 /* ========== 今日处方 ========== */
 .sports-prescription{
   background:linear-gradient(135deg,var(--accent),var(--accent2));
   border-radius:var(--radius-lg);
-  padding:var(--space-4);
+  padding:var(--space-5);
   color:#fff;
-  margin-bottom:var(--space-4);
+  margin-bottom:var(--space-5);
 }
 .sports-prescription-header{
   display:flex;
   align-items:center;
   gap:var(--space-3);
-  margin-bottom:var(--space-3);
+  margin-bottom:var(--space-4);
 }
 .sports-prescription-icon{
   font-size:32px;
-  width:48px;
-  height:48px;
+  width:52px;
+  height:52px;
   background:rgba(255,255,255,.2);
   border-radius:50%;
   display:flex;
@@ -37,19 +39,19 @@
 .sports-daily-targets{
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:var(--space-2);
+  gap:var(--space-3);
 }
 .sports-target-item{
   background:rgba(255,255,255,.15);
   border-radius:var(--radius);
-  padding:var(--space-2);
+  padding:var(--space-3);
   text-align:center;
 }
 .sports-target-label{
   display:block;
   font-size:var(--text-xs);
   opacity:.8;
-  margin-bottom:2px;
+  margin-bottom:4px;
 }
 .sports-target-value{
   font-size:var(--text-lg);
@@ -61,15 +63,15 @@
   background:var(--bg2);
   border-left:4px solid var(--accent);
   border-radius:0 var(--radius) var(--radius) 0;
-  padding:var(--space-3);
-  margin-bottom:var(--space-4);
+  padding:var(--space-4);
+  margin-bottom:var(--space-5);
 }
 .sports-quote-text{
   font-size:var(--text-base);
   font-style:italic;
   color:var(--ink);
   line-height:var(--leading-relaxed);
-  margin-bottom:var(--space-2);
+  margin-bottom:var(--space-3);
 }
 .sports-quote-source{
   font-size:var(--text-sm);
@@ -78,13 +80,13 @@
 
 /* ========== 区块标题 ========== */
 .sports-section{
-  margin-bottom:var(--space-5);
+  margin-bottom:var(--space-6);
 }
 .sports-section-title{
-  font-size:var(--text-base);
+  font-size:var(--text-lg);
   font-weight:var(--font-semibold);
   color:var(--ink);
-  margin-bottom:var(--space-3);
+  margin-bottom:var(--space-4);
   display:flex;
   align-items:center;
   gap:var(--space-2);
@@ -94,12 +96,13 @@
 .sports-quick-cards{
   display:grid;
   grid-template-columns:repeat(2,1fr);
-  gap:var(--space-3);
+  gap:var(--space-4);
+  margin-bottom:var(--space-5);
 }
 .sports-quick-card{
   background:var(--bg2);
   border-radius:var(--radius);
-  padding:var(--space-3);
+  padding:var(--space-4);
   border:1px solid var(--rule);
   overflow:hidden;
 }
@@ -110,14 +113,14 @@
   font-size:var(--text-sm);
   font-weight:var(--font-semibold);
   color:var(--ink);
-  margin-bottom:var(--space-2);
-  padding-bottom:var(--space-2);
+  margin-bottom:var(--space-3);
+  padding-bottom:var(--space-3);
   border-bottom:2px solid var(--cat-color,#E07A5F);
 }
 .sports-quick-card-items{
   display:flex;
   flex-direction:column;
-  gap:var(--space-1);
+  gap:var(--space-2);
 }
 .sports-quick-btn{
   background:transparent;
@@ -143,7 +146,7 @@
 .sports-type-list{
   display:flex;
   flex-direction:column;
-  gap:var(--space-4);
+  gap:var(--space-5);
 }
 .sports-category-header{
   display:flex;
@@ -152,8 +155,8 @@
   font-size:var(--text-sm);
   font-weight:var(--font-semibold);
   color:var(--ink);
-  margin-bottom:var(--space-2);
-  padding-bottom:var(--space-2);
+  margin-bottom:var(--space-3);
+  padding-bottom:var(--space-3);
   border-bottom:2px solid var(--cat-color,#E07A5F);
 }
 .sports-category-desc{
@@ -166,13 +169,13 @@
   display:flex;
   align-items:center;
   gap:var(--space-3);
-  padding:var(--space-2) var(--space-3);
+  padding:var(--space-3) var(--space-4);
   background:var(--bg2);
   border-radius:var(--radius);
-  margin-bottom:var(--space-2);
+  margin-bottom:var(--space-3);
 }
 .sports-type-icon{
-  font-size:24px;
+  font-size:26px;
   flex-shrink:0;
 }
 .sports-type-info{
@@ -198,7 +201,7 @@
   color:#fff;
   border:none;
   border-radius:var(--radius);
-  padding:var(--space-1) var(--space-3);
+  padding:var(--space-2) var(--space-4);
   font-size:var(--text-sm);
   font-weight:var(--font-medium);
   cursor:pointer;

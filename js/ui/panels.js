@@ -47,7 +47,7 @@
       const deltaY = currentY - startY;
       const deltaX = Math.abs(e.touches[0].clientX - startX);
       if (deltaY > 0 && deltaY > deltaX) {
-        panel.style.transform = `translateY(${deltaY}px)`;
+        panel.style.transform = `translateX(-50%) translateY(${deltaY}px)`;
       }
     };
 
@@ -55,7 +55,7 @@
       const deltaY = currentY - startY;
       panel.style.transition = 'transform .25s ease';
       if (deltaY > 100) {
-        panel.style.transform = `translateY(100%)`;
+        panel.style.transform = 'translateX(-50%) translateY(100%)';
         setTimeout(() => {
           closeAllPanels();
           panel.style.transform = '';
