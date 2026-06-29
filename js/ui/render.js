@@ -798,6 +798,8 @@
     const reminderTime = (habit.reminder && habit.reminder.time) || '08:00';
     const repeatArr = habit.repeat || [0,1,2,3,4,5,6];
     const repeatDays = ['日','一','二','三','四','五','六'];
+    const extraReminders = habit.extraReminders || [];
+    const note = habit.note || '';
 
     // Icon picker options
     const iconOptions = ['🌅','☀️','🌙','💧','🏃','🧘','📖','💤','🍵','🍎','💊','💪',
@@ -892,6 +894,22 @@
       <input class="he-time-input" id="heReminderTime" type="time" value="${reminderTime}">
     </div>`;
 
+    // Extra reminders
+    html += `<div class="he-label" style="margin-top:6px">🔔 额外提醒</div>
+      <div class="he-extra-reminders" id="heExtraRemindersList">`;
+    extraReminders.forEach(t => {
+      html += `<div class="he-extra-reminder-item">
+          <input type="time" value="${t}">
+          <span class="he-reminder-remove" onclick="this.parentElement.remove()">✕</span>
+        </div>`;
+    });
+    html += `</div>
+      <button class="he-add-reminder-btn" onclick="App.UI.Render.addEditReminderTime()">+ 添加提醒</button>`;
+
+    // Note
+    html += `<div class="he-label">📝 备注说明</div>
+      <input class="he-input" id="heNote" value="${note}" placeholder="习惯说明（选填）" maxlength="100">`;
+
     // Enabled
     html += `<div class="he-switch-row">
       <span class="he-switch-label">✅ 启用习惯</span>
@@ -937,6 +955,17 @@
     document.getElementById('heRepeat').value = activeDays.join(',');
   }
 
+  function addEditReminderTime() {
+    const list = document.getElementById('heExtraRemindersList');
+    if (!list) return;
+    const count = list.children.length;
+    if (count >= 5) { showToast('最多添加5个额外提醒'); return; }
+    const div = document.createElement('div');
+    div.className = 'he-extra-reminder-item';
+    div.innerHTML = `<input type="time" value="12:00"><span class="he-reminder-remove" onclick="this.parentElement.remove()">✕</span>`;
+    list.appendChild(div);
+  }
+
   function saveHabitEdit(habitId) {
     const habit = habitsConfig.find(h => h.id === habitId);
     if (!habit) return;
@@ -959,6 +988,18 @@
     const reminderEnabled = document.getElementById('heReminderToggle').classList.contains('on');
     const reminderTime = document.getElementById('heReminderTime').value;
     habit.reminder = { enabled: reminderEnabled, time: reminderTime };
+
+    // 额外提醒
+    const extraReminderInputs = document.querySelectorAll('#heExtraRemindersList input[type="time"]');
+    const extraReminders = [];
+    extraReminderInputs.forEach(inp => {
+      if (inp.value) extraReminders.push(inp.value);
+    });
+    habit.extraReminders = extraReminders;
+
+    // 备注
+    const noteEl = document.getElementById('heNote');
+    habit.note = noteEl ? noteEl.value.trim() : '';
 
     habit.enabled = document.getElementById('heEnabledToggle').classList.contains('on');
 
