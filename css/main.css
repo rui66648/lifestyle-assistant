@@ -2261,6 +2261,34 @@ body.dark .wuse-card,body.dark .emotion-mini-card,body.dark .wulao-mini-card{bac
 }
 .ps-label{font-size:11px;color:var(--muted);margin-top:6px;display:block;font-weight:600}
 
+/* ========== 打卡页面统计概览 ========== */
+.checkin-stats-card{
+  display:flex;align-items:center;justify-content:space-around;
+  background:rgba(255,255,255,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-radius:var(--radius-lg);
+  padding:16px 8px;
+  margin-bottom:16px;
+  box-shadow:var(--shadow-sm);transition:all .3s var(--ease);
+  border:1px solid rgba(255,255,255,.6);
+}
+.checkin-stat-item{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  flex:1;
+}
+.checkin-stat-num{
+  font-size:20px;font-weight:800;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.checkin-stat-label{
+  font-size:10px;color:var(--muted);font-weight:600;
+}
+.checkin-stat-divider{
+  width:1px;height:36px;background:var(--rule);
+  margin:0 4px;
+}
+
 /* Menu Sections */
 .menu-section{margin-bottom:16px}
 .menu-section-title{
@@ -2669,6 +2697,7 @@ body.dark .lib-item{background:var(--bg2)}
 body.dark .ranking-rank.normal{background:var(--bg2)}
 body.dark .badge-icon.locked{background:var(--bg2)}
 body.dark .profile-stat-item{background:rgba(30,41,59,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-color:rgba(255,255,255,.06)}
+body.dark .checkin-stats-card{background:rgba(30,41,59,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-color:rgba(255,255,255,.06)}
 body.dark .menu-item{background:rgba(30,41,59,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-color:rgba(255,255,255,.06)}
 body.dark .profile-avatar{background:rgba(52,211,153,.1)}
 body.dark .mg-group{background:rgba(30,41,59,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-color:rgba(255,255,255,.06)}
@@ -3288,6 +3317,13 @@ body.theme-modern .profile-stat-item{
   border-radius:var(--radius);
   box-shadow:var(--shadow-sm);
   transition:all .3s ease;
+}
+body.theme-modern .checkin-stats-card{
+  background:rgba(255,255,255,.8);
+  backdrop-filter:blur(12px);
+  border:none;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-sm);
 }
 body.theme-modern .profile-stat-item:hover{
   box-shadow:var(--shadow);
@@ -3986,6 +4022,7 @@ body.cd-glass .mini-quote,
 body.cd-glass .profile-stat-item,
 body.cd-glass .mg-group,
 body.cd-glass .mg-stat-card,
+body.cd-glass .checkin-stats-card,
 body.cd-glass .ai-message-bubble,
 body.cd-glass .water-tracker,
 body.cd-glass .diet-tip-card,
@@ -4006,6 +4043,7 @@ body.dark.cd-glass .mini-quote,
 body.dark.cd-glass .profile-stat-item,
 body.dark.cd-glass .mg-group,
 body.dark.cd-glass .mg-stat-card,
+body.dark.cd-glass .checkin-stats-card,
 body.dark.cd-glass .ai-message-bubble,
 body.dark.cd-glass .water-tracker,
 body.dark.cd-glass .diet-tip-card,
@@ -4026,6 +4064,7 @@ body.cd-gradient .mini-quote,
 body.cd-gradient .profile-stat-item,
 body.cd-gradient .mg-group,
 body.cd-gradient .mg-stat-card,
+body.cd-gradient .checkin-stats-card,
 body.cd-gradient .ai-message-bubble,
 body.cd-gradient .water-tracker,
 body.cd-gradient .diet-tip-card,
@@ -4046,6 +4085,7 @@ body.cd-gradient .mini-quote::before,
 body.cd-gradient .profile-stat-item::before,
 body.cd-gradient .mg-group::before,
 body.cd-gradient .mg-stat-card::before,
+body.cd-gradient .checkin-stats-card::before,
 body.cd-gradient .ai-message-bubble::before,
 body.cd-gradient .water-tracker::before,
 body.cd-gradient .diet-tip-card::before,
