@@ -492,13 +492,6 @@
     const total = getTodayTotal();
     const pct = total > 0 ? Math.round((done / total) * 100) : 0;
 
-    const circumference = 2 * Math.PI * 68;
-    const offset = circumference - (pct / 100) * circumference;
-    const ringFg = document.getElementById('ringFg');
-    const ringPct = document.getElementById('ringPct');
-    if (ringFg) ringFg.style.strokeDashoffset = offset;
-    if (ringPct) ringPct.textContent = pct + '%';
-
     let maxStreakAll = 0;
     habitsConfig.forEach(h => {
       maxStreakAll = Math.max(maxStreakAll, getMaxStreak(h.id));
