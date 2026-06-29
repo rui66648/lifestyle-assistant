@@ -36,7 +36,7 @@ App.Modules.Sports = {
   open() {
     const existing = document.getElementById(this.panelId);
     if (existing) {
-      existing.classList.add('active');
+      this._showPanel(existing);
       this.render();
       return;
     }
@@ -47,20 +47,29 @@ App.Modules.Sports = {
     panel.innerHTML = this.getPanelHTML();
     document.body.appendChild(panel);
 
-    // 动画打开
-    requestAnimationFrame(() => {
-      panel.classList.add('active');
-    });
-
+    this._showPanel(panel);
     this.render();
     this.bindPanelEvents();
+  },
+
+  _showPanel(panel) {
+    const overlay = document.getElementById('panelOverlay');
+    if (overlay) overlay.classList.add('show');
+    panel.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    if (App.UI.Panels && App.UI.Panels.attachPanelGesture) {
+      App.UI.Panels.attachPanelGesture(panel);
+    }
   },
 
   // 关闭面板
   close() {
     const panel = document.getElementById(this.panelId);
     if (panel) {
-      panel.classList.remove('active');
+      panel.classList.remove('show');
+      const overlay = document.getElementById('panelOverlay');
+      if (overlay) overlay.classList.remove('show');
+      document.body.style.overflow = '';
       setTimeout(() => panel.remove(), 300);
     }
   },
@@ -415,3 +424,7 @@ App.Modules.Sports = {
     this.updateWeeklyStats();
   },
 };
+
+if (App.registerModule) {
+  App.registerModule('modules.sports', 'modules', null);
+}
