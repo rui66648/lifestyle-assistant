@@ -396,7 +396,7 @@
     });
 
     if (items.length === 0) {
-      html = '<div style="text-align:center;padding:40px 20px;color:var(--muted);font-size:14px;">还没有添加习惯<br>点击下方 + 按钮开始添加</div>';
+      html = '<div style="text-align:center;padding:40px 20px;color:var(--muted);font-size:14px;">还没有添加习惯<br><br>请先到 <strong style="color:var(--accent);cursor:pointer;" onclick="switchTab(\'manage\')">【管理】</strong> 界面添加习惯</div>';
     }
 
     container.innerHTML = html;
