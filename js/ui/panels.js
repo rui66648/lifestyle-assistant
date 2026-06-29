@@ -85,6 +85,53 @@
     openPanel('libraryPanel');
   }
 
+  // 局部更新单个习惯卡片状态，避免重新渲染整个面板
+  function updateLibCardState(id, added) {
+    // 更新分类卡片
+    const cards = document.querySelectorAll(`.lib-card[onclick*="'${id}'"]`);
+    cards.forEach(card => {
+      if (added) {
+        card.classList.add('added');
+        const nameSpan = card.querySelector('.lib-card-name');
+        if (nameSpan && !card.querySelector('.lib-card-added')) {
+          card.insertAdjacentHTML('beforeend', '<span class="lib-card-added">✓ 已添加</span>');
+        }
+      } else {
+        card.classList.remove('added');
+        const addedSpan = card.querySelector('.lib-card-added');
+        if (addedSpan) addedSpan.remove();
+      }
+    });
+    // 更新健康包中的卡片
+    const packCards = document.querySelectorAll(`.health-pack-habit[onclick*="'${id}'"]`);
+    packCards.forEach(card => {
+      if (added) {
+        card.classList.add('added');
+        const addBtn = card.querySelector('.health-pack-add-btn');
+        if (addBtn) addBtn.remove();
+        if (!card.querySelector('span[style*="color:var(--accent)"]')) {
+          card.insertAdjacentHTML('beforeend', '<span style="font-size:11px;color:var(--accent)">✓ 已添加</span>');
+        }
+      } else {
+        card.classList.remove('added');
+      }
+    });
+    // 更新季节包中的卡片
+    const seasonCards = document.querySelectorAll(`.season-pack-habit[onclick*="'${id}'"]`);
+    seasonCards.forEach(card => {
+      if (added) {
+        card.classList.add('added');
+        const addBtn = card.querySelector('.season-pack-add-btn');
+        if (addBtn) addBtn.remove();
+        if (!card.querySelector('span[style*="color:var(--accent)"]')) {
+          card.insertAdjacentHTML('beforeend', '<span style="font-size:11px;color:var(--accent)">✓ 已添加</span>');
+        }
+      } else {
+        card.classList.remove('added');
+      }
+    });
+  }
+
   function renderLibraryPanel(search) {
     const body = document.getElementById('libraryPanelBody');
     if (!body) return;
@@ -1310,6 +1357,7 @@
     attachPanelGesture,
     openLibraryPanel,
     renderLibraryPanel,
+    updateLibCardState,
     openReportPanel,
     getPomoTotalStats,
     openRefPanel,

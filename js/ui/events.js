@@ -266,8 +266,10 @@
     habitsConfig.push(newHabit);
     saveConfig();
     showToast(`${lib.icon} ${lib.name} 已添加`);
-    renderLibraryPanel((document.querySelector('.lib-search') && document.querySelector('.lib-search').value) || '');
-    render();
+    // 只更新卡片状态，不重新渲染整个面板
+    updateLibCardState(id, true);
+    // 只渲染 manage 和 checkin
+    render(['manage', 'checkin']);
   }
 
   function toggleHabitFromLib(id) {
@@ -280,15 +282,15 @@
         habitsConfig.splice(idx, 1);
         saveConfig();
         showToast('已删除习惯');
+        // 只更新卡片状态
+        updateLibCardState(id, false);
+        render(['manage', 'checkin']);
       }
     } else {
       // 未添加，执行添加
       addHabitFromLib(id);
-      return; // addHabitFromLib 内部已调用 renderLibraryPanel
+      return; // addHabitFromLib 内部已处理
     }
-    // 重新渲染习惯库
-    renderLibraryPanel((document.querySelector('.lib-search') && document.querySelector('.lib-search').value) || '');
-    render();
   }
 
   function addCustomHabit() {
@@ -340,8 +342,11 @@
     });
     saveConfig();
     showToast(`${icon} ${name} 已添加`);
-    renderLibraryPanel('');
-    render();
+    // 关闭自定义习惯面板（如果打开）
+    const customPanel = document.getElementById('customHabitPanel');
+    if (customPanel) customPanel.classList.remove('show');
+    // 只渲染 manage 和 checkin
+    render(['manage', 'checkin']);
   }
 
   function addCustomReminderTime() {
@@ -471,8 +476,9 @@
     if (addedCount > 0) {
       saveConfig();
       showToast(`💚 健康生活建议包：已添加 ${addedCount} 个习惯`);
-      renderLibraryPanel('');
-      render();
+      // 批量更新卡片状态
+      packHabitIds.forEach(id => updateLibCardState(id, true));
+      render(['manage', 'checkin']);
     } else {
       showToast('建议包中的习惯已全部添加');
     }
@@ -516,8 +522,11 @@
     if (addedCount > 0) {
       saveConfig();
       showToast(`${pack.emoji} ${pack.name}：已添加 ${addedCount} 个习惯`);
-      renderLibraryPanel('');
-      render();
+      // 批量更新卡片状态
+      pack.habits.forEach(ph => {
+        if (!myIds.has(ph.id)) updateLibCardState(ph.id, true);
+      });
+      render(['manage', 'checkin']);
     } else {
       showToast(`${pack.name}中的习惯已全部添加`);
     }
