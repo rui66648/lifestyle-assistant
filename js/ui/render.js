@@ -305,6 +305,19 @@
     const btnText = skipped ? '⏭ 跳过' : failed ? '✗ 犯了' : checked ? '✓' : (isNegative ? '没犯' : '打卡');
     const skipBtn = !isNegative ? `<button class="checkin-btn ${skipped ? 'skip' : 'pending'}" onclick="event.stopPropagation();skipHabit('${h.id}')" title="跳过（不打断连续）">⏭</button>` : '';
 
+    // 间隔提醒倒计时
+    let intervalHtml = '';
+    if (h.intervalReminder && h.intervalReminder.enabled) {
+      const ir = h.intervalReminder;
+      const last = (rec[h.id] && rec[h.id].lastInterval) || (rec[h.id] && rec[h.id].timestamp) || 0;
+      const elapsedMin = last ? Math.floor((Date.now() - last) / 60000) : ir.interval;
+      const remainMin = Math.max(0, ir.interval - elapsedMin);
+      const pct = last ? Math.min(100, Math.round((elapsedMin / ir.interval) * 100)) : 0;
+      const isOverdue = elapsedMin >= ir.interval;
+      const label = isOverdue ? '已到期' : remainMin + '分钟后';
+      intervalHtml = `<span style="font-size:11px;color:${isOverdue ? '#e74c3c' : 'var(--muted)'};background:var(--bg2);padding:2px 6px;border-radius:6px;display:inline-flex;align-items:center;gap:3px"><span style="display:inline-block;width:${pct/5}px;height:6px;background:${isOverdue ? '#e74c3c' : 'var(--accent)'};border-radius:3px"></span>⏰ ${label}</span>`;
+    }
+
     return `<div class="habit-card ${collapsedClass} ${negClass} ${doneCardClass} ${periodClass}" id="card-${h.id}" style="position:relative">
       <span class="status-ribbon ${ribbonCls}"></span>
       <span class="icon">${isNegative ? '❌' : h.icon}</span>
@@ -312,6 +325,7 @@
         <div class="name">${isNegative ? '不' + h.name : h.name}${valueStr}</div>
         <div class="meta">
           ${reminderStr ? '<span>⏰ ' + reminderStr + '前</span>' : ''}
+          ${intervalHtml}
           ${streak > 0 ? '<span class="streak">🔥' + streak + '天</span>' : ''}
           ${timeHint}
         </div>
@@ -879,9 +893,13 @@
     html += `<div class="he-label">习惯名称</div>
       <input class="he-input" id="heName" value="${habit.name}" maxlength="20">`;
 
-    // Icon picker
-    html += `<div class="he-label">选择图标</div>
-      <div class="he-icon-grid">`;
+    // Icon picker (collapsible)
+    const selectedIconLabel = habit.icon || '⭐';
+    html += `<div class="he-label" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'grid':'none';this.querySelector('.he-collapse-arrow').classList.toggle('collapsed')">
+      <span>选择图标 <span style="font-size:20px;margin-left:4px">${selectedIconLabel}</span></span>
+      <span class="he-collapse-arrow">▼</span>
+    </div>
+      <div class="he-icon-grid" style="display:none">`;
     iconOptions.forEach(ico => {
       const sel = habit.icon === ico ? ' selected' : '';
       html += `<div class="he-icon-opt${sel}" data-icon="${ico}" onclick="App.UI.Render.selectEditIcon(this,'${ico}')">${ico}</div>`;
@@ -940,6 +958,32 @@
       <span style="font-size:14px;color:var(--muted)">⏰</span>
       <input class="he-time-input" id="heReminderTime" type="time" value="${reminderTime}">
     </div>`;
+
+    // Interval reminder
+    const ir = habit.intervalReminder;
+    const irEnabled = ir && ir.enabled;
+    const irInterval = (ir && ir.interval) || 45;
+    const irStart = (ir && ir.startTime) || '09:00';
+    const irEnd = (ir && ir.endTime) || '18:00';
+    const irDays = (ir && ir.days) || [0,1,2,3,4,5,6];
+    html += `<div style="margin-top:10px;padding:10px;background:var(--bg2);border-radius:12px">
+      <div class="he-switch-row" style="margin-bottom:8px">
+        <span class="he-switch-label">⏰ 间隔提醒（每${irInterval}分钟）</span>
+        <div class="mg-item-toggle ${irEnabled ? 'on' : ''}" onclick="this.classList.toggle('on');document.getElementById('irWrap').style.display=this.classList.contains('on')?'block':'none'" id="heIntervalToggle"></div>
+      </div>
+      <div id="irWrap" style="display:${irEnabled ? 'block' : 'none'}">
+        <div style="font-size:13px;color:var(--muted);margin-bottom:6px">间隔 <input id="irInterval" type="number" value="${irInterval}" min="5" max="180" style="width:50px;padding:4px 8px;border:1px solid var(--rule);border-radius:6px;font-size:13px;text-align:center"> 分钟</div>
+        <div style="display:flex;gap:8px;margin-bottom:6px">
+          <input id="irStart" type="time" value="${irStart}" style="flex:1;padding:6px;border:1px solid var(--rule);border-radius:6px;font-size:13px">
+          <span style="color:var(--muted);align-self:center">~</span>
+          <input id="irEnd" type="time" value="${irEnd}" style="flex:1;padding:6px;border:1px solid var(--rule);border-radius:6px;font-size:13px">
+        </div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap">`;
+    repeatDays.forEach((d, i) => {
+      const isActive = irDays.includes(i);
+      html += `<div class="repeat-day-btn${isActive ? ' active' : ''}" data-irday="${i}" onclick="this.classList.toggle('active')" style="width:28px;height:28px;font-size:11px">${d}</div>`;
+    });
+    html += `</div></div></div>`;
 
     // Extra reminders
     html += `<div class="he-label" style="margin-top:6px">🔔 额外提醒</div>
@@ -1050,6 +1094,30 @@
 
     habit.enabled = document.getElementById('heEnabledToggle').classList.contains('on');
 
+    // Interval reminder
+    const irToggle = document.getElementById('heIntervalToggle');
+    if (irToggle) {
+      const irOn = irToggle.classList.contains('on');
+      if (irOn) {
+        const irIntervalVal = parseInt(document.getElementById('irInterval').value) || 45;
+        const irStartVal = document.getElementById('irStart').value || '09:00';
+        const irEndVal = document.getElementById('irEnd').value || '18:00';
+        const irDaysEls = document.querySelectorAll('[data-irday].active');
+        const irDaysArr = [];
+        irDaysEls.forEach(function(el) { irDaysArr.push(parseInt(el.dataset.irday)); });
+        habit.intervalReminder = {
+          interval: irIntervalVal,
+          unit: 'minute',
+          enabled: true,
+          startTime: irStartVal,
+          endTime: irEndVal,
+          days: irDaysArr.length ? irDaysArr : [0,1,2,3,4,5,6]
+        };
+      } else {
+        if (habit.intervalReminder) habit.intervalReminder.enabled = false;
+      }
+    }
+
     // Save to localStorage
     App.Core.Storage.saveConfig();
     App.UI.Panels.closeAllPanels();
@@ -1153,7 +1221,15 @@
       case 'sports': App.UI.Panels.openSportsPanel(); break;
       case 'clock': App.UI.Panels.openClockPanel(); break;
       case 'wulao': App.UI.Panels.openWulaoPanel(); break;
-      case 'constitution': App.Modules.Constitution.openConstitutionPanel(); break;
+      case 'constitution': 
+      if (App.Modules && App.Modules.Constitution) {
+        App.Modules.Constitution.openConstitutionPanel();
+      } else {
+        LazyLoad('js/modules/constitution.js', function() {
+          if (App.Modules && App.Modules.Constitution) App.Modules.Constitution.openConstitutionPanel();
+        });
+      }
+      break;
       case 'skin': App.UI.Panels.openSkinPanel(); break;
       case 'healthReport': App.UI.Panels.openHealthReportPanel(); break;
       case 'healthSummary': location.href = 'references/养生总结/养生总结.html'; break;

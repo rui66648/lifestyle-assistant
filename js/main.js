@@ -47,6 +47,9 @@
     }
     if (App.UI && App.UI.Render && App.UI.Render.render) {
       App.UI.Render.render();
+      // 隐藏骨架屏
+      var sk = document.getElementById('skeleton');
+      if (sk) { sk.style.display = 'none'; }
     }
     if (App.UI && App.UI.Events && App.UI.Events.initTouchSwipe) {
       App.UI.Events.initTouchSwipe();
@@ -54,6 +57,55 @@
     if (App.Modules && App.Modules.Guide && App.Modules.Guide.showGuide) {
       App.Modules.Guide.showGuide();
     }
+    startIntervalReminderCheck();
+  }
+
+  // ===== 间隔提醒检查 =====
+  var _intervalReminderTimer = null;
+  var _intervalReminderShown = {};
+
+  function startIntervalReminderCheck() {
+    if (_intervalReminderTimer) clearInterval(_intervalReminderTimer);
+    _intervalReminderTimer = setInterval(checkIntervalReminders, 60000);
+    checkIntervalReminders();
+  }
+
+  function checkIntervalReminders() {
+    if (typeof habitsConfig === 'undefined' || !habitsConfig.length) return;
+    var now = new Date();
+    var day = now.getDay();
+    var hm = now.getHours() * 60 + now.getMinutes();
+    var todayStr = (typeof today === 'function') ? today() : formatDate(now);
+
+    habitsConfig.forEach(function(h) {
+      var ir = h.intervalReminder;
+      if (!ir || !ir.enabled) return;
+      if (!ir.days || ir.days.indexOf(day) === -1) return;
+
+      var sh = ir.startTime ? ir.startTime.split(':').map(Number) : [0,0];
+      var eh = ir.endTime ? ir.endTime.split(':').map(Number) : [23,59];
+      var startMin = sh[0] * 60 + sh[1];
+      var endMin = eh[0] * 60 + eh[1];
+      if (hm < startMin || hm > endMin) return;
+
+      var rec = (typeof checkinRecords !== 'undefined' ? checkinRecords : {})[todayStr] || {};
+      var last = (rec[h.id] && rec[h.id].lastInterval) || (rec[h.id] && rec[h.id].timestamp) || 0;
+      var elapsedMin = last ? Math.floor((Date.now() - last) / 60000) : ir.interval;
+      if (elapsedMin >= ir.interval) {
+        var key = h.id + '_' + todayStr + '_' + hm;
+        if (!_intervalReminderShown[key]) {
+          _intervalReminderShown[key] = true;
+          showIntervalReminderBanner(h);
+        }
+      }
+    });
+  }
+
+  function showIntervalReminderBanner(h) {
+    var ir = h.intervalReminder;
+    var msg = h.icon + ' ' + h.name + '时间到了！' + (h.tip ? '（' + h.tip + '）' : '');
+    showToast(msg, 5000);
+    if (typeof playSound === 'function') playSound('checkin');
   }
 
   if (document.readyState === 'loading') {

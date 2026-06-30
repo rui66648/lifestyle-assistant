@@ -32,12 +32,30 @@
     panel._gestureAttached = true;
 
     let startY = 0, startX = 0, currentY = 0;
+    let _locked = false;      // 当前手势是否已锁定为"不关闭面板"
+
+    // 检查触摸点是否在可滚动的 panel-body 内，且 body 还未滚动到顶部
+    function shouldLockGesture(touchTarget, deltaY) {
+      const body = panel.querySelector('.panel-body');
+      if (!body) return false;
+      // 触摸点不在 panel-body 内（如在 header 上）→ 允许关闭
+      if (!body.contains(touchTarget)) return false;
+      // panel-body 没有滚动条 → 允许关闭
+      if (body.scrollHeight <= body.clientHeight) return false;
+      // panel-body 已滚动过 → 锁定（用户还在滚动内容）
+      if (body.scrollTop > 0) return true;
+      // panel-body 在顶部且是向上滑 → 锁定（用户想继续滚动）
+      if (deltaY < 0) return true;
+      // panel-body 在顶部且是向下滑 → 允许关闭
+      return false;
+    }
 
     const onTouchStart = e => {
       if (e.touches.length !== 1) return;
       startY = e.touches[0].clientY;
       startX = e.touches[0].clientX;
       currentY = startY;
+      _locked = false;
       panel.style.transition = 'none';
     };
 
@@ -46,15 +64,21 @@
       currentY = e.touches[0].clientY;
       const deltaY = currentY - startY;
       const deltaX = Math.abs(e.touches[0].clientX - startX);
-      if (deltaY > 0 && deltaY > deltaX) {
-        panel.style.transform = `translateX(-50%) translateY(${deltaY}px)`;
+      if (deltaY <= 0 || deltaY <= deltaX) return;
+
+      // 首次检测到有效下滑时决定是否锁定
+      if (!_locked) {
+        _locked = shouldLockGesture(e.target, deltaY);
       }
+      if (_locked) return;
+
+      panel.style.transform = `translateX(-50%) translateY(${deltaY}px)`;
     };
 
     const onTouchEnd = () => {
       const deltaY = currentY - startY;
       panel.style.transition = 'transform .25s ease';
-      if (deltaY > 100) {
+      if (!_locked && deltaY > 100) {
         panel.style.transform = 'translateX(-50%) translateY(100%)';
         setTimeout(() => {
           closeAllPanels();
@@ -64,6 +88,7 @@
         panel.style.transform = '';
       }
       startY = 0;
+      _locked = false;
     };
 
     panel.addEventListener('touchstart', onTouchStart, { passive: true });
@@ -674,18 +699,38 @@
 
   function openDietPanel() {
     const body = document.getElementById('dietPanelBody');
-    if (body && App.Modules.Diet) {
-      body.innerHTML = App.Modules.Diet.renderDietPanel();
+    if (body) {
+      if (App.Modules.Diet) {
+        body.innerHTML = App.Modules.Diet.renderDietPanel();
+        openPanel('dietPanel');
+      } else {
+        body.innerHTML = '<div style="text-align:center;color:var(--muted);padding:30px">⏳ 加载饮食模块...</div>';
+        LazyLoad('js/modules/diet.js', function() {
+          if (App.Modules.Diet) body.innerHTML = App.Modules.Diet.renderDietPanel();
+          openPanel('dietPanel');
+        });
+      }
+    } else {
+      openPanel('dietPanel');
     }
-    openPanel('dietPanel');
   }
 
   function openSportsPanel() {
     const body = document.getElementById('sportsPanelBody');
-    if (body && App.Modules.Sports) {
-      body.innerHTML = App.Modules.Sports.renderSportsPanel();
+    if (body) {
+      if (App.Modules.Sports) {
+        body.innerHTML = App.Modules.Sports.renderSportsPanel();
+        openPanel('sportsPanel');
+      } else {
+        body.innerHTML = '<div style="text-align:center;color:var(--muted);padding:30px">⏳ 加载运动模块...</div>';
+        LazyLoad('js/modules/sports.js', function() {
+          if (App.Modules.Sports) body.innerHTML = App.Modules.Sports.renderSportsPanel();
+          openPanel('sportsPanel');
+        });
+      }
+    } else {
+      openPanel('sportsPanel');
     }
-    openPanel('sportsPanel');
   }
 
   /* ========== 皮肤面板 ========== */
@@ -1404,6 +1449,10 @@
     removeWaterScheduleRow,
     saveWaterSettings
   };
+
+  // 暴露到全局，供 HTML onclick 直接使用
+  window.openPanel = openPanel;
+  window.closeAllPanels = closeAllPanels;
 
   if (App.registerModule) {
     App.registerModule('ui.panels', 'ui', null);

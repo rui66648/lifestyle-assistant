@@ -108,6 +108,10 @@
     downloadPoster
   };
 
+  // 暴露全局函数供点击调用
+  window.openPosterPanel = openPosterPanel;
+  window.downloadPoster = downloadPoster;
+
   if (App.registerModule) {
     App.registerModule('modules.poster', 'modules', null);
   }

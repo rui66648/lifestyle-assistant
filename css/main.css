@@ -703,15 +703,15 @@ select:focus-visible{
 /* Bottom Panels */
 .panel-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,.5);z-index:100;opacity:0;pointer-events:none;transition:opacity .3s var(--ease);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
 .panel-overlay.show{opacity:1;pointer-events:auto}
-.panel{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:480px;max-height:85vh;background:rgba(255,255,255,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:28px 28px 0 0;z-index:101;transition:transform .35s var(--ease);overflow:hidden;display:flex;flex-direction:column;box-shadow:0 -8px 32px rgba(15,23,42,.15)}
-.panel.show{transform:translateX(-50%) translateY(0)}
+.panel{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:480px;max-height:85vh;background:rgba(255,255,255,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:28px 28px 0 0;z-index:101;transition:transform .35s var(--ease),visibility .35s var(--ease);overflow:hidden;display:flex;flex-direction:column;box-shadow:0 -8px 32px rgba(15,23,42,.15);visibility:hidden}
+.panel.show{transform:translateX(-50%) translateY(0);visibility:visible}
 .panel-handle{width:48px;height:5px;background:var(--rule);border-radius:3px;margin:12px auto 8px}
 .panel-header{display:flex;justify-content:space-between;align-items:center;padding:10px 20px 14px;border-bottom:1px solid rgba(0,0,0,.06)}
 .panel-title{font-size:17px;font-weight:700}
 .panel-close{font-size:20px;padding:6px 10px;border-radius:12px;transition:all .2s var(--ease)}
 .panel-close:hover{background:var(--bg2);transform:rotate(90deg)}
 .panel-close:active{background:var(--rule)}
-.panel-body{flex:1;overflow-y:auto;padding:18px;-webkit-overflow-scrolling:touch}
+.panel-body{flex:1;overflow-y:auto;padding:18px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .panel-body-p0{padding:0}
 .panel-body-p20{padding:24px}
 .panel-body-p24{text-align:center;padding:28px}
@@ -2502,7 +2502,13 @@ body.dark .wuse-card,body.dark .emotion-mini-card,body.dark .wulao-mini-card{bac
 .he-icon-grid{
   display:grid;grid-template-columns:repeat(6,1fr);
   gap:8px;margin-bottom:14px;
+  max-height:260px;overflow-y:auto;
 }
+.he-collapse-arrow{
+  font-size:10px;color:var(--muted);
+  transition:transform .2s;display:inline-block;
+}
+.he-collapse-arrow.collapsed{transform:rotate(-90deg)}
 .he-icon-opt{
   width:100%;aspect-ratio:1;border-radius:12px;
   background:var(--bg);display:flex;align-items:center;justify-content:center;

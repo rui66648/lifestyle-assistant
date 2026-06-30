@@ -35,12 +35,18 @@
           _habitsConfig = defaults.map(function(id) {
             var lib = library.find(function(h) { return h.id === id; });
             if (!lib) return null;
-            return {
+            var h = {
               id: lib.id, name: lib.name, icon: lib.icon,
               category: lib.category, timePeriod: lib.timePeriod || 'daytime',
               type: lib.type, unit: lib.unit,
               reminder: {enabled:false, time:'08:00', days:[0,1,2,3,4,5,6], method:'in-app'}
             };
+            if (lib.intervalReminder) h.intervalReminder = JSON.parse(JSON.stringify(lib.intervalReminder));
+            if (lib.waterConfig) h.waterConfig = JSON.parse(JSON.stringify(lib.waterConfig));
+            if (lib.options) h.options = lib.options.slice();
+            if (lib.foods) h.foods = lib.foods;
+            if (lib.defaultReminder) h.reminder = Object.assign({}, h.reminder, lib.defaultReminder);
+            return h;
           }).filter(Boolean);
           saveConfig();
         } else {
@@ -87,8 +93,10 @@
     var changed = false;
     _habitsConfig.forEach(function(h) {
       var lib = library.find(function(l) { return l.id === h.id; });
-      if (lib && lib.icon && lib.icon !== h.icon) {
-        h.icon = lib.icon;
+      if (!lib) return;
+      if (lib.icon && lib.icon !== h.icon) { h.icon = lib.icon; changed = true; }
+      if (lib.intervalReminder && !h.intervalReminder) {
+        h.intervalReminder = JSON.parse(JSON.stringify(lib.intervalReminder));
         changed = true;
       }
     });

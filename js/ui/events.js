@@ -57,7 +57,7 @@
         delete rec[habitId];
         showToast('已撤销打卡');
       } else {
-        rec[habitId] = {done: true, value: 1};
+        rec[habitId] = {done: true, value: 1, lastInterval: Date.now()};
         // 打卡积分奖励
         const reward1 = getCheckinReward();
         const pts = App.Core.Utils.addPoints(reward1.perHabit, `${h.name} 打卡`);
@@ -104,7 +104,7 @@
       delete rec[habitId];
       showToast('已撤销记录');
     } else {
-      rec[habitId] = {done: true, value: val};
+      rec[habitId] = {done: true, value: val, lastInterval: Date.now()};
       // 打卡积分奖励
       const reward2 = getCheckinReward();
       const pts = App.Core.Utils.addPoints(reward2.perHabit, `${h.name} 记录`);

@@ -36,8 +36,8 @@ App.UI = App.UI || {};
     const required = {
       'data': ['constants', 'content', 'habits', 'packs'],
       'core': ['utils', 'storage'],
-      'modules': ['checkin', 'habit', 'stats', 'water', 'pomodoro', 'ai', 'constitution', 'poster', 'guide'],
-      'ui': ['render', 'panels', 'events']
+      'modules': ['checkin', 'habit', 'stats', 'water', 'guide'],
+      'ui': ['render', 'panels', 'events', 'components']
     };
 
     const missing = [];

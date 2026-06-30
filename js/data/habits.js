@@ -51,8 +51,8 @@ const HABIT_LIBRARY = [
   {id:'deep_breath',name:'深呼吸',icon:'🌬️',category:'mind',timePeriod:'forenoon',type:'count',unit:'次',tip:'5-10次腹式深呼吸，缓解压力'},
 
   // ============ 五劳五色防护 ============
-  {id:'eye_protect',name:'闭目养神',icon:'👁️',category:'protect',timePeriod:'forenoon',type:'timer',unit:'分钟',tip:'久视伤血，每20分钟闭目20秒'},
-  {id:'sit_protect',name:'起身活动',icon:'🚶',category:'protect',timePeriod:'forenoon',type:'timer',unit:'分钟',tip:'久坐伤肉，每45分钟起身5分钟'},
+  {id:'eye_protect',name:'闭目养神',icon:'👁️',category:'protect',timePeriod:'forenoon',type:'timer',unit:'分钟',tip:'久视伤血，每20分钟闭目20秒',intervalReminder:{interval:20,unit:'minute',enabled:true,startTime:'08:00',endTime:'22:00',days:[0,1,2,3,4,5,6]}},
+  {id:'sit_protect',name:'起身活动',icon:'🚶',category:'protect',timePeriod:'forenoon',type:'timer',unit:'分钟',tip:'久坐伤肉，每45分钟起身5分钟',intervalReminder:{interval:45,unit:'minute',enabled:true,startTime:'09:00',endTime:'18:00',days:[1,2,3,4,5]}},
   {id:'stand_protect',name:'交替坐立',icon:'🪑',category:'protect',timePeriod:'forenoon',type:'timer',unit:'分钟',tip:'久立伤骨，交替坐立踮脚尖'},
   {id:'lie_protect',name:'扩胸运动',icon:'🏃',category:'protect',timePeriod:'forenoon',type:'count',unit:'次',tip:'久卧伤气，适度活动扩胸'},
   {id:'walk_protect',name:'拉筋放松',icon:'🤸',category:'protect',timePeriod:'evening',type:'timer',unit:'分钟',tip:'久行伤筋，运动后拉伸'},

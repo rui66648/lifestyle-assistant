@@ -8,6 +8,9 @@
   // 配置信息存储在 localStorage 中，不会暴露在代码里
   // ============================================================
 
+  // 默认模型（必须在 getConfig 之前定义，避免 TDZ 错误）
+  const DEFAULT_MODEL = 'qwen-turbo';
+
   // 从 localStorage 读取配置
   function getConfig() {
     try {
@@ -16,20 +19,22 @@
         const config = JSON.parse(saved);
         return {
           workerUrl: config.workerUrl || '',
-          apiKey: config.apiKey || ''
+          apiKey: config.apiKey || '',
+          model: config.model || DEFAULT_MODEL
         };
       }
     } catch (e) {
       console.warn('[AI] 读取配置失败:', e);
     }
-    return { workerUrl: '', apiKey: '' };
+    return { workerUrl: '', apiKey: '', model: DEFAULT_MODEL };
   }
 
-  function saveConfig(workerUrl, apiKey) {
+  function saveConfig(workerUrl, apiKey, model) {
     try {
       localStorage.setItem('ai_config', JSON.stringify({
         workerUrl: workerUrl || '',
-        apiKey: apiKey || ''
+        apiKey: apiKey || '',
+        model: model || DEFAULT_MODEL
       }));
     } catch (e) {
       console.warn('[AI] 保存配置失败:', e);
@@ -89,7 +94,16 @@
   const MAX_HISTORY = 20;           // 对话历史保留条数
   const MAX_TOKENS = 500;           // AI 回复最大 token 数
   const TEMPERATURE = 0.7;          // 创造性参数
-  const MODEL = 'qwen-turbo';       // 模型
+
+  // 可用模型列表
+  const MODEL_OPTIONS = [
+    { value: 'qwen-turbo', label: 'qwen-turbo（轻量快速）' },
+    { value: 'qwen-plus', label: 'qwen-plus（标准推荐）' },
+    { value: 'qwen-max', label: 'qwen-max（最强智能）' },
+    { value: 'qwen-coder-plus', label: 'qwen-coder-plus（编程专用）' },
+    { value: 'deepseek-v3', label: 'deepseek-v3（深度推理）' },
+    { value: 'deepseek-r1', label: 'deepseek-r1（推理增强）' }
+  ];
 
   // 状态
   let aiChatHistory = [];
@@ -341,6 +355,7 @@
         const apiKey = getApiKey();
         const userMessages = aiChatHistory;
 
+        const model = currentConfig.model || DEFAULT_MODEL;
         response = await fetch(workerUrl, {
           method: 'POST',
           headers: {
@@ -348,7 +363,7 @@
             'Authorization': 'Bearer ' + apiKey
           },
           body: JSON.stringify({
-            model: MODEL,
+            model: model,
             messages: userMessages,
             max_tokens: MAX_TOKENS,
             temperature: TEMPERATURE
@@ -382,6 +397,7 @@
           ...aiChatHistory
         ];
 
+        const model = currentConfig.model || DEFAULT_MODEL;
         response = await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', {
           method: 'POST',
           headers: {
@@ -389,7 +405,7 @@
             'Authorization': 'Bearer ' + apiKey
           },
           body: JSON.stringify({
-            model: MODEL,
+            model: model,
             messages: messages,
             max_tokens: MAX_TOKENS,
             temperature: TEMPERATURE
@@ -506,16 +522,18 @@
   function saveAiConfig() {
     const workerUrl = document.getElementById('configWorkerUrl');
     const apiKey = document.getElementById('configApiKey');
+    const modelEl = document.getElementById('configModel');
 
     const url = workerUrl ? workerUrl.value.trim() : '';
     const key = apiKey ? apiKey.value.trim() : '';
+    const model = modelEl ? modelEl.value : DEFAULT_MODEL;
 
     if (!key) {
       alert('请填写 API Key');
       return;
     }
 
-    saveConfig(url, key);
+    saveConfig(url, key, model);
     currentConfig = getConfig();
 
     // 更新设置面板状态
@@ -553,14 +571,17 @@
     const cfg = getConfig();
     const workerEl = document.getElementById('configWorkerUrl');
     const apiKeyEl = document.getElementById('configApiKey');
+    const modelEl = document.getElementById('configModel');
     if (workerEl) workerEl.value = cfg.workerUrl || '';
     if (apiKeyEl) apiKeyEl.value = cfg.apiKey || '';
+    if (modelEl) modelEl.value = cfg.model || DEFAULT_MODEL;
 
     // 显示配置状态
     const statusEl = document.getElementById('settingsAiStatus');
     if (statusEl) {
       if (cfg.apiKey) {
-        statusEl.textContent = '✅ 已配置 · API Key: ' + cfg.apiKey.substring(0, 6) + '...';
+        const modelLabel = MODEL_OPTIONS.find(m => m.value === (cfg.model || DEFAULT_MODEL));
+        statusEl.textContent = '✅ 已配置 · ' + (modelLabel ? modelLabel.label : cfg.model) + ' · API Key: ' + cfg.apiKey.substring(0, 6) + '...';
         statusEl.style.color = 'var(--accent)';
       } else {
         statusEl.textContent = '⚠️ 尚未配置 API Key';

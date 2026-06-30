@@ -15,6 +15,50 @@
 <link rel="stylesheet" href="./css/sports.css?v=20260630">
 </head>
 <body>
+<!-- ===== 骨架屏（首屏立即显示，JS执行后被替换） ===== -->
+<div id="skeleton" style="min-height:100vh;background:var(--bg,#FDF8F0);display:flex;flex-direction:column;padding:20px 16px 100px">
+  <style>
+    @keyframes sk-shimmer{0%{background-position:-200px 0}100%{background-position:200px 0}}
+    .sk-shimmer{background:linear-gradient(90deg,var(--bg2,#EDE8E0) 25%,var(--bg,#F7F3ED) 50%,var(--bg2,#EDE8E0) 75%);background-size:400px 100%;animation:sk-shimmer 1.8s ease-in-out infinite;border-radius:8px}
+    .sk-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+    .sk-header-left{width:120px;height:20px}
+    .sk-header-right{width:80px;height:28px;border-radius:14px}
+    .sk-card{height:160px;border-radius:20px;margin-bottom:16px;padding:20px}
+    .sk-card-line{height:14px;margin-bottom:8px;width:70%}
+    .sk-card-line-sm{height:14px;width:40%}
+    .sk-section-title{width:60px;height:16px;margin:24px 0 12px}
+    .sk-list-item{display:flex;align-items:center;gap:12px;padding:14px 12px;margin-bottom:8px;border-radius:14px;background:var(--bg2,#EDE8E0)}
+    .sk-item-icon{width:36px;height:36px;border-radius:10px;flex-shrink:0}
+    .sk-item-text{flex:1}
+    .sk-item-line{height:13px;width:60%;margin-bottom:4px}
+    .sk-item-line-xs{height:11px;width:30%}
+    .sk-bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;display:flex;justify-content:space-around;align-items:center;padding:8px 0 20px;background:var(--bg,#FDF8F0);border-top:1px solid var(--rule, rgba(0,0,0,.06))}
+    .sk-nav-item{width:36px;height:36px;border-radius:10px}
+    .sk-nav-center{width:50px;height:50px;border-radius:50%;margin-top:-16px}
+  </style>
+  <div class="sk-header">
+    <div class="sk-shimmer sk-header-left"></div>
+    <div class="sk-shimmer sk-header-right"></div>
+  </div>
+  <div class="sk-shimmer sk-card">
+    <div class="sk-shimmer sk-card-line"></div>
+    <div class="sk-shimmer sk-card-line-sm" style="margin-top:12px"></div>
+    <div class="sk-shimmer sk-card-line" style="width:50%;margin-top:12px"></div>
+  </div>
+  <div class="sk-shimmer sk-section-title"></div>
+  <div class="sk-list-item"><div class="sk-shimmer sk-item-icon"></div><div class="sk-item-text"><div class="sk-shimmer sk-item-line"></div><div class="sk-shimmer sk-item-line-xs"></div></div></div>
+  <div class="sk-list-item"><div class="sk-shimmer sk-item-icon"></div><div class="sk-item-text"><div class="sk-shimmer sk-item-line"></div><div class="sk-shimmer sk-item-line-xs"></div></div></div>
+  <div class="sk-list-item"><div class="sk-shimmer sk-item-icon"></div><div class="sk-item-text"><div class="sk-shimmer sk-item-line"></div><div class="sk-shimmer sk-item-line-xs"></div></div></div>
+  <div class="sk-bottom-nav">
+    <div class="sk-shimmer sk-nav-item"></div>
+    <div class="sk-shimmer sk-nav-item"></div>
+    <div class="sk-shimmer sk-nav-center"></div>
+    <div class="sk-shimmer sk-nav-item"></div>
+    <div class="sk-shimmer sk-nav-item"></div>
+  </div>
+</div>
+<script>document.getElementById('skeleton').style.display='flex';</script>
+
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
@@ -43,7 +87,7 @@
 <!-- Reminder Banner (hidden by default in minimal mode) -->
 <div class="reminder-banner" id="reminderBanner" style="display:none">
   <span class="text" id="reminderText">开启提醒，养成好习惯</span>
-  <button id="sharePosterBtn" class="settings-btn" onclick="openPosterPanel()" style="display:none;font-size:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-radius:8px;padding:4px 10px;font-weight:600">🎉 分享海报</button>
+  <button id="sharePosterBtn" class="settings-btn" onclick="LazyLoad('js/modules/poster.js',function(){openPosterPanel()})" style="display:none;font-size:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-radius:8px;padding:4px 10px;font-weight:600">🎉 分享海报</button>
   <button class="settings-btn" onclick="openClockPanel()" title="子午流注">⏳</button>
   <button class="settings-btn" onclick="openReminderPanel()">⚙️</button>
 </div>
@@ -356,6 +400,15 @@
       <input class="config-input" id="configWorkerUrl" type="text" placeholder="https://your-worker.workers.dev">
       <div class="he-label" style="margin-top:12px">阿里百炼 API Key（必填）</div>
       <input class="config-input" id="configApiKey" type="password" placeholder="sk-...">
+      <div class="he-label" style="margin-top:12px">选择模型</div>
+      <select class="config-input" id="configModel" style="padding:10px 12px">
+        <option value="qwen-turbo">qwen-turbo（轻量快速）</option>
+        <option value="qwen-plus">qwen-plus（标准推荐）</option>
+        <option value="qwen-max">qwen-max（最强智能）</option>
+        <option value="qwen-coder-plus">qwen-coder-plus（编程专用）</option>
+        <option value="deepseek-v3">deepseek-v3（深度推理）</option>
+        <option value="deepseek-r1">deepseek-r1（推理增强）</option>
+      </select>
       <div class="settings-api-hint">获取地址：<a href="https://bailian.console.aliyun.com/" target="_blank" style="color:var(--accent)">阿里百炼控制台</a> → 模型广场 → API Key 管理</div>
       <button class="const-btn" onclick="saveAiConfig()" style="margin-top:14px">✅ 保存 AI 配置</button>
       <div id="settingsAiStatus" style="margin-top:10px;font-size:12px;text-align:center"></div>
@@ -393,7 +446,7 @@
   <div class="panel-body panel-body-center" id="posterPanelBody">
     <canvas id="posterCanvas" style="width:100%;max-width:320px;border-radius:12px;box-shadow:var(--shadow)"></canvas>
     <div style="margin-top:12px;font-size:13px;color:var(--muted)">长按图片保存到相册</div>
-    <button class="const-btn" onclick="downloadPoster()" style="margin-top:12px">💾 下载海报</button>
+    <button class="const-btn" onclick="LazyLoad('js/modules/poster.js',function(){downloadPoster()})" style="margin-top:12px">💾 下载海报</button>
   </div>
 </div>
 
@@ -592,13 +645,13 @@
     </svg>
     <span class="bnav-label">管理</span>
   </button>
-  <button class="bnav-center" onclick="openPomodoroPanel()">
+  <button class="bnav-center" onclick="LazyLoad('js/modules/pomodoro.js',function(){openPomodoroPanel()})">
     <svg class="bnav-center-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="9"/>
       <path d="M12 7v5l3 2"/>
     </svg>
   </button>
-  <button class="bnav-item" onclick="openAiChatPanel()">
+  <button class="bnav-item" onclick="LazyLoad('js/modules/ai.js',function(){openAiChatPanel()})">
     <svg class="bnav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M9 18h6"/>
       <path d="M10 22h4"/>
@@ -617,6 +670,7 @@
 
 <!-- ===== 第0层：命名空间 + 模块系统 ===== -->
 <script src="js/app.js?v=20260630"></script>
+<script src="js/lazy.js?v=20260630"></script>
 
 <!-- ===== 第1层：数据层（无依赖） ===== -->
 <script src="js/data/constants.js?v=20260630"></script>
@@ -630,16 +684,22 @@
 <script src="js/core/storage.js?v=20260630"></script>
 
 <!-- ===== 第3层：业务模块层（依赖 core + data） ===== -->
+<!-- 核心模块同步加载 -->
 <script src="js/modules/checkin.js?v=20260630"></script>
 <script src="js/modules/habit.js?v=20260630"></script>
 <script src="js/modules/stats.js?v=20260630"></script>
 <script src="js/modules/water.js?v=20260630"></script>
-<script src="js/modules/diet.js?v=20260630"></script>
-<script src="js/modules/sports.js?v=20260630"></script>
-<script src="js/modules/pomodoro.js?v=20260630"></script>
-<script src="js/modules/ai.js?v=20260630"></script>
-<script src="js/modules/constitution.js?v=20260630"></script>
-<script src="js/modules/poster.js?v=20260630"></script>
+
+<!-- 非核心模块延迟加载（需要时再加载）
+  diet.js       → 点击饮食面板时
+  sports.js     → 点击运动面板时
+  pomodoro.js   → 点击番茄钟按钮时
+  ai.js         → 点击AI按钮时
+  constitution.js → 体质测试触发时
+  poster.js     → 导出海报触发时
+-->
+
+<!-- 引导模块（小体积，核心初始化使用） -->
 <script src="js/modules/guide.js?v=20260630"></script>
 
 <!-- ===== 第4层：UI层（依赖 modules + core + data） ===== -->
