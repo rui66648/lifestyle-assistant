@@ -1,30 +1,21 @@
-const CACHE_NAME = 'lifestyle-assistant-v20';
+const CACHE_NAME = 'lifestyle-assistant-v21';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './css/main.css',
+  './css/components.css',
+  './css/uiverse-raw.css',
+  './css/sports.css',
   './js/app.js',
+  './js/lazy.js',
   './js/main.js',
   './js/compat.js',
   './js/core/utils.js',
   './js/core/storage.js',
-  './js/data/constants.js',
-  './js/data/content.js',
-  './js/data/habits.js',
-  './js/data/packs.js',
-  './js/modules/ai.js',
-  './js/modules/checkin.js',
-  './js/modules/constitution.js',
-  './js/modules/guide.js',
-  './js/modules/habit.js',
-  './js/modules/pomodoro.js',
-  './js/modules/poster.js',
-  './js/modules/stats.js',
-  './js/modules/water.js',
-  './js/ui/events.js',
-  './js/ui/panels.js',
-  './js/ui/render.js',
+  './js/bundle/data.js',
+  './js/bundle/modules.js',
+  './js/bundle/ui.js',
   './assets/icon-192.jpg',
   './assets/icon-512.jpg',
 ];
@@ -57,11 +48,32 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request).then(cached => {
-      // Network-first for HTML and JS to always get latest updates
-      const isDynamic = event.request.destination === 'document'
-        || event.request.url.endsWith('.html')
-        || event.request.url.endsWith('.js');
-      if (isDynamic) {
+      const isHtml = event.request.destination === 'document' || event.request.url.endsWith('.html');
+      const isStatic = event.request.destination === 'script' || event.request.destination === 'style'
+        || event.request.url.endsWith('.js') || event.request.url.endsWith('.css');
+
+      // Cache-first for JS/CSS: 优先读缓存，快；后台静默更新
+      if (isStatic) {
+        if (cached) {
+          // 后台更新缓存（不阻塞响应）
+          fetch(event.request).then(response => {
+            if (response && response.status === 200) {
+              caches.open(CACHE_NAME).then(cache => cache.put(event.request, response));
+            }
+          }).catch(() => {});
+          return cached;
+        }
+        return fetch(event.request).then(response => {
+          if (response && response.status === 200) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          }
+          return response;
+        });
+      }
+
+      // Network-first for HTML: 确保获取最新版本
+      if (isHtml) {
         return fetch(event.request).then(response => {
           if (response && response.status === 200) {
             const clone = response.clone();
@@ -70,6 +82,8 @@ self.addEventListener('fetch', event => {
           return response;
         }).catch(() => cached);
       }
+
+      // 其他资源（图片、字体等）
       return cached || fetch(event.request);
     })
   );

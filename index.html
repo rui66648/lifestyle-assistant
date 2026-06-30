@@ -713,47 +713,29 @@
   </button>
 </div>
 
-<!-- ===== 第0层：命名空间 + 模块系统 ===== -->
-<script src="js/app.js?v=20260630"></script>
-<script src="js/lazy.js?v=20260630"></script>
+<!-- ===== 关键JS预加载 ===== -->
+<link rel="preload" href="js/app.js?v=20260630" as="script">
+<link rel="preload" href="js/core/utils.js?v=20260630" as="script">
+<link rel="preload" href="js/bundle/ui.js?v=20260630" as="script">
 
-<!-- ===== 第1层：数据层（无依赖） ===== -->
-<script src="js/data/constants.js?v=20260630"></script>
-<script src="js/data/content.js?v=20260630"></script>
-<script src="js/data/habits.js?v=20260630"></script>
-<script src="js/data/packs.js?v=20260630"></script>
-<script src="js/data/sports.js?v=20260630"></script>
+<!-- ===== 第0层：命名空间 + 懒加载 ===== -->
+<script src="js/app.js?v=20260630" defer></script>
+<script src="js/lazy.js?v=20260630" defer></script>
 
-<!-- ===== 第2层：核心层（依赖 data） ===== -->
-<script src="js/core/utils.js?v=20260630"></script>
-<script src="js/core/storage.js?v=20260630"></script>
+<!-- ===== 第1-2层：数据 + 核心 ===== -->
+<script src="js/bundle/data.js?v=20260630" defer></script>
+<script src="js/core/utils.js?v=20260630" defer></script>
+<script src="js/core/storage.js?v=20260630" defer></script>
 
-<!-- ===== 第3层：业务模块层（依赖 core + data） ===== -->
-<!-- 核心模块同步加载 -->
-<script src="js/modules/checkin.js?v=20260630"></script>
-<script src="js/modules/habit.js?v=20260630"></script>
-<script src="js/modules/stats.js?v=20260630"></script>
-<script src="js/modules/water.js?v=20260630"></script>
-<script src="js/modules/diet.js?v=20260630"></script>
-<script src="js/modules/sports.js?v=20260630"></script>
-<script src="js/modules/pomodoro.js?v=20260630"></script>
-<script src="js/modules/ai.js?v=20260630"></script>
-<script src="js/modules/constitution.js?v=20260630"></script>
-<script src="js/modules/poster.js?v=20260630"></script>
-<script src="js/modules/notification.js?v=20260630"></script>
-<script src="js/modules/guide.js?v=20260630"></script>
+<!-- ===== 第3层：业务模块（合并） ===== -->
+<script src="js/bundle/modules.js?v=20260630" defer></script>
 
-<!-- ===== 第4层：UI层（依赖 modules + core + data） ===== -->
-<script src="js/ui/render.js?v=20260630"></script>
-<script src="js/ui/panels.js?v=20260630"></script>
-<script src="js/ui/components.js?v=20260630"></script>
-<script src="js/ui/events.js?v=20260630"></script>
+<!-- ===== 第4层：UI层（合并） ===== -->
+<script src="js/bundle/ui.js?v=20260630" defer></script>
 
-<!-- ===== 第5层：兼容层（暴露全局函数） ===== -->
-<script src="js/compat.js?v=20260630"></script>
-
-<!-- ===== 第6层：应用入口 ===== -->
-<script src="js/main.js?v=20260630"></script>
+<!-- ===== 第5层：兼容层 + 入口 ===== -->
+<script src="js/compat.js?v=20260630" defer></script>
+<script src="js/main.js?v=20260630" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').then(reg => {
