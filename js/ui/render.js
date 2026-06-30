@@ -426,7 +426,9 @@
 
       const allDone = doneInGroup === totalInGroup && totalInGroup > 0;
 
-      html += `<div class="time-group ${allDone ? 'all-done' : ''}">
+      if (allDone) return;
+
+      html += `<div class="time-group">
         <div class="time-group-header">
           <div class="time-group-left">
             <span class="time-group-icon">${period.emoji}</span>
@@ -435,14 +437,13 @@
           <div style="display:flex;align-items:center;gap:8px">
             <span class="time-group-count">${doneInGroup}/${totalInGroup}</span>
           </div>
-        </div>
-        <div class="time-group-body" style="display:${allDone ? 'none' : 'block'}">`;
+        </div>`;
 
       groupItems.forEach(({h, checked, overdue, soon}) => {
         html += _renderHabitCardRow(h, checked, overdue, soon, rec);
       });
 
-      html += `</div></div>`;
+      html += `</div>`;
     });
 
     if (items.length === 0) {

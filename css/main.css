@@ -472,17 +472,6 @@ select:focus-visible{
   font-size:16px;color:var(--muted);transition:transform .3s var(--ease);
 }
 
-.time-group.all-done{
-  opacity:.7;
-}
-.time-group.all-done .time-group-header{
-  border-left-color:var(--success);
-}
-.time-group.all-done .time-group-count{
-  background:var(--success-light);
-  color:var(--success);
-}
-
 .time-group .habit-card{
   border-radius:0 !important;
   background:transparent !important;
