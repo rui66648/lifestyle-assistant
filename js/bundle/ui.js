@@ -1186,7 +1186,6 @@
   }
 
   function deleteHabitConfirm(habitId) {
-    if (!confirm('确定要删除这个习惯吗？此操作不可撤销。')) return;
     const idx = habitsConfig.findIndex(h => h.id === habitId);
     if (idx >= 0) {
       habitsConfig.splice(idx, 1);
@@ -1194,6 +1193,7 @@
       App.UI.Panels.closeAllPanels();
       App.UI.Render.renderManage();
       App.UI.Render.renderCheckin();
+      showToast('已删除习惯');
     }
   }
 
@@ -3784,7 +3784,6 @@
   }
 
   function deleteHabit(habitId) {
-    if (!confirm('确定要删除这个习惯吗？打卡记录会保留。')) return;
     habitsConfig = habitsConfig.filter(h => h.id !== habitId);
     saveConfig();
     showToast('已删除习惯');
