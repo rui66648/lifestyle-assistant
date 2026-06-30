@@ -2135,6 +2135,27 @@ body.dark .wuse-card,body.dark .emotion-mini-card,body.dark .wulao-mini-card{bac
 .install-prompt-card>div>div:last-child{font-size:0.8rem;color:var(--ink2);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .install-prompt-card button{flex-shrink:0;padding:6px 14px;font-size:0.8rem;white-space:nowrap;margin-top:0;width:auto}
 
+/* Constitution Entry Card */
+.constitution-entry-card{background:linear-gradient(135deg,var(--accent-light),rgba(245,158,11,.08));border:1px solid var(--accent-200);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all .2s var(--ease)}
+.constitution-entry-card:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+.constitution-entry-card:active{transform:scale(.98)}
+.ce-left{display:flex;align-items:center;gap:12px}
+.ce-emoji{font-size:1.8rem}
+.ce-title{font-size:.95rem;font-weight:700;color:var(--ink)}
+.ce-sub{font-size:.8rem;color:var(--ink2);margin-top:2px}
+.ce-arrow{font-size:1.5rem;color:var(--accent);font-weight:700}
+
+/* Constitution Tips Card */
+.constitution-tips{margin-bottom:12px}
+.ct-card{border-left:3px solid;border-radius:8px;padding:12px 14px;margin-bottom:8px}
+.ct-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.ct-emoji{font-size:1.3rem}
+.ct-title{font-size:.9rem;font-weight:700}
+.ct-body{font-size:.8rem;color:var(--ink2);line-height:1.5}
+.ct-footer{margin-top:8px;padding-top:8px;border-top:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between}
+.ct-advice{font-size:.8rem;color:var(--ink2);flex:1}
+.ct-btn{font-size:.75rem;padding:4px 10px;border-radius:20px;background:var(--accent);color:#fff;cursor:pointer}
+
 /* Health Report */
 .report-section{padding:16px;border-bottom:1px solid var(--rule)}
 .report-section:last-child{border-bottom:none}

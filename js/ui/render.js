@@ -371,6 +371,7 @@
 
     // 体质推荐（仅当天显示）
     if (viewDateOffset === 0) {
+      html += renderConstitutionEntry();
       html += renderConstitutionTips();
     }
 
@@ -1630,6 +1631,24 @@
     showToast('已完成 ' + completed + ' 项习惯' + (skipped ? '，' + skipped + ' 项需手动完成' : '') + '！');
     if (typeof checkLevelUp === 'function') checkLevelUp();
     render(['today', 'checkin']);
+  }
+
+  // ===== 体质测试入口卡片（未测过时显示） =====
+  function renderConstitutionEntry() {
+    var result = null;
+    try { result = JSON.parse(localStorage.getItem('constitution_result') || 'null'); } catch(e) {}
+    if (result && result.typeId) return ''; // 已测过不显示
+
+    return '<div class="constitution-entry-card" onclick="App.Modules.Constitution.openConstitutionPanel()">' +
+      '<div class="ce-left">' +
+        '<div class="ce-emoji">🩺</div>' +
+        '<div class="ce-text">' +
+          '<div class="ce-title">还没测过体质？</div>' +
+          '<div class="ce-sub">10秒测出你的体质，获取专属养生方案 →</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="ce-arrow">›</div>' +
+    '</div>';
   }
 
   // ===== 体质测试结果联动每日推荐（参考薄荷健康个性化方案） =====
