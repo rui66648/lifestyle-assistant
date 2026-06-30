@@ -670,34 +670,34 @@ select:focus-visible{
 .heatmap-cell.today{outline:2px solid var(--accent2);outline-offset:1px}
 
 /* Achievements */
-.achievements{display:flex;flex-wrap:wrap;gap:20px 14px;margin-top:16px;padding:8px 0;justify-content:center}
-.badge{width:70px;text-align:center;cursor:pointer;transition:all .3s var(--ease)}
-.badge:hover{transform:translateY(-4px) scale(1.05)}
-.badge:active{transform:scale(.92)}
+.achievements{display:flex;flex-wrap:wrap;gap:16px 12px;margin-top:16px;padding:8px 0;justify-content:flex-start}
+.badge{width:64px;text-align:center;cursor:pointer;transition:all .3s var(--ease)}
+.badge:hover{transform:translateY(-3px)}
+.badge:active{transform:scale(.94)}
 .badge-icon{
-  width:56px;height:56px;border-radius:50%;
+  width:48px;height:48px;border-radius:12px;
   display:flex;align-items:center;justify-content:center;
-  font-size:28px;margin:0 auto 8px;
-  box-shadow:0 4px 14px rgba(16,185,129,.2);
+  margin:0 auto 6px;
+  box-shadow:0 3px 10px rgba(16,185,129,.15);
   transition:all .3s var(--ease);
   position:relative;
+  color:var(--accent);
 }
 .badge-icon.locked{
   background:var(--bg2);
-  filter:grayscale(.6);
-  opacity:.55;
-  box-shadow:none;
+  box-shadow:inset 0 0 0 1.5px var(--rule);
+  color:var(--muted);
 }
 .badge-icon.locked::after{
-  content:'';position:absolute;bottom:-2px;right:-2px;
-  width:20px;height:20px;border-radius:50%;
-  background:#fff;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23A8A29E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='11' width='18' height='11' rx='2' ry='2'/%3E%3Cpath d='M7 11V7a5 5 0 0110 0v4'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:center;background-size:10px;
-  box-shadow:0 2px 6px rgba(0,0,0,.12);
+  content:'';position:absolute;bottom:-3px;right:-3px;
+  width:14px;height:14px;border-radius:50%;
+  background:var(--bg);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='7' viewBox='0 0 24 24' fill='none' stroke='%23A8A29E' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='11' width='18' height='11' rx='2' ry='2'/%3E%3Cpath d='M7 11V7a5 5 0 0110 0v4'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:center;background-size:7px;
+  box-shadow:0 1px 3px rgba(0,0,0,.08);
 }
-.badge-icon.unlocked{background:linear-gradient(135deg,var(--accent-light),var(--accent2-light));box-shadow:0 4px 14px rgba(16,185,129,.25)}
-.badge-label{font-size:11px;color:var(--muted);font-weight:500}
+.badge-icon.unlocked{background:linear-gradient(135deg,var(--accent-light),var(--accent2-light));box-shadow:0 3px 10px rgba(16,185,129,.15)}
+.badge-label{font-size:10px;color:var(--muted);font-weight:500}
 .badge-label.unlocked{color:var(--ink);font-weight:600}
 
 /* Bottom Panels */
@@ -2320,26 +2320,31 @@ body.dark .wuse-card,body.dark .emotion-mini-card,body.dark .wulao-mini-card{bac
 
 /* Profile Stats */
 .profile-stats{
-  display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
-  margin-bottom:24px;
+  display:grid;grid-template-columns:repeat(5,1fr);gap:8px;
+  margin-bottom:20px;
 }
 .profile-stat-item{
   background:rgba(255,255,255,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   border-radius:var(--radius-lg);
-  padding:18px 6px;text-align:center;
+  padding:14px 4px;text-align:center;
   box-shadow:var(--shadow-sm);transition:all .3s var(--ease);
   border:1px solid rgba(255,255,255,.6);
 }
 .profile-stat-item:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
 .profile-stat-item:active{transform:scale(.95)}
+.profile-stat-item.points-item{
+  background:linear-gradient(135deg,rgba(251,191,36,.1),rgba(245,158,11,.05));
+  border-color:rgba(251,191,36,.2);
+}
 .ps-val{
-  display:block;font-size:26px;font-weight:800;
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  background-clip:text;
+  display:block;font-size:20px;font-weight:700;
+  color:var(--accent);
   letter-spacing:-0.5px;
 }
-.ps-label{font-size:11px;color:var(--muted);margin-top:6px;display:block;font-weight:600}
+.profile-stat-item.points-item .ps-val{
+  color:var(--accent2);
+}
+.ps-label{font-size:10px;color:var(--muted);margin-top:4px;display:block;font-weight:600}
 
 /* ========== 运动养生模块 ========== */
 

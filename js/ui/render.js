@@ -478,22 +478,6 @@
     habitsConfig.forEach(h => {
       maxStreakAll = Math.max(maxStreakAll, getMaxStreak(h.id));
     });
-    const statsGrid = document.getElementById('statsGrid');
-    if (statsGrid) {
-      if (total === 0) {
-        statsGrid.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:16px;grid-column:1/-1">还没有习惯数据</div>';
-      } else {
-        const points = getUserPoints();
-        statsGrid.innerHTML = `
-          <div class="stat-card"><div class="stat-val">${done}/${total}</div><div class="stat-label">今日完成</div></div>
-          <div class="stat-card"><div class="stat-val">${maxStreakAll}</div><div class="stat-label">最长连续</div></div>
-          <div class="stat-card"><div class="stat-val">${getWeekRate()}%</div><div class="stat-label">本周率</div></div>
-          <div class="stat-card"><div class="stat-val">${getMonthRate()}%</div><div class="stat-label">本月率</div></div>
-          <div class="stat-card points-card"><div class="stat-val">⭐${points}</div><div class="stat-label">累计积分</div></div>
-        `;
-      }
-    }
-
     const rankingList = document.getElementById('rankingList');
     if (rankingList) {
       if (habitsConfig.length === 0) {
@@ -508,7 +492,7 @@
           else if (i === 1) rankClass = 'silver';
           else if (i === 2) rankClass = 'bronze';
           return `<div class="ranking-item">
-            <div class="ranking-rank ${rankClass}">${i < 3 ? ['🥇','🥈','🥉'][i] : i+1}</div>
+            <div class="ranking-rank ${rankClass}">${i+1}</div>
             <div class="ranking-header"><span class="ranking-name">${h.icon} ${h.name}</span><span class="ranking-pct">${rate}%</span></div>
             <div class="ranking-bar"><div class="ranking-fill ${cls}" style="width:${rate}%"></div></div>
           </div>`;
@@ -586,11 +570,15 @@
   function renderAchievements() {
     const container = document.getElementById('achievements');
     if (!container) return;
+    var svgFlame = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>';
+    var svgStar = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>';
+    var svgTrophy = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>';
+
     const badges = [
-      {id:'streak7',label:'7天连续',icon:'🔥',check: () => habitsConfig.some(h => getMaxStreak(h.id) >= 7)},
-      {id:'streak14',label:'14天连续',icon:'🔥',check: () => habitsConfig.some(h => getMaxStreak(h.id) >= 14)},
-      {id:'streak30',label:'30天连续',icon:'⭐',check: () => habitsConfig.some(h => getMaxStreak(h.id) >= 30)},
-      {id:'all_done',label:'全部完成',icon:'🏆',check: () => {
+      {id:'streak7',label:'7天连续',icon:svgFlame,check: () => habitsConfig.some(h => getMaxStreak(h.id) >= 7)},
+      {id:'streak14',label:'14天连续',icon:svgFlame,check: () => habitsConfig.some(h => getMaxStreak(h.id) >= 14)},
+      {id:'streak30',label:'30天连续',icon:svgStar,check: () => habitsConfig.some(h => getMaxStreak(h.id) >= 30)},
+      {id:'all_done',label:'全部完成',icon:svgTrophy,check: () => {
         const rec = checkinRecords[today()] || {};
         return habitsConfig.length > 0 && habitsConfig.every(h => App.Core.Storage.isHabitChecked(h, rec));
       }}
@@ -598,10 +586,10 @@
 
     container.innerHTML = badges.map(b => {
       const unlocked = b.check();
-      return `<div class="badge">
-        <div class="badge-icon ${unlocked ? 'unlocked' : 'locked'}">${b.icon}</div>
-        <div class="badge-label ${unlocked ? 'unlocked' : ''}">${b.label}</div>
-      </div>`;
+      return '<div class="badge">' +
+        '<div class="badge-icon ' + (unlocked ? 'unlocked' : 'locked') + '">' + b.icon + '</div>' +
+        '<div class="badge-label ' + (unlocked ? 'unlocked' : '') + '">' + b.label + '</div>' +
+      '</div>';
     }).join('');
   }
 
@@ -1174,16 +1162,19 @@
     const total = getTotalCheckins();
     const rate = habitsConfig.length ? Math.round(getTodayCompletionRate()) : 0;
     const count = habitsConfig.length;
+    const points = getUserPoints();
 
     const streakEl = document.getElementById('psStreak');
     const totalEl = document.getElementById('psTotal');
     const rateEl = document.getElementById('psRate');
     const habitsEl = document.getElementById('psHabits');
+    const pointsEl = document.getElementById('psPoints');
 
     if (streakEl) streakEl.textContent = streak;
     if (totalEl) totalEl.textContent = total;
     if (rateEl) rateEl.textContent = rate + '%';
     if (habitsEl) habitsEl.textContent = count;
+    if (pointsEl) pointsEl.textContent = points;
   }
 
   /* ========== Profile Grid (图标宫格) ========== */
