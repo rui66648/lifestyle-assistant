@@ -428,6 +428,9 @@
 
   function renderVersionSelect() {
     var body = document.getElementById('constitutionPanelBody');
+    var svgFlash = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>';
+    var svgList = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>';
+    var svgMicro = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"></path><path d="M7 14.5c.5 2.5 2.5 3.5 5 3.5s4.5-1 5-3.5"></path><circle cx="12" cy="8" r="2"></circle><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="M12 2v2"></path></svg>';
     body.innerHTML =
       '<div style="padding:1.5rem;text-align:center">' +
         '<div style="font-size:2rem;margin-bottom:0.8rem">🩺</div>' +
@@ -435,22 +438,28 @@
         '<div style="color:var(--muted);font-size:0.85rem;margin-bottom:1.5rem;line-height:1.6">基于王琦教授《中医体质分类与判定》标准<br>请选择适合您的测试版本</div>' +
         '<div class="const-version-list">' +
           '<div class="const-version-card" onclick="selectConstitutionVersion(\'quick\')">' +
-            '<div class="const-version-emoji">⚡</div>' +
-            '<div class="const-version-name">快筛版</div>' +
-            '<div class="const-version-meta">10题 · 约1分钟</div>' +
-            '<div class="const-version-desc">快速了解主要体质倾向</div>' +
+            '<div class="const-version-emoji">' + svgFlash + '</div>' +
+            '<div style="flex:1">' +
+              '<div class="const-version-name">快筛版</div>' +
+              '<div class="const-version-meta">10题 · 约1分钟</div>' +
+              '<div class="const-version-desc">快速了解主要体质倾向</div>' +
+            '</div>' +
           '</div>' +
           '<div class="const-version-card" onclick="selectConstitutionVersion(\'std\')">' +
-            '<div class="const-version-emoji">📋</div>' +
-            '<div class="const-version-name">标准版</div>' +
-            '<div class="const-version-meta">30题 · 约3分钟</div>' +
-            '<div class="const-version-desc">较全面的体质评估</div>' +
+            '<div class="const-version-emoji">' + svgList + '</div>' +
+            '<div style="flex:1">' +
+              '<div class="const-version-name">标准版</div>' +
+              '<div class="const-version-meta">30题 · 约3分钟</div>' +
+              '<div class="const-version-desc">较全面的体质评估</div>' +
+            '</div>' +
           '</div>' +
           '<div class="const-version-card" onclick="selectConstitutionVersion(\'full\')">' +
-            '<div class="const-version-emoji">🔬</div>' +
-            '<div class="const-version-name">完整版</div>' +
-            '<div class="const-version-meta">67题 · 约10分钟</div>' +
-            '<div class="const-version-desc">国标完整量表，最精准</div>' +
+            '<div class="const-version-emoji">' + svgMicro + '</div>' +
+            '<div style="flex:1">' +
+              '<div class="const-version-name">完整版</div>' +
+              '<div class="const-version-meta">67题 · 约10分钟</div>' +
+              '<div class="const-version-desc">国标完整量表，最精准</div>' +
+            '</div>' +
           '</div>' +
         '</div>' +
         '<div style="margin-top:1rem;font-size:0.8rem;color:var(--muted)">💡 首次建议从快筛版开始</div>' +
