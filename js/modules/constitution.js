@@ -755,7 +755,13 @@
       tip: habit.tip || ''
     };
     if (habit.defaultReminder) {
-      newHabit.reminder = Object.assign({}, habit.defaultReminder, { enabled: true });
+      newHabit.reminder = Object.assign(
+        { enabled: false, time: '08:00', days: [0,1,2,3,4,5,6], method: 'in-app' },
+        habit.defaultReminder,
+        { enabled: true }
+      );
+    } else {
+      newHabit.reminder = { enabled: false, time: '08:00', days: [0,1,2,3,4,5,6], method: 'in-app' };
     }
     if (habit.type === 'water') {
       newHabit.waterConfig = { perCup: 250, dailyGoal: 2000 };
