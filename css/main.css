@@ -909,7 +909,7 @@ select:focus-visible{
   background:var(--rule);
   transform:scale(.98);
 }
-.pse-icon{font-size:18px}
+.pse-icon{width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:var(--accent-light);border-radius:7px;color:var(--accent)}
 .pse-label{font-size:14px;font-weight:600;color:var(--ink);flex:1}
 .pse-desc{font-size:11px;color:var(--muted)}
 .pse-arrow{font-size:18px;color:var(--muted)}
