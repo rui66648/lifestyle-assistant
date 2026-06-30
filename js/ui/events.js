@@ -714,6 +714,14 @@
     toggleReminderEnabled
   };
 
+  // 暴露到全局，供 HTML onclick 直接使用
+  window.switchTab = switchTab;
+  window.handleCheckin = handleCheckin;
+  // 批量暴露其余函数
+  Object.keys(App.UI.Events).forEach(function(k) {
+    if (typeof App.UI.Events[k] === 'function' && !window[k]) window[k] = App.UI.Events[k];
+  });
+
   if (App.registerModule) {
     App.registerModule('ui.events', 'ui', null);
   }

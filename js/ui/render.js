@@ -1122,6 +1122,7 @@
       }
     }
   }
+  window.toggleEditFixedReminder = toggleEditFixedReminder;
 
   function toggleEditIntervalReminder(el) {
     const isOn = el.classList.toggle('on');
@@ -1137,6 +1138,7 @@
       }
     }
   }
+  window.toggleEditIntervalReminder = toggleEditIntervalReminder;
 
   function addEditReminderTime() {
     const list = document.getElementById('heExtraRemindersList');
@@ -1894,6 +1896,15 @@
     showCelebration,
     dismissCelebration
   };
+
+  // 暴露到全局，供 HTML onclick 直接使用
+  window.toggleMgGroup = toggleMgGroup;
+  window.openHabitEditPanel = openHabitEditPanel;
+  window.toggleEditReminder = toggleEditReminder;
+  // 批量暴露其余函数
+  Object.keys(App.UI.Render).forEach(function(k) {
+    if (typeof App.UI.Render[k] === 'function' && !window[k]) window[k] = App.UI.Render[k];
+  });
 
   if (App.registerModule) {
     App.registerModule('ui.render', 'ui', null);

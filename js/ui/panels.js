@@ -1421,6 +1421,13 @@
   window.openHabitReminderList = openHabitReminderList;
   window.toggleHabitReminder = toggleHabitReminder;
   window.batchToggleReminders = batchToggleReminders;
+  window.openReportPanel = openReportPanel;
+  window.openEmotionPanel = openEmotionPanel;
+  window.openRetroactivePanel = openRetroactivePanel;
+  // 批量暴露其余函数
+  Object.keys(App.UI.Panels).forEach(function(k) {
+    if (typeof App.UI.Panels[k] === 'function' && !window[k]) window[k] = App.UI.Panels[k];
+  });
 
   if (App.registerModule) {
     App.registerModule('ui.panels', 'ui', null);
