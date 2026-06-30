@@ -1210,7 +1210,6 @@
     habit.enabled = document.getElementById('heEnabledToggle').classList.contains('on');
 
     // Interval reminder
-    const irToggle = document.getElementById('heIntervalToggle');
     if (irToggle) {
       const irOn = reminderMainOn && irToggle.classList.contains('on');
       if (irOn) {
