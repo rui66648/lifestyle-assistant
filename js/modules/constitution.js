@@ -759,6 +759,7 @@
     }
     if (habit.type === 'water') {
       newHabit.waterConfig = { perCup: 250, dailyGoal: 2000 };
+      newHabit.intervalReminder = { interval: 120, unit: 'minute', enabled: true, startTime: '07:00', endTime: '22:00', days: [0,1,2,3,4,5,6] };
     }
     if (habit.options) newHabit.options = habit.options;
 

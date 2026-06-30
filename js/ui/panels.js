@@ -1220,11 +1220,6 @@
     const h = habitsConfig.find(x => x.id === habitId);
     if (!h) return;
 
-    if (h.type === 'water') {
-      openWaterSettingsPanel(habitId);
-      return;
-    }
-
     const r = h.reminder || {enabled:false, time:'08:00', days:[0,1,2,3,4,5,6], method:'in-app'};
 
     document.getElementById('timePanelTitle').textContent = `${h.icon} ${h.name} 提醒设置`;
@@ -1372,94 +1367,6 @@
     openPanel('checkinPanel');
   }
 
-  function openWaterSettingsPanel(habitId) {
-    pendingCheckinHabitId = habitId;
-    const h = habitsConfig.find(x => x.id === habitId);
-    if (!h) return;
-    const wc = h.waterConfig || {dailyGoal:2000, perCup:250, schedule:[]};
-    const body = document.getElementById('checkinPanelBody');
-    document.getElementById('checkinPanelTitle').textContent = '💧 饮水设置';
-
-    let html = `<div style="padding:10px 0">`;
-    html += `<div style="font-size:14px;color:var(--muted);margin-bottom:12px">为「${h.name}」设置饮水计划</div>`;
-
-    html += `<div style="margin-bottom:16px">
-      <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:6px">每日目标 (ml)</label>
-      <input type="number" id="waterDailyGoal" value="${wc.dailyGoal || 2000}" min="500" max="5000" step="100" style="width:100%;padding:12px;border:2px solid var(--rule);border-radius:12px;font-size:16px;background:#fff;outline:none">
-    </div>`;
-
-    html += `<div style="margin-bottom:16px">
-      <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:6px">每杯容量 (ml)</label>
-      <input type="number" id="waterPerCup" value="${wc.perCup || 250}" min="50" max="1000" step="50" style="width:100%;padding:12px;border:2px solid var(--rule);border-radius:12px;font-size:16px;background:#fff;outline:none">
-    </div>`;
-
-    html += `<div style="margin-bottom:16px">
-      <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:6px">饮水时间表</label>
-      <div id="waterScheduleList" style="display:flex;flex-direction:column;gap:6px">`;
-    const schedule = wc.schedule || [];
-    schedule.forEach((s, idx) => {
-      html += `<div class="water-schedule-row" data-idx="${idx}" style="display:flex;gap:6px;align-items:center">
-        <input type="time" class="ws-time" value="${s.time}" style="flex:1;padding:8px;border:2px solid var(--rule);border-radius:8px;font-size:14px;background:#fff;outline:none">
-        <input type="text" class="ws-label" value="${s.label}" placeholder="标签" style="flex:2;padding:8px;border:2px solid var(--rule);border-radius:8px;font-size:14px;background:#fff;outline:none">
-        <input type="number" class="ws-amount" value="${s.amount}" min="50" max="1000" step="50" placeholder="ml" style="width:70px;padding:8px;border:2px solid var(--rule);border-radius:8px;font-size:14px;background:#fff;outline:none">
-        <button onclick="removeWaterScheduleRow(${idx})" style="width:32px;height:32px;border-radius:8px;background:var(--bg2);color:#e74c3c;font-size:16px;border:none;cursor:pointer">✕</button>
-      </div>`;
-    });
-    html += `</div>`;
-    html += `<button onclick="addWaterScheduleRow()" style="width:100%;padding:8px;margin-top:6px;border-radius:8px;background:var(--bg2);color:var(--accent);font-size:13px;font-weight:600;border:none;cursor:pointer">+ 添加时间点</button>`;
-    html += `</div>`;
-
-    html += `<div style="display:flex;gap:10px;margin-top:20px">
-      <button class="checkin-btn pending" style="flex:1;padding:12px;border-radius:12px;font-size:14px;font-weight:600" onclick="closeAllPanels()">取消</button>
-      <button class="checkin-btn done" style="flex:1;padding:12px;border-radius:12px;font-size:14px;font-weight:600" onclick="saveWaterSettings()">保存</button>
-    </div>`;
-
-    html += `</div>`;
-
-    body.innerHTML = html;
-    openPanel('checkinPanel');
-  }
-
-  function addWaterScheduleRow() {
-    const list = document.getElementById('waterScheduleList');
-    const idx = list.children.length;
-    const div = document.createElement('div');
-    div.className = 'water-schedule-row';
-    div.dataset.idx = idx;
-    div.style.cssText = 'display:flex;gap:6px;align-items:center';
-    div.innerHTML = `<input type="time" class="ws-time" value="08:00" style="flex:1;padding:8px;border:2px solid var(--rule);border-radius:8px;font-size:14px;background:#fff;outline:none">
-      <input type="text" class="ws-label" value="" placeholder="标签" style="flex:2;padding:8px;border:2px solid var(--rule);border-radius:8px;font-size:14px;background:#fff;outline:none">
-      <input type="number" class="ws-amount" value="250" min="50" max="1000" step="50" placeholder="ml" style="width:70px;padding:8px;border:2px solid var(--rule);border-radius:8px;font-size:14px;background:#fff;outline:none">
-      <button onclick="this.parentElement.remove()" style="width:32px;height:32px;border-radius:8px;background:var(--bg2);color:#e74c3c;font-size:16px;border:none;cursor:pointer">✕</button>`;
-    list.appendChild(div);
-  }
-
-  function removeWaterScheduleRow(idx) {
-    const row = document.querySelector(`.water-schedule-row[data-idx="${idx}"]`);
-    if (row) row.remove();
-  }
-
-  function saveWaterSettings() {
-    const h = habitsConfig.find(x => x.id === pendingCheckinHabitId);
-    if (!h) return;
-    const goal = parseInt(document.getElementById('waterDailyGoal').value) || 2000;
-    const perCup = parseInt(document.getElementById('waterPerCup').value) || 250;
-    const rows = document.querySelectorAll('.water-schedule-row');
-    const schedule = [];
-    rows.forEach(row => {
-      const time = row.querySelector('.ws-time').value;
-      const label = row.querySelector('.ws-label').value;
-      const amount = parseInt(row.querySelector('.ws-amount').value) || 250;
-      if (time) schedule.push({time, label: label || '喝水', amount});
-    });
-    schedule.sort((a, b) => a.time.localeCompare(b.time));
-    h.waterConfig = {dailyGoal: goal, perCup, schedule};
-    saveConfig();
-    showToast('饮水设置已保存');
-    closeAllPanels();
-    render();
-  }
-
   if (!window.App) window.App = {};
   if (!App.UI) App.UI = {};
 
@@ -1504,11 +1411,7 @@
     saveTimeSettings,
     toggleRepeat,
     openWaterInputPanel,
-    openWaterWeekPanel,
-    openWaterSettingsPanel,
-    addWaterScheduleRow,
-    removeWaterScheduleRow,
-    saveWaterSettings
+    openWaterWeekPanel
   };
 
   // 暴露到全局，供 HTML onclick 直接使用

@@ -1,8 +1,7 @@
-// water.js - 饮水追踪模块（非 UI 函数已统一至 js/ui/events.js 和 js/ui/panels.js）
-// 仅保留 renderWaterTracker（唯一未被重复定义的函数）
+// water.js - 饮水追踪模块
 (function() {
   function renderWaterTracker(h, rec) {
-    const wc = h.waterConfig || {dailyGoal:2000, perCup:250, schedule:[]};
+    const wc = h.waterConfig || {dailyGoal:2000, perCup:250};
     const goal = wc.dailyGoal || 2000;
     const perCup = wc.perCup || 250;
     const waterRec = rec[h.id] || {};
@@ -19,37 +18,17 @@
     if (pct >= 80) fillClass = 'high';
     else if (pct >= 50) fillClass = 'mid';
 
-    // 合并：时间线+水杯图标 → 每个时间点一个杯子，上方显示时间
-    const now = new Date();
-    const currentMinutes = now.getHours() * 60 + now.getMinutes();
-    const schedule = wc.schedule || [];
-    const hasSchedule = schedule.length > 0;
-
     let cupsViz = `<div class="water-cups-row">`;
     for (let i = 0; i < totalCups; i++) {
       const filled = i < doneCups;
       const isNext = i === doneCups;
       const clickAttr = filled ? '' : `onclick="quickAddWater('${h.id}',${perCup})"`;
 
-      // 取对应时间点的信息
-      let timeLabel = '';
-      let timeIcon = '';
-      if (hasSchedule && i < schedule.length) {
-        const s = schedule[i];
-        const [sh, sm] = s.time.split(':').map(Number);
-        const schedMinutes = sh * 60 + sm;
-        const isPast = currentMinutes >= schedMinutes;
-        timeLabel = s.time.slice(0,5);
-        timeIcon = isPast ? '💧' : '⭕';
-      }
-
       cupsViz += `<div class="water-cup-item">
-        ${timeLabel ? `<span class="water-cup-time">${timeLabel}</span>` : ''}
         <div class="water-cup ${filled ? 'filled' : ''} ${isNext ? 'next' : ''}" ${clickAttr} title="${filled ? '已喝 ✓' : '点击记录一杯'}">
           <span class="water-cup-num">${i+1}</span>
           ${filled ? '<span class="water-cup-check">✓</span>' : ''}
         </div>
-        ${timeIcon ? `<span class="water-cup-icon">${timeIcon}</span>` : ''}
       </div>`;
     }
     cupsViz += `</div>`;

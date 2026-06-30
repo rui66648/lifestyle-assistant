@@ -15,7 +15,7 @@ const HABIT_LIBRARY = [
   {id:'breakfast',name:'吃早餐',icon:'🍳',category:'diet',timePeriod:'morning',type:'boolean',unit:'',tip:'7:00-8:00，碳水+蛋白质+蔬果'},
   {id:'healthy_diet',name:'均衡饮食',icon:'🥗',category:'diet',timePeriod:'afternoon',type:'boolean',unit:'',defaultReminder:{time:'12:00'},tip:'每餐12种以上食物，七分饱'},
   {id:'fruits_veggies',name:'蔬果摄入',icon:'🥦',category:'diet',timePeriod:'afternoon',type:'count',unit:'份',tip:'每天300-500g蔬菜+200-350g水果'},
-  {id:'daily_water',name:'每日饮水',icon:'💧',category:'diet',timePeriod:'morning',type:'water',unit:'ml',tip:'1500-2000ml/天，少量多次',waterConfig:{dailyGoal:2000,perCup:250,schedule:[{time:'06:30',label:'起床第一杯温水',amount:300},{time:'09:30',label:'上午',amount:250},{time:'11:30',label:'午餐前',amount:250},{time:'14:00',label:'下午',amount:200},{time:'16:00',label:'下午补水',amount:250},{time:'18:30',label:'晚餐前',amount:200},{time:'20:30',label:'睡前',amount:150},{time:'22:00',label:'晚间',amount:150}]}},
+  {id:'daily_water',name:'每日饮水',icon:'💧',category:'diet',timePeriod:'morning',type:'water',unit:'ml',tip:'1500-2000ml/天，少量多次',waterConfig:{dailyGoal:2000,perCup:250},intervalReminder:{interval:120,unit:'minute',enabled:true,startTime:'07:00',endTime:'22:00',days:[0,1,2,3,4,5,6]}},
   {id:'less_oil',name:'少油少盐',icon:'🧂',category:'diet',timePeriod:'afternoon',type:'boolean',unit:'',tip:'每天油≤25g，盐≤6g'},
   {id:'home_cooking',name:'自己做饭',icon:'👨‍🍳',category:'diet',timePeriod:'evening',type:'boolean',unit:'',tip:'减少外卖，自己动手更健康'},
   {id:'no_sugar_drink',name:'不喝含糖饮料',icon:'🚫',category:'diet',timePeriod:'afternoon',type:'boolean',unit:'',tip:'用白水/茶代替碳酸饮料和奶茶'},

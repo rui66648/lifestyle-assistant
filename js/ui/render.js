@@ -180,15 +180,6 @@
 
   // ---- 打卡项辅助 ----
   function _getNextTime(h, rec, nowMinutes) {
-    if (h.type === 'water' && (h.waterConfig && h.waterConfig.schedule)) {
-      const doneTimes = new Set(((rec[h.id] && rec[h.id].cups) || []).map(c => c.time));
-      for (const s of h.waterConfig.schedule) {
-        const [sh, sm] = s.time.split(':').map(Number);
-        const schedMin = sh * 60 + sm;
-        if (!doneTimes.has(s.time) && schedMin >= nowMinutes) return schedMin;
-      }
-      return 9999;
-    }
     if ((h.reminder && h.reminder.enabled)) {
       const [rh, rm] = h.reminder.time.split(':').map(Number);
       return rh * 60 + rm;
@@ -917,6 +908,21 @@
       <input class="he-input" id="heTarget" type="number" value="${habit.target || ''}" placeholder="每日目标数量">
     </div>`;
 
+    // Water config (for water type)
+    const wc = habit.waterConfig || {dailyGoal: 2000, perCup: 250};
+    html += `<div id="heWaterWrap" style="display:${habit.type === 'water' ? 'block' : 'none'}">
+      <div class="he-row">
+        <div class="he-row-item">
+          <div class="he-label">每日目标 (ml)</div>
+          <input class="he-input" id="heWaterGoal" type="number" value="${wc.dailyGoal}" min="500" max="5000" step="100">
+        </div>
+        <div class="he-row-item">
+          <div class="he-label">每杯容量 (ml)</div>
+          <input class="he-input" id="heWaterPerCup" type="number" value="${wc.perCup}" min="50" max="1000" step="50">
+        </div>
+      </div>
+    </div>`;
+
     // Repeat days
     html += `<div class="he-label">重复日</div>
       <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap">`;
@@ -1019,12 +1025,19 @@
     const type = document.getElementById('heType').value;
     const unitWrap = document.getElementById('heUnitWrap');
     const targetWrap = document.getElementById('heTargetWrap');
+    const waterWrap = document.getElementById('heWaterWrap');
     if (type === 'count' || type === 'timer') {
       if (unitWrap) unitWrap.style.display = 'block';
       if (targetWrap) targetWrap.style.display = 'block';
+      if (waterWrap) waterWrap.style.display = 'none';
+    } else if (type === 'water') {
+      if (unitWrap) unitWrap.style.display = 'none';
+      if (targetWrap) targetWrap.style.display = 'none';
+      if (waterWrap) waterWrap.style.display = 'block';
     } else {
       if (unitWrap) unitWrap.style.display = 'none';
       if (targetWrap) targetWrap.style.display = 'none';
+      if (waterWrap) waterWrap.style.display = 'none';
     }
   }
 
@@ -1089,6 +1102,15 @@
     if (habit.type === 'count' || habit.type === 'timer') {
       habit.unit = document.getElementById('heUnit').value || '次';
       habit.target = parseInt(document.getElementById('heTarget').value) || 1;
+    }
+
+    if (habit.type === 'water') {
+      const goalInput = document.getElementById('heWaterGoal');
+      const perCupInput = document.getElementById('heWaterPerCup');
+      habit.waterConfig = {
+        dailyGoal: goalInput ? parseInt(goalInput.value) || 2000 : 2000,
+        perCup: perCupInput ? parseInt(perCupInput.value) || 250 : 250
+      };
     }
 
     const repeatStr = document.getElementById('heRepeat').value;
