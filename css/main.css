@@ -2127,6 +2127,14 @@ body.dark .wuse-card,body.dark .emotion-mini-card,body.dark .wulao-mini-card{bac
 .const-result-habit .rh-btn{font-size:12px;color:var(--accent);font-weight:600;cursor:pointer}
 .const-btn{width:100%;padding:14px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:15px;font-weight:700;border:none;cursor:pointer;margin-top:12px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
 
+/* ========== 安装引导卡片 ========== */
+.install-prompt-card{margin:8px 0;padding:14px 16px;background:linear-gradient(135deg,var(--accent-light),var(--accent2-light));border-radius:14px;display:flex;align-items:center;gap:12px;flex-direction:row !important;flex-wrap:nowrap !important;width:100%;box-sizing:border-box}
+.install-prompt-card > span:first-child{font-size:2rem;flex-shrink:0;width:auto;height:auto;line-height:1}
+.install-prompt-card > div{flex:1;min-width:0;text-align:left}
+.install-prompt-card > div > div:first-child{font-weight:700;font-size:15px;color:var(--ink);white-space:normal;word-wrap:break-word}
+.install-prompt-card > div > div:last-child{font-size:12px;color:var(--ink2);margin-top:2px;white-space:normal;word-wrap:break-word}
+.install-prompt-card button.const-btn{flex-shrink:0;padding:8px 16px;font-size:13px;font-weight:600;margin-top:0;min-width:70px;height:auto;white-space:nowrap}
+
 /* Health Report */
 .report-section{padding:16px;border-bottom:1px solid var(--rule)}
 .report-section:last-child{border-bottom:none}
