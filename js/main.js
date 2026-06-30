@@ -2,9 +2,9 @@
   function initDarkMode() {
     const saved = localStorage.getItem('dark_mode');
     const checkbox = document.getElementById('themeCheckbox');
+    const settingsCheckbox = document.getElementById('settingsThemeCheckbox');
     const icon = document.getElementById('themeIcon');
 
-    // 确定实际暗黑模式状态：优先用户手动设置，其次系统偏好
     let useDark;
     if (saved !== null) {
       useDark = saved === 'true';
@@ -15,10 +15,12 @@
     if (useDark) {
       if (document.body) document.body.classList.add('dark');
       if (checkbox) checkbox.checked = true;
+      if (settingsCheckbox) settingsCheckbox.checked = true;
       if (icon) icon.textContent = '🌙';
     } else {
       if (document.body) document.body.classList.remove('dark');
       if (checkbox) checkbox.checked = false;
+      if (settingsCheckbox) settingsCheckbox.checked = false;
       if (icon) icon.textContent = '☀️';
     }
   }

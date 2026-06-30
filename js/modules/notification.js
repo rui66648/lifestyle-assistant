@@ -153,4 +153,7 @@
     openSettings: openNotificationSettings,
     toggleReminders: toggleNotificationReminders
   };
+
+  window.openNotificationSettings = openNotificationSettings;
+  window.toggleNotificationReminders = toggleNotificationReminders;
 })();

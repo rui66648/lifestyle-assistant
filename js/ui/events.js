@@ -662,14 +662,17 @@
 
   function toggleDarkMode(enable) {
     const icon = document.getElementById('themeIcon');
+    const settingsCheckbox = document.getElementById('settingsThemeCheckbox');
     if (enable) {
       document.body.classList.add('dark');
       localStorage.setItem('dark_mode', 'true');
       if (icon) icon.textContent = '🌙';
+      if (settingsCheckbox) settingsCheckbox.checked = true;
     } else {
       document.body.classList.remove('dark');
       localStorage.setItem('dark_mode', 'false');
       if (icon) icon.textContent = '☀️';
+      if (settingsCheckbox) settingsCheckbox.checked = false;
     }
   }
 

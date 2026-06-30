@@ -2074,6 +2074,57 @@ body.dark .wuse-card,body.dark .emotion-mini-card,body.dark .wulao-mini-card{bac
 .settings-section .config-input:focus{
   border-color:var(--accent);
 }
+.settings-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 0;
+  border-bottom:1px solid var(--rule);
+}
+.settings-item:last-child{
+  border-bottom:none;
+}
+.settings-item-left{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.settings-item-icon{
+  width:36px;
+  height:36px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--accent-light);
+  border-radius:10px;
+  font-size:18px;
+}
+.settings-item-title{
+  font-size:14px;
+  font-weight:600;
+  color:var(--ink);
+}
+.settings-item-desc{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:2px;
+}
+.settings-entry-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 0;
+  border-bottom:1px solid var(--rule);
+  cursor:pointer;
+  transition:opacity .2s;
+}
+.settings-entry-item:active{
+  opacity:0.7;
+}
+.settings-entry-arrow{
+  font-size:20px;
+  color:var(--muted);
+}
 /* Manage Heatmap (GitHub-style) */
 .gm-heatmap-card{background:#fff;border-radius:14px;padding:16px;margin:12px 16px;box-shadow:var(--shadow)}
 .gm-heatmap-title{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
