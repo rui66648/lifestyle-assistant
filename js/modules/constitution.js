@@ -4,7 +4,7 @@
   var constitutionGender = null;
   var currentQuizSet = null;
   var currentQuizName = '';
-  var TYPES = App.Data.TYPES;
+  var TYPES = App.Data.CONSTITUTION_TYPES;
 
   /* ========== 体质分享海报 ========== */
   function generateConstitutionPoster() {
@@ -808,6 +808,15 @@
 
   if (!window.App) window.App = {};
   if (!App.Modules) App.Modules = {};
+
+  window.selectConstitutionVersion = selectConstitutionVersion;
+  window.startConstitutionQuiz = startConstitutionQuiz;
+  window.selectConstitutionOption = selectConstitutionOption;
+  window.retakeConstitutionQuiz = retakeConstitutionQuiz;
+  window.addHabitFromConstitution = addHabitFromConstitution;
+  window.showInstallPrompt = showInstallPrompt;
+  window.openConstitutionPosterPanel = openConstitutionPosterPanel;
+  window.shareConstitutionResult = shareConstitutionResult;
 
   App.Modules.Constitution = {
     openConstitutionPanel: openConstitutionPanel,
