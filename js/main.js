@@ -74,8 +74,12 @@
 
   function startIntervalReminderCheck() {
     if (_intervalReminderTimer) clearInterval(_intervalReminderTimer);
-    _intervalReminderTimer = setInterval(checkIntervalReminders, 60000);
+    _intervalReminderTimer = setInterval(function() {
+      checkIntervalReminders();
+      checkFixedReminders();
+    }, 60000);
     checkIntervalReminders();
+    checkFixedReminders();
   }
 
   function checkIntervalReminders() {
@@ -103,17 +107,73 @@
         var key = h.id + '_' + todayStr + '_' + hm;
         if (!_intervalReminderShown[key]) {
           _intervalReminderShown[key] = true;
-          showIntervalReminderBanner(h);
+          triggerReminder(h);
         }
       }
     });
   }
 
-  function showIntervalReminderBanner(h) {
-    var ir = h.intervalReminder;
-    var msg = h.icon + ' ' + h.name + '时间到了！' + (h.tip ? '（' + h.tip + '）' : '');
-    showToast(msg, 5000);
-    if (typeof playSound === 'function') playSound('checkin');
+  var _fixedReminderShown = {};
+  function checkFixedReminders() {
+    if (typeof habitsConfig === 'undefined' || !habitsConfig.length) return;
+    var now = new Date();
+    var day = now.getDay();
+    var hm = now.getHours() * 60 + now.getMinutes();
+    var todayStr = (typeof today === 'function') ? today() : formatDate(now);
+
+    habitsConfig.forEach(function(h) {
+      if (!h.reminder || !h.reminder.enabled) return;
+      if (!h.reminder.days || h.reminder.days.indexOf(day) === -1) return;
+      var times = [h.reminder.time];
+      if (h.reminder.extraTimes && h.reminder.extraTimes.length) {
+        times = times.concat(h.reminder.extraTimes);
+      }
+      times.forEach(function(t) {
+        if (!t) return;
+        var parts = t.split(':');
+        var rh = parseInt(parts[0]) || 0;
+        var rm = parseInt(parts[1]) || 0;
+        var tMin = rh * 60 + rm;
+        if (hm === tMin) {
+          var key = h.id + '_' + todayStr + '_' + tMin;
+          if (!_fixedReminderShown[key]) {
+            _fixedReminderShown[key] = true;
+            triggerReminder(h);
+          }
+        }
+      });
+    });
+  }
+
+  function triggerReminder(habit) {
+    var method = habit.reminder ? (habit.reminder.method || 'toast') : 'toast';
+    if (method === 'off') return;
+    var soundOn = habit.reminder ? (habit.reminder.sound !== false) : true;
+    var vibrateOn = habit.reminder ? (habit.reminder.vibrate !== false) : true;
+
+    switch (method) {
+      case 'toast':
+        var msg = habit.icon + ' ' + habit.name + '时间到了！' + (habit.tip ? '（' + habit.tip + '）' : '');
+        showToast(msg, 3000);
+        break;
+      case 'banner':
+        if (typeof showReminderBanner === 'function') showReminderBanner(habit);
+        if (soundOn && typeof playSound === 'function') playSound('reminder');
+        if (vibrateOn && navigator.vibrate) navigator.vibrate([200, 100, 200]);
+        break;
+      case 'notification':
+        if (typeof showLocalNotification === 'function') showLocalNotification(habit.name, habit.icon + ' ' + habit.name + '时间到了！', habit.icon);
+        if (soundOn && typeof playSound === 'function') playSound('reminder');
+        break;
+      case 'alarm':
+        if (typeof showReminderBanner === 'function') showReminderBanner(habit);
+        if (typeof playAlarmSequence === 'function') playAlarmSequence();
+        if (typeof flashScreen === 'function') flashScreen();
+        break;
+      default:
+        var msg2 = habit.icon + ' ' + habit.name + '时间到了！' + (habit.tip ? '（' + habit.tip + '）' : '');
+        showToast(msg2, 3000);
+    }
   }
 
   if (document.readyState === 'loading') {

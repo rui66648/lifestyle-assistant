@@ -1122,7 +1122,7 @@
           if (granted) {
             _applyReminderMethod('notification');
           } else {
-            document.getElementById('settingsReminderMethod').value = 'in-app';
+            document.getElementById('settingsReminderMethod').value = 'toast';
           }
         });
       } else {
@@ -1134,8 +1134,8 @@
   }
 
   function _applyReminderMethod(method) {
-    habitsConfig.forEach(h => {
-      if (!h.reminder) h.reminder = {enabled:false, time:'08:00', days:[0,1,2,3,4,5,6], method:'in-app'};
+    habitsConfig.forEach(function(h) {
+      if (!h.reminder) h.reminder = {enabled:false, time:'08:00', days:[0,1,2,3,4,5,6], method:'toast', sound:true, vibrate:true};
       h.reminder.method = method;
       if (method !== 'off') h.reminder.enabled = true;
       else h.reminder.enabled = false;

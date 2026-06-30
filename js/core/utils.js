@@ -159,11 +159,69 @@
           gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.4);
           osc.start(now + i * 0.1); osc.stop(now + i * 0.1 + 0.4);
         });
+      } else if (type === 'reminder') {
+        // 双音调提醒音，更尖锐
+        [880, 1100].forEach((freq, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.type = 'sine'; osc.frequency.setValueAtTime(freq, now + i * 0.15);
+          gain.gain.setValueAtTime(0.18, now + i * 0.15);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.15 + 0.25);
+          osc.start(now + i * 0.15); osc.stop(now + i * 0.15 + 0.25);
+        });
+      } else if (type === 'alarm') {
+        // 三音调渐强，紧迫感
+        [523, 659, 784].forEach((freq, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.type = 'square'; osc.frequency.setValueAtTime(freq, now + i * 0.2);
+          gain.gain.setValueAtTime(0.2, now + i * 0.2);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.2 + 0.35);
+          osc.start(now + i * 0.2); osc.stop(now + i * 0.2 + 0.35);
+        });
       }
     } catch(e) {
       // 音频播放失败不阻塞主流程，仅记录日志
       console.warn('[playSound] 音频播放失败:', e.message);
     }
+  }
+
+  /* ========== 提醒横幅 ========== */
+  function showReminderBanner(habit) {
+    var container = document.getElementById('reminderBannerContainer');
+    if (!container) return;
+    var msg = habit.icon + ' ' + habit.name + '时间到了！';
+    var tip = habit.tip || '记得完成打卡哦';
+    var banner = document.createElement('div');
+    banner.className = 'reminder-banner';
+    banner.innerHTML = '<span class="reminder-banner-icon">' + habit.icon + '</span>' +
+      '<div class="reminder-banner-body">' +
+        '<div class="reminder-banner-title">' + habit.name + '时间到了！</div>' +
+        '<div class="reminder-banner-text">' + tip + '</div>' +
+      '</div>' +
+      '<button class="reminder-banner-close" onclick="this.parentElement.remove()">✕</button>';
+    container.appendChild(banner);
+  }
+
+  /* ========== 屏幕闪烁 ========== */
+  function flashScreen() {
+    var overlay = document.createElement('div');
+    overlay.className = 'alarm-flash';
+    document.body.appendChild(overlay);
+    setTimeout(function() { overlay.remove(); }, 2000);
+  }
+
+  /* ========== 报警序列（声音+振动） ========== */
+  function playAlarmSequence() {
+    var count = 0;
+    var interval = setInterval(function() {
+      playSound('alarm');
+      if (navigator.vibrate) navigator.vibrate([300, 150, 300]);
+      count++;
+      if (count >= 3) clearInterval(interval);
+    }, 700);
   }
 
   function _isChecked(habit, rec) {
@@ -309,6 +367,9 @@
     getDayOfWeek,
     showToast,
     playSound,
+    showReminderBanner,
+    flashScreen,
+    playAlarmSequence,
     getCurrentStreak,
     getCurrentLevel,
     getNextLevel,
