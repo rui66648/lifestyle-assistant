@@ -180,7 +180,7 @@
 
   // ---- 打卡项辅助 ----
   function _getNextTime(h, rec, nowMinutes) {
-    if ((h.reminder && h.reminder.enabled)) {
+    if (h.reminder && h.reminder.enabled && h.reminder.time) {
       const [rh, rm] = h.reminder.time.split(':').map(Number);
       return rh * 60 + rm;
     }
@@ -3805,11 +3805,14 @@
       type: lib.type,
       unit: lib.unit,
       repeat: [0,1,2,3,4,5,6],
-      reminder: {enabled:false, time:'08:00', days:[0,1,2,3,4,5,6], method:'in-app'}
+      reminder: {enabled:false, time:'08:00', days:[0,1,2,3,4,5,6], method:'toast', sound:true, vibrate:true}
     };
     if (lib.type === 'water' && lib.waterConfig) {
       newHabit.waterConfig = JSON.parse(JSON.stringify(lib.waterConfig));
-      newHabit.reminder = {enabled:true, method:'in-app'};
+      newHabit.reminder = {enabled:true, time:'08:00', days:[0,1,2,3,4,5,6], method:'toast', sound:true, vibrate:true};
+    }
+    if (lib.intervalReminder) {
+      newHabit.intervalReminder = JSON.parse(JSON.stringify(lib.intervalReminder));
     }
     habitsConfig.push(newHabit);
     saveConfig();

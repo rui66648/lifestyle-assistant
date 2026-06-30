@@ -180,7 +180,7 @@
 
   // ---- 打卡项辅助 ----
   function _getNextTime(h, rec, nowMinutes) {
-    if ((h.reminder && h.reminder.enabled)) {
+    if (h.reminder && h.reminder.enabled && h.reminder.time) {
       const [rh, rm] = h.reminder.time.split(':').map(Number);
       return rh * 60 + rm;
     }
