@@ -852,7 +852,10 @@
     if (!habit) { body.innerHTML = '<p style="color:var(--muted);text-align:center">习惯未找到</p>'; return; }
 
     const enabled = habit.enabled !== false;
-    const reminderEnabled = habit.reminder && habit.reminder.enabled;
+    const ir = habit.intervalReminder;
+    const irEnabled = ir && ir.enabled;
+    // 互斥：优先间隔提醒，若间隔开启则定点显示为关闭
+    const reminderEnabled = irEnabled ? false : (habit.reminder && habit.reminder.enabled);
     const reminderTime = (habit.reminder && habit.reminder.time) || '08:00';
     const repeatArr = habit.repeat || [0,1,2,3,4,5,6];
     const repeatDays = ['日','一','二','三','四','五','六'];
@@ -963,8 +966,6 @@
     html += `</div><input type="hidden" id="heRepeat" value="${repeatArr.join(',')}">`;
 
     // Reminder - 统一提醒区域
-    const ir = habit.intervalReminder;
-    const irEnabled = ir && ir.enabled;
     const irInterval = (ir && ir.interval) || 45;
     const irStart = (ir && ir.startTime) || '09:00';
     const irEnd = (ir && ir.endTime) || '18:00';
