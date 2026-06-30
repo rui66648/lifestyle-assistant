@@ -2090,14 +2090,14 @@ body.dark .wuse-card,body.dark .emotion-mini-card,body.dark .wulao-mini-card{bac
   gap:12px;
 }
 .settings-item-icon{
-  width:36px;
-  height:36px;
+  width:32px;
+  height:32px;
   display:flex;
   align-items:center;
   justify-content:center;
   background:var(--accent-light);
-  border-radius:10px;
-  font-size:18px;
+  border-radius:8px;
+  color:var(--accent);
 }
 .settings-item-title{
   font-size:14px;
