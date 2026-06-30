@@ -982,7 +982,7 @@
     html += `<div class="he-reminder-section">
       <div class="he-reminder-sec-title">
         <span>⏰ 定点提醒</span>
-        <div class="mg-item-toggle ${reminderEnabled ? 'on' : ''}" onclick="this.classList.toggle('on');document.getElementById('heFixedWrap').style.display=this.classList.contains('on')?'block':'none'" id="heFixedToggle" style="width:36px;height:20px"></div>
+        <div class="mg-item-toggle-sm ${reminderEnabled ? 'on' : ''}" onclick="toggleEditFixedReminder(this)" id="heFixedToggle"></div>
       </div>
       <div id="heFixedWrap" style="display:${reminderEnabled ? 'block' : 'none'};margin-top:8px">
         <div class="he-time-row">
@@ -1005,7 +1005,7 @@
     html += `<div class="he-reminder-section">
       <div class="he-reminder-sec-title">
         <span>⏱️ 间隔提醒</span>
-        <div class="mg-item-toggle ${irEnabled ? 'on' : ''}" onclick="this.classList.toggle('on');document.getElementById('heIntervalWrap').style.display=this.classList.contains('on')?'block':'none'" id="heIntervalToggle" style="width:36px;height:20px"></div>
+        <div class="mg-item-toggle-sm ${irEnabled ? 'on' : ''}" onclick="toggleEditIntervalReminder(this)" id="heIntervalToggle"></div>
       </div>
       <div id="heIntervalWrap" style="display:${irEnabled ? 'block' : 'none'};margin-top:8px">
         <div style="font-size:13px;color:var(--muted);margin-bottom:6px">每 <input id="irInterval" type="number" value="${irInterval}" min="5" max="180" style="width:50px;padding:4px 8px;border:1px solid var(--rule);border-radius:6px;font-size:13px;text-align:center"> 分钟</div>
@@ -1088,8 +1088,10 @@
     const isOn = toggle.classList.toggle('on');
     if (wrap) wrap.style.display = isOn ? 'block' : 'none';
     if (isOn) {
+      // 开启总开关时，默认只开启定点提醒
       const fixedToggle = document.getElementById('heFixedToggle');
-      if (fixedToggle && !fixedToggle.classList.contains('on')) {
+      const intervalToggle = document.getElementById('heIntervalToggle');
+      if (fixedToggle && !fixedToggle.classList.contains('on') && intervalToggle && !intervalToggle.classList.contains('on')) {
         fixedToggle.classList.add('on');
         const fixedWrap = document.getElementById('heFixedWrap');
         if (fixedWrap) fixedWrap.style.display = 'block';
@@ -1103,6 +1105,36 @@
       const intervalWrap = document.getElementById('heIntervalWrap');
       if (fixedWrap) fixedWrap.style.display = 'none';
       if (intervalWrap) intervalWrap.style.display = 'none';
+    }
+  }
+
+  function toggleEditFixedReminder(el) {
+    const isOn = el.classList.toggle('on');
+    const wrap = document.getElementById('heFixedWrap');
+    if (wrap) wrap.style.display = isOn ? 'block' : 'none';
+    // 互斥：开启定点时关闭间隔
+    if (isOn) {
+      const intervalToggle = document.getElementById('heIntervalToggle');
+      if (intervalToggle && intervalToggle.classList.contains('on')) {
+        intervalToggle.classList.remove('on');
+        const intervalWrap = document.getElementById('heIntervalWrap');
+        if (intervalWrap) intervalWrap.style.display = 'none';
+      }
+    }
+  }
+
+  function toggleEditIntervalReminder(el) {
+    const isOn = el.classList.toggle('on');
+    const wrap = document.getElementById('heIntervalWrap');
+    if (wrap) wrap.style.display = isOn ? 'block' : 'none';
+    // 互斥：开启间隔时关闭定点
+    if (isOn) {
+      const fixedToggle = document.getElementById('heFixedToggle');
+      if (fixedToggle && fixedToggle.classList.contains('on')) {
+        fixedToggle.classList.remove('on');
+        const fixedWrap = document.getElementById('heFixedWrap');
+        if (fixedWrap) fixedWrap.style.display = 'none';
+      }
     }
   }
 
@@ -1147,8 +1179,19 @@
 
     const reminderMainOn = document.getElementById('heReminderToggle').classList.contains('on');
     const fixedOn = document.getElementById('heFixedToggle').classList.contains('on');
-    const reminderTime = document.getElementById('heReminderTime').value;
-    habit.reminder = { enabled: reminderMainOn && fixedOn, time: reminderTime };
+    const irToggle = document.getElementById('heIntervalToggle');
+    const irOn = irToggle ? irToggle.classList.contains('on') : false;
+
+    // 定点/间隔互斥保存
+    if (reminderMainOn && irOn) {
+      // 优先间隔提醒
+      habit.reminder = { enabled: false, time: document.getElementById('heReminderTime').value };
+    } else if (reminderMainOn && fixedOn) {
+      // 定点提醒
+      habit.reminder = { enabled: true, time: document.getElementById('heReminderTime').value };
+    } else {
+      habit.reminder = { enabled: false, time: document.getElementById('heReminderTime').value };
+    }
 
     // 额外提醒
     const extraReminderInputs = document.querySelectorAll('#heExtraRemindersList input[type="time"]');
