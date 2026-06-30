@@ -1115,35 +1115,25 @@
     openPanel('achievementPanel');
   }
 
-  function openReminderPanel() {
-    const body = document.getElementById('reminderPanelBody');
-    const methods = [
-      {value:'in-app', label:'应用内横幅', desc:'在应用内显示提醒横幅'},
-      {value:'notification', label:'浏览器通知', desc:'通过浏览器推送通知提醒'},
-      {value:'off', label:'关闭提醒', desc:'不接收任何提醒'}
-    ];
-
-    let currentMethod = 'in-app';
-    if (habitsConfig.length > 0 && habitsConfig[0].reminder) {
-      currentMethod = habitsConfig[0].reminder.method || 'in-app';
+  function changeReminderMethod(method) {
+    if (method === 'notification') {
+      if (App.Modules.Notification && App.Modules.Notification.requestPermission) {
+        App.Modules.Notification.requestPermission().then(function(granted) {
+          if (granted) {
+            _applyReminderMethod('notification');
+          } else {
+            document.getElementById('settingsReminderMethod').value = 'in-app';
+          }
+        });
+      } else {
+        _applyReminderMethod(method);
+      }
+    } else {
+      _applyReminderMethod(method);
     }
-
-    body.innerHTML = `
-      <div style="margin-bottom:16px;font-size:13px;color:var(--muted)">选择提醒方式（将应用到所有习惯）</div>
-      ${methods.map(m => `
-        <div class="reminder-option" onclick="setGlobalReminder('${m.value}')">
-          <div class="radio ${currentMethod === m.value ? 'active' : ''}"></div>
-          <div>
-            <div class="label">${m.label}</div>
-            <div class="desc">${m.desc}</div>
-          </div>
-        </div>
-      `).join('')}
-    `;
-    openPanel('reminderPanel');
   }
 
-  function setGlobalReminder(method) {
+  function _applyReminderMethod(method) {
     habitsConfig.forEach(h => {
       if (!h.reminder) h.reminder = {enabled:false, time:'08:00', days:[0,1,2,3,4,5,6], method:'in-app'};
       h.reminder.method = method;
@@ -1151,9 +1141,78 @@
       else h.reminder.enabled = false;
     });
     saveConfig();
-    closeAllPanels();
     showToast('提醒设置已更新');
     render();
+  }
+
+  function openHabitReminderList() {
+    const body = document.getElementById('habitReminderBody');
+    if (!body) return;
+
+    const enabledCount = habitsConfig.filter(h => h.reminder && h.reminder.enabled).length;
+    const total = habitsConfig.length;
+
+    let html = '<div style="padding:16px">';
+
+    html += '<div style="text-align:center;margin-bottom:16px">' +
+      '<div style="font-size:2rem;margin-bottom:.5rem">⏰</div>' +
+      '<div style="font-weight:700;font-size:1.1rem">习惯提醒管理</div>' +
+      '<div style="color:var(--muted);font-size:.85rem;margin-top:.3rem">已开启 ' + enabledCount + ' / ' + total + ' 个习惯提醒</div>' +
+    '</div>';
+
+    html += '<div style="display:flex;gap:8px;margin-bottom:12px">';
+    html += '<button class="export-btn" style="flex:1;padding:8px;font-size:12px;background:var(--accent-light);color:var(--accent)" onclick="batchToggleReminders(true)">全部开启</button>';
+    html += '<button class="export-btn" style="flex:1;padding:8px;font-size:12px;background:var(--rule);color:var(--ink2)" onclick="batchToggleReminders(false)">全部关闭</button>';
+    html += '</div>';
+
+    habitsConfig.forEach(function(h) {
+      const r = h.reminder || {enabled:false, time:'08:00'};
+      html += '<div class="hr-item" onclick="openTimePanel(\'' + h.id + '\')">' +
+        '<div class="hr-left">' +
+          '<span class="hr-icon">' + h.icon + '</span>' +
+          '<div class="hr-info">' +
+            '<div class="hr-name">' + h.name + '</div>' +
+            '<div class="hr-time">' + (r.enabled ? '⏰ ' + r.time : '未开启') + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="hr-right">' +
+          '<div class="toggle-switch ' + (r.enabled ? 'on' : '') + '" onclick="event.stopPropagation();toggleHabitReminder(\'' + h.id + '\', this)"></div>' +
+          '<span class="hr-arrow">›</span>' +
+        '</div>' +
+      '</div>';
+    });
+
+    html += '</div>';
+    body.innerHTML = html;
+    openPanel('habitReminderPanel');
+  }
+
+  function toggleHabitReminder(habitId, el) {
+    const h = habitsConfig.find(x => x.id === habitId);
+    if (!h) return;
+    if (!h.reminder) h.reminder = {enabled:false, time:'08:00', days:[0,1,2,3,4,5,6], method:'in-app'};
+    h.reminder.enabled = !h.reminder.enabled;
+    el.classList.toggle('on');
+    saveConfig();
+    render();
+    const body = document.getElementById('habitReminderBody');
+    if (body) {
+      const enabledCount = habitsConfig.filter(x => x.reminder && x.reminder.enabled).length;
+      const total = habitsConfig.length;
+      const infoEl = body.querySelector('[style*="font-weight:700"] + div');
+      if (infoEl) infoEl.textContent = '已开启 ' + enabledCount + ' / ' + total + ' 个习惯提醒';
+    }
+  }
+
+  function batchToggleReminders(enable) {
+    habitsConfig.forEach(h => {
+      if (!h.reminder) h.reminder = {enabled:false, time:'08:00', days:[0,1,2,3,4,5,6], method:'in-app'};
+      h.reminder.enabled = enable;
+    });
+    saveConfig();
+    render();
+    openHabitReminderList();
+    showToast(enable ? '已开启所有习惯提醒' : '已关闭所有习惯提醒');
   }
 
   function openTimePanel(habitId) {
@@ -1435,8 +1494,10 @@
     openDataPanel,
     openRetroactivePanel,
     openDailyAchievementCard,
-    openReminderPanel,
-    setGlobalReminder,
+    changeReminderMethod,
+    openHabitReminderList,
+    toggleHabitReminder,
+    batchToggleReminders,
     openTimePanel,
     toggleReminderEnabledPanel,
     toggleDay,
@@ -1453,6 +1514,10 @@
   // 暴露到全局，供 HTML onclick 直接使用
   window.openPanel = openPanel;
   window.closeAllPanels = closeAllPanels;
+  window.changeReminderMethod = changeReminderMethod;
+  window.openHabitReminderList = openHabitReminderList;
+  window.toggleHabitReminder = toggleHabitReminder;
+  window.batchToggleReminders = batchToggleReminders;
 
   if (App.registerModule) {
     App.registerModule('ui.panels', 'ui', null);

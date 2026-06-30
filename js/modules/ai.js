@@ -576,6 +576,14 @@
     if (apiKeyEl) apiKeyEl.value = cfg.apiKey || '';
     if (modelEl) modelEl.value = cfg.model || DEFAULT_MODEL;
 
+    // 同步提醒方式
+    const reminderMethodEl = document.getElementById('settingsReminderMethod');
+    if (reminderMethodEl && typeof habitsConfig !== 'undefined' && habitsConfig.length > 0) {
+      const firstHabit = habitsConfig[0];
+      const method = (firstHabit.reminder && firstHabit.reminder.method) ? firstHabit.reminder.method : 'in-app';
+      reminderMethodEl.value = method;
+    }
+
     // 显示配置状态
     const statusEl = document.getElementById('settingsAiStatus');
     if (statusEl) {
