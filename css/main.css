@@ -719,8 +719,11 @@ select:focus-visible{
 .panel-body-center{padding:20px;text-align:center}
 
 /* Habit Library Panel */
-.lib-search{width:100%;padding:10px 14px;border:2px solid var(--rule);border-radius:12px;font-size:14px;background:#fff;outline:none;margin-bottom:12px}
+.lib-search-row{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.lib-search{flex:1;padding:10px 14px;border:2px solid var(--rule);border-radius:12px;font-size:14px;background:#fff;outline:none}
 .lib-search:focus{border-color:var(--accent)}
+.lib-search-btn{flex-shrink:0;padding:10px 14px;border-radius:12px;background:var(--accent);color:#fff;font-weight:600;font-size:13px;border:none;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.lib-search-btn:active{background:#6aa88a;transform:scale(.95)}
 
 /* 横向分类标签栏 */
 .lib-tabs{display:flex;gap:8px;overflow-x:auto;padding:0 0 12px;margin-bottom:16px;border-bottom:1px solid var(--rule);-webkit-overflow-scrolling:touch;scrollbar-width:none;mask-image:linear-gradient(to right,black 85%,transparent 98%);-webkit-mask-image:linear-gradient(to right,black 85%,transparent 98%)}

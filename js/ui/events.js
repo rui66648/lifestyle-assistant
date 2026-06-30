@@ -296,6 +296,17 @@
     }
   }
 
+  function toggleCustomForm() {
+    const form = document.getElementById('libCustomForm');
+    if (!form) return;
+    const shown = form.style.display === 'block';
+    form.style.display = shown ? 'none' : 'block';
+    // 滚动到表单区域
+    if (!shown) {
+      setTimeout(() => form.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    }
+  }
+
   function addCustomHabit() {
     const name = document.getElementById('customHabitName').value.trim();
     const icon = document.getElementById('customHabitIcon').value || '✅';
@@ -696,6 +707,7 @@
     deleteHabit,
     addHabitFromLib,
     toggleHabitFromLib,
+    toggleCustomForm,
     addCustomHabit,
     addCustomReminderTime,
     selectCustomType,

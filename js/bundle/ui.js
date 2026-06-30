@@ -2024,7 +2024,53 @@
     const myIds = new Set(habitsConfig.map(h => h.id));
     const q = search.toLowerCase();
 
-    let html = `<input class="lib-search" placeholder="搜索习惯..." value="${search}" oninput="renderLibraryPanel(this.value)">`;
+    let html = `<div class="lib-search-row">
+      <input class="lib-search" placeholder="搜索习惯..." value="${search}" oninput="renderLibraryPanel(this.value)">
+      <button class="lib-search-btn" onclick="toggleCustomForm()">＋ 自定义</button>
+    </div>
+    <div id="libCustomForm" style="display:none">
+      <div class="lib-custom">
+        <div class="lib-custom-title">✨ 自定义习惯</div>
+        <div class="lib-custom-input">
+          <input id="customHabitName" placeholder="习惯名称" maxlength="20">
+          <button onclick="addCustomHabit()">添加</button>
+        </div>
+        <div class="lib-custom-type" id="customTypeSelector">
+          <button class="active" data-type="boolean" onclick="selectCustomType(this)">打卡</button>
+          <button data-type="count" onclick="selectCustomType(this)">计数</button>
+          <button data-type="timer" onclick="selectCustomType(this)">计时</button>
+        </div>
+        <div id="customUnitWrap" style="display:none;margin-top:8px">
+          <input id="customHabitUnit" placeholder="单位（如：杯、个、分钟）" style="width:100%;padding:10px 14px;border:2px solid var(--rule);border-radius:12px;font-size:14px;background:#fff;outline:none">
+        </div>
+        <div class="lib-custom-time">
+          <label>⏰ 打卡时间</label>
+          <input type="time" id="customHabitTime" value="08:00">
+        </div>
+        <div class="lib-custom-reminders" id="customRemindersWrap">
+          <div class="lib-custom-reminders-label">🔔 额外提醒</div>
+          <div class="lib-custom-reminders-list" id="customRemindersList"></div>
+          <button class="lib-custom-reminder-add" onclick="addCustomReminderTime()">+ 添加提醒</button>
+        </div>
+        <div class="lib-custom-freq">
+          <div class="lib-custom-freq-label">📅 每周频率</div>
+          <div class="weekdays" id="customWeekdays">
+            ${['日','一','二','三','四','五','六'].map((d,i) => `<button class="active" data-day="${i}" onclick="toggleCustomWeekday(this)">${d}</button>`).join('')}
+          </div>
+        </div>
+        <div class="lib-custom-note">
+          <label>📝 备注说明</label>
+          <input id="customHabitNote" placeholder="习惯说明（选填）" maxlength="100">
+        </div>
+        <div class="lib-icon-picker">
+          <div class="lib-icon-picker-label">🎨 选择图标 <span id="customIconPreview" class="selected-icon">✅</span></div>
+          <div class="preset-icons" id="customIconGrid">
+            ${CUSTOM_ICONS.map(ic => `<span data-icon="${ic}" onclick="selectCustomIcon(this, '${ic}')" class="${ic === '✅' ? 'selected' : ''}">${ic}</span>`).join('')}
+          </div>
+          <input type="hidden" id="customHabitIcon" value="✅">
+        </div>
+      </div>
+    </div>`;
 
     // 收集所有分类及其习惯
     const categories = ['sport','diet','study','sleep','mind','protect','care','home','social','hobby','quit'];
@@ -2279,50 +2325,6 @@
     
     // 关闭黄帝内经包
     html += `
-        </div>
-      </div>`;
-
-    // 自定义习惯输入区（放在最后）
-    html += `
-      <div class="lib-custom">
-        <div class="lib-custom-title">✨ 自定义习惯</div>
-        <div class="lib-custom-input">
-          <input id="customHabitName" placeholder="习惯名称" maxlength="20">
-          <button onclick="addCustomHabit()">添加</button>
-        </div>
-        <div class="lib-custom-type" id="customTypeSelector">
-          <button class="active" data-type="boolean" onclick="selectCustomType(this)">打卡</button>
-          <button data-type="count" onclick="selectCustomType(this)">计数</button>
-          <button data-type="timer" onclick="selectCustomType(this)">计时</button>
-        </div>
-        <div id="customUnitWrap" style="display:none;margin-top:8px">
-          <input id="customHabitUnit" placeholder="单位（如：杯、个、分钟）" style="width:100%;padding:10px 14px;border:2px solid var(--rule);border-radius:12px;font-size:14px;background:#fff;outline:none">
-        </div>
-        <div class="lib-custom-time">
-          <label>⏰ 打卡时间</label>
-          <input type="time" id="customHabitTime" value="08:00">
-        </div>
-        <div class="lib-custom-reminders" id="customRemindersWrap">
-          <div class="lib-custom-reminders-label">🔔 额外提醒</div>
-          <div class="lib-custom-reminders-list" id="customRemindersList"></div>
-          <button class="lib-custom-reminder-add" onclick="addCustomReminderTime()">+ 添加提醒</button>
-        </div>
-        <div class="lib-custom-freq">
-          <div class="lib-custom-freq-label">📅 每周频率</div>
-          <div class="weekdays" id="customWeekdays">
-            ${['日','一','二','三','四','五','六'].map((d,i) => `<button class="active" data-day="${i}" onclick="toggleCustomWeekday(this)">${d}</button>`).join('')}
-          </div>
-        </div>
-        <div class="lib-custom-note">
-          <label>📝 备注说明</label>
-          <input id="customHabitNote" placeholder="习惯说明（选填）" maxlength="100">
-        </div>
-        <div class="lib-icon-picker">
-          <div class="lib-icon-picker-label">🎨 选择图标 <span id="customIconPreview" class="selected-icon">✅</span></div>
-          <div class="preset-icons" id="customIconGrid">
-            ${CUSTOM_ICONS.map(ic => `<span data-icon="${ic}" onclick="selectCustomIcon(this, '${ic}')" class="${ic === '✅' ? 'selected' : ''}">${ic}</span>`).join('')}
-          </div>
-          <input type="hidden" id="customHabitIcon" value="✅">
         </div>
       </div>`;
 
@@ -3844,6 +3846,17 @@
     }
   }
 
+  function toggleCustomForm() {
+    const form = document.getElementById('libCustomForm');
+    if (!form) return;
+    const shown = form.style.display === 'block';
+    form.style.display = shown ? 'none' : 'block';
+    // 滚动到表单区域
+    if (!shown) {
+      setTimeout(() => form.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    }
+  }
+
   function addCustomHabit() {
     const name = document.getElementById('customHabitName').value.trim();
     const icon = document.getElementById('customHabitIcon').value || '✅';
@@ -4244,6 +4257,7 @@
     deleteHabit,
     addHabitFromLib,
     toggleHabitFromLib,
+    toggleCustomForm,
     addCustomHabit,
     addCustomReminderTime,
     selectCustomType,
