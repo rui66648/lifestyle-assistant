@@ -4,12 +4,13 @@
   var constitutionGender = null;
   var currentQuizSet = null;
   var currentQuizName = '';
+  var TYPES = App.Data.TYPES;
 
   /* ========== 体质分享海报 ========== */
   function generateConstitutionPoster() {
     var result = constitutionResult;
     if (!result) return;
-    var mainType = CONSTITUTION_TYPES.find(function(c) { return c.id === result.typeId; });
+    var mainType = TYPES.find(function(c) { return c.id === result.typeId; });
     if (!mainType) return;
 
     var canvas = document.getElementById('posterCanvas');
@@ -138,7 +139,7 @@
   function shareConstitutionResult() {
     var result = constitutionResult;
     if (!result) return;
-    var mainType = CONSTITUTION_TYPES.find(function(c) { return c.id === result.typeId; });
+    var mainType = TYPES.find(function(c) { return c.id === result.typeId; });
     var url = window.location.origin + window.location.pathname + '?type=' + result.typeId;
     var text = '我测出来是「' + mainType.name + '」' + mainType.emoji + '，你也来测测你的体质吧！' + url;
 
@@ -467,14 +468,15 @@
   }
 
   function selectConstitutionVersion(version) {
-    if (version === 'quick' && typeof CONSTITUTION_QUICK_QUIZ !== 'undefined') {
-      currentQuizSet = CONSTITUTION_QUICK_QUIZ;
+    var data = App.Data;
+    if (version === 'quick' && data.CONSTITUTION_QUICK_QUIZ) {
+      currentQuizSet = data.CONSTITUTION_QUICK_QUIZ;
       currentQuizName = '快筛版';
-    } else if (version === 'std' && typeof CONSTITUTION_STD_QUIZ !== 'undefined') {
-      currentQuizSet = CONSTITUTION_STD_QUIZ;
+    } else if (version === 'std' && data.CONSTITUTION_STD_QUIZ) {
+      currentQuizSet = data.CONSTITUTION_STD_QUIZ;
       currentQuizName = '标准版';
     } else {
-      currentQuizSet = CONSTITUTION_QUIZ;
+      currentQuizSet = data.CONSTITUTION_QUIZ;
       currentQuizName = '完整版';
     }
     renderGenderSelect();
@@ -501,7 +503,7 @@
   }
 
   function getFilteredQuiz() {
-    var quiz = currentQuizSet || CONSTITUTION_QUIZ;
+    var quiz = currentQuizSet || App.Data.CONSTITUTION_QUIZ;
     return quiz.filter(function(q) {
       if (q.gender) return q.gender === constitutionGender;
       return true;
@@ -513,7 +515,7 @@
     var quiz = getFilteredQuiz();
     var q = quiz[qIdx];
     var progress = Math.round((qIdx / quiz.length) * 100);
-    var typeName = CONSTITUTION_TYPES.find(function(c) { return c.id === q.type; });
+    var typeName = TYPES.find(function(c) { return c.id === q.type; });
 
     var html = '<div class="const-progress">' +
       '<div class="const-progress-bar"><div class="const-progress-fill" style="width:' + progress + '%"></div></div>' +
@@ -546,7 +548,7 @@
     var quiz = getFilteredQuiz();
     var rawScores = {};
     var questionCounts = {};
-    CONSTITUTION_TYPES.forEach(function(c) {
+    TYPES.forEach(function(c) {
       rawScores[c.id] = 0;
       questionCounts[c.id] = 0;
     });
@@ -560,18 +562,19 @@
 
     // 转化分 = (原始分 - 题数) / (题数 × 4) × 100
     var convertedScores = {};
-    CONSTITUTION_TYPES.forEach(function(c) {
+    TYPES.forEach(function(c) {
       var raw = rawScores[c.id] || 0;
       var count = questionCounts[c.id] || 1;
       convertedScores[c.id] = Math.round((raw - count) / (count * 4) * 100);
     });
 
     // 快筛版和平质判定阈值适当降低
-    var pingheThreshold = currentQuizSet === CONSTITUTION_QUICK_QUIZ ? 50 : 60;
-    var biasThreshold = currentQuizSet === CONSTITUTION_QUICK_QUIZ ? 35 : 40;
+    var isQuick = currentQuizSet && currentQuizSet.length === 10;
+    var pingheThreshold = isQuick ? 50 : 60;
+    var biasThreshold = isQuick ? 35 : 40;
 
     var resultTypes = [];
-    CONSTITUTION_TYPES.forEach(function(c) {
+    TYPES.forEach(function(c) {
       if (c.id === 'pinghe') return;
       if (convertedScores[c.id] >= biasThreshold) {
         resultTypes.push({
@@ -607,7 +610,7 @@
   function renderConstitutionResult() {
     var body = document.getElementById('constitutionPanelBody');
     var result = constitutionResult;
-    var mainType = CONSTITUTION_TYPES.find(function(c) { return c.id === result.typeId; });
+    var mainType = TYPES.find(function(c) { return c.id === result.typeId; });
 
     function getTendencyLevel(score, typeId) {
       if (typeId === 'pinghe') {
@@ -622,7 +625,7 @@
       }
     }
 
-    var allTypes = CONSTITUTION_TYPES.map(function(c) {
+    var allTypes = TYPES.map(function(c) {
       var score = result.convertedScores[c.id] || 0;
       var level = getTendencyLevel(score, c.id);
       return {
@@ -782,9 +785,9 @@
   function checkUrlParams() {
     var params = new URLSearchParams(window.location.search);
     var type = params.get('type');
-    if (type && CONSTITUTION_TYPES.some(function(c) { return c.id === type; })) {
+    if (type && TYPES.some(function(c) { return c.id === type; })) {
       // 有体质参数，预设结果并打开面板
-      var ct = CONSTITUTION_TYPES.find(function(c) { return c.id === type; });
+      var ct = TYPES.find(function(c) { return c.id === type; });
       constitutionResult = {
         typeId: type,
         isPinghe: type === 'pinghe',

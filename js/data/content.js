@@ -306,6 +306,11 @@ const CONSTITUTION_QUIZ = [
   ]}
 ];
 
+const QUICK_NUMS = [1, 8, 16, 26, 34, 39, 49, 53, 60, 65];
+const STD_NUMS = [1, 3, 5, 7, 8, 10, 12, 14, 16, 17, 22, 25, 26, 30, 32, 34, 36, 39, 41, 42, 46, 49, 52, 53, 54, 58, 60, 61, 65, 67];
+const CONSTITUTION_QUICK_QUIZ = CONSTITUTION_QUIZ.filter(function(q){ return QUICK_NUMS.indexOf(q.num) >= 0; });
+const CONSTITUTION_STD_QUIZ = CONSTITUTION_QUIZ.filter(function(q){ return STD_NUMS.indexOf(q.num) >= 0; });
+
 const GUIDE_STEPS = [
   { emoji: '🌿', title: '欢迎使用生活习惯小助手', text: '基于《黄帝内经》的AI养生习惯追踪应用，让千年中医智慧融入日常生活。' },
   { emoji: '🩺', title: '先测体质，个性化推荐', text: '通过8道简单问题，辨识你的中医体质类型，获取专属养生习惯推荐。' },
