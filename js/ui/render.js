@@ -927,30 +927,53 @@
     });
     html += `</div><input type="hidden" id="heRepeat" value="${repeatArr.join(',')}">`;
 
-    // Reminder
-    html += `<div class="he-switch-row">
-      <span class="he-switch-label">🔔 开启提醒</span>
-      <div class="mg-item-toggle ${reminderEnabled ? 'on' : ''}" onclick="this.classList.toggle('on');document.getElementById('heReminderTimeWrap').style.display=this.classList.contains('on')?'flex':'none'" id="heReminderToggle"></div>
-    </div>`;
-    html += `<div id="heReminderTimeWrap" style="display:${reminderEnabled ? 'flex' : 'none'}" class="he-time-row">
-      <span style="font-size:14px;color:var(--muted)">⏰</span>
-      <input class="he-time-input" id="heReminderTime" type="time" value="${reminderTime}">
-    </div>`;
-
-    // Interval reminder
+    // Reminder - 统一提醒区域
     const ir = habit.intervalReminder;
     const irEnabled = ir && ir.enabled;
     const irInterval = (ir && ir.interval) || 45;
     const irStart = (ir && ir.startTime) || '09:00';
     const irEnd = (ir && ir.endTime) || '18:00';
     const irDays = (ir && ir.days) || [0,1,2,3,4,5,6];
-    html += `<div style="margin-top:10px;padding:10px;background:var(--bg2);border-radius:12px">
-      <div class="he-switch-row" style="margin-bottom:8px">
-        <span class="he-switch-label">⏰ 间隔提醒（每${irInterval}分钟）</span>
-        <div class="mg-item-toggle ${irEnabled ? 'on' : ''}" onclick="this.classList.toggle('on');document.getElementById('irWrap').style.display=this.classList.contains('on')?'block':'none'" id="heIntervalToggle"></div>
+    const hasAnyReminder = reminderEnabled || irEnabled;
+
+    html += `<div class="he-switch-row">
+      <span class="he-switch-label">🔔 开启提醒</span>
+      <div class="mg-item-toggle ${hasAnyReminder ? 'on' : ''}" onclick="toggleEditReminder()" id="heReminderToggle"></div>
+    </div>`;
+
+    html += `<div id="heReminderWrap" style="display:${hasAnyReminder ? 'block' : 'none'};padding-left:4px">`;
+
+    // 定点提醒
+    html += `<div class="he-reminder-section">
+      <div class="he-reminder-sec-title">
+        <span>⏰ 定点提醒</span>
+        <div class="mg-item-toggle ${reminderEnabled ? 'on' : ''}" onclick="this.classList.toggle('on');document.getElementById('heFixedWrap').style.display=this.classList.contains('on')?'block':'none'" id="heFixedToggle" style="width:36px;height:20px"></div>
       </div>
-      <div id="irWrap" style="display:${irEnabled ? 'block' : 'none'}">
-        <div style="font-size:13px;color:var(--muted);margin-bottom:6px">间隔 <input id="irInterval" type="number" value="${irInterval}" min="5" max="180" style="width:50px;padding:4px 8px;border:1px solid var(--rule);border-radius:6px;font-size:13px;text-align:center"> 分钟</div>
+      <div id="heFixedWrap" style="display:${reminderEnabled ? 'block' : 'none'};margin-top:8px">
+        <div class="he-time-row">
+          <span style="font-size:14px;color:var(--muted)">⏰</span>
+          <input class="he-time-input" id="heReminderTime" type="time" value="${reminderTime}">
+        </div>
+        <div class="he-extra-reminders" id="heExtraRemindersList" style="margin-top:8px">`;
+    extraReminders.forEach(t => {
+      html += `<div class="he-extra-reminder-item">
+          <input type="time" value="${t}">
+          <span class="he-reminder-remove" onclick="this.parentElement.remove()">✕</span>
+        </div>`;
+    });
+    html += `</div>
+        <button class="he-add-reminder-btn" onclick="App.UI.Render.addEditReminderTime()" style="margin-top:6px">+ 添加提醒</button>
+      </div>
+    </div>`;
+
+    // 间隔提醒
+    html += `<div class="he-reminder-section">
+      <div class="he-reminder-sec-title">
+        <span>⏱️ 间隔提醒</span>
+        <div class="mg-item-toggle ${irEnabled ? 'on' : ''}" onclick="this.classList.toggle('on');document.getElementById('heIntervalWrap').style.display=this.classList.contains('on')?'block':'none'" id="heIntervalToggle" style="width:36px;height:20px"></div>
+      </div>
+      <div id="heIntervalWrap" style="display:${irEnabled ? 'block' : 'none'};margin-top:8px">
+        <div style="font-size:13px;color:var(--muted);margin-bottom:6px">每 <input id="irInterval" type="number" value="${irInterval}" min="5" max="180" style="width:50px;padding:4px 8px;border:1px solid var(--rule);border-radius:6px;font-size:13px;text-align:center"> 分钟</div>
         <div style="display:flex;gap:8px;margin-bottom:6px">
           <input id="irStart" type="time" value="${irStart}" style="flex:1;padding:6px;border:1px solid var(--rule);border-radius:6px;font-size:13px">
           <span style="color:var(--muted);align-self:center">~</span>
@@ -961,19 +984,11 @@
       const isActive = irDays.includes(i);
       html += `<div class="repeat-day-btn${isActive ? ' active' : ''}" data-irday="${i}" onclick="this.classList.toggle('active')" style="width:28px;height:28px;font-size:11px">${d}</div>`;
     });
-    html += `</div></div></div>`;
-
-    // Extra reminders
-    html += `<div class="he-label" style="margin-top:6px">🔔 额外提醒</div>
-      <div class="he-extra-reminders" id="heExtraRemindersList">`;
-    extraReminders.forEach(t => {
-      html += `<div class="he-extra-reminder-item">
-          <input type="time" value="${t}">
-          <span class="he-reminder-remove" onclick="this.parentElement.remove()">✕</span>
-        </div>`;
-    });
     html += `</div>
-      <button class="he-add-reminder-btn" onclick="App.UI.Render.addEditReminderTime()">+ 添加提醒</button>`;
+      </div>
+    </div>`;
+
+    html += `</div>`;
 
     // Note
     html += `<div class="he-label">📝 备注说明</div>
@@ -1024,6 +1039,31 @@
     document.getElementById('heRepeat').value = activeDays.join(',');
   }
 
+  function toggleEditReminder() {
+    const toggle = document.getElementById('heReminderToggle');
+    if (!toggle) return;
+    const wrap = document.getElementById('heReminderWrap');
+    const isOn = toggle.classList.toggle('on');
+    if (wrap) wrap.style.display = isOn ? 'block' : 'none';
+    if (isOn) {
+      const fixedToggle = document.getElementById('heFixedToggle');
+      if (fixedToggle && !fixedToggle.classList.contains('on')) {
+        fixedToggle.classList.add('on');
+        const fixedWrap = document.getElementById('heFixedWrap');
+        if (fixedWrap) fixedWrap.style.display = 'block';
+      }
+    } else {
+      const fixedToggle = document.getElementById('heFixedToggle');
+      const intervalToggle = document.getElementById('heIntervalToggle');
+      if (fixedToggle) fixedToggle.classList.remove('on');
+      if (intervalToggle) intervalToggle.classList.remove('on');
+      const fixedWrap = document.getElementById('heFixedWrap');
+      const intervalWrap = document.getElementById('heIntervalWrap');
+      if (fixedWrap) fixedWrap.style.display = 'none';
+      if (intervalWrap) intervalWrap.style.display = 'none';
+    }
+  }
+
   function addEditReminderTime() {
     const list = document.getElementById('heExtraRemindersList');
     if (!list) return;
@@ -1054,9 +1094,10 @@
     const repeatStr = document.getElementById('heRepeat').value;
     habit.repeat = repeatStr ? repeatStr.split(',').map(Number) : [0,1,2,3,4,5,6];
 
-    const reminderEnabled = document.getElementById('heReminderToggle').classList.contains('on');
+    const reminderMainOn = document.getElementById('heReminderToggle').classList.contains('on');
+    const fixedOn = document.getElementById('heFixedToggle').classList.contains('on');
     const reminderTime = document.getElementById('heReminderTime').value;
-    habit.reminder = { enabled: reminderEnabled, time: reminderTime };
+    habit.reminder = { enabled: reminderMainOn && fixedOn, time: reminderTime };
 
     // 额外提醒
     const extraReminderInputs = document.querySelectorAll('#heExtraRemindersList input[type="time"]');
@@ -1075,7 +1116,7 @@
     // Interval reminder
     const irToggle = document.getElementById('heIntervalToggle');
     if (irToggle) {
-      const irOn = irToggle.classList.contains('on');
+      const irOn = reminderMainOn && irToggle.classList.contains('on');
       if (irOn) {
         const irIntervalVal = parseInt(document.getElementById('irInterval').value) || 45;
         const irStartVal = document.getElementById('irStart').value || '09:00';

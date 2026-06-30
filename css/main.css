@@ -2756,6 +2756,17 @@ body.dark .wuse-card,body.dark .emotion-mini-card,body.dark .wulao-mini-card{bac
 .he-time-row{
   display:flex;align-items:center;gap:10px;margin-bottom:14px;
 }
+.he-reminder-section{
+  padding:10px 0;
+  border-bottom:1px solid var(--bg2);
+}
+.he-reminder-section:last-child{
+  border-bottom:none;
+}
+.he-reminder-sec-title{
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:13px;font-weight:600;color:var(--ink);
+}
 .he-time-input{
   width:100px;padding:10px 12px;border:2px solid var(--rule);
   border-radius:10px;font-size:14px;text-align:center;background:#fff;outline:none;
