@@ -47,118 +47,86 @@ const REF_BOOKS = [
   {name:'《求医不如求己》',author:'现代 · 中里巴人',type:'modern',emoji:'💆',desc:'穴位按摩经络保健',url:'https://rui66648.github.io/lifestyle-assistant/references/求医不如求己/求医不如求己.html'},
   {name:'《拉伸》',author:'现代 · 鲍勃',type:'modern',emoji:'🤸',desc:'拉伸动作与办公室拉伸',url:'https://rui66648.github.io/lifestyle-assistant/references/拉伸/拉伸.html'},
   {name:'《黄帝内经说什么》',author:'现代 · 徐文兵/梁冬',type:'modern',emoji:'💬',desc:'对话体解读黄帝内经',url:'https://rui66648.github.io/lifestyle-assistant/references/黄帝内经说什么/黄帝内经说什么.html'},
-  {name:'《睡眠革命》',author:'现代 · Nick Littlehales',type:'modern',emoji:'🌙',desc:'R90睡眠方案与现代睡眠科学',url:'https://rui66648.github.io/lifestyle-assistant/references/睡眠革命/睡眠革命.html'},
-  {name:'《运动改造大脑》',author:'现代 · John Ratey',type:'modern',emoji:'🧠',desc:'运动与脑科学',url:'https://rui66648.github.io/lifestyle-assistant/references/运动改造大脑/运动改造大脑.html'},
-  {name:'《正念的奇迹》',author:'现代 · 一行禅师',type:'modern',emoji:'🧘',desc:'正念冥想与身心疗愈',url:'https://rui66648.github.io/lifestyle-assistant/references/正念的奇迹/正念的奇迹.html'},
-  {name:'《抗炎生活》',author:'现代 · 池谷敏郎',type:'modern',emoji:'🔥',desc:'慢性炎症与现代疾病预防',url:'https://rui66648.github.io/lifestyle-assistant/references/抗炎生活/抗炎生活.html'},
-  {name:'《肠子的小心思》',author:'现代 · 朱莉娅·恩德斯',type:'modern',emoji:'🦠',desc:'肠道菌群与健康',url:'https://rui66648.github.io/lifestyle-assistant/references/肠子的小心思/肠子的小心思.html'},
-  {name:'《深度营养》',author:'现代 · 凯瑟琳·沙纳汉',type:'modern',emoji:'🥑',desc:'传统饮食智慧与现代营养学',url:'https://rui66648.github.io/lifestyle-assistant/references/深度营养/深度营养.html'},
-  {name:'《控糖革命》',author:'现代 · 杰西·安佐斯佩',type:'modern',emoji:'🍬',desc:'血糖管理与健康饮食',url:'https://rui66648.github.io/lifestyle-assistant/references/控糖革命/控糖革命.html'},
-  {name:'《端粒效应》',author:'现代 · 伊丽莎白·布莱克本',type:'modern',emoji:'🧬',desc:'端粒科学与抗衰老',url:'https://rui66648.github.io/lifestyle-assistant/references/端粒效应/端粒效应.html'},
-  {name:'《人体运动生理学》',author:'现代 · 运动科学',type:'modern',emoji:'🏃',desc:'能量代谢与运动系统适应',url:'https://rui66648.github.io/lifestyle-assistant/references/人体运动生理学/人体运动生理学.html'},
-  {name:'《高级运动营养学》',author:'现代 · 营养科学',type:'modern',emoji:'🥩',desc:'周期化营养与补剂科学',url:'https://rui66648.github.io/lifestyle-assistant/references/高级运动营养学/高级运动营养学.html'},
-  {name:'《力量训练基础》',author:'现代 · 力量训练',type:'modern',emoji:'🏋️',desc:'训练原则与周期化模型',url:'https://rui66648.github.io/lifestyle-assistant/references/力量训练基础/力量训练基础.html'},
-  {name:'《运动医学与康复》',author:'现代 · 运动医学',type:'modern',emoji:'🩺',desc:'损伤预防与康复方案',url:'https://rui66648.github.io/lifestyle-assistant/references/运动医学与康复/运动医学与康复.html'}
+  {name:'《睡眠革命》',author:'现代 ·  Nick Littlehales',type:'modern',emoji:'🌙',desc:'R90睡眠方案与现代睡眠科学',url:'https://rui66648.github.io/lifestyle-assistant/references/睡眠革命/睡眠革命.html'},
+  {name:'《救命饮食》',author:'现代 · 柯林·坎贝尔',type:'modern',emoji:'🥦',desc:'中国健康调查与植物性饮食',url:'https://rui66648.github.io/lifestyle-assistant/references/救命饮食/救命饮食.html'},
+  {name:'《免疫功能90天复原方案》',author:'现代 · 苏珊·布卢姆',type:'modern',emoji:'🛡️',desc:'免疫系统修复与功能医学',url:'https://rui66648.github.io/lifestyle-assistant/references/免疫功能90天复原方案/免疫功能90天复原方案.html'},
+  {name:'《掌控习惯》',author:'现代 · 詹姆斯·克利尔',type:'modern',emoji:'📈',desc:'习惯养成四定律与行为设计',url:'https://rui66648.github.io/lifestyle-assistant/references/掌控习惯/掌控习惯.html'},
+  {name:'《久坐急救运动》',author:'现代 · 埃里克·古德曼',type:'modern',emoji:'🏃',desc:'Foundation Training核心训练',url:'https://rui66648.github.io/lifestyle-assistant/references/久坐急救运动/久坐急救运动.html'}
 ];
 
-const HEALTH_TIPS = [
-  {habit:'morning_run',text:'晨跑30分钟，提升一整天的精力和专注力。',source:'广步于庭，被发缓形，以使志生。--《素问·四气调神大论》',refBook:'黄帝内经'},
-  {habit:'early_rise',text:'规律作息，早睡早起，让生物钟保持稳定。',source:'法于阴阳，和于术数，食饮有节，起居有常，不妄作劳。--《素问·上古天真论》',refBook:'黄帝内经'},
-  {habit:'reading',text:'每天阅读20分钟，一年可以读完20本书。',source:'嗜欲不能劳其目，淫邪不能惑其心。--《素问·上古天真论》',refBook:'黄帝内经'},
-  {habit:'meditation',text:'冥想5分钟就能显著降低焦虑水平。',source:'恬惔虚无，真气从之，精神内守，病安从来。--《素问·上古天真论》',refBook:'黄帝内经'},
-  {habit:'early_sleep',text:'晚上11点前入睡，让身体充分修复。',source:'子时胆经当令，凡十一脏取决于胆。--《子午流注》',refBook:'黄帝内经'},
-  {habit:'breakfast',text:'营养均衡的早餐是一天能量的基础。',source:'辰时胃经最活跃，必须吃早餐。--《子午流注》',refBook:'黄帝内经'},
-  {habit:'walk',text:'饭后散步15分钟，有助于消化和血糖控制。',source:'广步于庭，以缓其形。--《素问·四气调神大论》',refBook:'黄帝内经'},
-  {habit:'breathe',text:'深呼吸练习可以激活副交感神经，缓解压力。',source:'和于术数，导引吐纳。--《素问·上古天真论》',refBook:'黄帝内经'},
-  {habit:'strength',text:'力量训练不仅塑形，还能增强骨密度。',source:'志闲而少欲，心安而不惧，形劳而不倦。--《素问·上古天真论》',refBook:'黄帝内经'},
-  {habit:'yoga',text:'瑜伽改善柔韧性，同时锻炼身心平衡。',source:'不妄作劳，故能形与神俱。--《素问·上古天真论》',refBook:'黄帝内经'},
-  {habit:'skincare',text:'坚持护肤习惯，皮肤状态会肉眼可见地改善。',source:'肺主皮毛，白当肺。--《素问·五脏生成篇》',refBook:'黄帝内经'},
-  {habit:'diary',text:'写日记是很好的情绪管理和自我反思方式。',source:'志闲而少欲，心安而不惧，形劳而不倦。--《素问·上古天真论》',refBook:'黄帝内经'},
-  {habit:'foot_bath',text:'睡前泡脚15分钟，促进血液循环，改善睡眠质量。',source:'冬三月，此谓闭藏，水冰地坼，无扰乎阳。早卧晚起，必待日光，去寒就温，无泄皮肤。--《素问·四气调神大论》',refBook:'黄帝内经'},
-  {habit:'daily_water',text:'成年人每天建议饮水1500-2000ml（约8杯），少量多次。起床后空腹喝一杯温水（200-300ml），促进肠胃蠕动和代谢。',source:'食饮有节，谨和五味；卯时大肠经当令，起床饮温水。--《素问·上古天真论》《子午流注》',refBook:'黄帝内经'},
-  {habit:'healthy_diet',text:'均衡饮食是健康的基石，每天摄入12种以上食物。',source:'五谷为养，五果为助，五畜为益，五菜为充。--《素问·藏气法时论》',refBook:'黄帝内经'},
-  {habit:'less_sit',text:'每坐45分钟站起来活动5分钟，保护腰椎。',source:'久视伤血，久卧伤气，久坐伤肉，久立伤骨，久行伤筋。--《素问·宣明五气篇》',refBook:'黄帝内经'},
-  {habit:'eye_rest',text:'每用眼20分钟远眺20秒，保护视力。',source:'久视伤血，久卧伤气，久坐伤肉，久立伤骨，久行伤筋。--《素问·宣明五气篇》',refBook:'黄帝内经'},
-  {habit:'good_posture',text:'保持正确坐姿，减少颈椎压力。',source:'形正则气顺。--《遵生八笺》',refBook:'遵生八笺'},
-  {habit:'sunshine',text:'每天晒太阳15-20分钟，促进阳气生发。',source:'夏三月，此谓蕃秀，天地气交，万物华实。夜卧早起，无厌于日，使志无怒，使华英成秀。--《素问·四气调神大论》',refBook:'黄帝内经'},
-  {habit:'vitamin',text:'秋冬注意补充维生素D和钙质。',source:'冬三月，此谓闭藏，水冰地坼，无扰乎阳。早卧晚起，必待日光，去寒就温，无泄皮肤。--《素问·四气调神大论》',refBook:'黄帝内经'},
-  {habit:'fruits_veggies',text:'每天摄入300-500克蔬菜，降低慢性病风险。',source:'五谷为养，五果为助，五畜为益，五菜为充。--《素问·藏气法时论》',refBook:'黄帝内经'},
-  {habit:'jump_rope',text:'跳绳10分钟消耗的热量相当于慢跑30分钟。',source:'夫四时阴阳者，万物之根本也。春夏养阳，秋冬养阴，以从其根。--《素问·四气调神大论》',refBook:'黄帝内经'},
-  {habit:'stretch',text:'办公室拉伸5分钟，缓解肩颈僵硬和腰背酸痛。',source:'导引按跷，以通经气。--《黄帝内经》',refBook:'拉伸'},
-  {habit:'sleep_quality',text:'右侧卧睡，屈右臂，头枕左手，安眠养神。',source:'屈膝侧卧，益人气力。--《老老恒言》',refBook:'老老恒言'},
-  {habit:'acupressure',text:'每日按揉足三里、合谷穴各3分钟，调理脾胃。',source:'胃病者，胃脘当心而痛，上支两胁。--《灵枢》',refBook:'求医不如求己'},
-  {habit:'emotion',text:'怒伤肝，悲伤肺，思伤脾，恐伤肾。保持情绪平和。',source:'怒伤肝，悲胜怒；喜伤心，恐胜喜；思伤脾，怒胜思；忧伤肺，喜胜忧；恐伤肾，思胜恐。--《素问·阴阳应象大论》',refBook:'黄帝内经'},
-  {habit:'rest',text:'主动休息比被动休息更有效，每90分钟休息15分钟。',source:'久视伤血，久卧伤气，久坐伤肉，久立伤骨，久行伤筋。--《素问·宣明五气篇》',refBook:'科学休息'},
-  {habit:'constitution',text:'了解自己的体质类型，针对性调理饮食和运动。',source:'阴阳和平之人，其骨直以和。--《灵枢·通天》',refBook:'九种体质养生全书'},
-  {habit:'food_therapy',text:'食物是最好的药物，合理搭配可预防疾病。',source:'五谷为养，五果为助，五畜为益，五菜为充。--《素问·藏气法时论》',refBook:'饮膳正要'},
-  {habit:'mind',text:'养生先养心，心为五脏六腑之大主。',source:'心者，君主之官也，神明出焉。--《素问·灵兰秘典论》',refBook:'闲情偶寄'},
-  {habit:'longevity',text:'不伤为本，积微成损，养生在于日常点滴。',source:'善养生者，不伤为本。--《抱朴子》',refBook:'抱朴子'},
-  {habit:'five_viscera',text:'五脏养生各有法：肝苦急，急食甘以缓之。',source:'五谷为养，五果为助，五畜为益，五菜为充。--《素问·藏气法时论》',refBook:'寿世青编'},
-  {habit:'medicine',text:'大医精诚，养性之道在于日常修身。',source:'安生之本，必资于食。--《备急千金要方》',refBook:'备急千金要方'},
-  {habit:'body_form',text:'形神相亲，养生贵在形神兼养。',source:'精神之于形骸，犹国之有君也。--《养生论》',refBook:'养生论'},
-  {habit:'sleep_quality',text:'R90睡眠方案：以90分钟为一个睡眠周期，每晚睡4-5个周期即可。',source:'不是睡够8小时，而是睡够睡眠周期。--《睡眠革命》',refBook:'睡眠革命'},
-  {habit:'morning_run',text:'有氧运动30分钟可提升脑源性神经营养因子(BDNF)，改善记忆力和情绪。',source:'运动是最接近万能药的东西。--《运动改造大脑》',refBook:'运动改造大脑'},
-  {habit:'meditation',text:'正念呼吸7分钟就能降低皮质醇水平，效果堪比一次短暂休假。',source:'呼吸是连接身与心的桥梁。--《正念的奇迹》',refBook:'正念的奇迹'},
-  {habit:'healthy_diet',text:'控糖的关键不是少吃甜食，而是改变进食顺序：先吃蔬菜→再吃蛋白质→最后吃碳水。',source:'正确的进食顺序能降低血糖峰值73%。--《控糖革命》',refBook:'控糖革命'},
-  {habit:'fruits_veggies',text:'每天摄入30种不同植物性食物，肠道菌群多样性可提升40%。',source:'肠道是人体的第二个大脑。--《肠子的小心思》',refBook:'肠子的小心思'},
-  {habit:'foot_bath',text:'慢性炎症是万病之源，通过饮食、运动、睡眠三管齐下可有效降低体内炎症水平。',source:'90%的慢性病都与慢性炎症有关。--《抗炎生活》',refBook:'抗炎生活'},
-  {habit:'daily_water',text:'细胞需要优质油脂（如橄榄油、鱼油）和天然电解质，而非单纯的低脂饮食。',source:'现代营养学正在回归传统饮食智慧。--《深度营养》',refBook:'深度营养'},
-  {habit:'early_sleep',text:'慢性压力会加速端粒缩短，冥想和正念可显著延缓细胞衰老速度。',source:'端粒长度决定细胞寿命。--《端粒效应》',refBook:'端粒效应'},
-  {habit:'breathe',text:'现代人最常见的亚健康状态是"上热下寒"，需要通过调整饮食和作息来恢复阴阳平衡。',source:'《黄帝内经》的核心是教人如何顺应自然节律生活。--《黄帝内经说什么》',refBook:'黄帝内经说什么'},
-  {habit:'reading',text:'每周150分钟中等强度运动，可将阿尔茨海默病风险降低45%。',source:'运动是对大脑最好的投资。--《运动改造大脑》',refBook:'运动改造大脑'},
-  {habit:'sunshine',text:'早晨接触自然光10分钟，可调节褪黑素分泌，改善夜间睡眠质量。',source:'光线是调节生物钟最重要的信号。--《睡眠革命》',refBook:'睡眠革命'},
-  {habit:'emotion',text:'正念练习8周可改变大脑结构，前额叶皮层增厚，杏仁核缩小。',source:'每一刻的觉察都是奇迹。--《正念的奇迹》',refBook:'正念的奇迹'},
-  {habit:'less_sit',text:'久坐1小时，寿命缩短22分钟。每30分钟起身活动2分钟即可抵消久坐危害。',source:'久坐是最接近吸烟的健康杀手。--《运动改造大脑》',refBook:'运动改造大脑'},
-  {habit:'vitamin',text:'Omega-3脂肪酸可降低体内炎症标志物C反应蛋白水平达30%。',source:'好的油脂是抗炎的关键。--《抗炎生活》',refBook:'抗炎生活'},
-  {habit:'stretch',text:'肠道菌群影响情绪和认知，益生菌补充可改善焦虑和抑郁症状。',source:'肠道被称为"第二大脑"。--《肠子的小心思》',refBook:'肠子的小心思'},
-  {habit:'acupressure',text:'食物中添加天然香料（姜黄、生姜、大蒜）可有效抑制慢性炎症反应。',source:'厨房是最好的药房。--《抗炎生活》',refBook:'抗炎生活'},
-  {habit:'yoga',text:'每天12分钟正念冥想，坚持8周即可检测到端粒酶活性提升。',source:'压力管理是最有效的抗衰老策略。--《端粒效应》',refBook:'端粒效应'},
-  {habit:'diary',text:'血糖波动过大会导致注意力不集中和情绪波动，控糖即控情绪。',source:'稳定的血糖带来稳定的情绪。--《控糖革命》',refBook:'控糖革命'},
-  {habit:'eye_rest',text:'传统发酵食品（泡菜、酸奶、味噌）富含益生菌，是肠道健康的最佳来源。',source:'发酵食品是人类最古老的营养智慧。--《深度营养》',refBook:'深度营养'},
-  {habit:'strength',text:'运动后立即学习，记忆巩固效率提升20%，这是运动对大脑最直接的馈赠。',source:'运动让大脑准备好学习。--《运动改造大脑》',refBook:'运动改造大脑'},
-  {habit:'jump_rope',text:'睡眠质量由睡眠周期决定，而非单纯的小时数。了解周期比追求时长更重要。',source:'90分钟是一个完整的睡眠周期。--《睡眠革命》',refBook:'睡眠革命'}
-];
+const HEALTH_TIPS = {
+  morning: [
+    {type:'diet',text:'辰时(7-9点)胃经当令，宜食温热早餐，忌空腹冷饮',source:'黄帝内经'},
+    {type:'diet',text:'卯时(5-7点)大肠经当令，宜排宿便，饮温水一杯',source:'黄帝内经'},
+    {type:'exercise',text:'晨间宜轻度运动如八段锦、散步，忌剧烈运动',source:'养生论'},
+    {type:'mood',text:'晨起保持心情愉悦，有助肝气疏泄',source:'遵生八笺'},
+    {type:'sleep',text:'早起顺应阳气生发，不宜赖床',source:'黄帝内经'}
+  ],
+  afternoon: [
+    {type:'diet',text:'午时(11-13点)心经当令，午餐宜七分饱，饭后小憩',source:'黄帝内经'},
+    {type:'work',text:'未时(13-15点)小肠经当令，宜工作学习，效率最高',source:'黄帝内经'},
+    {type:'exercise',text:'申时(15-17点)膀胱经当令，宜饮水运动',source:'黄帝内经'},
+    {type:'diet',text:'下午茶宜选坚果、水果，忌高糖零食',source:'你是你吃出来的'},
+    {type:'work',text:'久坐后起身活动，做眼保健操',source:'久坐急救运动'}
+  ],
+  evening: [
+    {type:'diet',text:'酉时(17-19点)肾经当令，晚餐宜清淡，七分饱',source:'黄帝内经'},
+    {type:'sleep',text:'戌时(19-21点)心包经当令，宜放松身心，准备入睡',source:'黄帝内经'},
+    {type:'exercise',text:'亥时(21-23点)三焦经当令，宜泡脚按摩',source:'遵生八笺'},
+    {type:'mood',text:'睡前静心，避免情绪波动',source:'老老恒言'},
+    {type:'sleep',text:'亥时入睡最佳，利于胆经排毒',source:'黄帝内经'}
+  ]
+};
 
 const BODY_CLOCK = [
-  {id:'zishi',name:'子时',start:23,end:1,meridian:'胆经',action:'必须入睡',detail:'凡十一脏取决于胆',icon:'🌙',color:'#2d3436'},
-  {id:'choushi',name:'丑时',start:1,end:3,meridian:'肝经',action:'深度睡眠',detail:'血归于肝，肝排毒修复',icon:'🌙',color:'#2d3436'},
-  {id:'yinshi',name:'寅时',start:3,end:5,meridian:'肺经',action:'保持深睡',detail:'肺主气，不宜醒来',icon:'🌙',color:'#2d3436'},
-  {id:'maoshi',name:'卯时',start:5,end:7,meridian:'大肠经',action:'起床·喝温水·排便',detail:'大肠经当令，阳气初生',icon:'🌅',color:'#F4A683'},
-  {id:'chenshi',name:'辰时',start:7,end:9,meridian:'胃经',action:'必须吃早餐',detail:'胃最活跃，营养吸收佳',icon:'☀️',color:'#7CB69D'},
-  {id:'sishi',name:'巳时',start:9,end:11,meridian:'脾经',action:'高效工作学习',detail:'脾运化，精力充沛',icon:'☀️',color:'#7CB69D'},
-  {id:'wushi',name:'午时',start:11,end:13,meridian:'心经',action:'午休小睡15-30分钟',detail:'养心安神，小憩最佳',icon:'🌤️',color:'#F4A683'},
-  {id:'weishi',name:'未时',start:13,end:15,meridian:'小肠经',action:'午餐吸收营养',detail:'小肠泌别清浊',icon:'🌤️',color:'#7CB69D'},
-  {id:'shenshi',name:'申时',start:15,end:17,meridian:'膀胱经',action:'多喝水·适合运动',detail:'代谢旺盛，排毒最佳',icon:'☀️',color:'#7CB69D'},
-  {id:'youshi',name:'酉时',start:17,end:19,meridian:'肾经',action:'休息养肾',detail:'肾藏精，不宜过劳',icon:'🌅',color:'#F4A683'},
-  {id:'xushi',name:'戌时',start:19,end:21,meridian:'心包经',action:'放松心情',detail:'适合娱乐社交、舒缓情绪',icon:'🌙',color:'#2d3436'},
-  {id:'haishi',name:'亥时',start:21,end:23,meridian:'三焦经',action:'泡脚静心·准备入睡',detail:'三焦通百脉，宜静养',icon:'🌙',color:'#2d3436'}
+  {time:'23:00-01:00',name:'子时',organ:'胆经',desc:'胆经当令，宜深睡，养胆气'},
+  {time:'01:00-03:00',name:'丑时',organ:'肝经',desc:'肝经当令，宜熟睡，养肝血'},
+  {time:'03:00-05:00',name:'寅时',organ:'肺经',desc:'肺经当令，宜深睡，养肺气'},
+  {time:'05:00-07:00',name:'卯时',organ:'大肠经',desc:'大肠经当令，宜排便，饮温水'},
+  {time:'07:00-09:00',name:'辰时',organ:'胃经',desc:'胃经当令，宜食早餐，温养脾胃'},
+  {time:'09:00-11:00',name:'巳时',organ:'脾经',desc:'脾经当令，宜工作，脾主运化'},
+  {time:'11:00-13:00',name:'午时',organ:'心经',desc:'心经当令，宜小憩，养心神'},
+  {time:'13:00-15:00',name:'未时',organ:'小肠经',desc:'小肠经当令，宜工作，分清泌浊'},
+  {time:'15:00-17:00',name:'申时',organ:'膀胱经',desc:'膀胱经当令，宜运动，排尿排毒'},
+  {time:'17:00-19:00',name:'酉时',organ:'肾经',desc:'肾经当令，宜晚餐，补肾藏精'},
+  {time:'19:00-21:00',name:'戌时',organ:'心包经',desc:'心包经当令，宜放松，护心脏'},
+  {time:'21:00-23:00',name:'亥时',organ:'三焦经',desc:'三焦经当令，宜入睡，通百脉'}
 ];
 
-const EMOTION_DATA = [
-  {id:'anger',name:'怒',emoji:'😠',organ:'肝',damage:'气上冲',cure:'悲',cureEmoji:'😢',cureDesc:'想悲伤的事来平息怒气',quote:'怒伤肝，悲胜怒'},
-  {id:'joy',name:'喜',emoji:'😂',organ:'心',damage:'气涣散',cure:'恐',cureEmoji:'😨',cureDesc:'用冷静思考收敛过度兴奋',quote:'喜伤心，恐胜喜'},
-  {id:'thinking',name:'思',emoji:'🤔',organ:'脾',damage:'气郁滞',cure:'怒',cureEmoji:'😠',cureDesc:'适当发怒来打破过度思虑',quote:'思伤脾，怒胜思'},
-  {id:'sorrow',name:'悲',emoji:'😢',organ:'肺',damage:'气消耗',cure:'喜',cureEmoji:'😂',cureDesc:'做开心的事来缓解悲伤',quote:'忧伤肺，喜胜忧'},
-  {id:'fear',name:'恐',emoji:'😨',organ:'肾',damage:'气下陷',cure:'思',cureEmoji:'🤔',cureDesc:'用理性思考来化解恐惧',quote:'恐伤肾，思胜恐'}
-];
+const EMOTION_DATA = {
+  quotes: [
+    {text:'恬淡虚无，真气从之，精神内守，病安从来。',source:'黄帝内经'},
+    {text:'怒伤肝，喜伤心，思伤脾，忧伤肺，恐伤肾。',source:'黄帝内经'},
+    {text:'志闲而少欲，心安而不惧，形劳而不倦。',source:'黄帝内经'},
+    {text:'是以圣人为无为之事，乐恬淡之能，从欲快志于虚无之守。',source:'黄帝内经'},
+    {text:'高下不相慕，其民故曰朴。',source:'黄帝内经'}
+  ],
+  exercises: [
+    {name:'呼吸调息',desc:'深呼吸6次，吸气4秒-屏息4秒-呼气6秒',emoji:'🫁'},
+    {name:'正念冥想',desc:'静坐5分钟，专注呼吸，不评判念头',emoji:'🧘'},
+    {name:'情志相胜',desc:'怒伤肝悲胜怒，喜伤心恐胜喜，思伤脾怒胜思',emoji:'⚖️'},
+    {name:'音乐疗法',desc:'听宫调音乐(脾)、角调音乐(肝)调理情志',emoji:'🎵'},
+    {name:'书写宣泄',desc:'将情绪写在纸上然后撕掉，释放压力',emoji:'📝'}
+  ]
+};
 
 const WULAO_DATA = [
-  {id:'jiushi',name:'久视伤血',emoji:'👀',organ:'肝',scene:'长时间看手机、电脑',action:'闭目养肝',tip:'每20分钟远眺20秒，闭目养神'},
-  {id:'jiuzuo',name:'久坐伤肉',emoji:'🪑',organ:'脾',scene:'办公室久坐',action:'脾经活动',tip:'每45分钟起身活动5分钟，拉伸'},
-  {id:'jiuli',name:'久立伤骨',emoji:'🧍',organ:'肾',scene:'长期站立工作',action:'抖腿活动',tip:'交替坐立，踮脚尖活动'},
-  {id:'jiuwo',name:'久卧伤气',emoji:'🛏️',organ:'肺',scene:'长期躺床不动',action:'扩胸运动',tip:'适度活动，不可赖床过久'},
-  {id:'jiuxing',name:'久行伤筋',emoji:'🚶',organ:'肝',scene:'过度行走跑步',action:'拉筋放松',tip:'量力而行，运动后拉伸'}
+  {name:'久视伤血',organ:'肝',symptom:'眼睛干涩、视物模糊、头晕',solution:'每20分钟远眺20秒，闭目养神，做眼保健操'},
+  {name:'久卧伤气',organ:'肺',symptom:'乏力、气短、精神萎靡',solution:'睡眠时间7-8小时，避免白天长时间卧床'},
+  {name:'久坐伤肉',organ:'脾',symptom:'肌肉松弛、消化不良、肥胖',solution:'每小时起身活动5分钟，做拉伸运动'},
+  {name:'久立伤骨',organ:'肾',symptom:'腰膝酸软、足跟痛、骨质疏松',solution:'避免长时间站立，适当走动，穿舒适鞋子'},
+  {name:'久行伤筋',organ:'肝',symptom:'小腿酸痛、足底筋膜炎、关节损伤',solution:'控制步行量，穿运动鞋，泡脚放松'}
 ];
 
 const CONSTITUTION_TYPES = [
   {id:'pinghe',name:'平和质',emoji:'😊',color:'#7CB69D',desc:'阴阳气血调和，体态适中，面色红润，精力充沛。',advice:'继续保持，注意劳逸结合，饮食均衡。',habits:['early_rise','morning_run','breakfast','walk','reading','meditation','early_sleep']},
   {id:'qixu',name:'气虚质',emoji:'😮‍💨',color:'#F4A683',desc:'元气不足，容易疲乏，气短懒言，出汗多。',advice:'宜食用黄芪、山药、红枣等补气食物，避免过度劳累。',habits:['early_rise','breakfast','breathe','walk','foot_bath','early_sleep','less_sit']},
-  {id:'yangxu',name:'阳虚质',emoji:'🥶',color:'#5B8DB8',desc:'阳气不足，畏寒怕冷，手足不温，喜热饮食。',advice:'宜食用生姜、羊肉、桂圆等温阳食物，注意保暖，多晒太阳。',habits:['early_rise','breakfast','walk','sunshine','foot_bath','early_sleep','vitamin']},
-  {id:'yinxu',name:'阴虚质',emoji:'🔥',color:'#E07A5F',desc:'阴液亏少，口燥咽干，手足心热，喜冷饮。',advice:'宜食用银耳、百合、梨等滋阴食物，避免熬夜，多喝水。',habits:['daily_water','reading','meditation','early_sleep','skincare','breathe']},
-  {id:'tanshi',name:'痰湿质',emoji:'💧',color:'#8B9A8B',desc:'痰湿凝聚，形体肥胖，腹部肥满，口黏苔腻。',advice:'宜食用薏米、冬瓜、山楂等祛湿食物，多运动，少吃油腻。',habits:['morning_run','walk','less_sit','healthy_diet','fruits_veggies','jump_rope']},
-  {id:'shire',name:'湿热质',emoji:'🌡️',color:'#D4A373',desc:'湿热内蕴，面垢油光，易生痤疮，口苦口干。',advice:'宜食用绿豆、苦瓜、芹菜等清热利湿食物，忌辛辣油腻。',habits:['daily_water','morning_run','walk','healthy_diet','skincare','foot_bath']},
-  {id:'xueyu',name:'血瘀质',emoji:'🩸',color:'#A44A4A',desc:'血行不畅，肤色晦暗，色素沉着，易出瘀斑。',advice:'宜食用山楂、红花、黑豆等活血食物，适度运动，保持心情舒畅。',habits:['morning_run','walk','stretch','yoga','breathe','meditation']},
-  {id:'qiyu',name:'气郁质',emoji:'😔',color:'#6B5B95',desc:'气机郁滞，神情抑郁，情感脆弱，烦闷不乐。',advice:'宜多参加社交活动，多晒太阳，饮用玫瑰花茶，保持心情舒畅。',habits:['reading','walk','meditation','yoga','breathe','sunshine','diary']},
+  {id:'yangxu',name:'阳虚质',emoji:'❄️',color:'#A8D8EA',desc:'阳气不足，畏寒怕冷，手足不温，喜热饮食。',advice:'宜温补，食用羊肉、生姜、桂圆，忌生冷。',habits:['sunshine','foot_bath','warm_water','early_sleep','breakfast','walk']},
+  {id:'yinxu',name:'阴虚质',emoji:'🔥',color:'#F4E04D',desc:'阴液亏少，口燥咽干，手足心热，易失眠。',advice:'宜滋阴润燥，食用银耳、百合、梨，忌辛辣。',habits:['meditation','reading','early_sleep','cool_drink','yoga']},
+  {id:'tanshi',name:'痰湿质',emoji:'💧',color:'#C7CEEA',desc:'痰湿凝聚，形体肥胖，腹部肥满，口黏苔腻。',advice:'宜清淡饮食，少食甜腻，多运动排湿。',habits:['walk','healthy_diet','water','less_sit','exercise','early_sleep']},
+  {id:'shire',name:'湿热质',emoji:'🌡️',color:'#F8B500',desc:'湿热内蕴，面垢油光，易生痤疮，口苦口干。',advice:'宜清热利湿，食用绿豆、苦瓜、冬瓜，忌辛辣油腻。',habits:['water','healthy_diet','exercise','cool_drink','early_sleep']},
+  {id:'xueyu',name:'血瘀质',emoji:'🩸',color:'#D4A5A5',desc:'血行不畅，肤色晦暗，易有瘀斑，舌质紫暗。',advice:'宜活血化瘀，食用山楂、玫瑰花、黑木耳，适量运动。',habits:['walk','exercise','foot_bath','healthy_diet','meditation']},
+  {id:'qiyu',name:'气郁质',emoji:'😔',color:'#B5EAD7',desc:'气机郁滞，闷闷不乐，多愁善感，易失眠。',advice:'宜疏肝解郁，多与人交流，适量运动，保持心情舒畅。',habits:['meditation','reading','walk','sunshine','social','exercise']},
   {id:'tebing',name:'特禀质',emoji:'🤧',color:'#B8B8D1',desc:'先天失常，过敏体质，易荨麻疹、哮喘、花粉症。',advice:'避免接触过敏原，饮食清淡，增强体质，注意季节变化。',habits:['early_rise','breakfast','walk','sunshine','healthy_diet','vitamin']}
 ];
 
@@ -252,50 +220,50 @@ const CONSTITUTION_QUIZ = [
     {text:'精力充沛',score:5},
     {text:'比较充沛',score:4},
     {text:'一般',score:3},
-    {text:'不太充沛',score:2},
-    {text:'很不充沛',score:1}
-  ]},
-  {type:'pinghe',num:61,question:'您容易疲乏吗？',reverse:true,options:[
-    {text:'不容易疲乏',score:5},
-    {text:'比较不容易疲乏',score:4},
-    {text:'有时容易疲乏',score:3},
     {text:'比较容易疲乏',score:2},
     {text:'非常容易疲乏',score:1}
   ]},
-  {type:'pinghe',num:62,question:'您说话声音无力吗？',reverse:true,options:[
-    {text:'声音有力',score:5},
-    {text:'声音比较有力',score:4},
-    {text:'声音一般',score:3},
-    {text:'声音比较无力',score:2},
-    {text:'声音很无力',score:1}
-  ]},
-  {type:'pinghe',num:63,question:'您感到闷闷不乐吗？',reverse:true,options:[
-    {text:'不闷闷不乐',score:5},
-    {text:'比较不闷闷不乐',score:4},
-    {text:'有时闷闷不乐',score:3},
-    {text:'比较闷闷不乐',score:2},
-    {text:'非常闷闷不乐',score:1}
-  ]},
-  {type:'pinghe',num:64,question:'您比一般人耐受不了寒冷吗？',reverse:true,options:[
-    {text:'能耐受寒冷',score:5},
-    {text:'比较能耐受寒冷',score:4},
-    {text:'一般',score:3},
-    {text:'比较不能耐受寒冷',score:2},
-    {text:'很不能耐受寒冷',score:1}
-  ]},
-  {type:'pinghe',num:65,question:'您能适应外界自然和社会环境的变化吗？',reverse:true,options:[
+  {type:'pinghe',num:61,question:'您能适应外界自然环境和社会环境的变化吗？',reverse:true,options:[
     {text:'能适应',score:5},
     {text:'比较能适应',score:4},
     {text:'一般',score:3},
     {text:'比较不能适应',score:2},
     {text:'不能适应',score:1}
   ]},
-  {type:'pinghe',num:66,question:'您容易失眠吗？',reverse:true,options:[
-    {text:'不容易失眠',score:5},
-    {text:'比较不容易失眠',score:4},
-    {text:'有时失眠',score:3},
-    {text:'比较容易失眠',score:2},
-    {text:'非常容易失眠',score:1}
+  {type:'pinghe',num:62,question:'您能耐受寒冷吗？',reverse:true,options:[
+    {text:'能耐受',score:5},
+    {text:'比较能耐受',score:4},
+    {text:'一般',score:3},
+    {text:'比较不能耐受',score:2},
+    {text:'不能耐受',score:1}
+  ]},
+  {type:'pinghe',num:63,question:'您能耐受炎热吗？',reverse:true,options:[
+    {text:'能耐受',score:5},
+    {text:'比较能耐受',score:4},
+    {text:'一般',score:3},
+    {text:'比较不能耐受',score:2},
+    {text:'不能耐受',score:1}
+  ]},
+  {type:'pinghe',num:64,question:'您睡眠良好吗？',reverse:true,options:[
+    {text:'睡眠好',score:5},
+    {text:'比较好',score:4},
+    {text:'一般',score:3},
+    {text:'比较差',score:2},
+    {text:'很差',score:1}
+  ]},
+  {type:'pinghe',num:65,question:'您二便正常吗？',reverse:true,options:[
+    {text:'正常',score:5},
+    {text:'比较正常',score:4},
+    {text:'一般',score:3},
+    {text:'比较不正常',score:2},
+    {text:'很不正常',score:1}
+  ]},
+  {type:'pinghe',num:66,question:'您舌苔薄白吗？',reverse:true,options:[
+    {text:'舌苔薄白',score:5},
+    {text:'比较薄白',score:4},
+    {text:'一般',score:3},
+    {text:'比较厚腻',score:2},
+    {text:'很厚腻',score:1}
   ]},
   {type:'pinghe',num:67,question:'您容易忘事（健忘）吗？',reverse:true,options:[
     {text:'不容易忘事',score:5},
@@ -303,6 +271,90 @@ const CONSTITUTION_QUIZ = [
     {text:'有时容易忘事',score:3},
     {text:'比较容易忘事',score:2},
     {text:'非常容易忘事',score:1}
+  ]}
+];
+
+/* ========== 快筛版：10题（约1分钟） ========== */
+const CONSTITUTION_QUICK_QUIZ = [
+  {type:'yangxu',question:'您手脚发凉、怕冷吗？',options:[...OPTS]},
+  {type:'yinxu',question:'您感到手脚心发热、口干咽燥吗？',options:[...OPTS]},
+  {type:'qixu',question:'您容易疲乏、气短懒言吗？',options:[...OPTS]},
+  {type:'tanshi',question:'您体型偏胖、腹部肥满、舌苔厚腻吗？',options:[...OPTS]},
+  {type:'shire',question:'您面部油腻、易生痤疮、口苦口干吗？',options:[...OPTS]},
+  {type:'xueyu',question:'您肤色晦暗、易有黑眼圈或瘀斑吗？',options:[...OPTS]},
+  {type:'qiyu',question:'您容易闷闷不乐、多愁善感吗？',options:[...OPTS]},
+  {type:'tebing',question:'您容易过敏（食物、花粉、药物等）吗？',options:[...OPTS]},
+  {type:'pinghe',question:'您精力充沛、不容易疲乏吗？',reverse:true,options:[
+    {text:'精力充沛',score:5},
+    {text:'比较充沛',score:4},
+    {text:'一般',score:3},
+    {text:'比较容易疲乏',score:2},
+    {text:'非常容易疲乏',score:1}
+  ]},
+  {type:'pinghe',question:'您适应外界环境变化的能力好吗？',reverse:true,options:[
+    {text:'很好',score:5},
+    {text:'比较好',score:4},
+    {text:'一般',score:3},
+    {text:'比较差',score:2},
+    {text:'很差',score:1}
+  ]}
+];
+
+/* ========== 标准版：30题（约3分钟） ========== */
+const CONSTITUTION_STD_QUIZ = [
+  /* 阳虚质 3题 */
+  {type:'yangxu',question:'您手脚发凉吗？',options:[...OPTS]},
+  {type:'yangxu',question:'您胃脘部、背部或腰膝部怕冷吗？',options:[...OPTS]},
+  {type:'yangxu',question:'您吃（喝）凉的东西会感到不舒服吗？',options:[...OPTS]},
+  /* 阴虚质 3题 */
+  {type:'yinxu',question:'您感到手脚心发热吗？',options:[...OPTS]},
+  {type:'yinxu',question:'您皮肤或口唇干吗？',options:[...OPTS]},
+  {type:'yinxu',question:'您容易便秘或大便干燥吗？',options:[...OPTS]},
+  /* 气虚质 3题 */
+  {type:'qixu',question:'您容易疲乏吗？',options:[...OPTS]},
+  {type:'qixu',question:'您容易气短（呼吸短促）吗？',options:[...OPTS]},
+  {type:'qixu',question:'您比别人容易患感冒吗？',options:[...OPTS]},
+  /* 痰湿质 3题 */
+  {type:'tanshi',question:'您腹部肥满松软吗？',options:[...OPTS]},
+  {type:'tanshi',question:'您嘴里有黏黏的感觉吗？',options:[...OPTS]},
+  {type:'tanshi',question:'您平时痰多，咽喉部总有痰堵着吗？',options:[...OPTS]},
+  /* 湿热质 3题 */
+  {type:'shire',question:'您面部或鼻部有油腻感吗？',options:[...OPTS]},
+  {type:'shire',question:'您容易生痤疮或疮疖吗？',options:[...OPTS]},
+  {type:'shire',question:'您感到口苦或嘴里有异味吗？',options:[...OPTS]},
+  /* 血瘀质 3题 */
+  {type:'xueyu',question:'您的皮肤会出现青紫瘀斑吗？',options:[...OPTS]},
+  {type:'xueyu',question:'您面色晦黯或容易出现褐斑吗？',options:[...OPTS]},
+  {type:'xueyu',question:'您口唇颜色偏黯吗？',options:[...OPTS]},
+  /* 气郁质 3题 */
+  {type:'qiyu',question:'您感到闷闷不乐吗？',options:[...OPTS]},
+  {type:'qiyu',question:'您容易精神紧张、焦虑不安吗？',options:[...OPTS]},
+  {type:'qiyu',question:'您咽喉部有异物感，吐之不出、咽之不下吗？',options:[...OPTS]},
+  /* 特禀质 3题 */
+  {type:'tebing',question:'您容易过敏（对药物、食物、气味、花粉等）吗？',options:[...OPTS]},
+  {type:'tebing',question:'您的皮肤容易起荨麻疹吗？',options:[...OPTS]},
+  {type:'tebing',question:'您没有感冒时也会鼻塞、流鼻涕吗？',options:[...OPTS]},
+  /* 平和质 3题（反向计分） */
+  {type:'pinghe',question:'您精力充沛吗？',reverse:true,options:[
+    {text:'精力充沛',score:5},
+    {text:'比较充沛',score:4},
+    {text:'一般',score:3},
+    {text:'比较容易疲乏',score:2},
+    {text:'非常容易疲乏',score:1}
+  ]},
+  {type:'pinghe',question:'您能适应外界环境变化吗？',reverse:true,options:[
+    {text:'能适应',score:5},
+    {text:'比较能适应',score:4},
+    {text:'一般',score:3},
+    {text:'比较不能适应',score:2},
+    {text:'不能适应',score:1}
+  ]},
+  {type:'pinghe',question:'您睡眠质量好吗？',reverse:true,options:[
+    {text:'很好',score:5},
+    {text:'比较好',score:4},
+    {text:'一般',score:3},
+    {text:'比较差',score:2},
+    {text:'很差',score:1}
   ]}
 ];
 
@@ -323,6 +375,8 @@ App.Data.EMOTION_DATA = EMOTION_DATA;
 App.Data.WULAO_DATA = WULAO_DATA;
 App.Data.CONSTITUTION_TYPES = CONSTITUTION_TYPES;
 App.Data.CONSTITUTION_QUIZ = CONSTITUTION_QUIZ;
+App.Data.CONSTITUTION_QUICK_QUIZ = CONSTITUTION_QUICK_QUIZ;
+App.Data.CONSTITUTION_STD_QUIZ = CONSTITUTION_STD_QUIZ;
 App.Data.GUIDE_STEPS = GUIDE_STEPS;
 
 if (App.registerModule) {
