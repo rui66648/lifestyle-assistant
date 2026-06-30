@@ -104,10 +104,14 @@
       var last = (rec[h.id] && rec[h.id].lastInterval) || (rec[h.id] && rec[h.id].timestamp) || 0;
       var elapsedMin = last ? Math.floor((Date.now() - last) / 60000) : ir.interval;
       if (elapsedMin >= ir.interval) {
-        var key = h.id + '_' + todayStr + '_' + hm;
+        var key = h.id + '_' + todayStr;
         if (!_intervalReminderShown[key]) {
           _intervalReminderShown[key] = true;
           triggerReminder(h);
+          // 更新 lastInterval 防止反复触发
+          if (!rec[h.id]) rec[h.id] = {};
+          rec[h.id].lastInterval = Date.now();
+          if (typeof saveCheckinRecords === 'function') saveCheckinRecords();
         }
       }
     });
