@@ -591,7 +591,6 @@
   function renderProfile() {
     renderLevelCard();
     renderProfileStats();
-    renderConstitutionSummary();
     renderProfileGrid();
     renderStats();
     renderDailyCardPreview();
@@ -1171,61 +1170,6 @@
     if (rateEl) rateEl.textContent = rate + '%';
     if (habitsEl) habitsEl.textContent = count;
     if (pointsEl) pointsEl.textContent = points;
-  }
-
-  function renderConstitutionSummary() {
-    const card = document.getElementById('constitutionSummaryCard');
-    if (!card) return;
-
-    let result = null;
-    try { result = JSON.parse(localStorage.getItem('constitution_result') || 'null'); } catch(e) {}
-
-    if (!result || !result.typeId) {
-      card.style.display = 'block';
-      card.innerHTML = `
-        <div class="const-summary-card entry-card" onclick="App.Modules.Constitution.openConstitutionPanel()">
-          <div class="csc-left">
-            <div class="csc-emoji">🩺</div>
-            <div class="csc-info">
-              <div class="csc-title">测测你的体质</div>
-              <div class="csc-sub">九种体质辨识，获取专属养生方案</div>
-            </div>
-          </div>
-          <span class="csc-arrow">›</span>
-        </div>`;
-      return;
-    }
-
-    const ct = (typeof CONSTITUTION_TYPES !== 'undefined' && Array.isArray(CONSTITUTION_TYPES))
-      ? CONSTITUTION_TYPES.find(c => c.id === result.typeId)
-      : null;
-
-    if (!ct) {
-      card.style.display = 'none';
-      return;
-    }
-
-    const dateStr = result.date ? new Date(result.date).toLocaleDateString('zh-CN') : '';
-    const version = result.quizVersion || '';
-
-    card.style.display = 'block';
-    card.innerHTML = `
-      <div class="const-summary-card" style="border-left-color:${ct.color || 'var(--accent)'}" onclick="App.Modules.Constitution.openConstitutionPanel()">
-        <div class="csc-header">
-          <span class="csc-badge" style="background:${ct.color || 'var(--accent)'}">${ct.name}</span>
-          <span class="csc-date">${version} · ${dateStr}</span>
-        </div>
-        <div class="csc-body">
-          <div class="csc-emoji-lg">${ct.emoji}</div>
-          <div class="csc-content">
-            <div class="csc-desc">${ct.desc}</div>
-            <div class="csc-advice">💡 ${ct.advice ? ct.advice.substring(0, 30) + '...' : ''}</div>
-          </div>
-        </div>
-        <div class="csc-footer">
-          <span class="csc-more">查看详情 ›</span>
-        </div>
-      </div>`;
   }
 
   /* ========== Profile Grid (图标宫格) ========== */
@@ -1808,7 +1752,6 @@
     renderCheckin,
     renderProfile,
     renderProfileGrid,
-    renderConstitutionSummary,
     renderStats,
     renderHeatmap,
     changeMonth,
