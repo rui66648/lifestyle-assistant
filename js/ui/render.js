@@ -262,7 +262,7 @@
     </div>`;
   }
 
-  function _renderHabitCardRow(h, checked, overdue, soon, rec) {
+  function _renderHabitCardRow(h, checked, overdue, soon, rec, nextTime) {
     const collapsedClass = checked ? 'collapsed' : '';
     const rec2 = rec[h.id] || {};
     const skipped = rec2.skipped;
@@ -279,6 +279,14 @@
       if (found && found.tip) libTip = found.tip;
     }
 
+    // 下次提醒时间
+    let nextTimeStr = '';
+    if (typeof nextTime === 'number') {
+      const nh = Math.floor(nextTime / 60);
+      const nm = nextTime % 60;
+      nextTimeStr = (nh < 10 ? '0' : '') + nh + ':' + (nm < 10 ? '0' : '') + nm;
+    }
+
     if (h.type === 'water') {
       return renderWaterTracker(h, rec).replace('class="water-tracker"', `class="water-tracker ${collapsedClass} ${periodClass}"`);
     }
@@ -293,7 +301,7 @@
         <span class="icon">${h.icon}</span>
         <div class="info">
           <div class="name">${h.name}${selected ? '：' + selected : ''}</div>
-          <div class="meta"><span style="color:var(--accent)">点击记录今日情绪</span>${timeHint}</div>
+          <div class="meta"><span style="color:var(--accent)">下次提醒 ${nextTimeStr || '点击记录今日情绪'}</span>${timeHint}</div>
           ${tipStr2 ? `<div style="font-size:11px;color:var(--accent);margin-top:3px;line-height:1.4">💡 ${tipStr2}</div>` : ''}
         </div>
         <button class="checkin-btn ${selected ? 'done' : 'pending'}">${selected ? '✓' : '记录'}</button>
@@ -302,8 +310,6 @@
 
     // 通用类型：boolean / count / timer
     const streak = getStreak(h.id);
-    const reminder = h.reminder;
-    const reminderStr = reminder && reminder.enabled ? reminder.time : '';
     const valueStr = checked ? (h.type === 'boolean' ? '' : ` ${rec[h.id].value}${h.unit}`) : '';
     const failed = h.negative && rec[h.id] && rec[h.id].failed;
     const isNegative = h.negative;
@@ -332,7 +338,7 @@
       <div class="info">
         <div class="name">${isNegative ? '不' + h.name : h.name}${valueStr}</div>
         <div class="meta">
-          ${reminderStr ? '<span>⏰ ' + reminderStr + '前</span>' : ''}
+          <span>⏰ ${nextTimeStr || '--:--'}</span>
           ${intervalHtml}
           ${streak > 0 ? '<span class="streak">🔥' + streak + '天</span>' : ''}
           ${timeHint}
@@ -403,73 +409,12 @@
       html += _renderEncourageRing(doneCount, total, firstId);
     }
 
-    // 按时间段分组
-    const periods = [
-      { id: 'morning', name: '早晨', icon: '🌅', emoji: '🌅', range: [4, 10] },
-      { id: 'forenoon', name: '上午', icon: '🌤️', emoji: '🌤️', range: [10, 12] },
-      { id: 'afternoon', name: '下午', icon: '☀️', emoji: '☀️', range: [12, 18] },
-      { id: 'evening', name: '晚上', icon: '🌙', emoji: '🌙', range: [18, 24] }
-    ];
-
-    const periodMap = { morning:'morning', forenoon:'morning', afternoon:'afternoon', evening:'evening', night:'evening' };
-
-    periods.forEach(period => {
-      const groupItems = items.filter(({h, nextTime}) => {
-        // 间隔提醒按下次提醒时间动态分组
-        if (h.intervalReminder && h.intervalReminder.enabled) {
-          const rangeStart = period.range[0] * 60;
-          const rangeEnd = period.range[1] * 60;
-          return nextTime >= rangeStart && nextTime < rangeEnd;
-        }
-        const tp = h.timePeriod || 'daytime';
-        if (tp === period.id) return true;
-        if (periodMap[tp] === period.id) return true;
-        if (tp === 'daytime' && h.reminder && h.reminder.enabled && h.reminder.time) {
-          const [hr, min] = h.reminder.time.split(':').map(Number);
-          const minutes = hr * 60 + min;
-          const rangeStart = period.range[0] * 60;
-          const rangeEnd = period.range[1] * 60;
-          return minutes >= rangeStart && minutes < rangeEnd;
-        }
-        if (h.reminder && h.reminder.enabled && h.reminder.time) {
-          const [hr, min] = h.reminder.time.split(':').map(Number);
-          const minutes = hr * 60 + min;
-          const rangeStart = period.range[0] * 60;
-          const rangeEnd = period.range[1] * 60;
-          return minutes >= rangeStart && minutes < rangeEnd;
-        }
-        return false;
-      });
-
-      const doneInGroup = groupItems.filter(x => x.checked).length;
-      const totalInGroup = groupItems.length;
-
-      if (totalInGroup === 0 && total > 0) return;
-      if (totalInGroup === 0) return;
-
-      const normalItems = groupItems.filter(({h}) => !h.intervalReminder || !h.intervalReminder.enabled);
-      const normalDone = normalItems.filter(x => x.checked).length;
-      const allNormalDone = normalItems.length > 0 && normalDone === normalItems.length;
-
-      if (allNormalDone) return;
-
-      html += `<div class="time-group">
-        <div class="time-group-header">
-          <div class="time-group-left">
-            <span class="time-group-icon">${period.emoji}</span>
-            <span class="time-group-name">${period.name}</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <span class="time-group-count">${doneInGroup}/${totalInGroup}</span>
-          </div>
-        </div>`;
-
-      groupItems.forEach(({h, checked, overdue, soon}) => {
-        html += _renderHabitCardRow(h, checked, overdue, soon, rec);
-      });
-
-      html += `</div>`;
+    // 所有习惯平铺显示，按 nextTime 排序（已排序）
+    html += `<div class="time-group">`;
+    items.forEach(({h, checked, overdue, soon, nextTime}) => {
+      html += _renderHabitCardRow(h, checked, overdue, soon, rec, nextTime);
     });
+    html += `</div>`;
 
     if (items.length === 0) {
       html = '<div style="text-align:center;padding:40px 20px;color:var(--muted);font-size:14px;">还没有添加习惯<br><br>请先到 <strong style="color:var(--accent);cursor:pointer;" onclick="switchTab(\'manage\')">【管理】</strong> 界面添加习惯</div>';
