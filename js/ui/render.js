@@ -184,6 +184,23 @@
       const [rh, rm] = h.reminder.time.split(':').map(Number);
       return rh * 60 + rm;
     }
+    // 间隔提醒：按下次提醒时间计算
+    if (h.intervalReminder && h.intervalReminder.enabled) {
+      const ir = h.intervalReminder;
+      const last = (rec[h.id] && rec[h.id].lastInterval) || (rec[h.id] && rec[h.id].timestamp) || 0;
+      const intervalMs = ir.interval * 60000;
+      let next = last + intervalMs;
+      const nowMs = Date.now();
+      // 如果下次时间已过，按当前时间推算下一个
+      if (next < nowMs) {
+        const elapsed = nowMs - last;
+        const count = Math.ceil(elapsed / intervalMs);
+        next = last + count * intervalMs;
+      }
+      const nextDate = new Date(next);
+      const nextMinutes = nextDate.getHours() * 60 + nextDate.getMinutes();
+      return nextMinutes;
+    }
     const tp = h.timePeriod || 'daytime';
     const defaults = {morning:420, forenoon:600, afternoon:840, evening:1260, daytime:720};
     return defaults[tp] || 720;
@@ -397,7 +414,13 @@
     const periodMap = { morning:'morning', forenoon:'morning', afternoon:'afternoon', evening:'evening', night:'evening' };
 
     periods.forEach(period => {
-      const groupItems = items.filter(({h}) => {
+      const groupItems = items.filter(({h, nextTime}) => {
+        // 间隔提醒按下次提醒时间动态分组
+        if (h.intervalReminder && h.intervalReminder.enabled) {
+          const rangeStart = period.range[0] * 60;
+          const rangeEnd = period.range[1] * 60;
+          return nextTime >= rangeStart && nextTime < rangeEnd;
+        }
         const tp = h.timePeriod || 'daytime';
         if (tp === period.id) return true;
         if (periodMap[tp] === period.id) return true;
