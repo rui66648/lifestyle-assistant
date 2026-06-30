@@ -383,12 +383,6 @@
       html += '<div class="report-card" style="cursor:pointer" onclick="openReportPanel()"><div class="report-title">📋 点击查看本周总结</div></div>';
     }
 
-    // 体质推荐（仅当天显示）
-    if (viewDateOffset === 0) {
-      html += renderConstitutionEntry();
-      html += renderConstitutionTips();
-    }
-
     const total = items.length;
     const doneCount = items.filter(x => x.checked).length;
     const buildRecord = App.Modules.Checkin && App.Modules.Checkin.buildBatchCompleteRecord;
@@ -591,6 +585,7 @@
   function renderProfile() {
     renderLevelCard();
     renderProfileStats();
+    renderConstitutionSummary();
     renderProfileGrid();
     renderStats();
     renderDailyCardPreview();
@@ -1172,6 +1167,62 @@
     if (pointsEl) pointsEl.textContent = points;
   }
 
+  function renderConstitutionSummary() {
+    var card = document.getElementById('constitutionSummaryCard');
+    if (!card) return;
+
+    var result = null;
+    try { result = JSON.parse(localStorage.getItem('constitution_result') || 'null'); } catch(e) {}
+
+    if (!result || !result.typeId) {
+      card.style.display = 'block';
+      card.innerHTML =
+        '<div class="const-summary-card entry-card" onclick="App.Modules.Constitution.openConstitutionPanel()">' +
+          '<div class="csc-left">' +
+            '<div class="csc-emoji">🩺</div>' +
+            '<div class="csc-info">' +
+              '<div class="csc-title">测测你的体质</div>' +
+              '<div class="csc-sub">九种体质辨识，获取专属养生方案</div>' +
+            '</div>' +
+          '</div>' +
+          '<span class="csc-arrow">›</span>' +
+        '</div>';
+      return;
+    }
+
+    var ct = null;
+    if (typeof CONSTITUTION_TYPES !== 'undefined' && Array.isArray(CONSTITUTION_TYPES)) {
+      ct = CONSTITUTION_TYPES.find(function(c) { return c.id === result.typeId; });
+    }
+
+    if (!ct) {
+      card.style.display = 'none';
+      return;
+    }
+
+    var dateStr = result.date ? new Date(result.date).toLocaleDateString('zh-CN') : '';
+    var version = result.quizVersion || '';
+
+    card.style.display = 'block';
+    card.innerHTML =
+      '<div class="const-summary-card" style="border-left-color:' + (ct.color || 'var(--accent)') + '" onclick="App.Modules.Constitution.openConstitutionPanel()">' +
+        '<div class="csc-header">' +
+          '<span class="csc-badge" style="background:' + (ct.color || 'var(--accent)') + '">' + ct.name + '</span>' +
+          '<span class="csc-date">' + version + ' · ' + dateStr + '</span>' +
+        '</div>' +
+        '<div class="csc-body">' +
+          '<div class="csc-emoji-lg">' + ct.emoji + '</div>' +
+          '<div class="csc-content">' +
+            '<div class="csc-desc">' + ct.desc + '</div>' +
+            '<div class="csc-advice">💡 ' + (ct.advice ? ct.advice.substring(0, 30) + '...' : '') + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="csc-footer">' +
+          '<span class="csc-more">查看详情 ›</span>' +
+        '</div>' +
+      '</div>';
+  }
+
   /* ========== Profile Grid (图标宫格) ========== */
   function renderProfileGrid() {
     const grid = document.getElementById('profileGrid');
@@ -1656,84 +1707,6 @@
     setTimeout(function() { if (overlay.parentElement) overlay.remove(); }, 500);
   }
 
-  // ===== 体质测试入口卡片（未测过时显示） =====
-  function renderConstitutionEntry() {
-    var result = null;
-    try { result = JSON.parse(localStorage.getItem('constitution_result') || 'null'); } catch(e) {}
-    if (result && result.typeId) return ''; // 已测过不显示
-
-    return '<div class="constitution-entry-card" onclick="App.Modules.Constitution.openConstitutionPanel()">' +
-      '<div class="ce-left">' +
-        '<div class="ce-emoji">🩺</div>' +
-        '<div class="ce-text">' +
-          '<div class="ce-title">还没测过体质？</div>' +
-          '<div class="ce-sub">10秒测出你的体质，获取专属养生方案 →</div>' +
-        '</div>' +
-      '</div>' +
-      '<div class="ce-arrow">›</div>' +
-    '</div>';
-  }
-
-  // ===== 体质测试结果联动每日推荐（参考薄荷健康个性化方案） =====
-  function renderConstitutionTips() {
-    var result = null;
-    try { result = JSON.parse(localStorage.getItem('constitution_result') || 'null'); } catch(e) {}
-    if (!result || !result.typeId) return '';
-
-    // 从 CONSTITUTION_TYPES 获取体质数据
-    var ct = null;
-    if (typeof CONSTITUTION_TYPES !== 'undefined' && Array.isArray(CONSTITUTION_TYPES)) {
-      ct = CONSTITUTION_TYPES.find(function(c) { return c.id === result.typeId; });
-    }
-    if (!ct) return '';
-
-    // 查找推荐的关联习惯（在现有习惯中高亮）
-    var recommendedHabitIds = ct.habits || [];
-    var matchedHabits = [];
-    if (habitsConfig && recommendedHabitIds.length > 0) {
-      habitsConfig.forEach(function(h) {
-        if (h.enabled === false) return;
-        // 通过名称模糊匹配或ID精确匹配
-        if (recommendedHabitIds.indexOf(h.id) >= 0) {
-          matchedHabits.push({ name: h.name, icon: h.icon, id: h.id, direct: true });
-        }
-      });
-    }
-
-    // 如果体质有通用推荐习惯标签也可以展示
-    var tags = [];
-    if (matchedHabits.length > 0) {
-      tags = matchedHabits.map(function(h) {
-        return '<span class="ct-habit-tag recommended" title="体质推荐习惯">' + h.icon + ' ' + h.name + '</span>';
-      });
-    }
-
-    // 体质建议作为额外标签
-    if (ct.advice) {
-      var adviceWords = ct.advice.replace(/[，、。；]/g, '|').split('|').filter(function(w) { return w.length > 2 && w.length < 12; });
-      adviceWords.slice(0, 3).forEach(function(w) {
-        tags.push('<span class="ct-habit-tag">' + w + '</span>');
-      });
-    }
-
-    return '<div class="constitution-tips">\
-      <div class="ct-card" style="border-left-color:' + (ct.color || 'var(--accent)') + ';background:rgba(' + (ct.color ? _hexToRgb(ct.color) + ',0.05' : '91,185,138,0.05') + ')">\
-        <div class="ct-header">\
-          <span class="ct-emoji">' + ct.emoji + '</span>\
-          <span class="ct-name" style="color:' + (ct.color || 'var(--accent)') + '">' + ct.name + '</span>\
-        </div>\
-        <div class="ct-desc">' + ct.desc + '</div>\
-        ' + (tags.length > 0 ? '<div class="ct-habits">' + tags.join('') + '</div>' : '') + '\
-      </div>\
-    </div>';
-  }
-
-  // 辅助：hex颜色转rgb
-  function _hexToRgb(hex) {
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? parseInt(result[1], 16) + ',' + parseInt(result[2], 16) + ',' + parseInt(result[3], 16) : '91,185,138';
-  }
-
   // 防抖渲染管理（搜索输入用）
   var _manageRenderTimer = null;
   function debouncedRenderManage() {
@@ -1784,8 +1757,7 @@
     renderSdYearReview,
     debouncedRenderManage,
     showCelebration,
-    dismissCelebration,
-    renderConstitutionTips
+    dismissCelebration
   };
 
   if (App.registerModule) {

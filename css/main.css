@@ -2211,26 +2211,113 @@ body.dark .wuse-card,body.dark .emotion-mini-card,body.dark .wulao-mini-card{bac
 .install-prompt-card>div>div:last-child{font-size:0.8rem;color:var(--ink2);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .install-prompt-card button{flex-shrink:0;padding:6px 14px;font-size:0.8rem;white-space:nowrap;margin-top:0;width:auto}
 
-/* Constitution Entry Card */
-.constitution-entry-card{background:linear-gradient(135deg,var(--accent-light),rgba(245,158,11,.08));border:1px solid var(--accent-200);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all .2s var(--ease)}
-.constitution-entry-card:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm)}
-.constitution-entry-card:active{transform:scale(.98)}
-.ce-left{display:flex;align-items:center;gap:12px}
-.ce-emoji{font-size:1.8rem}
-.ce-title{font-size:.95rem;font-weight:700;color:var(--ink)}
-.ce-sub{font-size:.8rem;color:var(--ink2);margin-top:2px}
-.ce-arrow{font-size:1.5rem;color:var(--accent);font-weight:700}
-
-/* Constitution Tips Card */
-.constitution-tips{margin-bottom:12px}
-.ct-card{border-left:3px solid;border-radius:8px;padding:12px 14px;margin-bottom:8px}
-.ct-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.ct-emoji{font-size:1.3rem}
-.ct-title{font-size:.9rem;font-weight:700}
-.ct-body{font-size:.8rem;color:var(--ink2);line-height:1.5}
-.ct-footer{margin-top:8px;padding-top:8px;border-top:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between}
-.ct-advice{font-size:.8rem;color:var(--ink2);flex:1}
-.ct-btn{font-size:.75rem;padding:4px 10px;border-radius:20px;background:var(--accent);color:#fff;cursor:pointer}
+/* Constitution Summary Card (我的页面) */
+.const-summary-card{
+  background:var(--surface);
+  border-radius:var(--radius-lg);
+  padding:14px 16px;
+  margin:12px 0;
+  cursor:pointer;
+  transition:all .2s var(--ease);
+  box-shadow:var(--shadow-sm);
+  border:1px solid var(--border);
+  border-left-width:4px;
+}
+.const-summary-card:hover{
+  transform:translateY(-2px);
+  box-shadow:var(--shadow-md);
+}
+.const-summary-card:active{
+  transform:scale(.98);
+}
+.csc-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
+.csc-badge{
+  color:#fff;
+  padding:4px 12px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:700;
+}
+.csc-date{
+  font-size:11px;
+  color:var(--muted);
+}
+.csc-body{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+}
+.csc-emoji-lg{
+  font-size:42px;
+  flex-shrink:0;
+  line-height:1;
+}
+.csc-content{
+  flex:1;
+  min-width:0;
+}
+.csc-desc{
+  font-size:13px;
+  color:var(--ink2);
+  line-height:1.5;
+  margin-bottom:6px;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.csc-advice{
+  font-size:12px;
+  color:var(--accent);
+  line-height:1.4;
+}
+.csc-footer{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid var(--rule);
+  text-align:right;
+}
+.csc-more{
+  font-size:12px;
+  color:var(--accent);
+  font-weight:600;
+}
+.const-summary-card.entry-card{
+  background:linear-gradient(135deg,var(--accent-light),rgba(245,158,11,.08));
+  border-color:var(--accent-200);
+  border-left-width:4px;
+}
+.csc-left{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.csc-emoji{
+  font-size:28px;
+}
+.csc-info{
+  flex:1;
+}
+.csc-title{
+  font-size:14px;
+  font-weight:700;
+  color:var(--ink);
+}
+.csc-sub{
+  font-size:12px;
+  color:var(--ink2);
+  margin-top:2px;
+}
+.csc-arrow{
+  font-size:20px;
+  color:var(--accent);
+  font-weight:700;
+}
 
 /* Health Report */
 .report-section{padding:16px;border-bottom:1px solid var(--rule)}
@@ -3111,33 +3198,6 @@ body.dark .pg-icon{background:linear-gradient(135deg,rgba(91,185,138,.2),rgba(25
 @keyframes mhFireworkPop{
   0%{transform:translate(0,0) scale(1);opacity:1}
   100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}
-}
-
-/* ========== 体质推荐区块 ========== */
-.constitution-tips{
-  margin:6px 16px 12px;padding:0;
-}
-.constitution-tips .ct-card{
-  padding:14px 16px;border-radius:var(--radius);
-  box-shadow:var(--shadow-sm);
-  border-left:3px solid;
-  transition:border-color .3s;
-}
-.constitution-tips .ct-header{
-  display:flex;align-items:center;gap:8px;margin-bottom:8px;
-}
-.constitution-tips .ct-emoji{font-size:24px}
-.constitution-tips .ct-name{font-size:15px;font-weight:700}
-.constitution-tips .ct-desc{font-size:12px;color:var(--ink2);line-height:1.6;margin-bottom:8px}
-.constitution-tips .ct-habits{display:flex;flex-wrap:wrap;gap:6px}
-.constitution-tips .ct-habit-tag{
-  font-size:11px;padding:3px 10px;border-radius:12px;
-  font-weight:600;cursor:pointer;transition:all .15s;
-  background:var(--accent-light);color:var(--accent);
-}
-.constitution-tips .ct-habit-tag:active{transform:scale(.95)}
-.constitution-tips .ct-habit-tag.recommended{
-  background:var(--accent);color:#fff;
 }
 
 /* ========== 饮食建议模块 ========== */
