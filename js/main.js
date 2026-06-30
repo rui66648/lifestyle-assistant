@@ -56,7 +56,13 @@
     if (App.UI && App.UI.Events && App.UI.Events.initTouchSwipe) {
       App.UI.Events.initTouchSwipe();
     }
-    if (App.Modules && App.Modules.Guide && App.Modules.Guide.showGuide) {
+    var isFirstUse = !localStorage.getItem('has_seen_guide') && !localStorage.getItem('constitution_result');
+    if (isFirstUse) {
+      localStorage.setItem('has_seen_guide', 'true');
+      if (App.Modules && App.Modules.Constitution && App.Modules.Constitution.openConstitutionPanel) {
+        App.Modules.Constitution.openConstitutionPanel();
+      }
+    } else if (App.Modules && App.Modules.Guide && App.Modules.Guide.showGuide) {
       App.Modules.Guide.showGuide();
     }
     startIntervalReminderCheck();

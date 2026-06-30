@@ -424,9 +424,11 @@
       if (totalInGroup === 0 && total > 0) return;
       if (totalInGroup === 0) return;
 
-      const allDone = doneInGroup === totalInGroup && totalInGroup > 0;
+      const normalItems = groupItems.filter(({h}) => !h.intervalReminder || !h.intervalReminder.enabled);
+      const normalDone = normalItems.filter(x => x.checked).length;
+      const allNormalDone = normalItems.length > 0 && normalDone === normalItems.length;
 
-      if (allDone) return;
+      if (allNormalDone) return;
 
       html += `<div class="time-group">
         <div class="time-group-header">
