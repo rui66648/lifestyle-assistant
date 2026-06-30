@@ -396,11 +396,6 @@
       ? items.filter(function(x) { return !x.checked && buildRecord(x.h); }).length
       : 0;
 
-    // 一键全选按钮（当天且有可自动完成的习惯时显示）
-    if (viewDateOffset === 0 && batchPending > 0) {
-      html += '<button class="batch-complete-btn" onclick="App.UI.Render.batchCompleteAll()">✨ 一键全部完成（' + batchPending + '项）</button>';
-    }
-
     if (total > 0) {
       const firstId = (items[0] && items[0].h) ? items[0].h.id : ((habitsConfig[0] && habitsConfig[0].id) || '');
       html += _renderEncourageRing(doneCount, total, firstId);
@@ -596,6 +591,7 @@
   function renderProfile() {
     renderLevelCard();
     renderProfileStats();
+    renderConstitutionSummary();
     renderProfileGrid();
     renderStats();
     renderDailyCardPreview();
@@ -1177,6 +1173,61 @@
     if (pointsEl) pointsEl.textContent = points;
   }
 
+  function renderConstitutionSummary() {
+    const card = document.getElementById('constitutionSummaryCard');
+    if (!card) return;
+
+    let result = null;
+    try { result = JSON.parse(localStorage.getItem('constitution_result') || 'null'); } catch(e) {}
+
+    if (!result || !result.typeId) {
+      card.style.display = 'block';
+      card.innerHTML = `
+        <div class="const-summary-card entry-card" onclick="App.Modules.Constitution.openConstitutionPanel()">
+          <div class="csc-left">
+            <div class="csc-emoji">🩺</div>
+            <div class="csc-info">
+              <div class="csc-title">测测你的体质</div>
+              <div class="csc-sub">九种体质辨识，获取专属养生方案</div>
+            </div>
+          </div>
+          <span class="csc-arrow">›</span>
+        </div>`;
+      return;
+    }
+
+    const ct = (typeof CONSTITUTION_TYPES !== 'undefined' && Array.isArray(CONSTITUTION_TYPES))
+      ? CONSTITUTION_TYPES.find(c => c.id === result.typeId)
+      : null;
+
+    if (!ct) {
+      card.style.display = 'none';
+      return;
+    }
+
+    const dateStr = result.date ? new Date(result.date).toLocaleDateString('zh-CN') : '';
+    const version = result.quizVersion || '';
+
+    card.style.display = 'block';
+    card.innerHTML = `
+      <div class="const-summary-card" style="border-left-color:${ct.color || 'var(--accent)'}" onclick="App.Modules.Constitution.openConstitutionPanel()">
+        <div class="csc-header">
+          <span class="csc-badge" style="background:${ct.color || 'var(--accent)'}">${ct.name}</span>
+          <span class="csc-date">${version} · ${dateStr}</span>
+        </div>
+        <div class="csc-body">
+          <div class="csc-emoji-lg">${ct.emoji}</div>
+          <div class="csc-content">
+            <div class="csc-desc">${ct.desc}</div>
+            <div class="csc-advice">💡 ${ct.advice ? ct.advice.substring(0, 30) + '...' : ''}</div>
+          </div>
+        </div>
+        <div class="csc-footer">
+          <span class="csc-more">查看详情 ›</span>
+        </div>
+      </div>`;
+  }
+
   /* ========== Profile Grid (图标宫格) ========== */
   function renderProfileGrid() {
     const grid = document.getElementById('profileGrid');
@@ -1661,45 +1712,6 @@
     setTimeout(function() { if (overlay.parentElement) overlay.remove(); }, 500);
   }
 
-  // ===== 一键全部完成（参考薄荷健康快捷操作理念） =====
-  function batchCompleteAll() {
-    var buildRecord = App.Modules.Checkin && App.Modules.Checkin.buildBatchCompleteRecord;
-    if (!buildRecord) return;
-
-    var dateKey = today();
-    var rec = checkinRecords[dateKey] || {};
-    var viewDow = new Date().getDay();
-    var reward = App.Core.Utils.checkinReward || { perHabit: 1, allDoneBonus: 5 };
-    var completed = 0;
-    var skipped = 0;
-
-    habitsConfig.forEach(function(h) {
-      if (h.enabled === false) return;
-      var repeat = h.repeat || [0, 1, 2, 3, 4, 5, 6];
-      if (!repeat.includes(viewDow)) return;
-      if (App.Core.Storage.isHabitChecked(h, rec)) return;
-
-      var entry = buildRecord(h);
-      if (!entry) { skipped++; return; }
-
-      rec[h.id] = entry;
-      App.Core.Utils.addPoints(reward.perHabit, h.name + ' 打卡');
-      completed++;
-    });
-
-    if (completed === 0) {
-      if (skipped > 0) showToast('剩余 ' + skipped + ' 项需手动完成（如情绪记录）');
-      return;
-    }
-
-    checkinRecords[dateKey] = rec;
-    saveRecords();
-    playSound('checkin');
-    showToast('已完成 ' + completed + ' 项习惯' + (skipped ? '，' + skipped + ' 项需手动完成' : '') + '！');
-    if (typeof checkLevelUp === 'function') checkLevelUp();
-    render(['today', 'checkin']);
-  }
-
   // ===== 体质测试入口卡片（未测过时显示） =====
   function renderConstitutionEntry() {
     var result = null;
@@ -1796,6 +1808,7 @@
     renderCheckin,
     renderProfile,
     renderProfileGrid,
+    renderConstitutionSummary,
     renderStats,
     renderHeatmap,
     changeMonth,
@@ -1829,8 +1842,7 @@
     debouncedRenderManage,
     showCelebration,
     dismissCelebration,
-    renderConstitutionTips,
-    batchCompleteAll
+    renderConstitutionTips
   };
 
   if (App.registerModule) {

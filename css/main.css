@@ -2232,6 +2232,115 @@ body.dark .wuse-card,body.dark .emotion-mini-card,body.dark .wulao-mini-card{bac
 .ct-advice{font-size:.8rem;color:var(--ink2);flex:1}
 .ct-btn{font-size:.75rem;padding:4px 10px;border-radius:20px;background:var(--accent);color:#fff;cursor:pointer}
 
+/* Constitution Summary Card (我的页面) */
+.const-summary-card{
+  background:var(--surface);
+  border-radius:var(--radius-lg);
+  border-left:4px solid var(--accent);
+  padding:14px 16px;
+  margin:12px 0;
+  cursor:pointer;
+  transition:all .2s var(--ease);
+  box-shadow:var(--shadow-sm);
+  border:1px solid var(--border);
+  border-left-width:4px;
+}
+.const-summary-card:hover{
+  transform:translateY(-2px);
+  box-shadow:var(--shadow-md);
+}
+.const-summary-card:active{
+  transform:scale(.98);
+}
+.csc-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
+.csc-badge{
+  color:#fff;
+  padding:4px 12px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:700;
+}
+.csc-date{
+  font-size:11px;
+  color:var(--muted);
+}
+.csc-body{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+}
+.csc-emoji-lg{
+  font-size:42px;
+  flex-shrink:0;
+  line-height:1;
+}
+.csc-content{
+  flex:1;
+  min-width:0;
+}
+.csc-desc{
+  font-size:13px;
+  color:var(--ink2);
+  line-height:1.5;
+  margin-bottom:6px;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.csc-advice{
+  font-size:12px;
+  color:var(--accent);
+  line-height:1.4;
+}
+.csc-footer{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid var(--rule);
+  text-align:right;
+}
+.csc-more{
+  font-size:12px;
+  color:var(--accent);
+  font-weight:600;
+}
+.const-summary-card.entry-card{
+  background:linear-gradient(135deg,var(--accent-light),rgba(245,158,11,.08));
+  border-color:var(--accent-200);
+  border-left-width:4px;
+}
+.csc-left{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.csc-emoji{
+  font-size:28px;
+}
+.csc-info{
+  flex:1;
+}
+.csc-title{
+  font-size:14px;
+  font-weight:700;
+  color:var(--ink);
+}
+.csc-sub{
+  font-size:12px;
+  color:var(--ink2);
+  margin-top:2px;
+}
+.csc-arrow{
+  font-size:20px;
+  color:var(--accent);
+  font-weight:700;
+}
+
 /* Health Report */
 .report-section{padding:16px;border-bottom:1px solid var(--rule)}
 .report-section:last-child{border-bottom:none}
@@ -3057,16 +3166,6 @@ body.dark .pg-icon{background:linear-gradient(135deg,rgba(91,185,138,.2),rgba(25
 /* 重复日按钮 */
 .repeat-day-btn{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;background:var(--bg);color:var(--muted)}
 .repeat-day-btn.active{background:var(--accent);color:var(--on-accent)}
-
-/* 一键全选按钮 */
-.batch-complete-btn{
-  display:block;margin:0 16px 12px;padding:10px 16px;
-  border-radius:var(--radius);border:2px dashed var(--accent);
-  background:var(--accent-light);color:var(--accent);
-  font-size:13px;font-weight:700;text-align:center;cursor:pointer;
-  transition:all .2s;width:calc(100% - 32px);
-}
-.batch-complete-btn:active{background:var(--accent);color:var(--on-accent);border-style:solid}
 
 /* ========== 习惯卡片状态色带 ========== */
 .habit-card .status-ribbon{
