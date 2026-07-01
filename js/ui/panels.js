@@ -16,6 +16,8 @@
     panel.classList.add('show');
     document.body.style.overflow = 'hidden';
     attachPanelGesture(panel);
+    // 注入皮肤目标类名到面板内的新元素
+    if (typeof injectSkinTargetClasses === 'function') injectSkinTargetClasses();
   }
 
   function closeAllPanels() {

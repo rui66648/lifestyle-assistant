@@ -139,6 +139,76 @@ body.btn-3d .ui-btn--primary:active{
     inset 0 1px 0 rgba(255,255,255,.2);
 }
 
+/* Button Skin: Gradient 3D */
+body.btn-gradient-3d .ui-btn--primary{
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);
+  position:relative;
+  border:none;
+  box-shadow:
+    0 6px 0 0 var(--accent-700),
+    0 8px 16px rgba(16,185,129,.3),
+    inset 0 1px 0 rgba(255,255,255,.25);
+  transform:translateY(0);
+}
+body.btn-gradient-3d .ui-btn--primary::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  background:linear-gradient(135deg,rgba(255,255,255,.3),transparent 50%);
+  pointer-events:none;
+}
+body.btn-gradient-3d .ui-btn--primary:hover{
+  transform:translateY(-2px);
+  box-shadow:
+    0 8px 0 0 var(--accent-700),
+    0 12px 24px rgba(16,185,129,.35),
+    inset 0 1px 0 rgba(255,255,255,.3);
+}
+body.btn-gradient-3d .ui-btn--primary:active{
+  transform:translateY(4px);
+  box-shadow:
+    0 2px 0 0 var(--accent-700),
+    0 2px 4px rgba(16,185,129,.2),
+    inset 0 1px 0 rgba(255,255,255,.15);
+}
+
+/* Button Skin: Glow Pulse (uiverse.io glow button) */
+body.btn-glow .ui-btn--primary{
+  background:var(--accent);
+  position:relative;overflow:hidden;
+  box-shadow:0 0 5px rgba(16,185,129,.3),0 0 20px rgba(16,185,129,.2);
+  transition:all .3s var(--ease);
+  animation:glowPulse 2s ease-in-out infinite alternate;
+}
+body.btn-glow .ui-btn--primary::before{
+  content:'';position:absolute;inset:-2px;
+  border-radius:inherit;
+  background:conic-gradient(from 0deg,transparent,var(--accent),transparent,var(--accent2),transparent);
+  animation:glowSpin 3s linear infinite;
+  z-index:-1;opacity:.5;
+}
+body.btn-glow .ui-btn--primary::after{
+  content:'';position:absolute;inset:2px;
+  border-radius:inherit;background:var(--accent);z-index:-1;
+}
+body.btn-glow .ui-btn--primary:hover{
+  box-shadow:0 0 10px rgba(16,185,129,.5),0 0 30px rgba(16,185,129,.3),0 0 60px rgba(16,185,129,.15);
+  transform:translateY(-2px);
+}
+body.btn-glow .ui-btn--primary:active{
+  transform:translateY(0) scale(.98);
+  box-shadow:0 0 5px rgba(16,185,129,.3);
+  animation:none;
+}
+@keyframes glowPulse{
+  from{box-shadow:0 0 5px rgba(16,185,129,.3),0 0 15px rgba(16,185,129,.2)}
+  to{box-shadow:0 0 10px rgba(16,185,129,.5),0 0 25px rgba(16,185,129,.3),0 0 40px rgba(16,185,129,.1)}
+}
+@keyframes glowSpin{
+  to{transform:rotate(360deg)}
+}
+
 /* ===== Switch Component ===== */
 .ui-switch{
   display:inline-flex;
@@ -182,59 +252,130 @@ body.btn-3d .ui-btn--primary:active{
   color:var(--ink);
 }
 
-/* Switch Skin: Day/Night (Uiverse style) */
+/* Switch Skin: Day/Night */
 body.tg-daynight .ui-switch__slider{
-  background:linear-gradient(135deg,#87CEEB,#5BA3C6);
-  width:56px;
-  height:30px;
-  border-radius:15px;
-  overflow:hidden;
+  background:linear-gradient(180deg,#1a1a2e,#16213e);
+  border:2px solid #0f3460;
+  width:60px;height:30px;border-radius:15px;
+  overflow:hidden;position:relative;
 }
 body.tg-daynight .ui-switch__slider::before{
-  background:#FFD93D;
-  box-shadow:0 0 12px rgba(255,217,61,.6);
-  width:22px;
-  height:22px;
-  top:4px;
-  left:4px;
+  width:22px;height:22px;border-radius:50%;
+  background:radial-gradient(circle at 30% 30%,#fffacd,#ffd700);
+  box-shadow:0 0 10px rgba(255,215,0,.5);
+  top:2px;left:2px;
+  transition:all .4s cubic-bezier(.68,-.55,.265,1.55);
 }
 body.tg-daynight .ui-switch__input:checked + .ui-switch__slider{
-  background:linear-gradient(135deg,#1a1a2e,#16213e);
+  background:linear-gradient(180deg,#87ceeb,#f0e68c);
+  border-color:#4a90d9;
 }
 body.tg-daynight .ui-switch__input:checked + .ui-switch__slider::before{
-  left:30px;
-  background:#f5f5f5;
-  box-shadow:
-    inset -3px -2px 0 0 #e0e0e0,
-    0 0 12px rgba(255,255,255,.3);
+  left:32px;
+  background:radial-gradient(circle at 30% 30%,#f5f5f5,#e0e0e0);
+  box-shadow:0 0 8px rgba(255,255,255,.3);
 }
 
 /* Switch Skin: Neon */
 body.tg-neon .ui-switch__slider{
-  background:rgba(255,255,255,.1);
-  border:2px solid var(--rule);
-  height:28px;
-  width:52px;
-  border-radius:14px;
+  width:56px;height:28px;border-radius:14px;
+  background:#1a1a2e;border:2px solid #2d2d44;
 }
 body.tg-neon .ui-switch__slider::before{
-  top:2px;
-  left:2px;
-  width:20px;
-  height:20px;
-  background:var(--muted);
+  top:3px;left:3px;width:18px;height:18px;border-radius:50%;
+  background:#555;box-shadow:none;
 }
 body.tg-neon .ui-switch__input:checked + .ui-switch__slider{
-  background:transparent;
-  border-color:var(--accent);
-  box-shadow:
-    0 0 10px rgba(16,185,129,.4),
-    inset 0 0 10px rgba(16,185,129,.15);
+  background:transparent;border-color:var(--accent);
+  box-shadow:0 0 10px var(--accent),inset 0 0 10px rgba(16,185,129,.2);
 }
 body.tg-neon .ui-switch__input:checked + .ui-switch__slider::before{
-  left:26px;
+  left:30px;
   background:var(--accent);
-  box-shadow:0 0 12px rgba(16,185,129,.6);
+  box-shadow:0 0 8px var(--accent),0 0 16px var(--accent);
+}
+
+/* Switch Skin: SVG Stroke Animation */
+body.tg-svg-animated .ui-switch__slider{
+  width:56px;
+  height:30px;
+  background:var(--rule);
+  border-radius:15px;
+  overflow:hidden;
+  position:relative;
+}
+body.tg-svg-animated .ui-switch__slider::before{
+  width:24px;
+  height:24px;
+  top:3px;
+  left:3px;
+  background:#fff;
+  box-shadow:0 2px 8px rgba(15,23,42,.15);
+  transition:all .4s cubic-bezier(.68,-.55,.265,1.55);
+}
+body.tg-svg-animated .ui-switch__input:checked + .ui-switch__slider{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+}
+body.tg-svg-animated .ui-switch__input:checked + .ui-switch__slider::before{
+  left:29px;
+  box-shadow:0 2px 12px rgba(16,185,129,.3);
+}
+body.tg-svg-animated .ui-switch__slider::after{
+  content:'';
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  border:2px solid var(--accent);
+  opacity:0;
+  transition:all .4s var(--ease);
+  pointer-events:none;
+}
+body.tg-svg-animated .ui-switch__input:checked + .ui-switch__slider::after{
+  opacity:1;
+  animation:svgRing .6s var(--ease-out);
+}
+@keyframes svgRing{
+  0%{transform:translate(-50%,-50%) scale(0);opacity:0}
+  50%{transform:translate(-50%,-50%) scale(1.3);opacity:.5}
+  100%{transform:translate(-50%,-50%) scale(1);opacity:0}
+}
+
+/* Switch Skin: Neumorphism (uiverse.io aasisodiya/sour-horse-29) */
+body.tg-neumorphism .ui-switch__slider{
+  width:56px;height:28px;border-radius:14px;
+  background:#e0e5ec;
+  box-shadow:6px 6px 12px #b8bec7,-6px -6px 12px #ffffff;
+  border:none;
+  transition:all .3s var(--ease);
+}
+body.tg-neumorphism .ui-switch__slider::before{
+  top:3px;left:3px;width:22px;height:22px;border-radius:50%;
+  background:#e0e5ec;
+  box-shadow:inset 3px 3px 6px #b8bec7,inset -3px -3px 6px #ffffff;
+  transition:all .3s var(--ease);
+}
+body.tg-neumorphism .ui-switch__input:checked + .ui-switch__slider{
+  box-shadow:inset 4px 4px 8px #b8bec7,inset -4px -4px 8px #ffffff;
+}
+body.tg-neumorphism .ui-switch__input:checked + .ui-switch__slider::before{
+  left:27px;
+  background:var(--accent);
+  box-shadow:0 0 8px rgba(16,185,129,.4),inset 0 0 0 transparent;
+}
+body.dark.tg-neumorphism .ui-switch__slider{
+  background:#2d3436;
+  box-shadow:6px 6px 12px #1e2527,-6px -6px 12px #3c4345;
+}
+body.dark.tg-neumorphism .ui-switch__slider::before{
+  background:#2d3436;
+  box-shadow:inset 3px 3px 6px #1e2527,inset -3px -3px 6px #3c4345;
+}
+body.dark.tg-neumorphism .ui-switch__input:checked + .ui-switch__slider{
+  box-shadow:inset 4px 4px 8px #1e2527,inset -4px -4px 8px #3c4345;
 }
 
 /* ===== Checkbox Component ===== */
@@ -295,6 +436,96 @@ body.tg-neon .ui-switch__input:checked + .ui-switch__slider::before{
 /* Checkbox Skin: Round */
 body.cb-round .ui-checkbox__box{
   border-radius:50%;
+}
+
+/* Checkbox Skin: SVG Stroke Animation */
+body.cb-svg-animated .ui-checkbox__box{
+  border:2px solid var(--rule);
+  border-radius:8px;
+  background:transparent;
+  position:relative;
+  overflow:hidden;
+}
+body.cb-svg-animated .ui-checkbox__box::before{
+  content:'';
+  position:absolute;
+  inset:-2px;
+  border-radius:inherit;
+  border:2px solid var(--accent);
+  opacity:0;
+  transform:scale(1.2);
+  transition:all .3s var(--ease);
+}
+body.cb-svg-animated .ui-checkbox:hover .ui-checkbox__box::before{
+  opacity:.3;
+  transform:scale(1);
+}
+body.cb-svg-animated .ui-checkbox__input:checked + .ui-checkbox__box{
+  border-color:var(--accent);
+  background:transparent;
+  box-shadow:0 0 0 3px rgba(16,185,129,.15);
+  animation:svgCheckPop .4s var(--ease-bounce);
+}
+body.cb-svg-animated .ui-checkbox__input:checked + .ui-checkbox__box::before{
+  opacity:0;
+  transform:scale(1.4);
+}
+body.cb-svg-animated .ui-checkbox__input:checked + .ui-checkbox__box .ui-checkbox__check{
+  transform:translate(-50%,-50%) rotate(45deg) scale(1);
+  opacity:1;
+  border-color:var(--accent);
+  transition:all .3s cubic-bezier(.68,-.55,.265,1.55);
+}
+@keyframes svgCheckPop{
+  0%{transform:scale(1)}
+  30%{transform:scale(.9)}
+  60%{transform:scale(1.15)}
+  100%{transform:scale(1)}
+}
+
+/* Checkbox Skin: Fill Unfill (uiverse.io PriyanshuGupta28/tough-puma-94) */
+body.cb-fill-unfill .ui-checkbox__box{
+  border:2px solid var(--rule);border-radius:6px;
+  background:rgba(207,205,205,.425);
+  position:relative;overflow:hidden;
+  transition:all .3s var(--ease);
+}
+body.cb-fill-unfill .ui-checkbox__box::before{
+  content:'';position:absolute;inset:0;
+  border:2px solid var(--accent);
+  stroke-dasharray:800;stroke-dashoffset:800;
+  opacity:0;transition:opacity .3s var(--ease);
+  border-radius:inherit;pointer-events:none;
+}
+body.cb-fill-unfill .ui-checkbox__box::after{
+  content:'';position:absolute;inset:0;
+  background:var(--accent);border-radius:inherit;
+  transform:scale(0);transition:transform .6s ease-in;
+}
+body.cb-fill-unfill .ui-checkbox:hover .ui-checkbox__box::before{
+  opacity:.3;
+}
+body.cb-fill-unfill .ui-checkbox__input:checked + .ui-checkbox__box{
+  border-color:var(--accent);
+  background:rgba(207,205,205,.425);
+}
+body.cb-fill-unfill .ui-checkbox__input:checked + .ui-checkbox__box::after{
+  transform:scale(1);
+}
+body.cb-fill-unfill .ui-checkbox__check{
+  z-index:1;border-right:3px solid #fff;border-bottom:3px solid #fff;
+  transition:all .6s ease-in;
+}
+body.cb-fill-unfill .ui-checkbox__input:checked + .ui-checkbox__box .ui-checkbox__check{
+  border-color:#fff;
+  transition:all .6s ease-in;
+}
+body.cb-fill-unfill .ui-checkbox:hover .ui-checkbox__box{
+  border-color:var(--accent);
+}
+body.dark.cb-fill-unfill .ui-checkbox__box{
+  border-color:rgba(255,255,255,.2);
+  background:rgba(100,100,120,.3);
 }
 
 /* Checkbox Skin: Neumorphic */
@@ -376,12 +607,74 @@ body.cd-gradient .ui-card::after{
   z-index:-1;
 }
 
-/* Card Skin: Glass Dark */
+/* Card Skin: Glassmorphism (Enhanced) */
 body.cd-glass .ui-card{
-  background:rgba(255,255,255,.7);
+  background:rgba(255,255,255,.65);
   backdrop-filter:blur(24px) saturate(180%);
   -webkit-backdrop-filter:blur(24px) saturate(180%);
-  border:1px solid rgba(255,255,255,.8);
+  border:1px solid rgba(255,255,255,.5);
+  box-shadow:
+    0 8px 32px rgba(15,23,42,.08),
+    inset 0 1px 0 rgba(255,255,255,.6),
+    inset 0 -1px 0 rgba(0,0,0,.02);
+  position:relative;
+  overflow:hidden;
+}
+body.cd-glass .ui-card::before{
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:50%;
+  background:linear-gradient(180deg,rgba(255,255,255,.3),transparent);
+  pointer-events:none;
+  border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+}
+body.cd-glass .ui-card:hover{
+  box-shadow:
+    0 16px 48px rgba(15,23,42,.12),
+    inset 0 1px 0 rgba(255,255,255,.8),
+    inset 0 -1px 0 rgba(0,0,0,.02);
+  transform:translateY(-4px);
+  border-color:rgba(255,255,255,.7);
+}
+
+/* Card Skin: Glow Border (uiverse.io rotating gradient border card) */
+body.cd-glow .ui-card{
+  position:relative;background:var(--bg);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  box-shadow:0 4px 20px rgba(0,0,0,.08);
+  transition:all .3s var(--ease);
+}
+body.cd-glow .ui-card::before{
+  content:'';position:absolute;
+  top:-50%;left:-50%;width:200%;height:200%;
+  background:conic-gradient(from 0deg,transparent,var(--accent),transparent 30%,var(--accent2),transparent 60%);
+  animation:cardGlowRotate 4s linear infinite;
+  z-index:-1;
+}
+body.cd-glow .ui-card::after{
+  content:'';position:absolute;inset:2px;
+  border-radius:calc(var(--radius-lg) - 2px);
+  background:var(--bg);z-index:-1;
+}
+body.cd-glow .ui-card>*{
+  position:relative;z-index:1;
+}
+body.cd-glow .ui-card:hover{
+  box-shadow:0 8px 32px rgba(16,185,129,.15),0 0 20px rgba(16,185,129,.08);
+  transform:translateY(-4px);
+}
+@keyframes cardGlowRotate{
+  to{transform:rotate(360deg)}
+}
+body.dark.cd-glow .ui-card::after{
+  background:var(--bg);
+}
+body.dark.cd-glow .ui-card:hover{
+  box-shadow:0 8px 32px rgba(16,185,129,.2),0 0 30px rgba(16,185,129,.1);
 }
 
 /* ===== Input Component ===== */
@@ -494,6 +787,34 @@ body.in-float .ui-input__field:not(:placeholder-shown) + .ui-input__label{
   font-weight:600;
 }
 
+/* Input Skin: Neumorphism (uiverse.io neumorphic input) */
+body.in-neumorphism .ui-input__field{
+  border:none;border-radius:12px;
+  background:#e0e5ec;
+  box-shadow:inset 4px 4px 8px #b8bec7,inset -4px -4px 8px #ffffff;
+  padding:12px 16px;padding-left:44px;
+  color:var(--ink);
+  transition:all .3s var(--ease);
+}
+body.in-neumorphism .ui-input__field:focus{
+  box-shadow:inset 5px 5px 10px #b8bec7,inset -5px -5px 10px #ffffff,0 0 0 2px var(--accent);
+  outline:none;
+}
+body.in-neumorphism .ui-input__field::placeholder{
+  color:rgba(0,0,0,.35);
+}
+body.dark.in-neumorphism .ui-input__field{
+  background:#2d3436;
+  box-shadow:inset 4px 4px 8px #1e2527,inset -4px -4px 8px #3c4345;
+  color:#dfe6e9;
+}
+body.dark.in-neumorphism .ui-input__field:focus{
+  box-shadow:inset 5px 5px 10px #1e2527,inset -5px -5px 10px #3c4345,0 0 0 2px var(--accent);
+}
+body.dark.in-neumorphism .ui-input__field::placeholder{
+  color:rgba(255,255,255,.3);
+}
+
 /* ===== Badge Component ===== */
 .ui-badge{
   display:inline-flex;
@@ -572,6 +893,62 @@ body.bd-dot .ui-badge--warning::before{
   background:var(--accent2);
 }
 
+/* Badge Skin: Glass */
+body.bd-glass .ui-badge--primary{
+  background:rgba(16,185,129,.12);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(16,185,129,.25);
+  color:var(--accent-700);
+}
+body.bd-glass .ui-badge--warning{
+  background:rgba(245,158,11,.12);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(245,158,11,.25);
+  color:var(--accent-2-600);
+}
+body.bd-glass .ui-badge--danger{
+  background:rgba(239,68,68,.12);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(239,68,68,.25);
+}
+body.bd-glass .ui-badge--info{
+  background:rgba(59,130,246,.12);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(59,130,246,.25);
+}
+
+/* Badge Skin: Neon Glow (uiverse.io neon badge) */
+body.bd-neon .ui-badge--primary{
+  background:transparent;
+  border:1px solid var(--accent);
+  color:var(--accent);
+  box-shadow:0 0 7px var(--accent),0 0 10px var(--accent),0 0 21px var(--accent),0 0 42px rgba(16,185,129,.3),inset 0 0 7px rgba(16,185,129,.15);
+  text-shadow:0 0 7px var(--accent),0 0 10px rgba(16,185,129,.5);
+}
+body.bd-neon .ui-badge--warning{
+  background:transparent;
+  border:1px solid var(--accent2);
+  color:var(--accent2);
+  box-shadow:0 0 7px var(--accent2),0 0 10px var(--accent2),0 0 21px var(--accent2),0 0 42px rgba(245,158,11,.3),inset 0 0 7px rgba(245,158,11,.15);
+  text-shadow:0 0 7px var(--accent2),0 0 10px rgba(245,158,11,.5);
+}
+body.bd-neon .ui-badge--danger{
+  background:transparent;
+  border:1px solid #EF4444;
+  color:#EF4444;
+  box-shadow:0 0 7px #EF4444,0 0 10px #EF4444,0 0 21px #EF4444,0 0 42px rgba(239,68,68,.3),inset 0 0 7px rgba(239,68,68,.15);
+}
+body.bd-neon .ui-badge--info{
+  background:transparent;
+  border:1px solid #3B82F6;
+  color:#3B82F6;
+  box-shadow:0 0 7px #3B82F6,0 0 10px #3B82F6,0 0 21px #3B82F6,0 0 42px rgba(59,130,246,.3),inset 0 0 7px rgba(59,130,246,.15);
+}
+
 /* ===== Dark Mode ===== */
 body.dark .ui-card{
   background:rgba(30,41,59,.85);
@@ -625,6 +1002,13 @@ body.dark.cd-gradient .ui-card::after{
 body.dark.cd-glass .ui-card{
   background:rgba(30,41,59,.6);
   border-color:rgba(255,255,255,.08);
+  box-shadow:
+    0 8px 32px rgba(0,0,0,.2),
+    inset 0 1px 0 rgba(255,255,255,.05),
+    inset 0 -1px 0 rgba(0,0,0,.1);
+}
+body.dark.cd-glass .ui-card::before{
+  background:linear-gradient(180deg,rgba(255,255,255,.05),transparent);
 }
 
 /* Dark Mode Input Variants */
@@ -636,3 +1020,44 @@ body.dark.in-float .ui-input__field:focus{
 }
 
 /* Dark Mode Checkbox Variants */
+
+/* Dark Mode - New Skin Variants */
+body.dark.tg-svg-animated .ui-switch__slider{
+  background:rgba(255,255,255,.1);
+}
+body.dark.tg-daynight .ui-switch__slider{
+  background:linear-gradient(180deg,#0a0a1a,#0d1020);
+  border-color:#1a2040;
+}
+body.dark.tg-daynight .ui-switch__input:checked + .ui-switch__slider{
+  background:linear-gradient(180deg,#4a7ab5,#8a9a5a);
+}
+body.dark.tg-neon .ui-switch__slider{
+  background:#0a0a1a;border-color:#1a1a2e;
+}
+body.dark.cb-svg-animated .ui-checkbox__box{
+  border-color:rgba(255,255,255,.15);
+}
+body.dark.cb-svg-animated .ui-checkbox__input:checked + .ui-checkbox__box{
+  box-shadow:0 0 0 3px rgba(16,185,129,.2);
+}
+body.dark.btn-gradient-3d .ui-btn--primary{
+  box-shadow:
+    0 6px 0 0 var(--accent-800),
+    0 8px 16px rgba(0,0,0,.3),
+    inset 0 1px 0 rgba(255,255,255,.15);
+}
+body.dark.btn-gradient-3d .ui-btn--primary:hover{
+  box-shadow:
+    0 8px 0 0 var(--accent-800),
+    0 12px 24px rgba(0,0,0,.35),
+    inset 0 1px 0 rgba(255,255,255,.2);
+}
+body.dark.bd-glass .ui-badge--primary{
+  background:rgba(16,185,129,.15);
+  border-color:rgba(16,185,129,.3);
+}
+body.dark.bd-glass .ui-badge--warning{
+  background:rgba(245,158,11,.15);
+  border-color:rgba(245,158,11,.3);
+}

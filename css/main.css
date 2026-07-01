@@ -4202,6 +4202,32 @@ body.cb-round .theme-toggle .theme-checkbox:checked~.theme-slider::before{
   opacity:1;transform:scale(1);box-shadow:none;
 }
 
+/* ========== 皮肤：复选框 - Fill Unfill (uiverse.io PriyanshuGupta28/tough-puma-94) ========== */
+body.cb-fill-unfill .habit-check{
+  border:2px solid var(--rule);border-radius:6px;
+  background:rgba(207,205,205,.425);
+  position:relative;overflow:hidden;
+}
+body.cb-fill-unfill .habit-check::before{
+  content:'';position:absolute;inset:0;
+  border:2px solid var(--accent);
+  opacity:0;transition:opacity .3s var(--ease);
+  border-radius:inherit;pointer-events:none;
+}
+body.cb-fill-unfill .habit-check:hover::before{
+  opacity:.3;
+}
+body.cb-fill-unfill .habit-check.checked{
+  border-color:var(--accent);background:var(--accent);
+  animation:fillUnfill .6s ease-in;
+}
+body.cb-fill-unfill .habit-check.checked::after{
+  color:#fff;
+}
+@keyframes fillUnfill{
+  0%{transform:scale(1)}40%{transform:scale(.85)}100%{transform:scale(1)}
+}
+
 /* ========== 皮肤：开关 - 日夜切换 ========== */
 body.tg-daynight .theme-toggle{width:60px;height:30px}
 body.tg-daynight .theme-toggle .theme-slider{
@@ -4244,6 +4270,28 @@ body.tg-daynight .toggle-switch.on::after{
   box-shadow:0 0 8px rgba(255,255,255,.3);
 }
 
+/* .ui-switch coverage for tg-daynight */
+body.tg-daynight .ui-switch__slider{
+  background:linear-gradient(180deg,#1a1a2e,#16213e);
+  border:2px solid #0f3460;
+  width:60px;height:30px;border-radius:15px;overflow:hidden;
+}
+body.tg-daynight .ui-switch__input:checked + .ui-switch__slider{
+  background:linear-gradient(180deg,#87ceeb,#f0e68c);
+  border-color:#4a90d9;
+}
+body.tg-daynight .ui-switch__slider::before{
+  top:2px;left:2px;width:22px;height:22px;border-radius:50%;
+  background:radial-gradient(circle at 30% 30%,#fffacd,#ffd700);
+  box-shadow:0 0 10px rgba(255,215,0,.5);
+  transition:all .4s cubic-bezier(.68,-.55,.265,1.55);
+}
+body.tg-daynight .ui-switch__input:checked + .ui-switch__slider::before{
+  left:32px;
+  background:radial-gradient(circle at 30% 30%,#f5f5f5,#e0e0e0);
+  box-shadow:0 0 8px rgba(255,255,255,.3);
+}
+
 /* ========== 皮肤：开关 - 霓虹 ========== */
 body.tg-neon .theme-toggle{width:56px;height:28px}
 body.tg-neon .theme-toggle .theme-slider{
@@ -4279,6 +4327,132 @@ body.tg-neon .toggle-switch.on::after{
   transform:translateX(28px);
   background:var(--accent);
   box-shadow:0 0 8px var(--accent),0 0 16px var(--accent);
+}
+
+/* .ui-switch coverage for tg-neon */
+body.tg-neon .ui-switch__slider{
+  width:56px;height:28px;border-radius:14px;
+  background:#1a1a2e;border:2px solid #2d2d44;
+}
+body.tg-neon .ui-switch__slider::before{
+  top:3px;left:3px;width:18px;height:18px;border-radius:50%;
+  background:#555;box-shadow:none;
+}
+body.tg-neon .ui-switch__input:checked + .ui-switch__slider{
+  background:transparent;border-color:var(--accent);
+  box-shadow:0 0 10px var(--accent),inset 0 0 10px rgba(16,185,129,.2);
+}
+body.tg-neon .ui-switch__input:checked + .ui-switch__slider::before{
+  left:30px;
+  background:var(--accent);
+  box-shadow:0 0 8px var(--accent),0 0 16px var(--accent);
+}
+
+/* .ui-switch coverage for tg-svg-animated */
+/* ========== 皮肤：开关 - 弹跳动画 ========== */
+/* .ui-switch coverage (defined in components.css) — add .theme-toggle/.toggle-switch coverage */
+body.tg-svg-animated .theme-toggle{
+  width:56px;height:30px;border-radius:15px;
+  background:var(--rule);overflow:hidden;position:relative;
+}
+body.tg-svg-animated .theme-toggle .theme-slider{
+  background:transparent;border:none;
+}
+body.tg-svg-animated .theme-toggle .theme-slider::before{display:none}
+body.tg-svg-animated .theme-toggle .theme-slider::after{
+  content:'';position:absolute;top:3px;left:3px;
+  width:24px;height:24px;border-radius:50%;background:#fff;
+  box-shadow:0 2px 8px rgba(15,23,42,.15);
+  transition:all .4s cubic-bezier(.68,-.55,.265,1.55);
+}
+body.tg-svg-animated .theme-toggle .theme-checkbox:checked~.theme-slider::after{
+  left:29px;
+  box-shadow:0 2px 12px rgba(16,185,129,.3);
+}
+body.tg-svg-animated .toggle-switch,
+body.tg-svg-animated .mg-item-toggle{
+  width:56px;height:30px;border-radius:15px;
+  background:var(--rule);overflow:hidden;
+}
+body.tg-svg-animated .toggle-switch::after,
+body.tg-svg-animated .mg-item-toggle::after{
+  top:3px;left:3px;width:24px;height:24px;border-radius:50%;
+  background:#fff;box-shadow:0 2px 8px rgba(15,23,42,.15);
+  transition:all .4s cubic-bezier(.68,-.55,.265,1.55);
+}
+body.tg-svg-animated .toggle-switch.on,
+body.tg-svg-animated .mg-item-toggle.on{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+}
+body.tg-svg-animated .toggle-switch.on::after,
+body.tg-svg-animated .mg-item-toggle.on::after{
+  left:29px;box-shadow:0 2px 12px rgba(16,185,129,.3);
+}
+
+/* ========== 皮肤：开关 - Neumorphism (uiverse.io aasisodiya/sour-horse-29) ========== */
+body.tg-neumorphism .theme-toggle{
+  width:56px;height:28px;border-radius:14px;
+  background:#e0e5ec;border:none;
+  box-shadow:6px 6px 12px #b8bec7,-6px -6px 12px #ffffff;
+  transition:all .3s var(--ease);
+}
+body.tg-neumorphism .theme-toggle .theme-slider{
+  background:transparent;border:none;
+}
+body.tg-neumorphism .theme-toggle .theme-slider::before{display:none}
+body.tg-neumorphism .theme-toggle .theme-slider::after{
+  content:'';position:absolute;top:3px;left:3px;
+  width:22px;height:22px;border-radius:50%;
+  background:#e0e5ec;
+  box-shadow:inset 3px 3px 6px #b8bec7,inset -3px -3px 6px #ffffff;
+  transition:all .3s var(--ease);
+}
+body.tg-neumorphism .theme-toggle .theme-checkbox:checked~.theme-slider{
+  box-shadow:inset 4px 4px 8px #b8bec7,inset -4px -4px 8px #ffffff;
+}
+body.tg-neumorphism .theme-toggle .theme-checkbox:checked~.theme-slider::after{
+  left:27px;background:var(--accent);
+  box-shadow:0 0 8px rgba(16,185,129,.4),inset 0 0 0 transparent;
+}
+body.tg-neumorphism .toggle-switch,
+body.tg-neumorphism .mg-item-toggle{
+  width:56px;height:28px;border-radius:14px;
+  background:#e0e5ec;border:none;
+  box-shadow:6px 6px 12px #b8bec7,-6px -6px 12px #ffffff;
+  transition:all .3s var(--ease);
+}
+body.tg-neumorphism .toggle-switch::after,
+body.tg-neumorphism .mg-item-toggle::after{
+  top:3px;left:3px;width:22px;height:22px;border-radius:50%;
+  background:#e0e5ec;
+  box-shadow:inset 3px 3px 6px #b8bec7,inset -3px -3px 6px #ffffff;
+  transition:all .3s var(--ease);
+}
+body.tg-neumorphism .toggle-switch.on,
+body.tg-neumorphism .mg-item-toggle.on{
+  box-shadow:inset 4px 4px 8px #b8bec7,inset -4px -4px 8px #ffffff;
+}
+body.tg-neumorphism .toggle-switch.on::after,
+body.tg-neumorphism .mg-item-toggle.on::after{
+  left:27px;background:var(--accent);
+  box-shadow:0 0 8px rgba(16,185,129,.4);
+}
+body.dark.tg-neumorphism .theme-toggle,
+body.dark.tg-neumorphism .toggle-switch,
+body.dark.tg-neumorphism .mg-item-toggle{
+  background:#2d3436;
+  box-shadow:6px 6px 12px #1e2527,-6px -6px 12px #3c4345;
+}
+body.dark.tg-neumorphism .theme-toggle .theme-slider::after,
+body.dark.tg-neumorphism .toggle-switch::after,
+body.dark.tg-neumorphism .mg-item-toggle::after{
+  background:#2d3436;
+  box-shadow:inset 3px 3px 6px #1e2527,inset -3px -3px 6px #3c4345;
+}
+body.dark.tg-neumorphism .theme-toggle .theme-checkbox:checked~.theme-slider,
+body.dark.tg-neumorphism .toggle-switch.on,
+body.dark.tg-neumorphism .mg-item-toggle.on{
+  box-shadow:inset 4px 4px 8px #1e2527,inset -4px -4px 8px #3c4345;
 }
 
 /* ========== 皮肤：卡片 - 毛玻璃 ========== */
@@ -4317,6 +4491,18 @@ body.dark.cd-glass .diet-color-card,
 body.dark.cd-glass .diet-habit-item,
 body.dark.cd-glass .diet-book-item,
 body.dark.cd-glass .lib-item{
+  background:rgba(30,41,59,.8);
+  border-color:rgba(255,255,255,.08);
+}
+
+/* .ui-card coverage for cd-glass */
+body.cd-glass .ui-card{
+  background:rgba(255,255,255,.8);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.6);
+}
+body.dark.cd-glass .ui-card{
   background:rgba(30,41,59,.8);
   border-color:rgba(255,255,255,.08);
 }
@@ -4374,6 +4560,83 @@ body.cd-gradient .habit-card:hover::before,
 body.cd-gradient .stat-card:hover::before,
 body.cd-gradient .lib-item:hover::before{
   opacity:.8;
+}
+
+/* .ui-card coverage for cd-gradient (components.css also handles .ui-card) */
+body.cd-gradient .ui-card{
+  position:relative;background:var(--bg);
+  border:2px solid transparent;background-clip:padding-box;
+}
+body.cd-gradient .ui-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  border-radius:inherit;padding:2px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  pointer-events:none;opacity:.4;
+}
+body.cd-gradient .ui-card:hover::before{opacity:.8}
+
+/* Card Skin: Glow Border (main.css system B coverage - uiverse.io rotating gradient border card) */
+body.cd-glow .habit-card,
+body.cd-glow .stat-card,
+body.cd-glow .mini-quote,
+body.cd-glow .mg-group,
+body.cd-glow .mg-stat-card,
+body.cd-glow .ai-message-bubble,
+body.cd-glow .water-tracker,
+body.cd-glow .diet-tip-card,
+body.cd-glow .diet-meal-card{
+  position:relative;background:var(--bg);
+  border-radius:var(--radius-lg);overflow:hidden;
+  box-shadow:0 4px 20px rgba(0,0,0,.08);
+}
+body.cd-glow .habit-card::before,
+body.cd-glow .stat-card::before,
+body.cd-glow .mini-quote::before,
+body.cd-glow .mg-group::before,
+body.cd-glow .mg-stat-card::before,
+body.cd-glow .ai-message-bubble::before,
+body.cd-glow .water-tracker::before,
+body.cd-glow .diet-tip-card::before,
+body.cd-glow .diet-meal-card::before{
+  content:'';position:absolute;
+  top:-50%;left:-50%;width:200%;height:200%;
+  background:conic-gradient(from 0deg,transparent,var(--accent),transparent 30%,var(--accent2),transparent 60%);
+  animation:cardGlowRotate 4s linear infinite;z-index:0;
+}
+body.cd-glow .habit-card::after,
+body.cd-glow .stat-card::after,
+body.cd-glow .mini-quote::after,
+body.cd-glow .mg-group::after,
+body.cd-glow .mg-stat-card::after,
+body.cd-glow .ai-message-bubble::after,
+body.cd-glow .water-tracker::after,
+body.cd-glow .diet-tip-card::after,
+body.cd-glow .diet-meal-card::after{
+  content:'';position:absolute;inset:2px;
+  border-radius:calc(var(--radius-lg) - 2px);
+  background:var(--bg);z-index:0;
+}
+body.cd-glow .habit-card:hover,
+body.cd-glow .stat-card:hover,
+body.cd-glow .mini-quote:hover,
+body.cd-glow .mg-group:hover,
+body.cd-glow .mg-stat-card:hover{
+  box-shadow:0 8px 32px rgba(16,185,129,.15),0 0 20px rgba(16,185,129,.08);
+  transform:translateY(-4px);
+}
+body.cd-glow .habit-card>*,
+body.cd-glow .stat-card>*,
+body.cd-glow .mini-quote>*,
+body.cd-glow .mg-group>*,
+body.cd-glow .mg-stat-card>*,
+body.cd-glow .ai-message-bubble>*,
+body.cd-glow .water-tracker>*,
+body.cd-glow .diet-tip-card>*,
+body.cd-glow .diet-meal-card>*{
+  position:relative;z-index:1;
 }
 
 /* ========== 皮肤：输入框 - 毛玻璃 ========== */
@@ -4449,6 +4712,80 @@ body.in-float .mg-search:focus{
   box-shadow:0 0 0 3px var(--accent-light);
 }
 
+/* .ui-input coverage for in-glass */
+body.in-glass .ui-input__field{
+  background:rgba(255,255,255,.7);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.6);
+}
+body.dark.in-glass .ui-input__field{
+  background:rgba(30,41,59,.7);
+  border-color:rgba(255,255,255,.08);
+}
+/* .ui-input coverage for in-underline */
+body.in-underline .ui-input__field{
+  border-radius:0;border:none;
+  border-bottom:2px solid var(--rule);
+  background:transparent;box-shadow:none;
+}
+body.in-underline .ui-input__field:focus{
+  border-bottom-color:var(--accent);box-shadow:none;
+}
+body.in-underline .ui-input__icon{left:0;position:relative;margin-right:10px}
+body.in-underline .ui-input__wrapper{border-bottom:none;padding:0}
+/* .ui-input coverage for in-float */
+body.in-float .ui-input__field{border:2px solid var(--rule)}
+body.in-float .ui-input__field:focus{
+  border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light);
+}
+
+/* ========== 皮肤：输入框 - Neumorphism (uiverse.io neumorphic input) ========== */
+body.in-neumorphism .checkin-input,
+body.in-neumorphism .lib-custom-input input,
+body.in-neumorphism .he-input,
+body.in-neumorphism .rh-input{
+  border:none;border-radius:12px;
+  background:#e0e5ec;
+  box-shadow:inset 4px 4px 8px #b8bec7,inset -4px -4px 8px #ffffff;
+  padding:12px 16px;
+  transition:all .3s var(--ease);
+}
+body.in-neumorphism .checkin-input:focus,
+body.in-neumorphism .lib-custom-input input:focus,
+body.in-neumorphism .he-input:focus,
+body.in-neumorphism .rh-input:focus{
+  box-shadow:inset 5px 5px 10px #b8bec7,inset -5px -5px 10px #ffffff,0 0 0 2px var(--accent);
+  outline:none;
+}
+/* .ui-input coverage */
+body.in-neumorphism .ui-input__field{
+  border:none;border-radius:12px;
+  background:#e0e5ec;
+  box-shadow:inset 4px 4px 8px #b8bec7,inset -4px -4px 8px #ffffff;
+  transition:all .3s var(--ease);
+}
+body.in-neumorphism .ui-input__field:focus{
+  box-shadow:inset 5px 5px 10px #b8bec7,inset -5px -5px 10px #ffffff,0 0 0 2px var(--accent);
+  outline:none;
+}
+body.dark.in-neumorphism .checkin-input,
+body.dark.in-neumorphism .lib-custom-input input,
+body.dark.in-neumorphism .he-input,
+body.dark.in-neumorphism .rh-input,
+body.dark.in-neumorphism .ui-input__field{
+  background:#2d3436;
+  box-shadow:inset 4px 4px 8px #1e2527,inset -4px -4px 8px #3c4345;
+  color:#dfe6e9;
+}
+body.dark.in-neumorphism .checkin-input:focus,
+body.dark.in-neumorphism .lib-custom-input input:focus,
+body.dark.in-neumorphism .he-input:focus,
+body.dark.in-neumorphism .rh-input:focus,
+body.dark.in-neumorphism .ui-input__field:focus{
+  box-shadow:inset 5px 5px 10px #1e2527,inset -5px -5px 10px #3c4345,0 0 0 2px var(--accent);
+}
+
 /* ========== 皮肤：徽章 - 药丸 ========== */
 body.bd-pill .level-badge,
 body.bd-pill .streak-badge,
@@ -4498,6 +4835,47 @@ body.bd-dot .habit-tag::before{
   width:8px;height:8px;
   border-radius:50%;
   background:var(--accent);
+}
+
+/* .ui-badge coverage for bd-pill */
+body.bd-pill .ui-badge{border-radius:999px;padding:4px 12px}
+/* .ui-badge coverage for bd-gradient */
+body.bd-gradient .ui-badge--primary{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;
+}
+body.bd-gradient .ui-badge--warning{
+  background:linear-gradient(135deg,var(--accent2),#EF4444);color:#fff;border:none;
+}
+/* .ui-badge coverage for bd-glow */
+body.bd-glow .ui-badge--primary{box-shadow:0 0 8px var(--accent),0 0 16px rgba(16,185,129,.3)}
+body.bd-glow .ui-badge--warning{box-shadow:0 0 8px var(--accent2),0 0 16px rgba(245,158,11,.3)}
+/* .ui-badge coverage for bd-dot */
+body.bd-dot .ui-badge{background:transparent;padding-left:18px;border:none}
+body.bd-dot .ui-badge::before{
+  content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:8px;height:8px;border-radius:50%;background:var(--accent);
+}
+/* .ui-badge coverage for bd-glass */
+body.bd-glass .ui-badge--primary{
+  background:rgba(16,185,129,.12);backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);border:1px solid rgba(16,185,129,.25);
+  color:var(--accent-700);
+}
+body.bd-glass .ui-badge--warning{
+  background:rgba(245,158,11,.12);backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);border:1px solid rgba(245,158,11,.25);
+  color:var(--accent-2-600);
+}
+
+/* Badge Skin: Neon Glow (main.css system B coverage - uiverse.io neon badge) */
+body.bd-neon .health-tag,
+body.bd-neon .emotion-tag,
+body.bd-neon .season-tag{
+  background:transparent;
+  border:1px solid var(--accent);
+  color:var(--accent);
+  box-shadow:0 0 7px var(--accent),0 0 10px var(--accent),0 0 21px var(--accent),0 0 42px rgba(16,185,129,.3),inset 0 0 7px rgba(16,185,129,.15);
+  text-shadow:0 0 7px var(--accent),0 0 10px rgba(16,185,129,.5);
 }
 
 

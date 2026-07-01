@@ -2618,6 +2618,8 @@
 { id:'btn-default', name:'圆角渐变', emoji:'🟢', style:{'btn-style':'default'} },
         { id:'btn-pill', name:'胶囊', emoji:'💊', style:{'btn-style':'pill'} },
         { id:'btn-3d', name:'3D立体', emoji:'📦', style:{'btn-style':'3d'} },
+        { id:'btn-gradient-3d', name:'渐变3D', emoji:'🎨', style:{'btn-style':'gradient-3d'} },
+        { id:'btn-glow', name:'发光脉冲', emoji:'✨', style:{'btn-style':'glow'} },
       ]
     },
     {
@@ -2627,6 +2629,8 @@
       items: [
         { id:'cb-default', name:'圆角', emoji:'✅', style:{'cb-style':'default'} },
         { id:'cb-round', name:'圆形', emoji:'⭕', style:{'cb-style':'round'} },
+        { id:'cb-svg-animated', name:'描边动画', emoji:'✨', style:{'cb-style':'svg-animated'} },
+        { id:'cb-fill-unfill', name:'填充动画', emoji:'🎯', style:{'cb-style':'fill-unfill'} },
       ]
     },
     {
@@ -2636,6 +2640,8 @@
       items: [
         { id:'tg-default', name:'标准', emoji:'🔘', style:{'tg-style':'default'} },
         { id:'tg-daynight', name:'日夜切换', emoji:'🌓', style:{'tg-style':'daynight'} },
+        { id:'tg-svg-animated', name:'弹跳动画', emoji:'✨', style:{'tg-style':'svg-animated'} },
+        { id:'tg-neumorphism', name:'拟物', emoji:'🫧', style:{'tg-style':'neumorphism'} },
       ]
     },
     {
@@ -2645,6 +2651,7 @@
       items: [
         { id:'cd-glass', name:'毛玻璃', emoji:'✨', style:{'cd-style':'glass'} },
         { id:'cd-gradient', name:'渐变边框', emoji:'🌈', style:{'cd-style':'gradient'} },
+        { id:'cd-glow', name:'流光边框', emoji:'💫', style:{'cd-style':'glow'} },
       ]
     },
     {
@@ -2654,6 +2661,7 @@
       items: [
         { id:'in-glass', name:'毛玻璃', emoji:'✨', style:{'in-style':'glass'} },
         { id:'in-underline', name:'下划线', emoji:'📏', style:{'in-style':'underline'} },
+        { id:'in-neumorphism', name:'拟物', emoji:'🫧', style:{'in-style':'neumorphism'} },
       ]
     },
     {
@@ -2663,6 +2671,8 @@
       items: [
         { id:'bd-pill', name:'药丸', emoji:'💊', style:{'bd-style':'pill'} },
         { id:'bd-gradient', name:'渐变', emoji:'🌈', style:{'bd-style':'gradient'} },
+        { id:'bd-glass', name:'玻璃态', emoji:'💎', style:{'bd-style':'glass'} },
+        { id:'bd-neon', name:'霓虹', emoji:'💜', style:{'bd-style':'neon'} },
       ]
     },
   ];

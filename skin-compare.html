@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>皮肤对比 - 修改前 vs 修改后</title>
+<!-- AFTER column loads real CSS -->
+<link rel="stylesheet" href="./css/main.css">
+<link rel="stylesheet" href="./css/components.css">
+<link rel="stylesheet" href="./css/skin-targets.css">
+<link rel="stylesheet" href="./css/uiverse-raw.css">
+<style>
+/* ========== Page Layout ========== */
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;
+  background:#f0f4f8;color:#334155;
+  min-height:100vh;
+  /* Override main.css body styles that would break the comparison layout */
+  max-width:none !important;
+  margin:0 !important;
+  padding:0 !important;
+  padding-bottom:0 !important;
+  overflow-x:hidden;
+}
+
+/* ========== Page Header ========== */
+.page-header{
+  text-align:center;padding:24px 16px 12px;
+  background:linear-gradient(135deg,#10b981 0%,#059669 100%);
+  color:#fff;
+}
+.page-header h1{font-size:1.4rem;font-weight:700;margin-bottom:4px}
+.page-header p{font-size:.85rem;opacity:.85}
+
+/* ========== Skin Nav ========== */
+.skin-nav{
+  position:sticky;top:0;background:#f0f4f8;padding:12px 16px;z-index:100;
+  display:flex;gap:6px;flex-wrap:wrap;justify-content:center;
+  border-bottom:1px solid #e2e8f0;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+.skin-nav button{
+  padding:6px 14px;border-radius:8px;border:2px solid #e2e8f0;
+  background:#fff;cursor:pointer;font-size:.78rem;font-weight:500;
+  color:#475569;transition:all .2s ease;
+}
+.skin-nav button:hover{border-color:#10b981;color:#10b981}
+.skin-nav button.active{background:#10b981;color:#fff;border-color:#10b981}
+.skin-nav .skin-type-tag{
+  font-size:.6rem;padding:1px 5px;border-radius:4px;
+  margin-left:4px;vertical-align:middle;font-weight:600;
+}
+.skin-type-tag.switch-tag{background:#dbeafe;color:#1d4ed8}
+.skin-type-tag.checkbox-tag{background:#fef3c7;color:#b45309}
+.skin-type-tag.button-tag{background:#d1fae5;color:#047857}
+.skin-type-tag.card-tag{background:#ede9fe;color:#6d28d9}
+.skin-type-tag.input-tag{background:#fce7f3;color:#be185d}
+.skin-type-tag.badge-tag{background:#e0e7ff;color:#3730a3}
+
+/* ========== Comparison Grid ========== */
+.compare-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;
+  padding:16px;max-width:1200px;margin:0 auto;
+}
+.compare-col{
+  background:#fff;border-radius:16px;padding:20px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+  min-height:300px;
+}
+.compare-col h2{
+  font-size:1rem;margin-bottom:16px;padding-bottom:8px;
+  display:flex;align-items:center;gap:8px;
+}
+.before-col h2{color:#94a3b8;border-bottom:2px dashed #e2e8f0}
+.after-col h2{color:#10b981;border-bottom:2px solid #10b981}
+.col-icon{
+  width:24px;height:24px;border-radius:50%;display:flex;
+  align-items:center;justify-content:center;font-size:.7rem;font-weight:700;
+}
+.before-col .col-icon{background:#fee2e2;color:#dc2626}
+.after-col .col-icon{background:#d1fae5;color:#059669}
+
+/* ========== Component Section ========== */
+.comp-section{margin-bottom:20px}
+.comp-section h3{
+  font-size:.85rem;color:#64748b;margin-bottom:10px;
+  display:flex;align-items:center;gap:6px;
+  padding:6px 0;border-bottom:1px solid #f1f5f9;
+}
+.comp-row{
+  display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px;
+}
+
+/* ========== Status Tags ========== */
+.status-tag{
+  display:inline-block;padding:2px 8px;border-radius:4px;
+  font-size:.7rem;margin-left:8px;font-weight:600;
+}
+.status-tag.old{background:#fee2e2;color:#dc2626}
+.status-tag.new{background:#d1fae5;color:#059669}
+.status-tag.same{background:#e0f2fe;color:#0284c7}
+
+/* ========== New Skin Placeholder ========== */
+.new-skin-placeholder{
+  display:flex;align-items:center;justify-content:center;
+  min-height:120px;border:2px dashed #e2e8f0;border-radius:12px;
+  color:#94a3b8;font-size:.9rem;
+  background:repeating-linear-gradient(45deg,#f8fafc,#f8fafc 10px,#f1f5f9 10px,#f1f5f9 20px);
+}
+.new-skin-placeholder span{
+  background:rgba(255,255,255,.9);padding:8px 16px;border-radius:8px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+
+/* ========== Skin Panel (one per skin, hidden/shown) ========== */
+.skin-panel{display:none}
+.skin-panel.active{display:block}
+
+/* ========== BEFORE Column Isolation ========== */
+/* The BEFORE column must be fully isolated from project CSS.
+   We reset all styles, then re-apply only the base + original inline styles. */
+.before-col{
+  position:relative;
+  font-family:system-ui,-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;
+  font-size:14px;color:#334155;
+}
+.before-col *{
+  /* Reset all inherited/project styles */
+  all:revert;
+  font-family:inherit;font-size:inherit;color:inherit;
+  box-sizing:border-box;
+}
+
+/* ========== Base Component Styles for BEFORE column ========== */
+.before-col .ui-switch{
+  display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none;
+}
+.before-col .ui-switch__input{display:none}
+.before-col .ui-switch__slider{
+  position:relative;width:48px;height:26px;
+  background:#e2e8f0;border-radius:13px;transition:all .3s ease;
+}
+.before-col .ui-switch__slider::before{
+  content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;
+  background:#fff;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.15);
+  transition:all .3s ease;
+}
+.before-col .ui-switch__input:checked + .ui-switch__slider{
+  background:linear-gradient(135deg,#10b981,#059669);
+}
+.before-col .ui-switch__input:checked + .ui-switch__slider::before{left:25px}
+.before-col .ui-switch__label{font-size:13px;font-weight:500;color:#334155}
+
+.before-col .ui-checkbox{
+  display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none;
+}
+.before-col .ui-checkbox__input{display:none}
+.before-col .ui-checkbox__box{
+  position:relative;width:20px;height:20px;
+  border:2px solid #e2e8f0;border-radius:6px;transition:all .3s ease;
+}
+.before-col .ui-checkbox__check{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%) rotate(45deg) scale(0);
+  width:8px;height:14px;border-right:3px solid #fff;border-bottom:3px solid #fff;
+  opacity:0;transition:all .2s ease;
+}
+.before-col .ui-checkbox:hover .ui-checkbox__box{border-color:#10b981}
+.before-col .ui-checkbox__input:checked + .ui-checkbox__box{
+  background:#10b981;border-color:#10b981;
+}
+.before-col .ui-checkbox__input:checked + .ui-checkbox__box .ui-checkbox__check{
+  transform:translate(-50%,-50%) rotate(45deg) scale(1);opacity:1;
+}
+.before-col .ui-checkbox__label{font-size:14px;font-weight:500;color:#334155}
+
+.before-col .ui-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 24px;border:none;border-radius:12px;font-weight:600;
+  font-size:14px;cursor:pointer;transition:all .2s ease;
+}
+.before-col .ui-btn--primary{
+  background:linear-gradient(135deg,#10b981,#059669);color:#fff;
+}
+
+.before-col .ui-card{
+  background:rgba(255,255,255,.85);border-radius:16px;
+  border:1px solid rgba(255,255,255,.6);
+  box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden;
+  transition:all .3s ease;
+}
+.before-col .ui-card__header{
+  padding:16px 20px;border-bottom:1px solid rgba(0,0,0,.04);
+  display:flex;align-items:center;gap:12px;
+}
+.before-col .ui-card__icon{
+  font-size:24px;width:36px;height:36px;display:flex;
+  align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#d1fae5,#fef3c7);border-radius:12px;
+}
+.before-col .ui-card__title{font-size:16px;font-weight:700;color:#1e293b;margin:0}
+.before-col .ui-card__body{padding:16px 20px;font-size:14px;color:#475569;line-height:1.7}
+.before-col .ui-card__footer{
+  padding:12px 20px;border-top:1px solid rgba(0,0,0,.04);
+  background:rgba(0,0,0,.02);
+}
+
+.before-col .ui-input{display:flex;flex-direction:column;gap:6px}
+.before-col .ui-input__label{
+  font-size:12px;font-weight:600;color:#94a3b8;
+  text-transform:uppercase;letter-spacing:.5px;
+}
+.before-col .ui-input__wrapper{position:relative;display:flex;align-items:center}
+.before-col .ui-input__icon{
+  position:absolute;left:14px;font-size:16px;color:#94a3b8;z-index:1;
+}
+.before-col .ui-input__field{
+  width:100%;padding:12px 16px;padding-left:44px;
+  border:2px solid #e2e8f0;border-radius:12px;font-size:14px;
+  color:#334155;background:#fff;outline:none;transition:all .3s ease;
+}
+.before-col .ui-input__field::placeholder{color:#94a3b8}
+.before-col .ui-input__field:focus{
+  border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.15);
+}
+
+.before-col .ui-badge{
+  display:inline-flex;align-items:center;gap:4px;padding:4px 12px;
+  border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;
+}
+.before-col .ui-badge--primary{background:#d1fae5;color:#047857}
+.before-col .ui-badge--warning{background:#fef3c7;color:#b45309}
+.before-col .ui-badge--danger{background:#fee2e2;color:#dc2626}
+.before-col .ui-badge--info{background:#dbeafe;color:#1d4ed8}
+
+/* ========== BEFORE Column: Original Skin Overrides ========== */
+
+/* --- tg-daynight BEFORE --- */
+.before-col .orig-tg-daynight .ui-switch__slider{
+  background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);
+  border:none;width:50px;height:26px;border-radius:13px;
+}
+.before-col .orig-tg-daynight .ui-switch__input:checked + .ui-switch__slider{
+  background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
+}
+.before-col .orig-tg-daynight .ui-switch__slider::before{
+  width:22px;height:22px;top:2px;left:2px;border-radius:50%;
+  background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.2);
+}
+.before-col .orig-tg-daynight .ui-switch__input:checked + .ui-switch__slider::before{
+  left:26px;background:#ffd700;
+}
+
+/* --- tg-neon BEFORE --- */
+.before-col .orig-tg-neon .ui-switch__slider{
+  background:rgba(255,255,255,.15);backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.2);width:50px;height:26px;border-radius:13px;
+}
+.before-col .orig-tg-neon .ui-switch__slider::before{
+  width:22px;height:22px;top:2px;left:2px;border-radius:50%;
+  background:#666;box-shadow:0 0 4px rgba(255,255,255,.1);
+}
+.before-col .orig-tg-neon .ui-switch__input:checked + .ui-switch__slider{
+  background:rgba(16,185,129,.2);border-color:rgba(16,185,129,.5);
+  box-shadow:0 0 12px rgba(16,185,129,.4);
+}
+.before-col .orig-tg-neon .ui-switch__input:checked + .ui-switch__slider::before{
+  left:26px;background:#10b981;box-shadow:0 0 8px #10b981;
+}
+
+/* --- cd-glass BEFORE --- */
+.before-col .orig-cd-glass .ui-card{
+  background:rgba(255,255,255,.6);backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.3);border-radius:16px;
+  box-shadow:0 4px 16px rgba(0,0,0,.06);
+}
+
+/* --- cb-default BEFORE --- */
+.before-col .orig-cb-default .ui-checkbox__box{
+  border:2px solid #cbd5e1;border-radius:6px;background:transparent;
+}
+.before-col .orig-cb-default .ui-checkbox__input:checked + .ui-checkbox__box{
+  background:#10b981;border-color:#10b981;
+}
+
+/* --- btn-default BEFORE --- */
+.before-col .orig-btn-default .ui-btn--primary{
+  background:linear-gradient(135deg,#10b981,#059669);border-radius:10px;
+  padding:10px 20px;color:#fff;border:none;cursor:pointer;
+}
+
+/* --- bd-pill BEFORE --- */
+.before-col .orig-bd-pill .ui-badge--primary{
+  border-radius:999px;padding:4px 12px;background:#10b981;color:#fff;
+}
+
+/* --- in-default BEFORE --- */
+.before-col .orig-in-default .ui-input__field{
+  border:2px solid #e2e8f0;border-radius:10px;padding:10px 14px;
+  background:#fff;outline:none;
+}
+
+/* ========== AFTER Column Skin Application ========== */
+/* For the AFTER column, the project CSS files handle all styling.
+   We just need to add the body skin class to trigger the skin rules. */
+.after-col.tg-daynight,
+.after-col.tg-neon,
+.after-col.tg-svg-animated,
+.after-col.tg-neumorphism,
+.after-col.cb-svg-animated,
+.after-col.cb-fill-unfill,
+.after-col.cb-round,
+.after-col.btn-gradient-3d,
+.after-col.btn-glow,
+.after-col.btn-pill,
+.after-col.cd-glass,
+.after-col.cd-glow,
+.after-col.cd-gradient,
+.after-col.in-neumorphism,
+.after-col.in-underline,
+.after-col.in-float,
+.after-col.bd-glass,
+.after-col.bd-neon,
+.after-col.bd-gradient,
+.after-col.bd-pill{
+  position:relative;
+}
+
+/* ========== Description Box ========== */
+.skin-desc{
+  background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;
+  padding:12px 16px;margin-bottom:16px;font-size:.82rem;color:#64748b;
+  line-height:1.6;
+}
+.skin-desc strong{color:#334155}
+.skin-desc code{
+  background:#e2e8f0;padding:1px 6px;border-radius:4px;
+  font-size:.75rem;color:#0f172a;
+}
+
+/* ========== Change Summary ========== */
+.change-summary{
+  margin-top:12px;padding:10px 14px;border-radius:8px;font-size:.8rem;
+}
+.change-summary.enhanced{background:#fef3c7;border:1px solid #fde68a;color:#92400e}
+.change-summary.new{background:#d1fae5;border:1px solid #6ee7b7;color:#065f46}
+
+/* ========== Responsive ========== */
+@media(max-width:768px){
+  .compare-grid{grid-template-columns:1fr;gap:12px}
+  .skin-nav{gap:4px;padding:8px}
+  .skin-nav button{padding:4px 10px;font-size:.72rem}
+}
+
+/* ========== Demo Background for AFTER cards ========== */
+.after-col .demo-bg{
+  background:linear-gradient(135deg,#667eea 0%,#764ba4 100%);
+  padding:12px;border-radius:12px;margin-bottom:12px;
+}
+.after-col .demo-bg-light{
+  background:#f0f4f8;
+  padding:12px;border-radius:12px;margin-bottom:12px;
+}
+
+/* ========== Inline toggle for interactive demos ========== */
+.comp-row .demo-note{
+  font-size:.7rem;color:#94a3b8;margin-left:4px;
+}
+
+/* ========== Before column needs explicit dark-bg for neon demos ========== */
+.before-col .neon-demo-bg{
+  background:#1a1a2e;padding:12px;border-radius:12px;margin-bottom:12px;
+}
+.after-col .neon-demo-bg{
+  background:#1a1a2e;padding:12px;border-radius:12px;margin-bottom:12px;
+}
+
+/* ========== Neumorphism demo background ========== */
+.before-col .neum-demo-bg{
+  background:#e0e0e0;padding:12px;border-radius:12px;margin-bottom:12px;
+}
+.after-col .neum-demo-bg{
+  background:#e0e0e0;padding:12px;border-radius:12px;margin-bottom:12px;
+}
+</style>
+</head>
+<body>
+
+<!-- ========== Header ========== -->
+<div class="page-header">
+  <h1>皮肤对比工具</h1>
+  <p>左侧为修改前（原效果），右侧为修改后（当前优化效果）</p>
+</div>
+
+<!-- ========== Skin Navigation ========== -->
+<nav class="skin-nav" id="skinNav">
+  <button class="active" data-skin="tg-daynight">日夜切换 <span class="skin-type-tag switch-tag">开关</span></button>
+  <button data-skin="tg-neon">霓虹 <span class="skin-type-tag switch-tag">开关</span></button>
+  <button data-skin="tg-neumorphism">拟物 <span class="skin-type-tag switch-tag">开关</span></button>
+  <button data-skin="tg-svg-animated">描边动画 <span class="skin-type-tag switch-tag">开关</span></button>
+  <button data-skin="cb-svg-animated">SVG描边 <span class="skin-type-tag checkbox-tag">复选框</span></button>
+  <button data-skin="cb-fill-unfill">填充动画 <span class="skin-type-tag checkbox-tag">复选框</span></button>
+  <button data-skin="btn-gradient-3d">渐变3D <span class="skin-type-tag button-tag">按钮</span></button>
+  <button data-skin="btn-glow">辉光脉冲 <span class="skin-type-tag button-tag">按钮</span></button>
+  <button data-skin="cd-glass">毛玻璃 <span class="skin-type-tag card-tag">卡片</span></button>
+  <button data-skin="cd-glow">辉光边框 <span class="skin-type-tag card-tag">卡片</span></button>
+  <button data-skin="in-neumorphism">拟物 <span class="skin-type-tag input-tag">输入框</span></button>
+  <button data-skin="bd-glass">玻璃 <span class="skin-type-tag badge-tag">徽章</span></button>
+  <button data-skin="bd-neon">霓虹 <span class="skin-type-tag badge-tag">徽章</span></button>
+</nav>
+
+<!-- ====================================================================
+     SKIN 1: tg-daynight
+     ==================================================================== -->
+<div class="skin-panel active" data-panel="tg-daynight">
+  <div class="skin-desc">
+    <strong>tg-daynight</strong> -- 日夜切换开关。修改前使用浅蓝天空渐变 (未选中) / 深蓝夜空渐变 (选中)。
+    修改后统一为深蓝夜空底色 + 金色太阳/银色月亮，增强对比度和视觉层次。
+  </div>
+  <div class="compare-grid">
+    <!-- BEFORE -->
+    <div class="compare-col before-col">
+      <h2><span class="col-icon">B</span> 修改前 (原效果) <span class="status-tag old">旧版</span></h2>
+
+      <div class="comp-section">
+        <h3>Switch 开关</h3>
+        <div class="comp-row">
+          <label class="ui-switch orig-tg-daynight">
+            <input type="checkbox" class="ui-switch__input">
+            <span class="ui-switch__slider"></span>
+            <span class="ui-switch__label">夜间模式 (OFF)</span>
+          </label>
+        </div>
+        <div class="comp-row">
+          <label class="ui-switch orig-tg-daynight">
+            <input type="checkbox" class="ui-switch__input" checked>
+            <span class="ui-switch__slider"></span>
+            <span class="ui-switch__label">夜间模式 (ON)</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="comp-section">
+        <h3>Checkbox 复选框 <span class="status-tag same">一致</span></h3>
+        <div class="comp-row">
+          <label class="ui-checkbox">
+            <input type="checkbox" class="ui-checkbox__input">
+            <span class="ui-checkbox__box"><span class="ui-checkbox__check"></span></span>
+            <span class="ui-checkbox__label">未选中</span>
+          </label>
+          <label class="ui-checkbox">
+            <input type="checkbox" class="ui-checkbox__input" checked>
+            <span class="ui-checkbox__box"><span class="ui-checkbox__check"></span></span>
+            <span class="ui-checkbox__label">已选中</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="comp-section">
+        <h3>Button 按钮 <span class="status-tag same">一致</span></h3>
+        <div class="comp-row">
+          <button class="ui-btn ui-btn--primary orig-btn-default">主要按钮</button>
+        </div>
+      </div>
+
+      <div class="comp-section">
+        <h3>Card 卡片 <span class="status-tag same">一致</span></h3>
+        <div class="comp-row">
+          <div class="ui-card" style="width:280px">
+            <div class="ui-card__header">
+              <div class="ui-card__icon">&#9728;</div>
+              <h3 class="ui-card__title">日间模式</h3>
+            </div>
+            <div class="ui-card__body">温暖的阳光，适合白天使用。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-section">
+        <h3>Input 输入框 <span class="status-tag same">一致</span></h3>
+        <div class="comp-row" style="width:260px">
+          <div class="ui-input orig-in-default">
+            <span class="ui-input__label">用户名</span>
+            <div class="ui-input__wrapper">
+              <span class="ui-input__icon">&#128100;</span>
+              <input type="text" class="ui-input__field" placeholder="请输入用户名">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-section">
+        <h3>Badge 徽章 <span class="status-tag same">一致</span></h3>
+        <div class="comp-row">
+          <span class="ui-badge ui-badge--primary">主要</span>
+          <span class="ui-badge ui-badge--warning">警告</span>
+          <span class="ui-badge ui-badge--danger">危险</span>
+          <span class="ui-badge ui-badge--info">信息</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- AFTER -->
+    <div class="compare-col after-col tg-daynight">
+      <h2><span class="col-icon">A</span> 修改后 (新效果) <span class="status-tag new">优化</span></h2>
+
+      <div class="comp-section">
+        <h3>Switch 开关</h3>
+        <div class="comp-row">
+          <label class="ui-switch">
+            <input type="checkbox" class="ui-switch__input">
+            <span class="ui-switch__slider"></span>
+            <span class="ui-switch__label">夜间模式 (OFF)</span>
+          </label>
+        </div>
+        <div class="comp-row">
+          <label class="ui-switch">
+            <input type="checkbox" class="ui-switch__input" checked>
+            <span class="ui-switch__slider"></span>
+            <span class="ui-switch__label">夜间模式 (ON)</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="comp-section">
+        <h3>Checkbox 复选框</h3>
+        <div class="comp-row">
+          <label class="ui-checkbox">
+            <input type="checkbox" class="ui-checkbox__input">
+            <span class="ui-checkbox__box"><span class="ui-checkbox__check"></span></span>
+            <span class="ui-checkbox__label">未选中</span>
+          </label>
+          <label class="ui-checkbox">
+            <input type="checkbox" class="ui-checkbox__input" checked>
+            <span class="ui-checkbox__box"><span class="ui-checkbox__check"></span></span>
+            <span class="ui-checkbox__label">已选中</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="comp-section">
+        <h3>Button 按钮</h3>
+        <div class="comp-row">
+          <button class="ui-btn ui-btn--primary">主要按钮</button>
+        </div>
+      </div>
+
+      <div class="comp-section">
+        <h3>Card 卡片</h3>
+        <div class="comp-row">
+          <div class="ui-card" style="width:280px">
+            <div class="ui-card__header">
+              <div class="ui-card__icon">&#9728;</div>
+              <h3 class="ui-card__title">日间模式</h3>
+            </div>
+            <div class="ui-card__body">温暖的阳光，适合白天使用。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-section">
+        <h3>Input 输入框</h3>
+        <div class="comp-row" style="width:260px">
+          <div class="ui-input">
+            <span class="ui-input__label">用户名</span>
+            <div class="ui-input__wrapper">
+              <span class="ui-input__icon">&#128100;</span>
+              <input type="text" class="ui-input__field" placeholder="请输入用户名">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-section">
+        <h3>Badge 徽章</h3>
+        <div class="comp-row">
+          <span class="ui-badge ui-badge--primary">主要</span>
+          <span class="ui-badge ui-badge--warning">警告</span>
+          <span class="ui-badge ui-badge--danger">危险</span>
+          <span class="ui-badge ui-badge--info">信息</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     SKIN 2: tg-neon
+     ==================================================================== -->
+<div class="skin-panel" data-panel="tg-neon">
+  <div class="skin-desc">
+    <strong>tg-neon</strong> -- 霓虹开关。修改前使用半透明毛玻璃风格。修改后统一为深色底 (<code>#1a1a2e</code>) + 绿色辉光效果，对比度更强。
+  </div>
+  <div class="compare-grid">
+    <!-- BEFORE -->
+    <div class="compare-col before-col">
+      <h2><span class="col-icon">B</span> 修改前 (原效果) <span class="status-tag old">旧版</span></h2>
+
+      <div class="comp-section">
+        <h3>Switch 开关</h3>
+        <div class="neon-demo-bg">
+          <div class="comp-row">
+            <label class="ui-switch orig-tg-neon">
+              <input type="checkbox" class="ui-switch__input">
+              <span class="ui-switch__slider"></span>
+              <span class="ui-switch__label" style="color:#ccc">OFF</span>
+            </label>
+          </div>
+          <div class="comp-row">
+            <label class="ui-switch orig-tg-neon">
+              <input type="checkbox" class="ui-switch__input" checked>
+              <span class="ui-switch__slider"></span>
+              <span class="ui-switch__label" style="color:#10b981">ON</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-section">
+        <h3>Checkbox 复选框 <span class="status-tag same">一致</span></h3>
+        <div class="comp-row">
+          <label class="ui-checkbox"><input type="checkbox" class="ui-checkbox__input"><span class="ui-checkbox__box"><span class="ui-checkbox__check"></span></span><span class="ui-checkbox__label">未选中</span></label>
+          <label class="ui-checkbox"><input type="checkbox" class="ui-checkbox__input" checked><span class="ui-checkbox__box"><span class="ui-checkbox__check"></span></span><span class="ui-checkbox__label">已选中</span></label>
+        </div>
+      </div>
+
+      <div class="comp-section">
+        <h3>Button 按钮 <span class="status-tag same">一致</span></h3>
+        <div class="comp-row"><button class="ui-btn ui-btn--primary">按钮</button></div>
+      </div>
+
+      <div class="comp-section">
+        <h3>Card 卡片 <span class="status-tag same">一致</span></h3>
+        <div class="comp-row">
+          <div class="ui-card" style="width:260px">
+            <div class="ui-card__header"><div class="ui-card__icon">&#9889;</div><h3 class="ui-card__title">标题</h3></div>
+            <div class="ui-card__body">卡片内容</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-section">
+        <h3>Input 输入框 <span class="status-tag same">一致</span></h3>
+        <div class="comp-row" style="width:240px">
+          <div class="ui-input"><span class="ui-input__label">输入</span><div class="ui-input__wrapper"><span class="ui-input__icon">&#9999;</span><input type="text" class="ui-input__field" placeholder="placeholder"></div></div>
+        </div>
+      </div>
+
+      <div class="comp-section">
+        <h3>Badge 徽章 <span class="status-tag same">一致</span></h3>
+        <div class="comp-row">
+          <span class="ui-badge ui-badge--primary">主要</span>
+          <span class="ui-badge ui-badge--warning">警告</span>
+          <span class="ui-badge ui-badge--info">信息</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AFTER -->
+    <div class="compare-col after-col tg-neon">
+      <h2><span class="col-icon">A</span> 修改后 (新效果) <span class="status-tag new">优化</span></h2>
+
+      <div class="comp-section">
+        <h3>Switch 开关</h3>
+        <div class="neon-demo-bg">
+          <div class="comp-row">
+            <label class="ui-switch"><input type="checkbox" class="ui-switch__input"><span class="ui-switch__slider"></span><span class="ui-switch__label" style="color:#ccc">OFF</span></label>
+          </div>
+          <div class="comp-row">
+            <label class="ui-switch"><input type="checkbox" class="ui-switch__input" checked><span class="ui-switch__slider"></span><span class="ui-switch__label" style="color:#10b981">ON</span></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-section">
+        <h3>Checkbox 复选框</h3>
+        <div class="comp-row">
+          <label class="ui-checkbox"><input type="checkbox" class="ui-checkbox__input"><span class="ui-checkbox__box"><span class="ui-checkbox__check"></span></span><span class="ui-checkbox__label">未选中</span></label>
+          <label class="ui-checkbox"><input type="checkbox" class="ui-checkbox__input" checked><span class="ui-checkbox__box"><span class="ui-checkbox__check"></span></span><span class="ui-checkbox__label">已选中</span></label>
+        </div>
+      </div>
+
+      <div class="comp-section">
+        <h3>Button 按钮</h3>
+        <div class="comp-row"><button class="ui-btn ui-btn--primary">按钮</button></div>
+      </div>
+
+      <div class="comp-section">
+        <h3>Card 卡片</h3>
+        <div class="comp-row">
+          <div class="ui-card" style="width:260px">
+            <div class="ui-card__header"><div class="ui-card__icon">&#9889;</div><h3 class="ui-card__title">标题</h3></div>
+            <div class="ui-card__body">卡片内容</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-section">
+        <h3>Input 输入框</h3>
+        <div class="comp-row" style="width:240px">
+          <div class="ui-input"><span class="ui-input__label">输入</span><div class="ui-input__wrapper"><span class="ui-input__icon">&#9999;</span><input type="text" class="ui-input__field" placeholder="placeholder"></div></div>
+        </div>
+      </div>
+
+      <div class="comp-section">
+        <h3>Badge 徽章</h3>
+        <div class="comp-row">
+          <span class="ui-badge ui-badge--primary">主要</span>
+          <span class="ui-badge ui-badge--warning">警告</span>
+          <span class="ui-badge ui-badge--info">信息</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     SKIN 3: tg-neumorphism (NEW)
+     ==================================================================== -->
+<div class="skin-panel" data-panel="tg-neumorphism">
+  <div class="skin-desc">
+    <strong>tg-neumorphism</strong> -- 拟物风格开关。此为 <strong>新增皮肤</strong>，使用凸起/凹陷阴影模拟物理质感。
+  </div>
+  <div class="compare-grid">
+    <div class="compare-col before-col">
+      <h2><span class="col-icon">B</span> 修改前 (原效果) <span class="status-tag old">无</span></h2>
+      <div class="new-skin-placeholder"><span>&#10024; 此皮肤为新增 -- 修改前不存在</span></div>
+      <div class="comp-section">
+        <h3>Switch (默认) <span class="status-tag same">使用默认样式</span></h3>
+        <div class="neum-demo-bg">
+          <div class="comp-row">
+            <label class="ui-switch"><input type="checkbox" class="ui-switch__input"><span class="ui-switch__slider"></span><span class="ui-switch__label">OFF</span></label>
+          </div>
+          <div class="comp-row">
+            <label class="ui-switch"><input type="checkbox" class="ui-switch__input" checked><span class="ui-switch__slider"></span><span class="ui-switch__label">ON</span></label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="compare-col after-col tg-neumorphism">
+      <h2><span class="col-icon">A</span> 修改后 (新效果) <span class="status-tag new">新增</span></h2>
+      <div class="comp-section">
+        <h3>Switch 开关</h3>
+        <div class="neum-demo-bg">
+          <div class="comp-row">
+            <label class="ui-switch"><input type="checkbox" class="ui-switch__input"><span class="ui-switch__slider"></span><span class="ui-switch__label">OFF</span></label>
+          </div>
+          <div class="comp-row">
+            <label class="ui-switch"><input type="checkbox" class="ui-switch__input" checked><span class="ui-switch__slider"></span><span class="ui-switch__label">ON</span></label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     SKIN 4: tg-svg-animated (NEW)
+     ==================================================================== -->
+<div class="skin-panel" data-panel="tg-svg-animated">
+  <div class="skin-desc">
+    <strong>tg-svg-animated</strong> -- 描边动画开关。此为 <strong>新增皮肤</strong>，切换时显示扩散环动画效果。
+  </div>
+  <div class="compare-grid">
+    <div class="compare-col before-col">
+      <h2><span class="col-icon">B</span> 修改前 (原效果) <span class="status-tag old">无</span></h2>
+      <div class="new-skin-placeholder"><span>&#10024; 此皮肤为新增 -- 修改前不存在</span></div>
+      <div class="comp-section">
+        <h3>Switch (默认) <span class="status-tag same">使用默认样式</span></h3>
+        <div class="comp-row">
+          <label class="ui-switch"><input type="checkbox" class="ui-switch__input"><span class="ui-switch__slider"></span><span class="ui-switch__label">OFF</span></label>
+        </div>
+        <div class="comp-row">
+          <label class="ui-switch"><input type="checkbox" class="ui-switch__input" checked><span class="ui-switch__slider"></span><span class="ui-switch__label">ON</span></label>
+        </div>
+      </div>
+    </div>
+    <div class="compare-col after-col tg-svg-animated">
+      <h2><span class="col-icon">A</span> 修改后 (新效果) <span class="status-tag new">新增</span></h2>
+      <div class="comp-section">
+        <h3>Switch 开关</h3>
+        <div class="comp-row">
+          <label class="ui-switch"><input type="checkbox" class="ui-switch__input"><span class="ui-switch__slider"></span><span class="ui-switch__label">OFF</span></label>
+        </div>
+        <div class="comp-row">
+          <label class="ui-switch"><input type="checkbox" class="ui-switch__input" checked><span class="ui-switch__slider"></span><span class="ui-switch__label">ON</span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     SKIN 5: cb-svg-animated (NEW)
+     ==================================================================== -->
+<div class="skin-panel" data-panel="cb-svg-animated">
+  <div class="skin-desc">
+    <strong>cb-svg-animated</strong> -- SVG 描边复选框。此为 <strong>新增皮肤</strong>，勾选时显示边框描边 + 弹跳动画。
+  </div>
+  <div class="compare-grid">
+    <div class="compare-col before-col">
+      <h2><span class="col-icon">B</span> 修改前 (原效果) <span class="status-tag old">无</span></h2>
+      <div class="new-skin-placeholder"><span>&#10024; 此皮肤为新增 -- 修改前不存在</span></div>
+      <div class="comp-section">
+        <h3>Checkbox (默认) <span class="status-tag same">使用默认样式</span></h3>
+        <div class="comp-row">
+          <label class="ui-checkbox"><input type="checkbox" class="ui-checkbox__input"><span class="ui-checkbox__box"><span class="ui-checkbox__check"></span></span><span class="ui-checkbox__label">未选中</span></label>
+          <label class="ui-checkbox"><input type="checkbox" class="ui-checkbox__input" checked><span class="ui-checkbox__box"><span class="ui-checkbox__check"></span></span><span class="ui-checkbox__label">已选中</span></label>
+        </div>
+      </div>
+    </div>
+    <div class="compare-col after-col cb-svg-animated">
+      <h2><span class="col-icon">A</span> 修改后 (新效果) <span class="status-tag new">新增</span></h2>
+      <div class="comp-section">
+        <h3>Checkbox 复选框</h3>
+        <div class="comp-row">
+          <label class="ui-checkbox"><input type="checkbox" class="ui-checkbox__input"><span class="ui-checkbox__box"><span class="ui-checkbox__check"></span></span><span class="ui-checkbox__label">未选中</span></label>
+          <label class="ui-checkbox"><input type="checkbox" class="ui-checkbox__input" checked><span class="ui-checkbox__box"><span class="ui-checkbox__check"></span></span><span class="ui-checkbox__label">已选中</span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     SKIN 6: cb-fill-unfill (NEW)
+     ==================================================================== -->
+<div class="skin-panel" data-panel="cb-fill-unfill">
+  <div class="skin-desc">
+    <strong>cb-fill-unfill</strong> -- 填充动画复选框。此为 <strong>新增皮肤</strong>，勾选时颜色从中心向外填充。
+  </div>
+  <div class="compare-grid">
+    <div class="compare-col before-col">
+      <h2><span class="col-icon">B</span> 修改前 (原效果) <span class="status-tag old">无</span></h2>
+      <div class="new-skin-placeholder"><span>&#10024; 此皮肤为新增 -- 修改前不存在</span></div>
+      <div class="comp-section">
+        <h3>Checkbox (默认) <span class="status-tag same">使用默认样式</span></h3>
+        <div class="comp-row">
+          <label class="ui-checkbox"><input type="checkbox" class="ui-checkbox__input"><span class="ui-checkbox__box"><span class="ui-checkbox__check"></span></span><span class="ui-checkbox__label">未选中</span></label>
+          <label class="ui-checkbox"><input type="checkbox" class="ui-checkbox__input" checked><span class="ui-checkbox__box"><span class="ui-checkbox__check"></span></span><span class="ui-checkbox__label">已选中</span></label>
+        </div>
+      </div>
+    </div>
+    <div class="compare-col after-col cb-fill-unfill">
+      <h2><span class="col-icon">A</span> 修改后 (新效果) <span class="status-tag new">新增</span></h2>
+      <div class="comp-section">
+        <h3>Checkbox 复选框</h3>
+        <div class="comp-row">
+          <label class="ui-checkbox"><input type="checkbox" class="ui-checkbox__input"><span class="ui-checkbox__box"><span class="ui-checkbox__check"></span></span><span class="ui-checkbox__label">未选中</span></label>
+          <label class="ui-checkbox"><input type="checkbox" class="ui-checkbox__input" checked><span class="ui-checkbox__box"><span class="ui-checkbox__check"></span></span><span class="ui-checkbox__label">已选中</span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     SKIN 7: btn-gradient-3d (NEW)
+     ==================================================================== -->
+<div class="skin-panel" data-panel="btn-gradient-3d">
+  <div class="skin-desc">
+    <strong>btn-gradient-3d</strong> -- 渐变 3D 按钮。此为 <strong>新增皮肤</strong>，结合渐变色 + 3D 按压效果 + 光泽层。
+  </div>
+  <div class="compare-grid">
+    <div class="compare-col before-col">
+      <h2><span class="col-icon">B</span> 修改前 (原效果) <span class="status-tag old">旧版</span></h2>
+      <div class="comp-section">
+        <h3>Button 按钮 (原默认) <span class="status-tag old">旧版</span></h3>
+        <div class="comp-row">
+          <button class="ui-btn ui-btn--primary orig-btn-default">主要按钮</button>
+        </div>
+      </div>
+      <div class="comp-section">
+        <h3>其他组件 <span class="status-tag same">一致</span></h3>
+        <div class="comp-row">
+          <label class="ui-switch"><input type="checkbox" class="ui-switch__input"><span class="ui-switch__slider"></span><span class="ui-switch__label">开关</span></label>
+        </div>
+        <div class="comp-row">
+          <label class="ui-checkbox"><input type="checkbox" class="ui-checkbox__input"><span class="ui-checkbox__box"><span class="ui-checkbox__check"></span></span><span class="ui-checkbox__label">复选框</span></label>
+        </div>
+        <div class="comp-row">
+          <span class="ui-badge ui-badge--primary">徽章</span>
+          <span class="ui-badge ui-badge--warning">警告</span>
+        </div>
+      </div>
+    </div>
+    <div class="compare-col after-col btn-gradient-3d">
+      <h2><span class="col-icon">A</span> 修改后 (新效果) <span class="status-tag new">新增</span></h2>
+      <div class="comp-section">
+        <h3>Button 按钮</h3>
+        <div class="comp-row">
+          <button class="ui-btn ui-btn--primary">主要按钮</button>
+          <button class="ui-btn ui-btn--secondary">次要按钮</button>
+        </div>
+        <div class="comp-row">
+          <button class="ui-btn ui-btn--primary ui-btn--sm">小按钮</button>
+          <button class="ui-btn ui-btn--primary ui-btn--lg">大按钮</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     SKIN 8: btn-glow (NEW)
+     ==================================================================== -->
+<div class="skin-panel" data-panel="btn-glow">
+  <div class="skin-desc">
+    <strong>btn-glow</strong> -- 辉光脉冲按钮。此为 <strong>新增皮肤</strong>，按钮拥有旋转渐变边框 + 持续辉光动画。
+  </div>
+  <div class="compare-grid">
+    <div class="compare-col before-col">
+      <h2><span class="col-icon">B</span> 修改前 (原效果) <span class="status-tag old">旧版</span></h2>
+      <div class="comp-section">
+        <h3>Button 按钮 (原默认) <span class="status-tag old">旧版</span></h3>
+        <div class="comp-row">
+          <button class="ui-btn ui-btn--primary orig-btn-default">主要按钮</button>
+        </div>
+      </div>
+      <div class="new-skin-placeholder"><span>&#10024; 辉光脉冲效果为新增</span></div>
+    </div>
+    <div class="compare-col after-col btn-glow">
+      <h2><span class="col-icon">A</span> 修改后 (新效果) <span class="status-tag new">新增</span></h2>
+      <div class="comp-section">
+        <h3>Button 按钮</h3>
+        <div class="comp-row">
+          <button class="ui-btn ui-btn--primary">主要按钮</button>
+        </div>
+        <div class="comp-row">
+          <button class="ui-btn ui-btn--primary ui-btn--sm">小按钮</button>
+          <button class="ui-btn ui-btn--primary ui-btn--lg">大按钮</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     SKIN 9: cd-glass
+     ==================================================================== -->
+<div class="skin-panel" data-panel="cd-glass">
+  <div class="skin-desc">
+    <strong>cd-glass</strong> -- 毛玻璃卡片。修改前使用简单的半透明模糊。修改后增强为多层毛玻璃效果：saturate(180%) + 渐变高光层 + 悬浮加深。
+  </div>
+  <div class="compare-grid">
+    <div class="compare-col before-col">
+      <h2><span class="col-icon">B</span> 修改前 (原效果) <span class="status-tag old">旧版</span></h2>
+
+      <div class="comp-section">
+        <h3>Card 卡片 <span class="status-tag old">旧版</span></h3>
+        <div class="demo-bg">
+          <div class="comp-row">
+            <div class="ui-card orig-cd-glass" style="width:280px">
+              <div class="ui-card__header">
+                <div class="ui-card__icon">&#127968;</div>
+                <h3 class="ui-card__title">毛玻璃卡片</h3>
+              </div>
+              <div class="ui-card__body">修改前：简单的半透明背景 + 基础模糊。</div>
+              <div class="ui-card__footer">底部操作栏</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-section">
+        <h3>其他组件 <span class="status-tag same">一致</span></h3>
+        <div class="comp-row">
+          <button class="ui-btn ui-btn--primary orig-btn-default">按钮</button>
+          <label class="ui-switch"><input type="checkbox" class="ui-switch__input"><span class="ui-switch__slider"></span><span class="ui-switch__label">开关</span></label>
+          <span class="ui-badge ui-badge--primary">徽章</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="compare-col after-col cd-glass">
+      <h2><span class="col-icon">A</span> 修改后 (新效果) <span class="status-tag new">增强</span></h2>
+
+      <div class="comp-section">
+        <h3>Card 卡片</h3>
+        <div class="demo-bg">
+          <div class="comp-row">
+            <div class="ui-card" style="width:280px">
+              <div class="ui-card__header">
+                <div class="ui-card__icon">&#127968;</div>
+                <h3 class="ui-card__title">毛玻璃卡片</h3>
+              </div>
+              <div class="ui-card__body">修改后：增强毛玻璃 + saturate + 渐变高光层 + 悬浮加深。</div>
+              <div class="ui-card__footer">底部操作栏</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="comp-section">
+        <h3>其他组件</h3>
+        <div class="comp-row">
+          <button class="ui-btn ui-btn--primary">按钮</button>
+          <label class="ui-switch"><input type="checkbox" class="ui-switch__input"><span class="ui-switch__slider"></span><span class="ui-switch__label">开关</span></label>
+          <span class="ui-badge ui-badge--primary">徽章</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     SKIN 10: cd-glow (NEW)
+     ==================================================================== -->
+<div class="skin-panel" data-panel="cd-glow">
+  <div class="skin-desc">
+    <strong>cd-glow</strong> -- 辉光边框卡片。此为 <strong>新增皮肤</strong>，使用 conic-gradient 旋转渐变作为边框动画。
+  </div>
+  <div class="compare-grid">
+    <div class="compare-col before-col">
+      <h2><span class="col-icon">B</span> 修改前 (原效果) <span class="status-tag old">无</span></h2>
+      <div class="new-skin-placeholder"><span>&#10024; 此皮肤为新增 -- 修改前不存在</span></div>
+      <div class="comp-section">
+        <h3>Card (默认) <span class="status-tag same">使用默认样式</span></h3>
+        <div class="comp-row">
+          <div class="ui-card" style="width:280px">
+            <div class="ui-card__header"><div class="ui-card__icon">&#10024;</div><h3 class="ui-card__title">默认卡片</h3></div>
+            <div class="ui-card__body">修改前使用默认卡片样式。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="compare-col after-col cd-glow">
+      <h2><span class="col-icon">A</span> 修改后 (新效果) <span class="status-tag new">新增</span></h2>
+      <div class="comp-section">
+        <h3>Card 卡片</h3>
+        <div class="comp-row">
+          <div class="ui-card" style="width:280px">
+            <div class="ui-card__header"><div class="ui-card__icon">&#10024;</div><h3 class="ui-card__title">辉光边框</h3></div>
+            <div class="ui-card__body">旋转渐变边框动画效果。</div>
+            <div class="ui-card__footer">底部操作栏</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     SKIN 11: in-neumorphism (NEW)
+     ==================================================================== -->
+<div class="skin-panel" data-panel="in-neumorphism">
+  <div class="skin-desc">
+    <strong>in-neumorphism</strong> -- 拟物风格输入框。此为 <strong>新增皮肤</strong>，使用内凹阴影模拟物理按键质感。
+  </div>
+  <div class="compare-grid">
+    <div class="compare-col before-col">
+      <h2><span class="col-icon">B</span> 修改前 (原效果) <span class="status-tag old">旧版</span></h2>
+      <div class="comp-section">
+        <h3>Input 输入框 (原默认) <span class="status-tag old">旧版</span></h3>
+        <div class="comp-row" style="width:260px">
+          <div class="ui-input orig-in-default">
+            <span class="ui-input__label">用户名</span>
+            <div class="ui-input__wrapper">
+              <span class="ui-input__icon">&#128100;</span>
+              <input type="text" class="ui-input__field" placeholder="请输入用户名">
+            </div>
+          </div>
+        </div>
+        <div class="comp-row" style="width:260px">
+          <div class="ui-input orig-in-default">
+            <span class="ui-input__label">搜索</span>
+            <div class="ui-input__wrapper">
+              <span class="ui-input__icon">&#128269;</span>
+              <input type="text" class="ui-input__field" placeholder="搜索内容...">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="compare-col after-col in-neumorphism">
+      <h2><span class="col-icon">A</span> 修改后 (新效果) <span class="status-tag new">新增</span></h2>
+      <div class="comp-section">
+        <h3>Input 输入框</h3>
+        <div class="comp-row" style="width:260px">
+          <div class="ui-input">
+            <span class="ui-input__label">用户名</span>
+            <div class="ui-input__wrapper">
+              <span class="ui-input__icon">&#128100;</span>
+              <input type="text" class="ui-input__field" placeholder="请输入用户名">
+            </div>
+          </div>
+        </div>
+        <div class="comp-row" style="width:260px">
+          <div class="ui-input">
+            <span class="ui-input__label">搜索</span>
+            <div class="ui-input__wrapper">
+              <span class="ui-input__icon">&#128269;</span>
+              <input type="text" class="ui-input__field" placeholder="搜索内容...">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     SKIN 12: bd-glass (NEW)
+     ==================================================================== -->
+<div class="skin-panel" data-panel="bd-glass">
+  <div class="skin-desc">
+    <strong>bd-glass</strong> -- 玻璃徽章。此为 <strong>新增皮肤</strong>，半透明毛玻璃背景 + 模糊效果。
+  </div>
+  <div class="compare-grid">
+    <div class="compare-col before-col">
+      <h2><span class="col-icon">B</span> 修改前 (原效果) <span class="status-tag old">旧版</span></h2>
+      <div class="comp-section">
+        <h3>Badge 徽章 (原默认) <span class="status-tag old">旧版</span></h3>
+        <div class="comp-row">
+          <span class="ui-badge ui-badge--primary orig-bd-pill">主要</span>
+          <span class="ui-badge ui-badge--warning">警告</span>
+          <span class="ui-badge ui-badge--danger">危险</span>
+          <span class="ui-badge ui-badge--info">信息</span>
+        </div>
+      </div>
+      <div class="comp-section">
+        <h3>其他组件 <span class="status-tag same">一致</span></h3>
+        <div class="comp-row">
+          <button class="ui-btn ui-btn--primary orig-btn-default">按钮</button>
+          <label class="ui-switch"><input type="checkbox" class="ui-switch__input"><span class="ui-switch__slider"></span><span class="ui-switch__label">开关</span></label>
+        </div>
+      </div>
+    </div>
+    <div class="compare-col after-col bd-glass">
+      <h2><span class="col-icon">A</span> 修改后 (新效果) <span class="status-tag new">新增</span></h2>
+      <div class="comp-section">
+        <h3>Badge 徽章</h3>
+        <div class="comp-row">
+          <span class="ui-badge ui-badge--primary">主要</span>
+          <span class="ui-badge ui-badge--warning">警告</span>
+          <span class="ui-badge ui-badge--danger">危险</span>
+          <span class="ui-badge ui-badge--info">信息</span>
+        </div>
+      </div>
+      <div class="comp-section">
+        <h3>其他组件</h3>
+        <div class="comp-row">
+          <button class="ui-btn ui-btn--primary">按钮</button>
+          <label class="ui-switch"><input type="checkbox" class="ui-switch__input"><span class="ui-switch__slider"></span><span class="ui-switch__label">开关</span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================
+     SKIN 13: bd-neon (NEW)
+     ==================================================================== -->
+<div class="skin-panel" data-panel="bd-neon">
+  <div class="skin-desc">
+    <strong>bd-neon</strong> -- 霓虹徽章。此为 <strong>新增皮肤</strong>，透明背景 + 彩色边框辉光 + text-shadow 发光效果。
+  </div>
+  <div class="compare-grid">
+    <div class="compare-col before-col">
+      <h2><span class="col-icon">B</span> 修改前 (原效果) <span class="status-tag old">旧版</span></h2>
+      <div class="comp-section">
+        <h3>Badge 徽章 (原默认) <span class="status-tag old">旧版</span></h3>
+        <div class="neon-demo-bg">
+          <div class="comp-row">
+            <span class="ui-badge ui-badge--primary orig-bd-pill">主要</span>
+            <span class="ui-badge ui-badge--warning">警告</span>
+            <span class="ui-badge ui-badge--danger">危险</span>
+            <span class="ui-badge ui-badge--info">信息</span>
+          </div>
+        </div>
+      </div>
+      <div class="new-skin-placeholder"><span>&#10024; 霓虹辉光效果为新增</span></div>
+    </div>
+    <div class="compare-col after-col bd-neon">
+      <h2><span class="col-icon">A</span> 修改后 (新效果) <span class="status-tag new">新增</span></h2>
+      <div class="comp-section">
+        <h3>Badge 徽章</h3>
+        <div class="neon-demo-bg">
+          <div class="comp-row">
+            <span class="ui-badge ui-badge--primary">主要</span>
+            <span class="ui-badge ui-badge--warning">警告</span>
+            <span class="ui-badge ui-badge--danger">危险</span>
+            <span class="ui-badge ui-badge--info">信息</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== JavaScript ========== -->
+<script>
+(function() {
+  const nav = document.getElementById('skinNav');
+  const buttons = nav.querySelectorAll('button[data-skin]');
+  const panels = document.querySelectorAll('.skin-panel[data-panel]');
+  // All known skin class names (used on body to trigger project CSS)
+  const allSkins = [
+    'tg-daynight','tg-neon','tg-neumorphism','tg-svg-animated',
+    'cb-svg-animated','cb-fill-unfill',
+    'btn-gradient-3d','btn-glow',
+    'cd-glass','cd-glow',
+    'in-neumorphism',
+    'bd-glass','bd-neon'
+  ];
+
+  function activateSkin(skin) {
+    // Remove all skin classes from body
+    allSkins.forEach(s => document.body.classList.remove(s));
+    // Also remove 'dark' class since skins here are light mode demos
+    document.body.classList.remove('dark');
+    // Add the active skin class to body so project CSS rules (body.xxx) apply
+    if (skin) {
+      document.body.classList.add(skin);
+    }
+  }
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const skin = btn.getAttribute('data-skin');
+
+      // Update active button
+      buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Update active panel
+      panels.forEach(p => {
+        p.classList.toggle('active', p.getAttribute('data-panel') === skin);
+      });
+
+      // Activate skin on body for project CSS matching
+      activateSkin(skin);
+    });
+  });
+
+  // Check if there is a hash in URL and navigate to it
+  function checkHash() {
+    const hash = window.location.hash.replace('#', '');
+    if (hash) {
+      const btn = nav.querySelector('button[data-skin="' + hash + '"]');
+      if (btn) btn.click();
+    }
+  }
+  checkHash();
+  window.addEventListener('hashchange', checkHash);
+
+  // Initialize first skin
+  activateSkin('tg-daynight');
+})();
+</script>
+
+</body>
+</html>

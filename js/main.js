@@ -38,11 +38,27 @@
     }
   }
 
+  // ===== 皮肤目标类名注入 =====
+  function injectSkinTargetClasses() {
+    var btnSelectors = '.const-btn,.tab,.health-pack-btn,.profile-grid-item,.mg-add-btn,.settings-btn,.checkin-input-actions button,.mini-quote-refresh,.mini-quote-ref,.skin-tab,.export-btn,.day-btn,.panel-close,.bnav-item,.bnav-center,.fab,.lib-tab,.lib-custom-input button,.lib-custom-type button,.lib-custom-reminder-add,.lib-custom-freq .weekdays button,.lib-item .add-btn,.health-pack-add-btn,.season-pack-btn,.season-pack-add-btn,.water-quick-btn,.water-qty-btn,.water-custom-btn,.heatmap-nav button,.edit-bar button,.emotion-btn,.ref-tab,.ref-lib-btn,.sd-tab,.he-btn,.he-btn-save,.skin-option,.rh-btn,.habit-card .checkin-btn,.reminder-option';
+    var cardSelectors = '.habit-card,.stat-card,.mini-quote,.profile-stat-item,.mg-group,.mg-stat-card,.ai-message-bubble,.water-tracker,.diet-tip-card,.diet-meal-card,.diet-seasonal-card,.diet-color-card,.diet-habit-item,.diet-book-item,.lib-item';
+    try {
+      document.querySelectorAll(btnSelectors).forEach(function(el) {
+        if (!el.classList.contains('skinnable-btn')) el.classList.add('skinnable-btn');
+      });
+      document.querySelectorAll(cardSelectors).forEach(function(el) {
+        if (!el.classList.contains('skinnable-card')) el.classList.add('skinnable-card');
+      });
+    } catch(e) { console.warn('[skin-targets] inject failed:', e); }
+  }
+  window.injectSkinTargetClasses = injectSkinTargetClasses;
+
   function initApp() {
     checkModules();
     if (App.UI && App.UI.Panels && App.UI.Panels.initAllSkins) {
       App.UI.Panels.initAllSkins();
     }
+    injectSkinTargetClasses();
     initDarkMode();
     if (App.Core && App.Core.Storage && App.Core.Storage.loadData) {
       App.Core.Storage.loadData();
@@ -52,6 +68,8 @@
       // 隐藏骨架屏
       var sk = document.getElementById('skeleton');
       if (sk) { sk.style.display = 'none'; }
+      // render 后再次注入皮肤目标类名（覆盖动态生成的元素）
+      injectSkinTargetClasses();
     }
     if (App.UI && App.UI.Events && App.UI.Events.initTouchSwipe) {
       App.UI.Events.initTouchSwipe();
