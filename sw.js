@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lifestyle-assistant-v23';
+const CACHE_NAME = 'lifestyle-assistant-v24';
 const ASSETS = [
   './',
   './index.html',
@@ -6,6 +6,7 @@ const ASSETS = [
   './css/main.css',
   './css/components.css',
   './css/uiverse-raw.css',
+  './css/skin-targets.css',
   './css/sports.css',
   './js/app.js',
   './js/lazy.js',
@@ -16,6 +17,9 @@ const ASSETS = [
   './js/bundle/data.js',
   './js/bundle/modules.js',
   './js/bundle/ui.js',
+  './js/modules/poster.js',
+  './js/modules/pomodoro.js',
+  './js/modules/ai.js',
   './assets/icon-192.jpg',
   './assets/icon-512.jpg',
 ];

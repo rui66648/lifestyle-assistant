@@ -25,7 +25,7 @@
     if (typeof callback === 'function') _queue[modulePath].push(callback);
 
     var script = document.createElement('script');
-    script.src = modulePath + (modulePath.indexOf('?') === -1 ? '?v=20260629d' : '');
+    script.src = modulePath + (modulePath.indexOf('?') === -1 ? '?v=20260630' : '');
     script.async = true;
 
     script.onload = script.onreadystatechange = function() {

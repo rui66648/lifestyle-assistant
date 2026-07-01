@@ -129,7 +129,7 @@
           // 更新 lastInterval 防止反复触发
           if (!rec[h.id]) rec[h.id] = {};
           rec[h.id].lastInterval = Date.now();
-          if (typeof saveCheckinRecords === 'function') saveCheckinRecords();
+          if (typeof saveData === 'function') saveData();
         }
       }
     });
@@ -184,7 +184,7 @@
         if (vibrateOn && navigator.vibrate) navigator.vibrate([200, 100, 200]);
         break;
       case 'notification':
-        if (typeof showLocalNotification === 'function') showLocalNotification(habit.name, habit.icon + ' ' + habit.name + '时间到了！', habit.icon);
+        if (typeof showNotification === 'function') showNotification(habit.name, habit.icon + ' ' + habit.name + '时间到了！', habit.icon);
         if (soundOn && typeof playSound === 'function') playSound('reminder');
         break;
       case 'alarm':

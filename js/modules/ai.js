@@ -239,8 +239,7 @@
     bubbleEl.className = 'ai-bubble';
     // textContent 会自动转义 HTML 标签
     bubbleEl.textContent = text;
-    // 把换行符转回 <br>
-    bubbleEl.innerHTML = bubbleEl.innerHTML.replace(/\n/g, '<br>');
+    // 使用 CSS white-space: pre-wrap 处理换行，避免 innerHTML 操作
 
     div.appendChild(avatarEl);
     div.appendChild(bubbleEl);
@@ -266,7 +265,6 @@
     const bubbleEl = document.createElement('div');
     bubbleEl.className = 'ai-bubble';
     bubbleEl.textContent = '⚠️ ' + text;
-    bubbleEl.innerHTML = bubbleEl.innerHTML.replace(/\n/g, '<br>');
 
     div.appendChild(avatarEl);
     div.appendChild(bubbleEl);
@@ -352,15 +350,13 @@
       if (isUsingWorker()) {
         // 方式1：使用 Worker 代理（安全）
         const workerUrl = getWorkerUrl();
-        const apiKey = getApiKey();
         const userMessages = aiChatHistory;
 
         const model = currentConfig.model || DEFAULT_MODEL;
         response = await fetch(workerUrl, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + apiKey
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             model: model,
@@ -539,7 +535,7 @@
     // 更新设置面板状态
     const statusEl = document.getElementById('settingsAiStatus');
     if (statusEl) {
-      statusEl.textContent = '✅ 已配置 · API Key: ' + key.substring(0, 6) + '...';
+      statusEl.textContent = '✅ 已配置 · API Key: ****' + key.slice(-4);
       statusEl.style.color = 'var(--accent)';
     }
     updateProfileAiStatus();
@@ -589,7 +585,7 @@
     if (statusEl) {
       if (cfg.apiKey) {
         const modelLabel = MODEL_OPTIONS.find(m => m.value === (cfg.model || DEFAULT_MODEL));
-        statusEl.textContent = '✅ 已配置 · ' + (modelLabel ? modelLabel.label : cfg.model) + ' · API Key: ' + cfg.apiKey.substring(0, 6) + '...';
+        statusEl.textContent = '✅ 已配置 · ' + (modelLabel ? modelLabel.label : cfg.model) + ' · API Key: ****' + cfg.apiKey.slice(-4);
         statusEl.style.color = 'var(--accent)';
       } else {
         statusEl.textContent = '⚠️ 尚未配置 API Key';

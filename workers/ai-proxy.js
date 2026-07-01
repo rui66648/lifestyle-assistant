@@ -1,62 +1,15 @@
 // Cloudflare Workers - AI 养生顾问代理
+// 功能：隐藏 API Key + 请求限流 + 请求校验 + 统一接口
 // 部署后 Worker URL 就是你的代理地址
 
-export default {
-  async fetch(request, env, ctx) {
-    // CORS 预检
-    if (request.method === 'OPTIONS') {
-      return new Response(null, {
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'POST, OPTIONS, GET',
-          'Access-Control-Allow-Headers': 'Content-Type',
-        }
-      });
-    }
+// ============================================================
+// 配置
+// ============================================================
+const RATE_WINDOW = 60 * 60 * 1000; // 限流窗口：1小时
+const RATE_LIMIT = 50;              // 每 IP 每小时最多 50 次
+const MAX_MSG_LENGTH = 2000;       // 单条消息最大长度
 
-    // 只允许 POST
-    if (request.method !== 'POST') {
-      return new Response('Method not allowed', {
-        status: 405,
-        headers: { 'Access-Control-Allow-Origin': '*' }
-      });
-    }
-
-    // API Key（从 Cloudflare 环境变量读取）
-    // 本地开发: 创建 .env 文件设置 QWEN_API_KEY=sk-xxx
-    // 生产部署: npx wrangler secret put QWEN_API_KEY
-    const QWEN_API_KEY = env.QWEN_API_KEY;
-
-    if (!QWEN_API_KEY) {
-      return new Response(JSON.stringify({ error: 'Worker 未配置 QWEN_API_KEY 环境变量' }), {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
-      });
-    }
-
-    // 解析请求体
-    let body;
-    try {
-      body = await request.json();
-    } catch (e) {
-      return new Response(JSON.stringify({ error: '无效的 JSON 请求体' }), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
-      });
-    }
-
-    const model = body.model || 'qwen-turbo';
-    const maxTokens = body.max_tokens || 500;
-    const temperature = body.temperature || 0.7;
-
-    const fullMessages = [
-      { role: 'system', content: `你是一位精通以下9部中医古籍和15部现代养生著作的养生顾问。
+const SYSTEM_PROMPT = `你是一位精通以下9部中医古籍和15部现代养生著作的养生顾问。
 
 【古籍经典】
 1.《黄帝内经》（《素问》《灵枢》）——中医养生理论之源，阴阳五行、脏腑经络、治未病
@@ -86,8 +39,160 @@ export default {
 23.《肠子的小心思》朱莉娅·恩德斯——肠道菌群
 24.《深度营养》凯瑟琳·沙纳汉——传统饮食智慧
 
-回答时请结合以上经典理论给出建议，并注明引用出处。回答简洁实用，每次控制在200字以内。` },
-      ...(body.messages || [])
+回答时请结合以上经典理论给出建议，并注明引用出处。回答简洁实用，每次控制在200字以内。`;
+
+// ============================================================
+// 工具函数
+// ============================================================
+function getClientIP(request) {
+  return request.headers.get('CF-Connecting-IP') ||
+         request.headers.get('X-Forwarded-For') ||
+         request.headers.get('X-Real-IP') ||
+         'unknown';
+}
+
+function jsonResponse(data, status = 200, headers = {}) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      ...headers
+    }
+  });
+}
+
+function validateRequest(body) {
+  if (!body.messages || !Array.isArray(body.messages)) {
+    return { valid: false, error: 'messages 字段是必需的' };
+  }
+  for (const msg of body.messages) {
+    if (!msg.role || !msg.content) {
+      return { valid: false, error: '每条消息必须包含 role 和 content' };
+    }
+    if (typeof msg.content !== 'string') {
+      return { valid: false, error: '消息内容必须是字符串' };
+    }
+    if (msg.content.length > MAX_MSG_LENGTH) {
+      return { valid: false, error: '单条消息内容不能超过 ' + MAX_MSG_LENGTH + ' 字符' };
+    }
+  }
+  return { valid: true };
+}
+
+// ============================================================
+// 限流逻辑（基于内存 Map，每个 Worker 实例独立计数）
+// ============================================================
+const rateLimitMap = new Map();
+
+function checkRateLimit(ip, limit) {
+  const now = Date.now();
+  if (!rateLimitMap.has(ip)) {
+    rateLimitMap.set(ip, { count: 0, windowStart: now });
+  }
+  const record = rateLimitMap.get(ip);
+  if (now - record.windowStart > RATE_WINDOW) {
+    record.count = 0;
+    record.windowStart = now;
+  }
+  if (record.count >= limit) {
+    return {
+      allowed: false,
+      remaining: 0,
+      resetTime: Math.ceil((record.windowStart + RATE_WINDOW - now) / 1000)
+    };
+  }
+  record.count++;
+  return {
+    allowed: true,
+    remaining: limit - record.count,
+    resetTime: Math.ceil((record.windowStart + RATE_WINDOW - now) / 1000)
+  };
+}
+
+// ============================================================
+// 主入口（ES Module 格式）
+// ============================================================
+export default {
+  async fetch(request, env, ctx) {
+    // CORS 预检
+    if (request.method === 'OPTIONS') {
+      return new Response(null, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+        }
+      });
+    }
+
+    // 只允许 POST
+    if (request.method !== 'POST') {
+      return new Response('Method not allowed', {
+        status: 405,
+        headers: { 'Access-Control-Allow-Origin': '*' }
+      });
+    }
+
+    // API Key（从 Cloudflare 环境变量读取）
+    // 本地开发: 创建 .env 文件设置 QWEN_API_KEY=sk-xxx
+    // 生产部署: npx wrangler secret put QWEN_API_KEY
+    const QWEN_API_KEY = env.QWEN_API_KEY;
+
+    if (!QWEN_API_KEY) {
+      return jsonResponse({
+        error: 'Worker 未配置 QWEN_API_KEY 环境变量',
+        message: '请在 Worker 设置中添加环境变量 QWEN_API_KEY'
+      }, 500);
+    }
+
+    // 获取限流配置（支持环境变量覆盖）
+    const rateLimit = parseInt(env.RATE_LIMIT) || RATE_LIMIT;
+
+    // 获取客户端 IP 并检查限流
+    const clientIP = getClientIP(request);
+    const rateCheck = checkRateLimit(clientIP, rateLimit);
+
+    const rateHeaders = {
+      'X-RateLimit-Limit': rateLimit.toString(),
+      'X-RateLimit-Remaining': rateCheck.remaining.toString(),
+      'X-RateLimit-Reset': rateCheck.resetTime.toString()
+    };
+
+    if (!rateCheck.allowed) {
+      return jsonResponse({
+        error: '请求过于频繁',
+        message: '已达每小时 ' + rateLimit + ' 次请求上限，请稍后再试',
+        retryAfter: rateCheck.resetTime
+      }, 429, rateHeaders);
+    }
+
+    // 解析请求体
+    let body;
+    try {
+      body = await request.json();
+    } catch (e) {
+      return jsonResponse({ error: '无效的 JSON 请求体' }, 400, rateHeaders);
+    }
+
+    // 验证请求
+    const validation = validateRequest(body);
+    if (!validation.valid) {
+      return jsonResponse({ error: validation.error }, 400, rateHeaders);
+    }
+
+    // 提取参数
+    const model = body.model || 'qwen-turbo';
+    const messages = body.messages || [];
+    const maxTokens = body.max_tokens || 500;
+    const temperature = body.temperature || 0.7;
+
+    // 添加系统提示词
+    const fullMessages = [
+      { role: 'system', content: SYSTEM_PROMPT },
+      ...messages
     ];
 
     try {
@@ -95,47 +200,44 @@ export default {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${QWEN_API_KEY}`
+          'Authorization': 'Bearer ' + QWEN_API_KEY
         },
         body: JSON.stringify({
           model: model,
           messages: fullMessages,
           max_tokens: maxTokens,
-          temperature: temperature
+          temperature: temperature,
+          stream: false
         })
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        return new Response(JSON.stringify({
-          error: data.error?.message || 'AI 服务暂时不可用',
-          code: response.status
-        }), {
-          status: response.status,
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-          }
-        });
+        let errorMsg = 'AI 服务暂时不可用';
+        let statusCode = 500;
+        if (response.status === 401 || response.status === 403) {
+          errorMsg = 'API 认证失败，请检查配置';
+          statusCode = 401;
+        } else if (response.status === 429) {
+          errorMsg = 'API 请求配额已用完，请稍后再试';
+          statusCode = 429;
+        } else if (response.status === 400) {
+          errorMsg = (data.error && data.error.message) || '请求参数错误';
+          statusCode = 400;
+        } else if (data.error && data.error.message) {
+          errorMsg = data.error.message;
+        }
+        return jsonResponse({ error: errorMsg, code: response.status }, statusCode, rateHeaders);
       }
 
-      return new Response(JSON.stringify(data), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
-      });
+      return jsonResponse(data, 200, rateHeaders);
 
     } catch (err) {
-      return new Response(JSON.stringify({ error: '网络请求失败: ' + err.message }), {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
-      });
+      return jsonResponse({
+        error: '网络请求失败',
+        message: err.message
+      }, 500, rateHeaders);
     }
   }
 };

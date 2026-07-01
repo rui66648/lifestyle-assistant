@@ -12,7 +12,7 @@ package.json
 
 # 调试/缓存文件
 .playwright-cli/
-.codebuddy/plans/
+.codebuddy/
 workers/.wrangler/cache/
 workers/.wrangler/tmp/
 

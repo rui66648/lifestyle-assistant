@@ -39,8 +39,6 @@ const LUNAR_INFO = [0x04bd8,0x04ae0,0x0a570,0x054d5,0x0d260,0x0d950,0x16554,0x05
 const LUNAR_MONTHS = ['正','二','三','四','五','六','七','八','九','十','冬','腊'];
 const LUNAR_DAYS = ['初一','初二','初三','初四','初五','初六','初七','初八','初九','初十','十一','十二','十三','十四','十五','十六','十七','十八','十九','二十','廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十'];
 
-const AI_WORKER_URL = '';
-
 const CUSTOM_ICONS = [
   '✅','🎯','⭐','💪','🏃','🚶','🧘','🏋️','🚴','🏊',
   '📚','✍️','🎨','🎵','🎸','📝','💻','📱',
@@ -63,7 +61,6 @@ App.Data.LEVELS = LEVELS;
 App.Data.LUNAR_INFO = LUNAR_INFO;
 App.Data.LUNAR_MONTHS = LUNAR_MONTHS;
 App.Data.LUNAR_DAYS = LUNAR_DAYS;
-App.Data.AI_WORKER_URL = AI_WORKER_URL;
 App.Data.CUSTOM_ICONS = CUSTOM_ICONS;
 App.Data.POMO_WORK = POMO_WORK;
 App.Data.POMO_SHORT = POMO_SHORT;

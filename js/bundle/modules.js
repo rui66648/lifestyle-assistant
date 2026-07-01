@@ -2755,7 +2755,8 @@
 
   App.Modules.Notification = {
     requestPermission: requestNotificationPermission,
-    showNotification: showLocalNotification
+    showNotification: showLocalNotification,
+    showLocalNotification: showLocalNotification
   };
 
 })();(function() {
