@@ -22,7 +22,16 @@ workers/.wrangler/tmp/
 !_shared/fonts/*.png
 
 # wrangler files
+workers/.wrangler/
 .wrangler
 .dev.vars*
 !.dev.vars.example
 !.env.example
+
+# 本地文件（不参与版本控制）
+_local/
+
+# 开发文档（单独管理）
+# lifestyle-assistant-guide/
+# trae-dev-journey/
+# 个人使用说明.html
