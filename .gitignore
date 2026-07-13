@@ -61,7 +61,8 @@ android/capacitor-cordova-android-plugins/
 # 构建产物
 # ============================================================
 # bundle 为构建产物（由 scripts/build.mjs 从 www/js/ 生成）
-www/js/bundle/
+# 已纳入版本控制，确保 GitHub Pages 可直接使用
+# www/js/bundle/
 
 # 构建时由 Gradle 从 local.properties 生成的内置云端配置（含 Key，勿提交）
 www/app-config.js
