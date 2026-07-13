@@ -1,0 +1,978 @@
+/* ================================================================
+   UIverse-Inspired Skin Styles (Optimized)
+   ================================================================
+   LEGACY MODE: Each skin variant repeats full selector chains for 
+   backward compatibility with existing localStorage skin settings.
+   
+   MIGRATION: New optimized rules use .skinnable-btn / .skinnable-card 
+   umbrella classes (defined in skin-targets.css). Once JS adds these
+   classes to all target elements, the legacy rules can be removed.
+   
+   To activate optimized rules, ensure skin-targets.css is loaded
+   AND the JS init function adds .skinnable-btn / .skinnable-card
+   classes to target elements.
+   ================================================================ */
+
+/* ================================================================
+   Glass 风格 - 按钮 (来源: StealthWorm/pretty-lion-68)
+   多彩渐变 + 星星粒子动画效果
+   ================================================================ */
+body.btn-glass .const-btn,
+body.btn-glass .tab,
+body.btn-glass .health-pack-btn,
+body.btn-glass .profile-grid-item,
+body.btn-glass .mg-add-btn,
+body.btn-glass .settings-btn,
+body.btn-glass .checkin-input-actions button,
+body.btn-glass .mini-quote-refresh,
+body.btn-glass .mini-quote-ref,
+body.btn-glass .skin-tab,
+body.btn-glass .export-btn,
+body.btn-glass .day-btn,
+body.btn-glass .panel-close,
+body.btn-glass .bnav-item,
+body.btn-glass .bnav-center,
+body.btn-glass .fab,
+body.btn-glass .lib-tab,
+body.btn-glass .lib-custom-input button,
+body.btn-glass .lib-custom-type button,
+body.btn-glass .lib-custom-reminder-add,
+body.btn-glass .lib-custom-freq .weekdays button,
+body.btn-glass .lib-item .add-btn,
+body.btn-glass .health-pack-add-btn,
+body.btn-glass .season-pack-btn,
+body.btn-glass .season-pack-add-btn,
+body.btn-glass .water-quick-btn,
+body.btn-glass .water-qty-btn,
+body.btn-glass .water-custom-btn,
+body.btn-glass .heatmap-nav button,
+body.btn-glass .edit-bar button,
+body.btn-glass .emotion-btn,
+body.btn-glass .ref-tab,
+body.btn-glass .ref-lib-btn,
+body.btn-glass .sd-tab,
+body.btn-glass .he-btn,
+body.btn-glass .he-btn-save,
+body.btn-glass .skin-option,
+body.btn-glass .rh-btn,
+body.btn-glass .habit-card .checkin-btn,
+body.btn-glass .reminder-option{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  width:13rem;
+  height:3rem;
+  background-size:300% 300%;
+  backdrop-filter:blur(1rem);
+  border-radius:5rem;
+  transition:.5s;
+  animation:glass-gradient 5s ease infinite;
+  border:double 4px transparent;
+  background-image:linear-gradient(#212121,#212121),
+    linear-gradient(137.48deg,#ffdb3b 10%,#FE53BB 45%,#8F51EA 67%,#0044ff 87%);
+  background-origin:border-box;
+  background-clip:content-box,border-box;
+  color:#fff;
+  box-shadow:0 4px 15px rgba(0,0,0,.2);
+}
+@keyframes glass-gradient{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+body.btn-glass .const-btn:hover,
+body.btn-glass .tab:hover,
+body.btn-glass .profile-grid-item:hover,
+body.btn-glass .mg-add-btn:hover,
+body.btn-glass .skin-tab:hover,
+body.btn-glass .bnav-center:hover,
+body.btn-glass .fab:hover,
+body.btn-glass .he-btn-save:hover,
+body.btn-glass .habit-card .checkin-btn:hover{
+  transform:scale(1.1);
+}
+body.btn-glass .const-btn:active,
+body.btn-glass .bnav-center:active,
+body.btn-glass .fab:active,
+body.btn-glass .he-btn-save:active,
+body.btn-glass .habit-card .checkin-btn:active{
+  border:double 4px #FE53BB;
+  background-origin:border-box;
+  background-clip:content-box,border-box;
+  animation:none;
+  transform:scale(0.98);
+}
+
+/* [Optimized] Glass style - buttons (using .skinnable-btn) */
+body.btn-glass .skinnable-btn{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  width:13rem;
+  height:3rem;
+  background-size:300% 300%;
+  backdrop-filter:blur(1rem);
+  border-radius:5rem;
+  transition:.5s;
+  animation:glass-gradient 5s ease infinite;
+  border:double 4px transparent;
+  background-image:linear-gradient(#212121,#212121),
+    linear-gradient(137.48deg,#ffdb3b 10%,#FE53BB 45%,#8F51EA 67%,#0044ff 87%);
+  background-origin:border-box;
+  background-clip:content-box,border-box;
+  color:#fff;
+  box-shadow:0 4px 15px rgba(0,0,0,.2);
+}
+body.btn-glass .skinnable-btn:hover{
+  transform:scale(1.1);
+}
+body.btn-glass .skinnable-btn:active{
+  border:double 4px #FE53BB;
+  background-origin:border-box;
+  background-clip:content-box,border-box;
+  animation:none;
+  transform:scale(0.98);
+}
+
+/* Frutiger Aero 风格 - 按钮 (来源: SelfMadeSystem/chilly-ladybug-60) */
+body.btn-aero .const-btn,
+body.btn-aero .tab,
+body.btn-aero .health-pack-btn,
+body.btn-aero .profile-grid-item,
+body.btn-aero .mg-add-btn,
+body.btn-aero .settings-btn,
+body.btn-aero .checkin-input-actions button,
+body.btn-aero .mini-quote-refresh,
+body.btn-aero .mini-quote-ref,
+body.btn-aero .skin-tab,
+body.btn-aero .export-btn,
+body.btn-aero .day-btn,
+body.btn-aero .panel-close,
+body.btn-aero .bnav-item,
+body.btn-aero .bnav-center,
+body.btn-aero .fab,
+body.btn-aero .lib-tab,
+body.btn-aero .lib-custom-input button,
+body.btn-aero .lib-custom-type button,
+body.btn-aero .lib-custom-reminder-add,
+body.btn-aero .lib-custom-freq .weekdays button,
+body.btn-aero .lib-item .add-btn,
+body.btn-aero .health-pack-add-btn,
+body.btn-aero .season-pack-btn,
+body.btn-aero .season-pack-add-btn,
+body.btn-aero .water-quick-btn,
+body.btn-aero .water-qty-btn,
+body.btn-aero .water-custom-btn,
+body.btn-aero .heatmap-nav button,
+body.btn-aero .edit-bar button,
+body.btn-aero .emotion-btn,
+body.btn-aero .ref-tab,
+body.btn-aero .ref-lib-btn,
+body.btn-aero .sd-tab,
+body.btn-aero .he-btn,
+body.btn-aero .he-btn-save,
+body.btn-aero .skin-option,
+body.btn-aero .rh-btn,
+body.btn-aero .habit-card .checkin-btn,
+body.btn-aero .reminder-option{
+  cursor:pointer;
+  position:relative;
+  padding:2px;
+  border-radius:6px;
+  border:0;
+  text-shadow:1px 1px rgba(0,0,0,.4);
+  background:linear-gradient(#006caa,#00c3ff);
+  box-shadow:0 4px 6px rgba(0,0,0,.2);
+  transition:.3s all;
+  color:#fff;
+}
+body.btn-aero .const-btn:hover,
+body.btn-aero .tab:hover,
+body.btn-aero .profile-grid-item:hover,
+body.btn-aero .mg-add-btn:hover,
+body.btn-aero .skin-tab:hover,
+body.btn-aero .bnav-center:hover,
+body.btn-aero .fab:hover,
+body.btn-aero .he-btn-save:hover,
+body.btn-aero .habit-card .checkin-btn:hover{
+  box-shadow:0 6px 12px rgba(0,0,0,.25);
+  transform:translateY(-2px);
+}
+body.btn-aero .const-btn:active,
+body.btn-aero .bnav-center:active,
+body.btn-aero .fab:active,
+body.btn-aero .he-btn-save:active,
+body.btn-aero .habit-card .checkin-btn:active{
+  box-shadow:0 0 0 rgba(0,0,0,0);
+  transform:translateY(0);
+}
+body.btn-aero .skin-tab{
+  background:transparent;
+  color:var(--muted);
+  box-shadow:none;
+  border-bottom:2px solid transparent;
+  text-shadow:none;
+}
+body.btn-aero .skin-tab.active{
+  border-bottom-color:var(--accent);
+  color:var(--accent);
+}
+body.btn-aero .bnav-item{
+  background:transparent;
+  color:var(--muted);
+  box-shadow:none;
+  text-shadow:none;
+}
+body.btn-aero .bnav-item.active{
+  color:var(--accent);
+}
+
+/* [Optimized] Aero style - buttons (using .skinnable-btn) */
+body.btn-aero .skinnable-btn{
+  cursor:pointer;
+  position:relative;
+  padding:2px;
+  border-radius:6px;
+  border:0;
+  text-shadow:1px 1px rgba(0,0,0,.4);
+  background:linear-gradient(#006caa,#00c3ff);
+  box-shadow:0 4px 6px rgba(0,0,0,.2);
+  transition:.3s all;
+  color:#fff;
+}
+body.btn-aero .skinnable-btn:hover{
+  box-shadow:0 6px 12px rgba(0,0,0,.25);
+  transform:translateY(-2px);
+}
+body.btn-aero .skinnable-btn:active{
+  box-shadow:0 0 0 rgba(0,0,0,0);
+  transform:translateY(0);
+}
+
+/* Cyberpunk 风格 - 按钮 (来源: Ashon-G/mean-mayfly-77) */
+body.btn-cyber .const-btn,
+body.btn-cyber .tab,
+body.btn-cyber .health-pack-btn,
+body.btn-cyber .profile-grid-item,
+body.btn-cyber .mg-add-btn,
+body.btn-cyber .settings-btn,
+body.btn-cyber .checkin-input-actions button,
+body.btn-cyber .mini-quote-refresh,
+body.btn-cyber .mini-quote-ref,
+body.btn-cyber .skin-tab,
+body.btn-cyber .export-btn,
+body.btn-cyber .day-btn,
+body.btn-cyber .panel-close,
+body.btn-cyber .bnav-item,
+body.btn-cyber .bnav-center,
+body.btn-cyber .fab,
+body.btn-cyber .lib-tab,
+body.btn-cyber .lib-custom-input button,
+body.btn-cyber .lib-custom-type button,
+body.btn-cyber .lib-custom-reminder-add,
+body.btn-cyber .lib-custom-freq .weekdays button,
+body.btn-cyber .lib-item .add-btn,
+body.btn-cyber .health-pack-add-btn,
+body.btn-cyber .season-pack-btn,
+body.btn-cyber .season-pack-add-btn,
+body.btn-cyber .water-quick-btn,
+body.btn-cyber .water-qty-btn,
+body.btn-cyber .water-custom-btn,
+body.btn-cyber .heatmap-nav button,
+body.btn-cyber .edit-bar button,
+body.btn-cyber .emotion-btn,
+body.btn-cyber .ref-tab,
+body.btn-cyber .ref-lib-btn,
+body.btn-cyber .sd-tab,
+body.btn-cyber .he-btn,
+body.btn-cyber .he-btn-save,
+body.btn-cyber .skin-option,
+body.btn-cyber .rh-btn,
+body.btn-cyber .habit-card .checkin-btn,
+body.btn-cyber .reminder-option{
+  --duration:7s;
+  --easing:linear;
+  --c-color-1:rgba(255,163,26,.7);
+  --c-color-2:#1a23ff;
+  --c-color-3:#e21bda;
+  --c-color-4:rgba(255,232,26,.7);
+  --c-shadow:rgba(255,223,87,.5);
+  --c-shadow-inset-top:rgba(255,223,52,.9);
+  --c-shadow-inset-bottom:rgba(255,250,215,.8);
+  --c-radial-inner:#ffd215;
+  --c-radial-outer:#fff172;
+  --c-color:#fff;
+  -webkit-tap-highlight-color:transparent;
+  -webkit-appearance:none;
+  outline:none;
+  position:relative;
+  cursor:pointer;
+  border:none;
+  display:table;
+  border-radius:24px;
+  padding:12px 24px;
+  margin:0;
+  text-align:center;
+  font-weight:600;
+  font-size:16px;
+  letter-spacing:.02em;
+  line-height:1.5;
+  color:var(--c-color);
+  background:radial-gradient(circle,var(--c-radial-inner),var(--c-radial-outer) 80%);
+  box-shadow:0 0 14px var(--c-shadow);
+}
+body.btn-cyber .const-btn:before,
+body.btn-cyber .tab:before,
+body.btn-cyber .profile-grid-item:before,
+body.btn-cyber .mg-add-btn:before,
+body.btn-cyber .skin-tab:before,
+body.btn-cyber .bnav-center:before,
+body.btn-cyber .fab:before,
+body.btn-cyber .he-btn-save:before,
+body.btn-cyber .habit-card .checkin-btn:before{
+  content:"";
+  pointer-events:none;
+  position:absolute;
+  z-index:3;
+  left:0;top:0;right:0;bottom:0;
+  border-radius:24px;
+  box-shadow:inset 0 3px 12px var(--c-shadow-inset-top),inset 0 -3px 4px var(--c-shadow-inset-bottom);
+}
+body.btn-cyber .const-btn:hover,
+body.btn-cyber .tab:hover,
+body.btn-cyber .profile-grid-item:hover,
+body.btn-cyber .mg-add-btn:hover,
+body.btn-cyber .skin-tab:hover,
+body.btn-cyber .bnav-center:hover,
+body.btn-cyber .fab:hover,
+body.btn-cyber .he-btn-save:hover,
+body.btn-cyber .habit-card .checkin-btn:hover{
+  --duration:1400ms;
+}
+
+/* [Optimized] Cyber style - buttons (using .skinnable-btn) */
+body.btn-cyber .skinnable-btn{
+  --duration:7s;
+  --easing:linear;
+  --c-color-1:rgba(255,163,26,.7);
+  --c-color-2:#1a23ff;
+  --c-color-3:#e21bda;
+  --c-color-4:rgba(255,232,26,.7);
+  --c-shadow:rgba(255,223,87,.5);
+  --c-shadow-inset-top:rgba(255,223,52,.9);
+  --c-shadow-inset-bottom:rgba(255,250,215,.8);
+  --c-radial-inner:#ffd215;
+  --c-radial-outer:#fff172;
+  --c-color:#fff;
+  -webkit-tap-highlight-color:transparent;
+  -webkit-appearance:none;
+  outline:none;
+  position:relative;
+  cursor:pointer;
+  border:none;
+  display:table;
+  border-radius:24px;
+  padding:12px 24px;
+  margin:0;
+  text-align:center;
+  font-weight:600;
+  font-size:16px;
+  letter-spacing:.02em;
+  line-height:1.5;
+  color:var(--c-color);
+  background:radial-gradient(circle,var(--c-radial-inner),var(--c-radial-outer) 80%);
+  box-shadow:0 0 14px var(--c-shadow);
+}
+body.btn-cyber .skinnable-btn:before{
+  content:"";
+  pointer-events:none;
+  position:absolute;
+  z-index:3;
+  left:0;top:0;right:0;bottom:0;
+  border-radius:24px;
+  box-shadow:inset 0 3px 12px var(--c-shadow-inset-top),inset 0 -3px 4px var(--c-shadow-inset-bottom);
+}
+body.btn-cyber .skinnable-btn:hover{
+  --duration:1400ms;
+}
+
+/* ================================================================
+   复选框样式
+   ================================================================ */
+
+/* Shadow 风格 - 复选框 (来源: Galahhad/sweet-ape-100) */
+body.cb-shadow .theme-toggle{
+  --primary-color:#1677ff;
+  --secondary-color:#fff;
+  --primary-hover-color:#4096ff;
+  --checkbox-diameter:20px;
+  --checkbox-border-radius:5px;
+  --checkbox-border-color:#d9d9d9;
+  --checkbox-border-width:1px;
+  --checkbox-border-style:solid;
+  --checkmark-size:1.2;
+  appearance:none;
+  -moz-appearance:none;
+  width:var(--checkbox-diameter);
+  height:var(--checkbox-diameter);
+  border-radius:var(--checkbox-border-radius);
+  background:var(--secondary-color);
+  border:var(--checkbox-border-width) var(--checkbox-border-style) var(--checkbox-border-color);
+  transition:all .3s;
+  cursor:pointer;
+  position:relative;
+}
+body.cb-shadow .theme-toggle::after{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;bottom:0;
+  box-shadow:0 0 0 calc(var(--checkbox-diameter) / 2.5) var(--primary-color);
+  border-radius:inherit;
+  opacity:0;
+  transition:all .5s cubic-bezier(.12,.4,.29,1.46);
+}
+body.cb-shadow .theme-toggle::before{
+  top:40%;
+  left:50%;
+  content:"";
+  position:absolute;
+  width:4px;
+  height:7px;
+  border-right:2px solid var(--secondary-color);
+  border-bottom:2px solid var(--secondary-color);
+  transform:translate(-50%,-50%) rotate(45deg) scale(0);
+  opacity:0;
+  transition:all .1s cubic-bezier(.71,-.46,.88,.6),opacity .1s;
+}
+body.cb-shadow .theme-toggle:hover{
+  border-color:var(--primary-color);
+}
+body.cb-shadow .theme-toggle .theme-checkbox:checked{
+  background:var(--primary-color);
+  border-color:transparent;
+}
+body.cb-shadow .theme-toggle .theme-checkbox:checked::before{
+  opacity:1;
+  transform:translate(-50%,-50%) rotate(45deg) scale(var(--checkmark-size));
+  border-color:#fff;
+}
+body.cb-shadow .theme-toggle .theme-checkbox:checked::after{
+  box-shadow:0 0 0 calc(var(--checkbox-diameter) / 2.5) var(--primary-color);
+  opacity:1;
+}
+
+/* Neumorphic 风格 - 复选框 (来源: chase2k25/nasty-turtle-29) */
+body.cb-neum .theme-toggle{
+  width:50px;
+  height:50px;
+  background:#e0e0e0;
+  border-radius:8px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  cursor:pointer;
+  transition:background-color .3s ease-in-out;
+  box-shadow:inset -4px -4px 8px #fff,inset 4px 4px 8px #b0b0b0;
+  position:relative;
+}
+body.cb-neum .theme-toggle .line{
+  position:absolute;
+  width:30px;
+  height:4px;
+  background:#a0a0a0;
+  border-radius:2px;
+  transition:all .3s ease-in-out;
+}
+body.cb-neum .theme-toggle .line1{
+  transform:rotate(45deg);
+}
+body.cb-neum .theme-toggle .line2{
+  transform:rotate(-45deg);
+}
+body.cb-neum .theme-toggle .theme-checkbox:checked{
+  background:#d4e9d4;
+}
+body.cb-neum .theme-toggle .theme-checkbox:checked ~ .line1{
+  transform:rotate(50deg) translateX(-3px) translateY(8px) scaleX(.6);
+  background:#169c1fff;
+}
+body.cb-neum .theme-toggle .theme-checkbox:checked ~ .line2{
+  transform:rotate(-50deg) translateX(6px) translateY(3px);
+  background:#169c1fff;
+}
+
+/* Cyberpunk 风格 - 复选框 (来源: adamgiebl/curly-lizard-40) */
+body.cb-cyber .theme-toggle{
+  appearance:none;
+  width:20px;
+  height:20px;
+  border:2px solid #30cfd0;
+  border-radius:5px;
+  background-color:transparent;
+  display:inline-block;
+  position:relative;
+  margin-right:10px;
+  cursor:pointer;
+}
+body.cb-cyber .theme-toggle:before{
+  content:"";
+  background-color:#30cfd0;
+  display:block;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%) scale(0);
+  width:10px;
+  height:10px;
+  border-radius:3px;
+  transition:all .3s ease-in-out;
+}
+body.cb-cyber .theme-toggle .theme-checkbox:checked:before{
+  transform:translate(-50%,-50%) scale(1);
+}
+
+/* ================================================================
+   开关样式
+   ================================================================ */
+
+/* Gradient 风格 - 开关 (来源: Codecite/angry-bullfrog-58) */
+body.tg-gradient .theme-toggle,
+body.tg-gradient .toggle-switch{
+  position:relative;
+  width:52px;
+  height:28px;
+  border-radius:25px;
+  cursor:pointer;
+  overflow:hidden;
+}
+body.tg-gradient .theme-toggle .theme-slider,
+body.tg-gradient .toggle-switch{
+  position:absolute;
+  cursor:pointer;
+  top:0;left:0;right:0;bottom:0;
+  background-image:linear-gradient(to bottom,#8d49fd,#7f56f3,#5691f3);
+  transition:.4s;
+  border:none;
+}
+body.tg-gradient .theme-toggle .theme-slider:before,
+body.tg-gradient .toggle-switch::after{
+  position:absolute;
+  content:"";
+  height:20px;
+  width:20px;
+  left:4px;
+  bottom:4px;
+  background-color:#fff;
+  transition:.4s;
+  border-radius:50%;
+  box-shadow:0 2px 8px rgba(0,0,0,.2);
+}
+body.tg-gradient .theme-toggle .theme-checkbox:checked ~ .theme-slider:before,
+body.tg-gradient .toggle-switch.on::after{
+  transform:translateX(24px);
+  box-shadow:0 2px 12px rgba(143,81,234,.4);
+}
+
+/* Slim 风格 - 开关 */
+body.tg-slim .theme-toggle,
+body.tg-slim .toggle-switch{
+  position:relative;
+  width:48px;
+  height:24px;
+  border-radius:12px;
+  cursor:pointer;
+}
+body.tg-slim .theme-toggle .theme-slider,
+body.tg-slim .toggle-switch{
+  position:absolute;
+  cursor:pointer;
+  top:0;left:0;right:0;bottom:0;
+  background-color:#ccc;
+  transition:.4s;
+  border:none;
+}
+body.tg-slim .theme-toggle .theme-slider:before,
+body.tg-slim .toggle-switch::after{
+  position:absolute;
+  content:"";
+  height:18px;
+  width:18px;
+  left:3px;
+  bottom:3px;
+  background-color:#fff;
+  transition:.4s;
+  border-radius:50%;
+  box-shadow:0 2px 4px rgba(0,0,0,.2);
+}
+body.tg-slim .theme-toggle .theme-checkbox:checked ~ .theme-slider,
+body.tg-slim .toggle-switch.on{
+  background-color:#10b981;
+}
+body.tg-slim .theme-toggle .theme-checkbox:checked ~ .theme-slider:before,
+body.tg-slim .toggle-switch.on::after{
+  transform:translateX(24px);
+}
+
+/* Soft 风格 - 开关 */
+body.tg-soft .theme-toggle,
+body.tg-soft .toggle-switch{
+  position:relative;
+  width:56px;
+  height:28px;
+  border-radius:14px;
+  cursor:pointer;
+}
+body.tg-soft .theme-toggle .theme-slider,
+body.tg-soft .toggle-switch{
+  position:absolute;
+  cursor:pointer;
+  top:0;left:0;right:0;bottom:0;
+  background:linear-gradient(145deg,#f0f0f0,#e0e0e0);
+  box-shadow:inset 2px 2px 4px rgba(0,0,0,.1),inset -2px -2px 4px rgba(255,255,255,.9);
+  transition:.4s;
+  border:none;
+}
+body.tg-soft .theme-toggle .theme-slider:before,
+body.tg-soft .toggle-switch::after{
+  position:absolute;
+  content:"";
+  height:22px;
+  width:22px;
+  left:3px;
+  bottom:3px;
+  background:#fff;
+  transition:.4s;
+  border-radius:50%;
+  box-shadow:2px 2px 4px rgba(0,0,0,.1),-2px -2px 4px rgba(255,255,255,.9);
+}
+body.tg-soft .theme-toggle .theme-checkbox:checked ~ .theme-slider:before,
+body.tg-soft .toggle-switch.on::after{
+  transform:translateX(28px);
+  background:var(--accent);
+}
+
+/* ================================================================
+   卡片样式
+   ================================================================ */
+
+/* Glass 风格 - 卡片 (来源: Yaya12085/blue-dragon-20) */
+body.cd-glass .habit-card,
+body.cd-glass .stat-card,
+body.cd-glass .mini-quote,
+body.cd-glass .profile-stat-item,
+body.cd-glass .mg-group,
+body.cd-glass .mg-stat-card,
+body.cd-glass .ai-message-bubble,
+body.cd-glass .water-tracker,
+body.cd-glass .diet-tip-card,
+body.cd-glass .diet-meal-card,
+body.cd-glass .diet-seasonal-card,
+body.cd-glass .diet-color-card,
+body.cd-glass .diet-habit-item,
+body.cd-glass .diet-book-item,
+body.cd-glass .lib-item{
+  position:relative;
+  background:transparent;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.1);
+  gap:10px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),inset 0 3px 0 rgba(0,0,0,.1),inset 0 -1px 0 rgba(255,255,255,.1),inset 0 -3px 0 rgba(0,0,0,.1);
+  backdrop-filter:blur(20px);
+  transition:all .3s ease;
+}
+body.cd-glass .habit-card::before,
+body.cd-glass .stat-card::before,
+body.cd-glass .lib-item::before{
+  position:absolute;
+  content:"";
+  width:100%;
+  height:100%;
+  left:0;
+  top:0;
+  border-radius:inherit;
+  background:rgba(255,255,255,.1);
+  z-index:-1;
+  filter:blur(10px);
+  transition:.3s ease-in-out;
+}
+body.cd-glass .habit-card:hover,
+body.cd-glass .stat-card:hover,
+body.cd-glass .lib-item:hover{
+  transform:translateY(-4px);
+  border-color:rgba(255,255,255,.2);
+}
+body.cd-glass .habit-card:hover::before,
+body.cd-glass .stat-card:hover::before,
+body.cd-glass .lib-item:hover::before{
+  filter:blur(50px);
+}
+
+/* [Optimized] Glass style - cards (using .skinnable-card) */
+body.cd-glass .skinnable-card{
+  position:relative;
+  background:transparent;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.1);
+  gap:10px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),inset 0 3px 0 rgba(0,0,0,.1),inset 0 -1px 0 rgba(255,255,255,.1),inset 0 -3px 0 rgba(0,0,0,.1);
+  backdrop-filter:blur(20px);
+  transition:all .3s ease;
+}
+body.cd-glass .skinnable-card::before{
+  position:absolute;
+  content:"";
+  width:100%;
+  height:100%;
+  left:0;
+  top:0;
+  border-radius:inherit;
+  background:rgba(255,255,255,.1);
+  z-index:-1;
+  filter:blur(10px);
+  transition:.3s ease-in-out;
+}
+body.cd-glass .skinnable-card:hover{
+  transform:translateY(-4px);
+  border-color:rgba(255,255,255,.2);
+}
+body.cd-glass .skinnable-card:hover::before{
+  filter:blur(50px);
+}
+
+/* Dark 风格 - 卡片 (来源: SelfMadeSystem/fluffy-eel-29) */
+body.cd-dark .habit-card,
+body.cd-dark .stat-card,
+body.cd-dark .mini-quote,
+body.cd-dark .profile-stat-item,
+body.cd-dark .mg-group,
+body.cd-dark .mg-stat-card,
+body.cd-dark .ai-message-bubble,
+body.cd-dark .water-tracker,
+body.cd-dark .diet-tip-card,
+body.cd-dark .diet-meal-card,
+body.cd-dark .diet-seasonal-card,
+body.cd-dark .diet-color-card,
+body.cd-dark .diet-habit-item,
+body.cd-dark .diet-book-item,
+body.cd-dark .lib-item{
+  position:relative;
+  border-radius:1em;
+  background:#111215;
+  display:flex;
+  flex-direction:column;
+  color:#fff;
+  overflow:hidden;
+  border:1px solid #1d1f23;
+  transition:all .3s ease;
+}
+body.cd-dark .habit-card:hover,
+body.cd-dark .stat-card:hover,
+body.cd-dark .lib-item:hover{
+  border-color:#343539;
+  transform:translateY(-2px);
+}
+
+/* [Optimized] Dark style - cards (using .skinnable-card) */
+body.cd-dark .skinnable-card{
+  position:relative;
+  border-radius:1em;
+  background:#111215;
+  display:flex;
+  flex-direction:column;
+  color:#fff;
+  overflow:hidden;
+  border:1px solid #1d1f23;
+  transition:all .3s ease;
+}
+body.cd-dark .skinnable-card:hover{
+  border-color:#343539;
+  transform:translateY(-2px);
+}
+
+/* Gradient Shadow 风格 - 卡片 (来源: alexruix/cold-cat-38) */
+body.cd-grad .habit-card,
+body.cd-grad .stat-card,
+body.cd-grad .mini-quote,
+body.cd-grad .profile-stat-item,
+body.cd-grad .mg-group,
+body.cd-grad .mg-stat-card,
+body.cd-grad .ai-message-bubble,
+body.cd-grad .water-tracker,
+body.cd-grad .diet-tip-card,
+body.cd-grad .diet-meal-card,
+body.cd-grad .diet-seasonal-card,
+body.cd-grad .diet-color-card,
+body.cd-grad .diet-habit-item,
+body.cd-grad .diet-book-item,
+body.cd-grad .lib-item{
+  --background:#f5f5f5;
+  --green:#1FC11B;
+  --yellow:#FFD913;
+  --orange:#FF9C55;
+  --red:#FF5555;
+  --violet:#555BFF;
+  width:190px;
+  height:254px;
+  display:flex;
+  flex-direction:column;
+  gap:1em;
+  background:var(--background);
+  padding:1rem;
+  border:3px solid var(--violet);
+  box-shadow:10px -10px 0 -3px var(--background),10px -10px var(--green),
+    20px -20px 0 -3px var(--background),20px -20px var(--yellow),
+    30px -30px 0 -3px var(--background),30px -30px var(--orange),
+    40px -40px 0 -3px var(--background),40px -40px var(--red);
+  transition:box-shadow 1s,top 1s,left 1s;
+}
+body.cd-grad .habit-card:hover,
+body.cd-grad .stat-card:hover,
+body.cd-grad .lib-item:hover{
+  box-shadow:0 0 0 -3px var(--background),0 0 0 0 var(--green),
+    0 0 0 -3px var(--background),0 0 0 0 var(--yellow),
+    0 0 0 -3px var(--background),0 0 0 0 var(--orange),
+    0 0 0 -3px var(--background),0 0 0 0 var(--red);
+}
+
+/* [Optimized] Gradient Shadow style - cards (using .skinnable-card) */
+body.cd-grad .skinnable-card{
+  --background:#f5f5f5;
+  --green:#1FC11B;
+  --yellow:#FFD913;
+  --orange:#FF9C55;
+  --red:#FF5555;
+  --violet:#555BFF;
+  width:190px;
+  height:254px;
+  display:flex;
+  flex-direction:column;
+  gap:1em;
+  background:var(--background);
+  padding:1rem;
+  border:3px solid var(--violet);
+  box-shadow:10px -10px 0 -3px var(--background),10px -10px var(--green),
+    20px -20px 0 -3px var(--background),20px -20px var(--yellow),
+    30px -30px 0 -3px var(--background),30px -30px var(--orange),
+    40px -40px 0 -3px var(--background),40px -40px var(--red);
+  transition:box-shadow 1s,top 1s,left 1s;
+}
+body.cd-grad .skinnable-card:hover{
+  box-shadow:0 0 0 -3px var(--background),0 0 0 0 var(--green),
+    0 0 0 -3px var(--background),0 0 0 0 var(--yellow),
+    0 0 0 -3px var(--background),0 0 0 0 var(--orange),
+    0 0 0 -3px var(--background),0 0 0 0 var(--red);
+}
+
+/* ================================================================
+   输入框样式
+   ================================================================ */
+
+/* Modern 风格 - 输入框 (来源: FColombati/curly-chipmunk-73) */
+body.in-modern input[type="text"],
+body.in-modern input[type="number"],
+body.in-modern input[type="password"],
+body.in-modern input[type="time"],
+body.in-modern textarea,
+body.in-modern select,
+body.in-modern .mg-search{
+  --base:#fe8ce4;
+  --light:color-mix(in sRGB,var(--base) 60%,#fff);
+  --lighter:color-mix(in sRGB,var(--base) 30%,#fff);
+  --dark:color-mix(in sRGB,var(--base) 95%,#000);
+  --transparent:color-mix(in sRGB,var(--base) 0%,#0000);
+  appearance:none;
+  font-size:1em;
+  width:20em;
+  height:2em;
+  border:.5em solid #fff;
+  border-radius:2em;
+  box-shadow:0 0 1em rgba(0,0,0,.1),.25em .5em rgba(0,0,0,.1);
+  overflow:hidden;
+  transition:all .3s ease;
+  background:#fff;
+}
+body.in-modern input:focus,
+body.in-modern textarea:focus,
+body.in-modern select:focus{
+  outline:none;
+  border-color:var(--base);
+  box-shadow:0 0 1em rgba(0,0,0,.1),.25em .5em rgba(0,0,0,.1),0 0 0 3px rgba(254,140,228,.2);
+}
+
+/* Outline 风格 - 输入框 (来源: kamehame-ha/lovely-fly-87) */
+body.in-outline input[type="text"],
+body.in-outline input[type="number"],
+body.in-outline input[type="password"],
+body.in-outline input[type="time"],
+body.in-outline textarea,
+body.in-outline select,
+body.in-outline .mg-search{
+  background:transparent;
+  border:none;
+  border-bottom:2px solid #ccc;
+  border-radius:0;
+  padding:10px 0;
+  color:#333;
+  transition:all .3s ease;
+}
+body.in-outline input:focus,
+body.in-outline textarea:focus,
+body.in-outline select:focus{
+  outline:none;
+  border-bottom-color:#0066cc;
+}
+body.in-outline input::placeholder,
+body.in-outline textarea::placeholder{
+  color:#999;
+}
+
+/* ================================================================
+   徽章样式
+   ================================================================ */
+
+/* Gradient 风格 - 徽章 */
+body.bd-gradient .level-badge,
+body.bd-gradient .streak-badge,
+body.bd-gradient .badge,
+body.bd-gradient .habit-tag{
+  background:linear-gradient(135deg,#667eea,#764ba2);
+  color:#fff;
+  border:none;
+  padding:4px 12px;
+  border-radius:20px;
+  font-weight:600;
+  box-shadow:0 4px 15px rgba(102,126,234,.4);
+}
+
+/* Outline 风格 - 徽章 */
+body.bd-outline .level-badge,
+body.bd-outline .streak-badge,
+body.bd-outline .badge,
+body.bd-outline .habit-tag{
+  background:transparent;
+  color:#ff6b6b;
+  border:2px solid #ff6b6b;
+  padding:4px 12px;
+  border-radius:20px;
+  font-weight:600;
+}
+
+/* Soft Shadow 风格 - 徽章 */
+body.bd-soft .level-badge,
+body.bd-soft .streak-badge,
+body.bd-soft .badge,
+body.bd-soft .habit-tag{
+  background:#f0f0f0;
+  color:#333;
+  border:none;
+  padding:4px 12px;
+  border-radius:8px;
+  font-weight:500;
+  box-shadow:2px 2px 8px rgba(0,0,0,.1);
+}

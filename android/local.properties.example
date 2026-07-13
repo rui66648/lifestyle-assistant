@@ -1,0 +1,16 @@
+# Android SDK 路径配置示例
+# 在本地环境构建前，复制此文件为 local.properties 并修改路径
+
+# macOS/Linux 示例：
+# sdk.dir=/Users/yourname/Library/Android/sdk
+# sdk.dir=/home/yourname/Android/Sdk
+
+# Windows 示例（注意使用正斜杠）：
+# sdk.dir=C:/Users/yourname/AppData/Local/Android/Sdk
+
+# 根据你的截图，你的 SDK 路径：
+sdk.dir=D:/Android/SDK
+
+# Gradle 缓存目录（可选）
+# org.gradle.caching=true
+# org.gradle.jvmargs=-Xmx4096m

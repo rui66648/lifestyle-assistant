@@ -1,0 +1,14 @@
+{
+  "versionCode": 2,
+  "versionName": "1.2",
+  "apkUrl": "https://github.com/rui66648/lifestyle-assistant/releases/latest/download/app-release.apk",
+  "whatsNew": [
+    "通知系统全面升级：不打开App也能收到提醒",
+    "新增免打扰时段设置（可自定义起止时间）",
+    "间隔提醒支持后台调度（72小时预注册）",
+    "习惯提醒管理优化：显示提醒方式、重复规律、额外时间",
+    "单个习惯可独立设置提醒方式和音效",
+    "修复通知调度多项Bug（星期判断、免打扰、ID碰撞等）"
+  ],
+  "publishedAt": "2026-07-12"
+}

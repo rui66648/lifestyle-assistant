@@ -1,0 +1,31 @@
+{
+  "name": "lifestyle-assistant",
+  "version": "1.0.0",
+  "description": "",
+  "main": "sw.js",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rui66648/lifestyle-assistant.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/rui66648/lifestyle-assistant/issues"
+  },
+  "homepage": "https://github.com/rui66648/lifestyle-assistant#readme",
+  "dependencies": {
+    "acorn": "^8.17.0"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.4.1",
+    "@capacitor/cli": "^8.4.1",
+    "@capacitor/core": "^8.4.1",
+    "@capacitor/local-notifications": "^8.2.0"
+  }
+}

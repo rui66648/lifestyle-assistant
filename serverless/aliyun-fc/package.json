@@ -1,0 +1,7 @@
+{
+  "name": "lifestyle-ai-proxy-fc",
+  "version": "1.0.0",
+  "description": "养生助手 AI 代理 - 阿里云函数计算（FC）版",
+  "main": "index.js",
+  "runtime": "nodejs20"
+}

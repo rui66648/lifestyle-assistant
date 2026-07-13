@@ -1,0 +1,24 @@
+{
+  "name": "生活习惯小助手",
+  "short_name": "习惯助手",
+  "description": "完全离线的习惯打卡应用，帮助你记录和改善日常健康生活习惯",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#FDF8F0",
+  "theme_color": "#7CB69D",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./assets/icon-192.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./assets/icon-512.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}

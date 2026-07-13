@@ -1,0 +1,28 @@
+{
+  "data": [
+    "data/constants.js",
+    "data/content.js",
+    "data/habits.js",
+    "data/packs.js",
+    "data/sports.js"
+  ],
+  "modules": [
+    "modules/checkin.js",
+    "modules/habit.js",
+    "modules/stats.js",
+    "modules/water.js",
+    "modules/diet.js",
+    "modules/sports.js",
+    "modules/pomodoro.js",
+    "modules/constitution.js",
+    "modules/poster.js",
+    "modules/notification.js",
+    "modules/guide.js"
+  ],
+  "ui": [
+    "ui/render.js",
+    "ui/panels.js",
+    "ui/components.js",
+    "ui/events.js"
+  ]
+}

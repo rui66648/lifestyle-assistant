@@ -1,0 +1,14 @@
+{
+  "appId": "com.rui66648.lifestyle",
+  "appName": "生活习惯小助手",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_notify",
+      "iconColor": "#ff6b6b"
+    }
+  }
+}

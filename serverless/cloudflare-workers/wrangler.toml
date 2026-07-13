@@ -1,0 +1,36 @@
+name = "ai-proxy"
+main = "ai-proxy.js"
+compatibility_date = "2024-07-29"
+
+workers_dev = true
+
+# ============================================================
+# 一键部署：运行以下命令即可完成全部配置
+# ============================================================
+# cd serverless/cloudflare-workers/
+# bash deploy.sh
+# ============================================================
+
+# Secret 配置（由 deploy.sh 自动设置）
+# - QWEN_API_KEY: 阿里百炼 API Key（AI 功能）
+# - VAPID_PRIVATE_KEY: Web Push 私钥（推送功能）
+
+# KV 命名空间（Web Push 订阅与时间表存储）
+[[kv_namespaces]]
+binding = "PUSH_KV"
+id = "f0f664356b294cb1a8282aed794ffd76"
+# 自动创建方式: npx wrangler kv namespace create PUSH_KV
+# 然后把返回的 id 替换上面的 REPLACE_WITH_KV_NAMESPACE_ID
+
+# Cron 定时触发器：每分钟检查习惯提醒
+[triggers]
+crons = ["* * * * *"]
+
+# ============================================================
+# 自定义域名（用于国内直连，绕过 workers.dev 被墙）
+# 部署前把 name 改成你自己的域名，例如 api.yourname.is-a-dev
+# 前提：该域名已在 Cloudflare 接入（NS 已指向 Cloudflare）
+# 设置好后运行 `npx wrangler deploy` 会自动绑定并签发免费 SSL
+# ============================================================
+[[custom_domains]]
+name = "REPLACE_WITH_YOUR_CUSTOM_DOMAIN"

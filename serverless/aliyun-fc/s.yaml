@@ -1,0 +1,34 @@
+# Serverless Devs 部署配置（可选，需安装 s 工具）
+# 安装：npm install -g @serverless-devs/s
+# 登录：s config add（按提示用阿里云 AccessKey）
+# 部署：在 fc/ 目录执行  s deploy
+# 说明：QWEN_API_KEY 通过本地环境变量传入，部署前请先 export QWEN_API_KEY=sk-xxxx
+edition: 3.0.0
+name: lifestyle-ai-proxy
+access: default
+
+resources:
+  ai-proxy-fc:
+    component: fc3
+    props:
+      region: cn-shanghai
+      service:
+        name: lifestyle-assistant
+        description: 养生助手 AI 代理
+      function:
+        name: ai-proxy
+        runtime: nodejs20
+        handler: index.handler
+        code: ./
+        timeout: 30
+        environmentVariables:
+          QWEN_API_KEY: ${env(QWEN_API_KEY)}
+      triggers:
+        - name: httpTrigger
+          type: http
+          config:
+            authType: anonymous
+            methods:
+              - GET
+              - POST
+              - OPTIONS
