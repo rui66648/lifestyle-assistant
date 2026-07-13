@@ -678,6 +678,32 @@
     const todayRecords = getRecordsByDate(date);
     const analysis = buildLocalAnalysis(todayRecords);
     const allDates = getAllDates();
+    const seasonal = getSeasonalTip();
+    const currentMeal = getCurrentMeal();
+    const mealTip = currentMeal && mealTips[currentMeal] ? mealTips[currentMeal] : null;
+
+    let tipCard = '';
+    if (mealTip) {
+      tipCard = `
+        <div class="diet-tip-advice-card">
+          <div class="diet-tip-advice-header">
+            <span class="diet-tip-advice-icon">${esc(mealTip.icon)}</span>
+            <span class="diet-tip-advice-title">${mealTip.title}建议</span>
+          </div>
+          <div class="diet-tip-advice-text">${esc(mealTip.tips[0])}</div>
+        </div>
+      `;
+    } else if (seasonal) {
+      tipCard = `
+        <div class="diet-tip-advice-card">
+          <div class="diet-tip-advice-header">
+            <span class="diet-tip-advice-icon">${esc(seasonal.icon)}</span>
+            <span class="diet-tip-advice-title">${seasonal.season}饮食</span>
+          </div>
+          <div class="diet-tip-advice-text">${esc(seasonal.tip)}</div>
+        </div>
+      `;
+    }
 
     return `
       <div class="diet-record-view">
@@ -685,17 +711,30 @@
           <input type="file" id="dietPhotoInput" accept="image/*" capture="environment" style="display:none" onchange="handleDietPhotoSelect(this)">
           <button class="diet-photo-btn" onclick="document.getElementById('dietPhotoInput').click()">
             <span class="diet-photo-btn-icon">📷</span>
-            <span class="diet-photo-btn-text">拍照记录饮食</span>
-            <span class="diet-photo-btn-hint">记录每一餐，养成健康饮食好习惯</span>
+            <span class="diet-photo-btn-main">
+              <span class="diet-photo-btn-text">拍照记录</span>
+              <span class="diet-photo-btn-hint">记录每一餐，养成健康饮食好习惯</span>
+            </span>
+            <span class="diet-photo-btn-arrow">›</span>
           </button>
         </div>
 
+        ${tipCard}
+
         ${analysis ? renderAnalysisCard(analysis) : ''}
 
-        <div class="diet-section-title">📅 ${date === today() ? '今日' : date}记录 (${todayRecords.length})</div>
-        ${todayRecords.length > 0 ? renderRecordGrid(todayRecords) : '<div class="diet-empty-tip">' + (date === today() ? '今天还没有记录哦，快拍一张吧 📷' : '该日期暂无记录') + '</div>'}
+        <div class="diet-today-card">
+          <div class="diet-today-header">
+            <span class="diet-today-title">${date === today() ? '今日' : date}记录</span>
+            <span class="diet-today-count">${todayRecords.length} 餐</span>
+          </div>
+          ${todayRecords.length > 0 ? renderRecordGrid(todayRecords) : '<div class="diet-empty-tip">' + (date === today() ? '今天还没有记录哦，快拍一张吧 📷' : '该日期暂无记录') + '</div>'}
+        </div>
 
         ${renderHistorySection(allDates)}
+
+        ${renderDietKnowledgeCompact(seasonal, mealTip)}
+        ${renderSportsKnowledgeCompact()}
       </div>
     `;
   }
@@ -713,12 +752,14 @@
             <div class="diet-analysis-summary">${esc(analysis.summary)}</div>
           </div>
         </div>
-        <div class="diet-analysis-tips">
-          ${analysis.tips.map(t => `<div class="diet-analysis-tip">${esc(t)}</div>`).join('')}
+        <div class="diet-analysis-tags">
+          ${analysis.tips.map(t => `<span class="diet-analysis-tag">${esc(t)}</span>`).join('')}
         </div>
-        <button class="diet-analysis-ai-btn" onclick="analyzeDietToday()">
-          <span>🤖</span> AI 深度分析建议
-        </button>
+        <div class="diet-analysis-footer">
+          <button class="diet-analysis-ai-link" onclick="analyzeDietToday()">
+            <span>🤖</span> AI 深度分析建议
+          </button>
+        </div>
       </div>
     `;
   }
@@ -749,21 +790,30 @@
     return `
       <div class="diet-section-title">📆 历史记录</div>
       <div class="diet-history-list">
-        ${otherDates.slice(0, 7).map(date => {
+        ${otherDates.slice(0, 7).map((date, idx) => {
           const records = getRecordsByDate(date);
           const mealCount = records.length;
           const firstImg = records[0] ? records[0].image : '';
+          const isLast = idx === otherDates.slice(0, 7).length - 1;
           return `
-            <div class="diet-history-item" onclick="toggleDietHistoryDate('${date}')">
-              <div class="diet-history-thumb" style="background-image:url('${firstImg}')"></div>
-              <div class="diet-history-info">
-                <div class="diet-history-date">${date}</div>
-                <div class="diet-history-count">共 ${mealCount} 餐</div>
+            <div class="diet-history-row">
+              <div class="diet-history-timeline">
+                <div class="diet-history-dot"></div>
+                ${!isLast ? '<div class="diet-history-line"></div>' : ''}
               </div>
-              <span class="diet-history-arrow" id="dietHistoryArrow_${date}">›</span>
-            </div>
-            <div class="diet-history-detail" id="dietHistoryDetail_${date}" style="display:none">
-              ${renderRecordGrid(records)}
+              <div class="diet-history-body">
+                <div class="diet-history-item" onclick="toggleDietHistoryDate('${date}')">
+                  <div class="diet-history-thumb" style="background-image:url('${firstImg}')"></div>
+                  <div class="diet-history-info">
+                    <div class="diet-history-date">${date}</div>
+                    <div class="diet-history-count">共 ${mealCount} 餐</div>
+                  </div>
+                  <span class="diet-history-arrow" id="dietHistoryArrow_${date}">›</span>
+                </div>
+                <div class="diet-history-detail" id="dietHistoryDetail_${date}" style="display:none">
+                  ${renderRecordGrid(records)}
+                </div>
+              </div>
             </div>
           `;
         }).join('')}
@@ -774,6 +824,96 @@
   /* ========== 修改：主渲染函数（饮食面板只保留知识内容） ========== */
   function renderDietPanel() {
     return renderKnowledgeView();
+  }
+
+  /* ========== 新增：记录页底部知识精简卡 ========== */
+  function renderDietKnowledgeCompact(seasonal, mealTip) {
+    // 五色饮食精简
+    const colorsHtml = fiveColorsFoods.map(item => `
+      <div class="dk-color-item">
+        <span class="dk-color-icon">${esc(item.icon)}</span>
+        <span class="dk-color-name">${item.color}色·${item.organ}</span>
+        <span class="dk-color-foods">${item.foods.slice(0,3).join('、')}</span>
+      </div>
+    `).join('');
+
+    // 当餐建议精简
+    let mealHtml = '';
+    if (mealTip) {
+      mealHtml = `
+        <div class="dk-meal-card">
+          <div class="dk-meal-header">
+            <span class="dk-meal-icon">${esc(mealTip.icon)}</span>
+            <span class="dk-meal-title">${mealTip.title} · ${mealTip.time}</span>
+          </div>
+          <div class="dk-meal-tips">
+            ${mealTip.tips.map(t => `<span class="dk-meal-tag">${esc(t)}</span>`).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="dk-section">
+        <div class="dk-section-title">饮食建议</div>
+        <div class="dk-seasonal-card">
+          <span class="dk-seasonal-icon">${esc(seasonal.icon)}</span>
+          <div class="dk-seasonal-body">
+            <div class="dk-seasonal-name">${seasonal.season}饮食</div>
+            <div class="dk-seasonal-text">${esc(seasonal.tip)}</div>
+          </div>
+        </div>
+        ${mealHtml}
+        <div class="dk-colors-grid">${colorsHtml}</div>
+      </div>
+    `;
+  }
+
+  function renderSportsKnowledgeCompact() {
+    if (!App.Data || !App.Data.MeridianSports) return '';
+    const currentMeridian = App.Data.MeridianSports.find(m => {
+      const h = new Date().getHours();
+      return h >= m.start && h < m.end;
+    }) || App.Data.MeridianSports[0];
+
+    const dailyTargets = App.Data.DailyTargets || {};
+    const targetsHtml = Object.entries(dailyTargets).map(([key, t]) => `
+      <div class="dk-sport-target">
+        <span class="dk-sport-target-label">${t.label}</span>
+        <span class="dk-sport-target-val">${esc(t.target)}${esc(t.unit)}</span>
+      </div>
+    `).join('');
+
+    // 运动处方精简（取前2个）
+    const prescriptions = App.Data.SportPrescriptions || {};
+    const prescriptionHtml = Object.values(prescriptions).slice(0, 2).map(p => `
+      <div class="dk-prescription-card">
+        <div class="dk-prescription-header">
+          <span class="dk-prescription-icon">${esc(p.icon)}</span>
+          <span class="dk-prescription-title">${p.title}</span>
+        </div>
+        <div class="dk-prescription-rows">
+          <span>时长 ${p.duration}</span>
+          <span>强度 ${p.intensity}</span>
+        </div>
+        <div class="dk-prescription-tip">${esc(p.tip)}</div>
+      </div>
+    `).join('');
+
+    return `
+      <div class="dk-section">
+        <div class="dk-section-title">运动养生</div>
+        <div class="dk-meridian-card">
+          <span class="dk-meridian-icon">${esc(currentMeridian.icon)}</span>
+          <div class="dk-meridian-body">
+            <div class="dk-meridian-name">${esc(currentMeridian.name)} · ${currentMeridian.meridian}</div>
+            <div class="dk-meridian-action">${currentMeridian.highlight ? '⭐ 最佳运动时段' : esc(currentMeridian.action)}</div>
+          </div>
+        </div>
+        ${targetsHtml ? `<div class="dk-sport-targets">${targetsHtml}</div>` : ''}
+        ${prescriptionHtml ? `<div class="dk-prescriptions">${prescriptionHtml}</div>` : ''}
+      </div>
+    `;
   }
 
   /* ========== 新增：全局交互函数 ========== */

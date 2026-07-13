@@ -3467,42 +3467,103 @@ body.dark .pg-icon{background:linear-gradient(135deg,rgba(91,185,138,.2),rgba(25
 .diet-view-tab:active{transform:scale(.97)}
 
 .diet-record-view{padding:0 4px 20px}
-.diet-photo-btn-wrap{margin-bottom:16px}
-.diet-photo-btn{width:100%;display:flex;flex-direction:column;align-items:center;gap:6px;padding:24px 16px;border:2px dashed var(--accent);border-radius:16px;background:linear-gradient(135deg,var(--accent-light),rgba(124,182,157,.08));color:var(--accent);cursor:pointer;transition:all .2s}
-.diet-photo-btn:active{transform:scale(.98);background:linear-gradient(135deg,var(--accent-light),rgba(124,182,157,.15))}
-.diet-photo-btn-icon{font-size:36px}
-.diet-photo-btn-text{font-size:15px;font-weight:700}
+.diet-photo-btn-wrap{margin-bottom:12px}
+.diet-photo-btn{width:100%;display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;background:var(--bg);color:var(--accent);cursor:pointer;transition:all .2s;border:none;box-shadow:var(--shadow-sm)}
+.diet-photo-btn:active{transform:scale(.98);background:var(--bg2)}
+.diet-photo-btn-icon{font-size:24px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:var(--accent-light);border-radius:12px;flex-shrink:0}
+.diet-photo-btn-main{flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.diet-photo-btn-text{font-size:14px;font-weight:700;color:var(--ink)}
 .diet-photo-btn-hint{font-size:11px;color:var(--muted);font-weight:400}
+.diet-photo-btn-arrow{font-size:20px;color:var(--muted);font-weight:300}
 
-.diet-analysis-card{background:var(--bg);border-radius:16px;padding:16px;margin-bottom:16px;box-shadow:var(--shadow-sm)}
-.diet-analysis-header{display:flex;align-items:center;gap:14px;margin-bottom:12px}
-.diet-analysis-score-ring{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:conic-gradient(var(--score-color,#7CB69D) calc(var(--score,0)*1%),var(--border) 0);position:relative;flex-shrink:0}
+.diet-analysis-card{background:var(--bg);border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:var(--shadow-sm)}
+.diet-analysis-header{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.diet-analysis-score-ring{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:conic-gradient(var(--score-color,#7CB69D) calc(var(--score,0)*1%),var(--border) 0);position:relative;flex-shrink:0}
 .diet-analysis-score-ring::before{content:'';position:absolute;inset:4px;border-radius:50%;background:var(--bg)}
-.diet-analysis-score{position:relative;z-index:1;font-size:18px;font-weight:800;color:var(--score-color,#7CB69D)}
+.diet-analysis-score{position:relative;z-index:1;font-size:16px;font-weight:800;color:var(--score-color,#7CB69D)}
 .diet-analysis-info{flex:1}
 .diet-analysis-title{font-size:14px;font-weight:700;color:var(--ink)}
 .diet-analysis-summary{font-size:11px;color:var(--muted);margin-top:2px}
-.diet-analysis-tips{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
-.diet-analysis-tip{font-size:12px;color:var(--ink2);line-height:1.5;padding:8px 10px;background:var(--bg2);border-radius:10px}
-.diet-analysis-ai-btn{width:100%;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
-.diet-analysis-ai-btn:active{transform:scale(.98);opacity:.9}
+.diet-analysis-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.diet-analysis-tag{font-size:11px;color:var(--ink2);padding:5px 10px;background:var(--bg2);border-radius:20px;line-height:1.3}
+.diet-analysis-footer{display:flex;justify-content:flex-end}
+.diet-analysis-ai-link{padding:6px 12px;border-radius:10px;border:none;background:transparent;color:var(--accent);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:4px}
+.diet-analysis-ai-link:active{opacity:.7;background:var(--accent-light)}
 
-.diet-empty-tip{text-align:center;padding:30px 16px;color:var(--muted);font-size:13px}
-.diet-photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.diet-empty-tip{text-align:center;padding:24px 16px;color:var(--muted);font-size:13px}
+
+.diet-tip-advice-card{background:linear-gradient(135deg,var(--accent-light),rgba(124,182,157,.08));border-radius:14px;padding:12px 14px;margin-bottom:12px;border-left:3px solid var(--accent)}
+.diet-tip-advice-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.diet-tip-advice-icon{font-size:18px}
+.diet-tip-advice-title{font-size:13px;font-weight:700;color:var(--ink)}
+.diet-tip-advice-text{font-size:12px;color:var(--ink2);line-height:1.6;padding-left:2px}
+.diet-photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .diet-photo-item{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:1;cursor:pointer;background:var(--bg2)}
 .diet-photo-img{width:100%;height:100%;object-fit:cover}
 .diet-photo-overlay{position:absolute;bottom:0;left:0;right:0;padding:8px 6px;background:linear-gradient(transparent,rgba(0,0,0,.6));display:flex;justify-content:space-between;align-items:center}
 .diet-photo-overlay span{font-size:10px;color:#fff;font-weight:600}
 
-.diet-history-list{display:flex;flex-direction:column;gap:8px}
+.diet-today-card{background:var(--bg);border-radius:16px;padding:14px;margin-bottom:16px;box-shadow:var(--shadow-sm)}
+.diet-today-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.diet-today-title{font-size:14px;font-weight:700;color:var(--ink)}
+.diet-today-count{font-size:12px;color:var(--muted);font-weight:600;background:var(--bg2);padding:3px 10px;border-radius:10px}
+
+.diet-history-list{display:flex;flex-direction:column;gap:0}
+.diet-history-row{display:flex;gap:10px}
+.diet-history-timeline{display:flex;flex-direction:column;align-items:center;padding-top:16px;width:20px;flex-shrink:0}
+.diet-history-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.diet-history-line{flex:1;width:2px;background:var(--border);margin:4px 0}
+.diet-history-body{flex:1;padding-bottom:12px}
 .diet-history-item{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--bg);border-radius:12px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow-sm)}
 .diet-history-item:active{transform:scale(.98)}
-.diet-history-thumb{width:48px;height:48px;border-radius:10px;background-size:cover;background-position:center;flex-shrink:0;background-color:var(--bg2)}
+.diet-history-thumb{width:44px;height:44px;border-radius:10px;background-size:cover;background-position:center;flex-shrink:0;background-color:var(--bg2)}
 .diet-history-info{flex:1}
 .diet-history-date{font-size:13px;font-weight:700;color:var(--ink)}
 .diet-history-count{font-size:11px;color:var(--muted);margin-top:2px}
 .diet-history-arrow{font-size:18px;color:var(--muted);transition:transform .2s}
-.diet-history-detail{padding:8px 0}
+.diet-history-detail{padding:8px 0 0 0}
+
+/* 记录页底部知识精简卡 */
+.dk-section{margin-top:20px}
+.dk-section-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:10px;padding-left:2px}
+.dk-seasonal-card{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:var(--bg);border-radius:14px;box-shadow:var(--shadow-sm);margin-bottom:10px}
+.dk-seasonal-icon{font-size:22px;flex-shrink:0}
+.dk-seasonal-body{flex:1}
+.dk-seasonal-name{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.dk-seasonal-text{font-size:12px;color:var(--ink2);line-height:1.6}
+
+.dk-meal-card{padding:10px 14px;background:var(--bg);border-radius:14px;box-shadow:var(--shadow-sm);margin-bottom:10px}
+.dk-meal-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.dk-meal-icon{font-size:18px}
+.dk-meal-title{font-size:13px;font-weight:700;color:var(--ink)}
+.dk-meal-tips{display:flex;flex-wrap:wrap;gap:6px}
+.dk-meal-tag{font-size:11px;color:var(--ink2);padding:4px 10px;background:var(--bg2);border-radius:20px;line-height:1.3}
+
+.dk-colors-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.dk-color-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;background:var(--bg);border-radius:12px;box-shadow:var(--shadow-sm);text-align:center}
+.dk-color-icon{font-size:20px}
+.dk-color-name{font-size:10px;font-weight:700;color:var(--ink)}
+.dk-color-foods{font-size:9px;color:var(--muted);line-height:1.3}
+
+.dk-meridian-card{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:var(--bg);border-radius:14px;box-shadow:var(--shadow-sm);margin-bottom:10px;border-left:3px solid var(--accent2)}
+.dk-meridian-icon{font-size:22px;flex-shrink:0}
+.dk-meridian-body{flex:1}
+.dk-meridian-name{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.dk-meridian-action{font-size:12px;color:var(--ink2);line-height:1.5}
+
+.dk-sport-targets{display:flex;gap:8px;margin-bottom:10px}
+.dk-sport-target{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 4px;background:var(--bg);border-radius:12px;box-shadow:var(--shadow-sm)}
+.dk-sport-target-label{font-size:10px;color:var(--muted)}
+.dk-sport-target-val{font-size:14px;font-weight:700;color:var(--accent)}
+
+.dk-prescriptions{display:flex;flex-direction:column;gap:8px}
+.dk-prescription-card{padding:12px 14px;background:var(--bg);border-radius:14px;box-shadow:var(--shadow-sm)}
+.dk-prescription-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.dk-prescription-icon{font-size:18px}
+.dk-prescription-title{font-size:13px;font-weight:700;color:var(--ink)}
+.dk-prescription-rows{display:flex;gap:12px;margin-bottom:6px}
+.dk-prescription-rows span{font-size:11px;color:var(--ink2);background:var(--bg2);padding:3px 8px;border-radius:8px}
+.dk-prescription-tip{font-size:11px;color:var(--muted);line-height:1.5}
 
 .diet-form-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:300;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s ease}
 .diet-form-panel{background:var(--bg);border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;animation:slideUp .3s ease}

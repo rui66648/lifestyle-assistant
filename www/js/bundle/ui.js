@@ -443,10 +443,10 @@
     return `
       <div class="checkin-segmented">
         <div class="checkin-segment ${checkinCurrentView === 'habits' ? 'active' : ''}" onclick="switchCheckinView('habits')">
-          <span>📋</span> 习惯打卡
+          打卡
         </div>
         <div class="checkin-segment ${checkinCurrentView === 'diet' ? 'active' : ''}" onclick="switchCheckinView('diet')">
-          <span>📷</span> 饮食记录
+          记录
         </div>
       </div>
     `;
