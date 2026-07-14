@@ -747,11 +747,43 @@
 <script src="js/modules/local-notify.js?v=20260714" defer></script>
 <script src="js/main.js?v=20260714" defer></script>
 <script>
+(function() {
+  var CUR_VERSION = '1.2';
+  var KEY = 'force_refresh_version';
+  var prev = localStorage.getItem(KEY);
+  if (prev && prev !== CUR_VERSION) {
+    localStorage.setItem(KEY, CUR_VERSION);
+    if (window.caches) {
+      caches.keys().then(function(keys) {
+        return Promise.all(keys.map(function(k) { return caches.delete(k); }));
+      }).then(function() {
+        window.location.reload(true);
+      });
+    } else {
+      window.location.reload(true);
+    }
+    return;
+  }
+  if (!prev) localStorage.setItem(KEY, CUR_VERSION);
+})();
+</script>
+<script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').then(reg => {
     let refreshing = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       if (!refreshing) { refreshing = true; window.location.reload(); }
+    });
+    if (reg.waiting) {
+      reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+    }
+    reg.addEventListener('updatefound', () => {
+      var newWorker = reg.installing;
+      newWorker.addEventListener('statechange', () => {
+        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          newWorker.postMessage({ type: 'SKIP_WAITING' });
+        }
+      });
     });
   }).catch(err => console.log('SW registration failed:', err));
 }
