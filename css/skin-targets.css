@@ -24,7 +24,7 @@
 }
 
 /* ===== Card Target Unifier ===== */
-:where(.habit-card, .stat-card, .mini-quote, .profile-stat-item, .mg-group, .mg-stat-card, .ai-message-bubble, .water-tracker, .diet-tip-card, .diet-meal-card, .diet-seasonal-card, .diet-color-card, .diet-habit-item, .diet-book-item, .lib-item).skinnable-card {
+::where(.habit-card, .stat-card, .mini-quote, .profile-stat-item, .mg-group, .mg-stat-card, .ai-message-bubble, .water-tracker, .diet-tip-card, .diet-meal-card, .diet-seasonal-card, .diet-color-card, .diet-habit-item, .diet-book-item, .diet-analysis-card, .lib-item).skinnable-card {
   transition: transform 300ms cubic-bezier(.4, 0, .2, 1),
               box-shadow 300ms cubic-bezier(.4, 0, .2, 1),
               border-color 300ms cubic-bezier(.4, 0, .2, 1);

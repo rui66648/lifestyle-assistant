@@ -670,6 +670,7 @@ body.cd-glass .diet-seasonal-card,
 body.cd-glass .diet-color-card,
 body.cd-glass .diet-habit-item,
 body.cd-glass .diet-book-item,
+body.cd-glass .diet-analysis-card,
 body.cd-glass .lib-item{
   position:relative;
   background:transparent;
@@ -760,6 +761,7 @@ body.cd-dark .diet-seasonal-card,
 body.cd-dark .diet-color-card,
 body.cd-dark .diet-habit-item,
 body.cd-dark .diet-book-item,
+body.cd-dark .diet-analysis-card,
 body.cd-dark .lib-item{
   position:relative;
   border-radius:1em;
@@ -810,6 +812,7 @@ body.cd-grad .diet-seasonal-card,
 body.cd-grad .diet-color-card,
 body.cd-grad .diet-habit-item,
 body.cd-grad .diet-book-item,
+body.cd-grad .diet-analysis-card,
 body.cd-grad .lib-item{
   --background:#f5f5f5;
   --green:#1FC11B;

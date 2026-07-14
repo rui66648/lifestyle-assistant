@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -7,16 +7,18 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="习惯打卡">
-<link rel="manifest" href="www/manifest.json">
+<link rel="manifest" href="./manifest.json">
 <title>生活习惯小助手 V2</title>
-<link rel="stylesheet" href="www/css/main.css?v=20260714">
-<link rel="stylesheet" href="www/css/components.css?v=20260714">
-<link rel="stylesheet" href="www/css/skin-targets.css?v=20260714">
-<link rel="stylesheet" href="www/css/uiverse-raw.css?v=20260714">
-<link rel="stylesheet" href="www/css/sports.css?v=20260714">
+<link rel="stylesheet" href="./css/main.css?v=20260714">
+<link rel="stylesheet" href="./css/components.css?v=20260714">
+<link rel="stylesheet" href="./css/skin-targets.css?v=20260714">
+<link rel="stylesheet" href="./css/uiverse-raw.css?v=20260714">
+<link rel="stylesheet" href="./css/sports.css?v=20260714">
+<link rel="stylesheet" href="./css/ui-enhance.css?v=20260714">
 </head>
 <body>
 
+<!-- ===== 骨架屏（首屏立即显示，JS执行后被替换） ===== -->
 <div id="skeleton" style="min-height:100vh;background:var(--bg,#FDF8F0);display:flex;flex-direction:column;padding:20px 16px 100px">
   <style>
     @keyframes sk-shimmer{0%{background-position:-200px 0}100%{background-position:200px 0}}
@@ -60,9 +62,14 @@
 </div>
 <script>document.getElementById('skeleton').style.display='flex';</script>
 
+<!-- Toast -->
 <div class="toast" id="toast"></div>
 
+
+
+<!-- 氛围背景 -->
 <div class="ambient-bg" id="ambientBg"></div>
+<!-- 极简顶栏 -->
 <div class="mini-header" id="todayCard">
   <div class="mini-header-row">
     <div class="mini-date-row">
@@ -82,6 +89,7 @@
   </div>
 </div>
 
+<!-- Checkin Section -->
 <div class="section active" id="sec-checkin">
   <div id="dateNavigator" class="date-nav">
     <button onclick="swipeDate(-1)" class="date-nav-btn">◀</button>
@@ -92,13 +100,16 @@
   <div id="checkinContent"></div>
 </div>
 
+<!-- Profile Section (我的) -->
 <div class="section" id="sec-profile">
+  <!-- 设置入口 -->
   <div class="profile-settings-entry" onclick="openSettingsPanel()">
     <span class="pse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span>
     <span class="pse-label">设置</span>
     <span class="pse-desc" id="pseAiStatus">AI 配置</span>
     <span class="pse-arrow">›</span>
   </div>
+  <!-- 个人信息卡片 -->
   <div class="profile-card" id="profileCard">
     <div class="profile-avatar" id="profileAvatar">🌱</div>
     <div class="profile-info">
@@ -114,6 +125,7 @@
     </div>
   </div>
 
+  <!-- 统计概览 -->
   <div class="profile-stats" id="profileStats">
     <div class="profile-stat-item">
       <span class="ps-val" id="psStreak">0</span>
@@ -137,10 +149,13 @@
     </div>
   </div>
 
+  <!-- 体质结果摘要 -->
   <div id="constitutionSummaryCard" style="display:none"></div>
 
+  <!-- 图标宫格 -->
   <div class="profile-grid" id="profileGrid"></div>
 
+  <!-- 习惯排行榜 -->
   <div class="ranking-section collapsed" id="rankingSection">
     <div class="section-title" onclick="toggleRanking()" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center">
       <span>习惯排名</span>
@@ -149,11 +164,13 @@
     <div class="ranking-list" id="rankingList"></div>
   </div>
 
+  <!-- 成就徽章 -->
   <div class="profile-badges-section">
     <div class="section-title">成就徽章</div>
     <div class="achievements" id="achievements"></div>
   </div>
 
+  <!-- 每日卡片收藏入口 -->
   <div class="daily-cards-entry" id="dailyCardsEntry" onclick="openDailyCardCollection()" style="display:none">
     <div class="dc-header">
       <span class="dc-title">🎴 每日卡片收藏</span>
@@ -162,22 +179,34 @@
     <div class="dc-preview" id="dcPreview"></div>
   </div>
 
+  <!-- 导出CSV -->
   <button class="export-btn" onclick="exportCSV()">📥 导出CSV数据</button>
 </div>
 
+<!-- Manage Section (管理 - 按时间段分组管理习惯) -->
 <div class="section" id="sec-manage">
+  <!-- 统计概览卡片 -->
   <div class="mg-stats" id="mgStats"></div>
+
+  <!-- 顶部搜索和添加 -->
   <div class="mg-header">
     <div class="mg-search-wrap">
       <input class="mg-search" id="mgSearch" placeholder="🔍 搜索习惯..." oninput="debouncedRenderManage()">
     </div>
     <button class="mg-add-btn" onclick="openLibraryPanel()">＋</button>
   </div>
+
+  <!-- 按时间段分组的习惯列表 -->
   <div id="mgGroups"></div>
 </div>
 
+
+
+
+<!-- Panel Overlay -->
 <div class="panel-overlay" id="panelOverlay" onclick="closeAllPanels()"></div>
 
+<!-- Checkin Input Panel -->
 <div class="panel" id="checkinPanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
@@ -197,6 +226,7 @@
   </div>
 </div>
 
+<!-- Habit Time Settings Panel -->
 <div class="panel" id="timePanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
@@ -206,6 +236,7 @@
   <div class="panel-body" id="timePanelBody"></div>
 </div>
 
+<!-- Habit Library Panel -->
 <div class="panel" id="libraryPanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
@@ -215,6 +246,7 @@
   <div class="panel-body" id="libraryPanelBody"></div>
 </div>
 
+<!-- Weekly Report Panel -->
 <div class="panel" id="reportPanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
@@ -224,6 +256,7 @@
   <div class="panel-body" id="reportPanelBody"></div>
 </div>
 
+<!-- Water Settings Panel -->
 <div class="panel" id="waterSettingsPanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
@@ -233,6 +266,7 @@
   <div class="panel-body" id="waterSettingsBody"></div>
 </div>
 
+<!-- 子午流注 Bio-Rhythm Panel -->
 <div class="panel" id="clockPanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
@@ -242,6 +276,7 @@
   <div class="panel-body" id="clockPanelBody"></div>
 </div>
 
+<!-- 养生参考文献 Panel -->
 <div class="panel" id="refPanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
@@ -251,6 +286,7 @@
   <div class="panel-body" id="refPanelBody"></div>
 </div>
 
+<!-- 情志养生 Panel -->
 <div class="panel" id="emotionPanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
@@ -260,6 +296,7 @@
   <div class="panel-body" id="emotionPanelBody"></div>
 </div>
 
+<!-- 五劳防护 Panel -->
 <div class="panel" id="wulaoPanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
@@ -269,6 +306,7 @@
   <div class="panel-body" id="wulaoPanelBody"></div>
 </div>
 
+<!-- 饮食建议面板 -->
 <div class="panel" id="dietPanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
@@ -278,6 +316,7 @@
   <div class="panel-body" id="dietPanelBody"></div>
 </div>
 
+<!-- 运动养生面板 -->
 <div class="panel" id="sportsPanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
@@ -287,11 +326,13 @@
   <div class="panel-body" id="sportsPanelBody"></div>
 </div>
 
+<!-- 皮肤面板 -->
 <div class="panel" id="skinPanel">
   <div class="panel-handle"></div>
   <div class="panel-body"></div>
 </div>
 
+<!-- AI 养生顾问 Panel (Trae Style) -->
 <div class="panel" id="aiChatPanel">
   <div class="panel-handle"></div>
   <div class="panel-header" style="position:relative">
@@ -302,12 +343,16 @@
     <button class="panel-close" onclick="closeAllPanels()">✕</button>
   </div>
   <div class="panel-body panel-body-chat" id="aiChatPanelBody">
+    <!-- 消息区域 -->
     <div id="aiChatMessages"></div>
+    <!-- 滚动到底部按钮 -->
     <div id="aiScrollBottom" onclick="scrollAiToBottom()" title="回到底部">⬇</div>
+    <!-- 输入区域 -->
     <div id="aiChatInputArea">
       <input type="text" id="aiChatInput" placeholder="输入养生问题，如：失眠怎么调理？" onkeydown="if(event.key==='Enter')sendAiMessage()">
       <button id="aiSendBtn" onclick="sendAiMessage()" title="发送">➤</button>
     </div>
+    <!-- 未配置提示 -->
     <div id="aiChatUnconfigured" style="display:none;padding:24px 20px;text-align:center">
       <div class="ai-unconfigured-icon">🔒</div>
       <div class="ai-unconfigured-title">尚未配置 API</div>
@@ -317,6 +362,7 @@
   </div>
 </div>
 
+<!-- 设置 Panel -->
 <div class="panel" id="settingsPanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
@@ -324,6 +370,7 @@
     <button class="panel-close" onclick="closeAllPanels()">✕</button>
   </div>
   <div class="panel-body panel-body-p20">
+    <!-- 通用设置 -->
     <div class="settings-section">
       <div class="settings-section-title">通用设置</div>
       <div class="settings-item">
@@ -341,6 +388,7 @@
       </div>
     </div>
 
+    <!-- 通知提醒 -->
     <div class="settings-section">
       <div class="settings-section-title">习惯提醒</div>
       <div class="settings-item">
@@ -380,6 +428,7 @@
       </div>
     </div>
 
+    <!-- AI 配置区 -->
     <div class="settings-section">
       <div class="settings-section-title">AI 养生顾问配置</div>
       <div class="settings-section-desc">配置阿里百炼 API 以启用 AI 养生顾问功能</div>
@@ -408,6 +457,7 @@
   </div>
 </div>
 
+<!-- 体质测试 Panel -->
 <div class="panel" id="constitutionPanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
@@ -417,6 +467,7 @@
   <div class="panel-body panel-body-p0" id="constitutionPanelBody"></div>
 </div>
 
+<!-- 健康报告 Panel -->
 <div class="panel" id="healthReportPanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
@@ -426,6 +477,7 @@
   <div class="panel-body panel-body-p0" id="healthReportPanelBody"></div>
 </div>
 
+<!-- 习惯提醒列表 Panel -->
 <div class="panel" id="habitReminderPanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
@@ -435,6 +487,7 @@
   <div class="panel-body panel-body-p0" id="habitReminderBody"></div>
 </div>
 
+<!-- 分享海报 Panel -->
 <div class="panel" id="posterPanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
@@ -444,10 +497,11 @@
   <div class="panel-body panel-body-center" id="posterPanelBody">
     <canvas id="posterCanvas" style="width:100%;max-width:320px;border-radius:12px;box-shadow:var(--shadow)"></canvas>
     <div style="margin-top:12px;font-size:13px;color:var(--muted)">长按图片保存到相册</div>
-    <button class="const-btn" onclick="LazyLoad('www/js/modules/poster.js',function(){downloadPoster()})" style="margin-top:12px">💾 下载海报</button>
+    <button class="const-btn" onclick="LazyLoad('js/modules/poster.js',function(){downloadPoster()})" style="margin-top:12px">💾 下载海报</button>
   </div>
 </div>
 
+<!-- 数据管理 Panel -->
 <div class="panel" id="dataPanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
@@ -466,6 +520,7 @@
   </div>
 </div>
 
+<!-- 番茄钟 Panel -->
 <div class="panel" id="pomodoroPanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
@@ -491,18 +546,22 @@
   </div>
 </div>
 
+
+<!-- 统计详情 Panel -->
 <div class="panel" id="statsDetailPanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
     <span class="panel-title">📊 统计详情</span>
     <button class="panel-close" onclick="closeAllPanels()">✕</button>
   </div>
+  <!-- 周月年标签页 -->
   <div class="sd-tabs">
     <button class="sd-tab active" data-period="week" onclick="App.UI.Render.switchStatsPeriod('week', this)">周</button>
     <button class="sd-tab" data-period="month" onclick="App.UI.Render.switchStatsPeriod('month', this)">月</button>
     <button class="sd-tab" data-period="year" onclick="App.UI.Render.switchStatsPeriod('year', this)">年</button>
   </div>
   <div class="panel-body" id="statsDetailPanelBody" style="padding:16px">
+    <!-- 周统计 -->
     <div class="sd-period-content" id="sdWeekContent">
       <div class="sd-section">
         <div class="sd-section-title">📈 本周趋势</div>
@@ -517,6 +576,7 @@
         <div id="sdRankingList"></div>
       </div>
     </div>
+    <!-- 月统计 -->
     <div class="sd-period-content" id="sdMonthContent" style="display:none">
       <div class="sd-section">
         <div class="heatmap-header">
@@ -534,6 +594,7 @@
         <div id="sdMonthReview"></div>
       </div>
     </div>
+    <!-- 年统计 -->
     <div class="sd-period-content" id="sdYearContent" style="display:none">
       <div class="sd-section">
         <div class="sd-section-title">🗓️ 年度打卡热力图</div>
@@ -559,6 +620,7 @@
   </div>
 </div>
 
+<!-- 补签 Panel -->
 <div class="panel" id="retroactivePanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
@@ -569,6 +631,7 @@
   </div>
 </div>
 
+<!-- 每日成就卡片 Panel -->
 <div class="panel" id="achievementPanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
@@ -579,6 +642,7 @@
   </div>
 </div>
 
+<!-- 每日卡片收藏 Panel -->
 <div class="panel" id="dailyCardPanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
@@ -589,6 +653,7 @@
   </div>
 </div>
 
+<!-- 习惯编辑 Panel -->
 <div class="panel" id="habitEditPanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
@@ -599,6 +664,7 @@
   </div>
 </div>
 
+<!-- 首次访问引导 -->
 <div id="guideOverlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:200;align-items:center;justify-content:center">
   <div id="guideCard" style="background:#fff;border-radius:var(--radius);padding:32px 24px;margin:24px;max-width:340px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.2)">
     <div id="guideEmoji" style="font-size:48px;margin-bottom:12px">🌿</div>
@@ -612,6 +678,7 @@
   </div>
 </div>
 
+<!-- 底部导航栏 -->
 <div id="bottomNav" style="position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--rule);display:flex;justify-content:space-around;align-items:center;padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom));z-index:100">
   <button class="bnav-item active" data-tab="checkin" onclick="switchTab('checkin')">
     <svg class="bnav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -629,13 +696,13 @@
     </svg>
     <span class="bnav-label">管理</span>
   </button>
-  <button class="bnav-center" onclick="LazyLoad('www/js/modules/pomodoro.js',function(){openPomodoroPanel()})">
+  <button class="bnav-center" onclick="LazyLoad('js/modules/pomodoro.js',function(){openPomodoroPanel()})">
     <svg class="bnav-center-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="9"/>
       <path d="M12 7v5l3 2"/>
     </svg>
   </button>
-  <button class="bnav-item" onclick="LazyLoad('www/js/modules/ai.js',function(){openAiChatPanel()})">
+  <button class="bnav-item" onclick="LazyLoad('js/modules/ai.js',function(){openAiChatPanel()})">
     <svg class="bnav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M9 18h6"/>
       <path d="M10 22h4"/>
@@ -652,24 +719,36 @@
   </button>
 </div>
 
-<link rel="preload" href="www/js/app.js?v=20260714" as="script">
-<link rel="preload" href="www/js/core/utils.js?v=20260714" as="script">
-<link rel="preload" href="www/js/bundle/ui.js?v=20260714" as="script">
+<!-- ===== 关键JS预加载 ===== -->
+<link rel="preload" href="js/app.js?v=20260714" as="script">
+<link rel="preload" href="js/core/utils.js?v=20260714" as="script">
+<link rel="preload" href="js/bundle/ui.js?v=20260714" as="script">
 
-<script src="www/js/core/platform.js?v=20260714"></script>
-<script src="www/js/app.js?v=20260714" defer></script>
-<script src="www/js/lazy.js?v=20260714" defer></script>
-<script src="www/js/bundle/data.js?v=20260714" defer></script>
-<script src="www/js/core/utils.js?v=20260714" defer></script>
-<script src="www/js/core/storage.js?v=20260714" defer></script>
-<script src="www/js/bundle/modules.js?v=20260714" defer></script>
-<script src="www/js/bundle/ui.js?v=20260714" defer></script>
-<script src="www/js/compat.js?v=20260714" defer></script>
-<script src="www/js/modules/local-notify.js?v=20260714" defer></script>
-<script src="www/js/main.js?v=20260714" defer></script>
+<!-- ===== 第0层：平台检测（必须同步加载，最先执行） ===== -->
+<script src="js/core/platform.js?v=20260714"></script>
+
+<!-- ===== 第1层：命名空间 + 懒加载 ===== -->
+<script src="js/app.js?v=20260714" defer></script>
+<script src="js/lazy.js?v=20260714" defer></script>
+
+<!-- ===== 第1-2层：数据 + 核心 ===== -->
+<script src="js/bundle/data.js?v=20260714" defer></script>
+<script src="js/core/utils.js?v=20260714" defer></script>
+<script src="js/core/storage.js?v=20260714" defer></script>
+
+<!-- ===== 第3层：业务模块（合并） ===== -->
+<script src="js/bundle/modules.js?v=20260714" defer></script>
+
+<!-- ===== 第4层：UI层（合并） ===== -->
+<script src="js/bundle/ui.js?v=20260714" defer></script>
+
+<!-- ===== 第5层：兼容层 + 入口 ===== -->
+<script src="js/compat.js?v=20260714" defer></script>
+<script src="js/modules/local-notify.js?v=20260714" defer></script>
+<script src="js/main.js?v=20260714" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('www/sw.js').then(reg => {
+  navigator.serviceWorker.register('./sw.js').then(reg => {
     let refreshing = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       if (!refreshing) { refreshing = true; window.location.reload(); }
