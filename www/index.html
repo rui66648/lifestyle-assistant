@@ -9,12 +9,12 @@
 <meta name="apple-mobile-web-app-title" content="习惯打卡">
 <link rel="manifest" href="./manifest.json">
 <title>生活习惯小助手 V2</title>
-<link rel="stylesheet" href="./css/main.css?v=20260714">
-<link rel="stylesheet" href="./css/components.css?v=20260714">
-<link rel="stylesheet" href="./css/skin-targets.css?v=20260714">
-<link rel="stylesheet" href="./css/uiverse-raw.css?v=20260714">
-<link rel="stylesheet" href="./css/sports.css?v=20260714">
-<link rel="stylesheet" href="./css/ui-enhance.css?v=20260714">
+<link rel="stylesheet" href="./css/main.min.css?v=20260714">
+<link rel="stylesheet" href="./css/components.min.css?v=20260714">
+<link rel="stylesheet" href="./css/skin-targets.min.css?v=20260714">
+<link rel="stylesheet" href="./css/uiverse-raw.min.css?v=20260714">
+<link rel="stylesheet" href="./css/sports.min.css?v=20260714">
+<link rel="stylesheet" href="./css/ui-enhance.min.css?v=20260714">
 </head>
 <body>
 
@@ -722,25 +722,25 @@
 <!-- ===== 关键JS预加载 ===== -->
 <link rel="preload" href="js/app.js?v=20260714" as="script">
 <link rel="preload" href="js/core/utils.js?v=20260714" as="script">
-<link rel="preload" href="js/bundle/ui.js?v=20260714" as="script">
+<link rel="preload" href="js/bundle/ui.min.js?v=20260714" as="script">
 
-<!-- ===== 第0层：平台检测（必须同步加载，最先执行） ===== -->
-<script src="js/core/platform.js?v=20260714"></script>
+<!-- ===== 第0层：平台检测（内联消除HTTP请求） ===== -->
+<script>(function(){var p='pwa';try{if(typeof Capacitor!=='undefined'&&Capacitor.getPlatform&&Capacitor.getPlatform()==='android')p='apk';else if(typeof Capacitor!=='undefined'&&Capacitor.Plugins&&Capacitor.Plugins.LocalNotifications)p='apk';}catch(e){}window.__PLATFORM__=p;window.isAPK=function(){return p==='apk';};window.isPWA=function(){return p==='pwa';};})();</script>
 
 <!-- ===== 第1层：命名空间 + 懒加载 ===== -->
 <script src="js/app.js?v=20260714" defer></script>
 <script src="js/lazy.js?v=20260714" defer></script>
 
 <!-- ===== 第1-2层：数据 + 核心 ===== -->
-<script src="js/bundle/data.js?v=20260714" defer></script>
+<script src="js/bundle/data.min.js?v=20260714" defer></script>
 <script src="js/core/utils.js?v=20260714" defer></script>
 <script src="js/core/storage.js?v=20260714" defer></script>
 
-<!-- ===== 第3层：业务模块（合并） ===== -->
-<script src="js/bundle/modules.js?v=20260714" defer></script>
+<!-- ===== 第3层：业务模块（合并压缩） ===== -->
+<script src="js/bundle/modules.min.js?v=20260714" defer></script>
 
-<!-- ===== 第4层：UI层（合并） ===== -->
-<script src="js/bundle/ui.js?v=20260714" defer></script>
+<!-- ===== 第4层：UI层（合并压缩） ===== -->
+<script src="js/bundle/ui.min.js?v=20260714" defer></script>
 
 <!-- ===== 第5层：兼容层 + 入口 ===== -->
 <script src="js/compat.js?v=20260714" defer></script>

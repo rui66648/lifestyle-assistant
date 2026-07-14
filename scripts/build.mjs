@@ -81,19 +81,13 @@ async function minifyCss() {
 }
 
 function updateSwCacheVersion() {
-  let versionCode = 30;
-  try {
-    const versionJson = JSON.parse(readFileSync(join(wwwDir, 'version.json'), 'utf8'));
-    versionCode = (versionJson.versionCode || 1) * 10 + (versionJson.cacheVersion || 0);
-    if (versionCode < 30) versionCode = 30;
-  } catch (e) {
-    console.warn('无法读取 version.json，使用默认版本:', versionCode);
-  }
-
   const swPath = join(wwwDir, 'sw.js');
   let swContent = readFileSync(swPath, 'utf8');
   const oldMatch = swContent.match(/const CACHE_NAME = 'lifestyle-assistant-v(\d+)';/);
-  const newVersion = versionCode;
+  let newVersion = 30;
+  if (oldMatch) {
+    newVersion = parseInt(oldMatch[1], 10) + 1;
+  }
   swContent = swContent.replace(
     /const CACHE_NAME = 'lifestyle-assistant-v\d+';/,
     `const CACHE_NAME = 'lifestyle-assistant-v${newVersion}';`
