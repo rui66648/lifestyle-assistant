@@ -5,7 +5,9 @@
   "main": "sw.js",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "sync:android": "npx cap sync android",
+    "build:apk": "npm run build && npm run sync:android",
+    "deploy": "npm run build && git push origin master"
   },
   "repository": {
     "type": "git",
@@ -26,6 +28,8 @@
     "@capacitor/android": "^8.4.1",
     "@capacitor/cli": "^8.4.1",
     "@capacitor/core": "^8.4.1",
-    "@capacitor/local-notifications": "^8.2.0"
+    "@capacitor/local-notifications": "^8.2.0",
+    "cssnano": "^8.0.2",
+    "terser": "^5.49.0"
   }
 }

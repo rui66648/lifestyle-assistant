@@ -67,6 +67,9 @@ android/capacitor-cordova-android-plugins/
 # 构建时由 Gradle 从 local.properties 生成的内置云端配置（含 Key，勿提交）
 www/app-config.js
 
+# APK 构建产物（太大，不提交）
+www/*.apk
+
 # ============================================================
 # 系统文件
 # ============================================================

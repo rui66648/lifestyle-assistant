@@ -748,23 +748,27 @@
 <script src="js/main.js?v=20260714" defer></script>
 <script>
 (function() {
-  var CUR_VERSION = '1.2';
   var KEY = 'force_refresh_version';
-  var prev = localStorage.getItem(KEY);
-  if (prev && prev !== CUR_VERSION) {
-    localStorage.setItem(KEY, CUR_VERSION);
-    if (window.caches) {
-      caches.keys().then(function(keys) {
-        return Promise.all(keys.map(function(k) { return caches.delete(k); }));
-      }).then(function() {
+  fetch('./version.json', { cache: 'no-store' }).then(function(res) {
+    return res.json().catch(function() { return { versionName: '1.0' }; });
+  }).then(function(data) {
+    var CUR_VERSION = data.versionName || data.versionCode || '1.0';
+    var prev = localStorage.getItem(KEY);
+    if (prev && prev !== CUR_VERSION) {
+      localStorage.setItem(KEY, CUR_VERSION);
+      if (window.caches) {
+        caches.keys().then(function(keys) {
+          return Promise.all(keys.map(function(k) { return caches.delete(k); }));
+        }).then(function() {
+          window.location.reload(true);
+        });
+      } else {
         window.location.reload(true);
-      });
-    } else {
-      window.location.reload(true);
+      }
+      return;
     }
-    return;
-  }
-  if (!prev) localStorage.setItem(KEY, CUR_VERSION);
+    if (!prev) localStorage.setItem(KEY, CUR_VERSION);
+  }).catch(function() {});
 })();
 </script>
 <script>
