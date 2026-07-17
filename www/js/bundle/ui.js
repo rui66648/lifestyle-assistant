@@ -603,13 +603,14 @@
     renderProfileStats();
     renderConstitutionSummary();
     renderProfileGrid();
-    renderStats();
-    renderDailyCardPreview();
   }
 
   function renderManage() {
     renderManageStats();
     renderManageGroups();
+    renderRankingSection();
+    renderAchievements();
+    renderDailyCardPreview();
   }
 
   function renderManageStats() {

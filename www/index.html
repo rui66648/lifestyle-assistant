@@ -9,12 +9,12 @@
 <meta name="apple-mobile-web-app-title" content="习惯打卡">
 <link rel="manifest" href="./manifest.json">
 <title>生活习惯小助手 V2</title>
-<link rel="stylesheet" href="./css/main.min.css?v=20260716">
-<link rel="stylesheet" href="./css/components.min.css?v=20260716">
-<link rel="stylesheet" href="./css/skin-targets.min.css?v=20260716">
-<link rel="stylesheet" href="./css/uiverse-raw.min.css?v=20260716">
-<link rel="stylesheet" href="./css/sports.min.css?v=20260716">
-<link rel="stylesheet" href="./css/ui-enhance.min.css?v=20260716">
+<link rel="stylesheet" href="./css/main.min.css?v=20260716a">
+<link rel="stylesheet" href="./css/components.min.css?v=20260716a">
+<link rel="stylesheet" href="./css/skin-targets.min.css?v=20260716a">
+<link rel="stylesheet" href="./css/uiverse-raw.min.css?v=20260716a">
+<link rel="stylesheet" href="./css/sports.min.css?v=20260716a">
+<link rel="stylesheet" href="./css/ui-enhance.min.css?v=20260716a">
 </head>
 <body>
 
@@ -100,7 +100,7 @@
   <div id="checkinContent"></div>
 </div>
 
-<!-- Profile Section (我的) -->
+<!-- Profile Section (我的 - 个人信息 + 体质 + 设置) -->
 <div class="section" id="sec-profile">
   <!-- 设置入口 -->
   <div class="profile-settings-entry" onclick="openSettingsPanel()">
@@ -155,6 +155,26 @@
   <!-- 图标宫格 -->
   <div class="profile-grid" id="profileGrid"></div>
 
+  <!-- 导出CSV -->
+  <button class="export-btn" onclick="exportCSV()">📥 导出CSV数据</button>
+</div>
+
+<!-- Manage Section (管理 - 习惯库 + 统计 + 排名) -->
+<div class="section" id="sec-manage">
+  <!-- 统计概览卡片 -->
+  <div class="mg-stats" id="mgStats"></div>
+
+  <!-- 顶部搜索和添加 -->
+  <div class="mg-header">
+    <div class="mg-search-wrap">
+      <input class="mg-search" id="mgSearch" placeholder="🔍 搜索习惯..." oninput="debouncedRenderManage()">
+    </div>
+    <button class="mg-add-btn" onclick="openLibraryPanel()">＋</button>
+  </div>
+
+  <!-- 按时间段分组的习惯列表 -->
+  <div id="mgGroups"></div>
+
   <!-- 习惯排行榜 -->
   <div class="ranking-section collapsed" id="rankingSection">
     <div class="section-title" onclick="toggleRanking()" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center">
@@ -178,26 +198,6 @@
     </div>
     <div class="dc-preview" id="dcPreview"></div>
   </div>
-
-  <!-- 导出CSV -->
-  <button class="export-btn" onclick="exportCSV()">📥 导出CSV数据</button>
-</div>
-
-<!-- Manage Section (管理 - 按时间段分组管理习惯) -->
-<div class="section" id="sec-manage">
-  <!-- 统计概览卡片 -->
-  <div class="mg-stats" id="mgStats"></div>
-
-  <!-- 顶部搜索和添加 -->
-  <div class="mg-header">
-    <div class="mg-search-wrap">
-      <input class="mg-search" id="mgSearch" placeholder="🔍 搜索习惯..." oninput="debouncedRenderManage()">
-    </div>
-    <button class="mg-add-btn" onclick="openLibraryPanel()">＋</button>
-  </div>
-
-  <!-- 按时间段分组的习惯列表 -->
-  <div id="mgGroups"></div>
 </div>
 
 
