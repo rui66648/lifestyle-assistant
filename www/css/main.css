@@ -154,7 +154,7 @@
   --z-toast:600;
   --z-tooltip:700;
 }
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:70px;overflow-x:hidden;line-height:var(--leading-normal);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;font-size:inherit}
 input,textarea{font-family:inherit;font-size:inherit}
@@ -5047,5 +5047,91 @@ body.bd-neon .season-tag{
   box-shadow:0 0 7px var(--accent),0 0 10px var(--accent),0 0 21px var(--accent),0 0 42px rgba(16,185,129,.3),inset 0 0 7px rgba(16,185,129,.15);
   text-shadow:0 0 7px var(--accent),0 0 10px rgba(16,185,129,.5);
 }
+
+/* ========== Design System v2.0 - 交互状态规范 ========== */
+
+/* ---- 按钮交互状态 ---- */
+.ui-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:10px 20px;border:none;border-radius:var(--radius-sm);
+  font-size:var(--text-base);font-weight:var(--font-semibold);line-height:1;
+  cursor:pointer;transition:all .2s var(--ease);-webkit-tap-highlight-color:transparent;
+  min-height:40px;min-width:80px;
+}
+.ui-btn--primary{
+  background:var(--accent);color:#fff;
+  box-shadow:var(--shadow-sm);
+}
+.ui-btn--primary:hover{background:var(--accent-600);box-shadow:var(--shadow)}
+.ui-btn--primary:active{background:var(--accent-700);transform:scale(.97);box-shadow:var(--shadow-xs)}
+.ui-btn--primary:disabled,.ui-btn--primary.is-disabled{
+  background:var(--bg2);color:var(--muted);box-shadow:none;cursor:not-allowed;transform:none;
+}
+.ui-btn--primary.is-loading{
+  position:relative;color:transparent;pointer-events:none;
+}
+.ui-btn--primary.is-loading::after{
+  content:'';position:absolute;width:16px;height:16px;
+  border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+
+.ui-btn--secondary{
+  background:var(--bg2);color:var(--ink2);
+  border:1px solid var(--rule);
+}
+.ui-btn--secondary:hover{background:var(--rule);color:var(--ink)}
+.ui-btn--secondary:active{background:var(--border);transform:scale(.97)}
+.ui-btn--secondary:disabled,.ui-btn--secondary.is-disabled{
+  background:var(--bg);color:var(--muted);border-color:var(--border-light);cursor:not-allowed;transform:none;
+}
+
+.ui-btn--ghost{
+  background:transparent;color:var(--accent);
+}
+.ui-btn--ghost:hover{background:var(--accent-light)}
+.ui-btn--ghost:active{background:rgba(16,185,129,.2);transform:scale(.97)}
+.ui-btn--ghost:disabled,.ui-btn--ghost.is-disabled{
+  color:var(--muted);cursor:not-allowed;transform:none;
+}
+
+.ui-btn--danger{
+  background:var(--danger);color:#fff;
+  box-shadow:var(--shadow-sm);
+}
+.ui-btn--danger:hover{background:#DC2626;box-shadow:var(--shadow)}
+.ui-btn--danger:active{background:#B91C1C;transform:scale(.97);box-shadow:var(--shadow-xs)}
+.ui-btn--danger:disabled,.ui-btn--danger.is-disabled{
+  background:var(--danger-light);color:var(--danger);cursor:not-allowed;transform:none;box-shadow:none;
+}
+
+/* ---- 输入框交互状态 ---- */
+.ui-input{
+  width:100%;padding:12px 16px;
+  background:var(--surface);color:var(--ink);
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+  font-size:var(--text-base);line-height:var(--leading-normal);
+  transition:all .2s var(--ease);outline:none;
+  -webkit-appearance:none;
+}
+.ui-input::placeholder{color:var(--muted)}
+.ui-input:hover{border-color:var(--rule)}
+.ui-input:focus{
+  border-color:var(--accent);border-width:2px;
+  box-shadow:0 0 0 3px var(--accent-light);
+  padding:11px 15px;
+}
+.ui-input.is-error{
+  background:var(--danger-light);border-color:var(--danger);color:var(--danger);
+}
+.ui-input.is-error:focus{
+  box-shadow:0 0 0 3px rgba(239,68,68,.15);
+}
+.ui-input:disabled,.ui-input.is-disabled{
+  background:var(--bg2);border-color:var(--border-light);color:var(--muted);cursor:not-allowed;
+}
+
+/* ---- 加载动画 ---- */
+@keyframes spin{to{transform:rotate(360deg)}}
 
 
