@@ -615,12 +615,46 @@
   }
 
   // ============================================================
+  // 打开系统通知设置页
+  // ============================================================
+  async function openSystemNotificationSettings() {
+    // APK: 通过自定义 Capacitor 插件打开系统通知设置
+    if (_isCapacitor && window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.NotificationSettings) {
+      try {
+        await Capacitor.Plugins.NotificationSettings.open();
+        return true;
+      } catch (e) {
+        console.warn('[LocalNotify] 打开系统通知设置失败:', e);
+        return false;
+      }
+    }
+
+    // PWA: 浏览器无法打开系统设置，直接请求权限
+    if (_platform === 'pwa' && 'Notification' in window) {
+      if (Notification.permission === 'default') {
+        var perm = await Notification.requestPermission();
+        _permissionGranted = perm === 'granted';
+      }
+      // 浏览器无法跳转到系统设置，提示用户
+      if (Notification.permission === 'denied') {
+        if (typeof showToast === 'function') {
+          showToast('请在浏览器地址栏点击🔒图标，修改通知权限');
+        }
+      }
+      return _permissionGranted;
+    }
+
+    return false;
+  }
+
+  // ============================================================
   // 暴露 API
   // ============================================================
 
   // 全局函数
   window.sendLocalNotification = sendNotification;
   window.requestLocalNotifyPermission = requestPermission;
+  window.openSystemNotificationSettings = openSystemNotificationSettings;
   window.scheduleHabitReminders = scheduleHabitReminders;
   window.rescheduleAllNotifications = rescheduleAll;
   window.markNotificationUIReady = markUIReady;
@@ -632,6 +666,7 @@
   App.Modules.LocalNotify = {
     init: init,
     requestPermission: requestPermission,
+    openSystemNotificationSettings: openSystemNotificationSettings,
     checkPermission: checkPermission,
     sendNotification: sendNotification,
     scheduleHabitReminders: scheduleHabitReminders,

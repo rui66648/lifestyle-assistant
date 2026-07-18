@@ -9,12 +9,12 @@
 <meta name="apple-mobile-web-app-title" content="习惯打卡">
 <link rel="manifest" href="./manifest.json">
 <title>生活习惯小助手 V2</title>
-<link rel="stylesheet" href="./css/main.min.css?v=20260716a">
-<link rel="stylesheet" href="./css/components.min.css?v=20260716a">
-<link rel="stylesheet" href="./css/skin-targets.min.css?v=20260716a">
-<link rel="stylesheet" href="./css/uiverse-raw.min.css?v=20260716a">
-<link rel="stylesheet" href="./css/sports.min.css?v=20260716a">
-<link rel="stylesheet" href="./css/ui-enhance.min.css?v=20260716a">
+<link rel="stylesheet" href="./css/main.min.css?v=20260718a">
+<link rel="stylesheet" href="./css/components.min.css?v=20260718a">
+<link rel="stylesheet" href="./css/skin-targets.min.css?v=20260718a">
+<link rel="stylesheet" href="./css/uiverse-raw.min.css?v=20260718a">
+<link rel="stylesheet" href="./css/sports.min.css?v=20260718a">
+<link rel="stylesheet" href="./css/ui-enhance.min.css?v=20260718a">
 </head>
 <body>
 
@@ -78,7 +78,6 @@
     </div>
     <div class="mini-badges" id="todayBadges"></div>
   </div>
-  <div class="mini-tip" id="todaySeasonTip"></div>
   <div class="mini-quote" id="quoteCard">
     <div class="mini-quote-text" id="quoteText"></div>
     <div class="mini-quote-source" id="quoteSource"></div>
@@ -102,13 +101,6 @@
 
 <!-- Profile Section (我的 - 个人信息 + 体质 + 设置) -->
 <div class="section" id="sec-profile">
-  <!-- 设置入口 -->
-  <div class="profile-settings-entry" onclick="openSettingsPanel()">
-    <span class="pse-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span>
-    <span class="pse-label">设置</span>
-    <span class="pse-desc" id="pseAiStatus">AI 配置</span>
-    <span class="pse-arrow">›</span>
-  </div>
   <!-- 个人信息卡片 -->
   <div class="profile-card" id="profileCard">
     <div class="profile-avatar" id="profileAvatar">🌱</div>
@@ -122,6 +114,10 @@
         <span class="profile-progress-pct" id="levelProgressPct">0%</span>
       </div>
       <div class="profile-next" id="levelNext">再打卡 3 天升级为「养生学徒」</div>
+      <div class="profile-ai-status" id="profileAiStatus"></div>
+    </div>
+    <div class="profile-settings-btn" onclick="openSettingsPanel()" title="设置">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
     </div>
   </div>
 
@@ -155,8 +151,11 @@
   <!-- 图标宫格 -->
   <div class="profile-grid" id="profileGrid"></div>
 
-  <!-- 导出CSV -->
-  <button class="export-btn" onclick="exportCSV()">📥 导出CSV数据</button>
+  <!-- 导出区域 -->
+  <div class="export-row">
+    <button class="export-btn" onclick="exportCSV()">📥 导出CSV数据</button>
+    <button class="export-btn" onclick="window.open('app-release.apk', '_blank')">📥 下载APP</button>
+  </div>
 </div>
 
 <!-- Manage Section (管理 - 习惯库 + 统计 + 排名) -->
@@ -337,9 +336,6 @@
   <div class="panel-handle"></div>
   <div class="panel-header" style="position:relative">
     <span class="panel-title">AI 养生顾问</span>
-    <button id="aiClearBtn" class="delete-btn" onclick="clearAiChat()" title="清空对话">
-      <svg class="svgIcon" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-    </button>
     <button class="panel-close" onclick="closeAllPanels()">✕</button>
   </div>
   <div class="panel-body panel-body-chat" id="aiChatPanelBody">
@@ -366,94 +362,216 @@
 <div class="panel" id="settingsPanel">
   <div class="panel-handle"></div>
   <div class="panel-header">
-    <span class="panel-title"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>设置</span>
+    <span class="panel-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      </svg>设置
+    </span>
     <button class="panel-close" onclick="closeAllPanels()">✕</button>
   </div>
-  <div class="panel-body panel-body-p20">
-    <!-- 通用设置 -->
-    <div class="settings-section">
-      <div class="settings-section-title">通用设置</div>
-      <div class="settings-item">
-        <div class="settings-item-left">
-          <div class="settings-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></div>
-          <div>
-            <div class="settings-item-title">暗黑模式</div>
-            <div class="settings-item-desc">夜间护眼，更省电</div>
+  <div class="panel-body settings-body">
+
+    <!-- 用户信息卡片 -->
+    <div class="settings-user-card" id="settingsUserCard">
+      <div class="settings-user-avatar">🌱</div>
+      <div class="settings-user-info">
+        <div class="settings-user-name" id="settingsUserName">养生小白</div>
+        <div class="settings-user-meta" id="settingsUserMeta">连续打卡 0 天</div>
+      </div>
+      <span class="settings-row-arrow">›</span>
+    </div>
+
+    <!-- 外观 -->
+    <div class="settings-group">
+      <div class="settings-group-header">
+        <span class="settings-group-title">外观</span>
+        <div class="settings-group-line"></div>
+      </div>
+      <div class="settings-card">
+        <div class="settings-row">
+          <div class="settings-row-left">
+            <div class="settings-row-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+              </svg>
+            </div>
+            <div class="settings-row-text">
+              <div class="settings-row-title">深色模式</div>
+              <div class="settings-row-desc">夜间护眼，更省电</div>
+            </div>
           </div>
+          <label class="ui-switch" for="settingsThemeCheckbox">
+            <input class="ui-switch-input" type="checkbox" id="settingsThemeCheckbox" onchange="toggleDarkMode(this.checked)">
+            <span class="ui-switch-slider"></span>
+          </label>
         </div>
-        <label class="theme-toggle" for="settingsThemeCheckbox">
-          <input class="theme-checkbox" type="checkbox" id="settingsThemeCheckbox" onchange="toggleDarkMode(this.checked)">
-          <span class="theme-slider"></span>
-        </label>
       </div>
     </div>
 
-    <!-- 通知提醒 -->
-    <div class="settings-section">
-      <div class="settings-section-title">习惯提醒</div>
-      <div class="settings-item">
-        <div class="settings-item-left">
-          <div class="settings-item-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></div>
-          <div>
-            <div class="settings-item-title">提醒方式</div>
-            <div class="settings-item-desc">轻提醒 / 系统通知 / 强提醒</div>
-          </div>
-        </div>
-        <select class="settings-select" id="settingsReminderMethod" onchange="changeReminderMethod(this.value)">
-          <option value="toast">轻提醒（底部滑出）</option>
-          <option value="notification">系统通知（不打开App也能收到）</option>
-          <option value="alarm">强提醒（声音+振动+闪烁）</option>
-          <option value="off">关闭提醒</option>
-        </select>
+    <!-- 提醒 -->
+    <div class="settings-group">
+      <div class="settings-group-header">
+        <span class="settings-group-title">提醒</span>
+        <div class="settings-group-line"></div>
       </div>
-      <div class="settings-entry-item" onclick="openHabitReminderList()">
-        <div class="settings-item-left">
-          <div class="settings-item-icon">📋</div>
-          <div>
-            <div class="settings-item-title">管理习惯提醒</div>
-            <div class="settings-item-desc">查看和设置各习惯的提醒时间</div>
+      <div class="settings-card">
+        <div class="settings-row">
+          <div class="settings-row-left">
+            <div class="settings-row-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+            </div>
+            <div class="settings-row-text">
+              <div class="settings-row-title">提醒方式</div>
+              <div class="settings-row-desc">轻提醒 / 系统通知 / 强提醒</div>
+            </div>
           </div>
+          <select class="ui-select" id="settingsReminderMethod" onchange="changeReminderMethod(this.value)">
+            <option value="toast">轻提醒</option>
+            <option value="notification">系统通知</option>
+            <option value="alarm">强提醒</option>
+            <option value="off">关闭</option>
+          </select>
         </div>
-        <span class="settings-entry-arrow">›</span>
-      </div>
-      <div class="settings-entry-item" onclick="requestLocalNotifyPermission().then(function(granted){ if(granted) showToast('系统通知权限已开启'); else showToast('请前往系统设置开启通知权限'); })">
-        <div class="settings-item-left">
-          <div class="settings-item-icon">🔔</div>
-          <div>
-            <div class="settings-item-title">系统通知权限</div>
-            <div class="settings-item-desc" id="pushSettingsStatus">点击开启 · 不打开 App 也能收到提醒</div>
+        <div class="settings-row" onclick="openHabitReminderList()">
+          <div class="settings-row-left">
+            <div class="settings-row-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="9" y1="3" x2="9" y2="21"></line>
+                <line x1="15" y1="3" x2="15" y2="21"></line>
+                <line x1="3" y1="9" x2="21" y2="9"></line>
+                <line x1="3" y1="15" x2="21" y2="15"></line>
+              </svg>
+            </div>
+            <div class="settings-row-text">
+              <div class="settings-row-title">管理习惯提醒</div>
+              <div class="settings-row-desc">设置各习惯的提醒时间</div>
+            </div>
           </div>
+          <span class="settings-row-arrow">›</span>
         </div>
-        <span class="settings-entry-arrow">›</span>
+        <div class="settings-row" onclick="openSystemNotificationSettings()">
+          <div class="settings-row-left">
+            <div class="settings-row-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a8 8 0 0 0-8 8c0 5.25 3.5 9.5 8 10.5 1.5-.5 3-1.5 4-2.5-1-.5-2.5-.5-4-1.5-.5-1-1.5-2-1.5-4 0-1.5.5-2.5 1-3.5-.5-.5-1-1-1-2.5 0-2 2-3.5 4-3.5 1 0 2.5.5 3.5 2-.5 1-1.5 2-2.5 3-.5.5-1 .5-1.5.5z"></path>
+              </svg>
+            </div>
+            <div class="settings-row-text">
+              <div class="settings-row-title">系统通知权限</div>
+              <div class="settings-row-desc" id="pushSettingsStatus">点击前往系统设置开启</div>
+            </div>
+          </div>
+          <span class="settings-row-arrow">›</span>
+        </div>
       </div>
     </div>
 
-    <!-- AI 配置区 -->
-    <div class="settings-section">
-      <div class="settings-section-title">AI 养生顾问配置</div>
-      <div class="settings-section-desc">配置阿里百炼 API 以启用 AI 养生顾问功能</div>
-      <div class="settings-config-desc">
-        <strong>方式1（推荐）：Cloudflare Workers 代理</strong><br>
-        1. 注册 Cloudflare 账号 → 2. 注册阿里百炼获取 API Key → 3. 部署 workers/ai-proxy.js → 4. 填入 Worker URL 和 API Key
+    <!-- AI 服务 -->
+    <div class="settings-group">
+      <div class="settings-group-header">
+        <span class="settings-group-title">AI 服务</span>
+        <div class="settings-group-line"></div>
       </div>
-      <div class="he-label">Worker URL（可选）</div>
-      <input class="config-input" id="configWorkerUrl" type="text" placeholder="https://your-worker.workers.dev">
-      <div class="he-label" style="margin-top:12px">阿里百炼 API Key（必填）</div>
-      <input class="config-input" id="configApiKey" type="password" placeholder="sk-...">
-      <div class="he-label" style="margin-top:12px">选择模型</div>
-      <select class="config-input" id="configModel" style="padding:10px 12px">
-        <option value="qwen-turbo">qwen-turbo（轻量快速）</option>
-        <option value="qwen-plus">qwen-plus（标准推荐）</option>
-        <option value="qwen-max">qwen-max（最强智能）</option>
-        <option value="qwen-coder-plus">qwen-coder-plus（编程专用）</option>
-        <option value="deepseek-v3">deepseek-v3（深度推理）</option>
-        <option value="deepseek-r1">deepseek-r1（推理增强）</option>
-      </select>
-      <div class="settings-api-hint">获取地址：<a href="https://bailian.console.aliyun.com/" target="_blank" style="color:var(--accent)">阿里百炼控制台</a> → 模型广场 → API Key 管理</div>
-      <button class="const-btn" onclick="saveAiConfig()" style="margin-top:14px">✅ 保存 AI 配置</button>
-      <div id="settingsAiStatus" style="margin-top:10px;font-size:12px;text-align:center"></div>
+      <div class="settings-card">
+        <div class="settings-row" onclick="openAiConfigPanel()">
+          <div class="settings-row-left">
+            <div class="settings-row-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a8 8 0 0 0-8 8c0 5.25 3.5 9.5 8 10.5 1.5-.5 3-1.5 4-2.5-1-.5-2.5-.5-4-1.5-.5-1-1.5-2-1.5-4 0-1.5.5-2.5 1-3.5-.5-.5-1-1-1-2.5 0-2 2-3.5 4-3.5 1 0 2.5.5 3.5 2-.5 1-1.5 2-2.5 3-.5.5-1 .5-1.5.5z"></path>
+              </svg>
+            </div>
+            <div class="settings-row-text">
+              <div class="settings-row-title">AI 养生顾问</div>
+              <div class="settings-row-desc" id="settingsAiSummary">未配置</div>
+            </div>
+          </div>
+          <span class="settings-row-arrow">›</span>
+        </div>
+      </div>
     </div>
 
+    <!-- 关于 -->
+    <div class="settings-group">
+      <div class="settings-group-header">
+        <span class="settings-group-title">关于</span>
+        <div class="settings-group-line"></div>
+      </div>
+      <div class="settings-card">
+        <div class="settings-row">
+          <div class="settings-row-left">
+            <div class="settings-row-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+            </div>
+            <div class="settings-row-text">
+              <div class="settings-row-title">版本</div>
+            </div>
+          </div>
+          <span class="settings-row-value">v2.0.1</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-footer">生活习惯小助手 v2.0.1</div>
+
+  </div>
+</div>
+
+<!-- AI 配置详情 Panel -->
+<div class="panel" id="aiConfigPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title">AI 配置</span>
+    <button class="panel-close" onclick="closeAllPanels();openSettingsPanel()">✕</button>
+  </div>
+  <div class="panel-body settings-body">
+    <div class="settings-group" style="margin-top:8px">
+      <div class="settings-card">
+        <div class="settings-form">
+          <div class="settings-form-tip">
+            <strong>配置阿里百炼 API</strong>，启用 AI 养生顾问功能<br>
+            推荐使用 Cloudflare Workers 代理以保护 API Key
+          </div>
+
+          <div class="settings-form-field">
+            <label class="settings-form-label">Worker URL（可选）</label>
+            <input class="ui-input" id="configWorkerUrl" type="text" placeholder="https://your-worker.workers.dev">
+          </div>
+
+          <div class="settings-form-field">
+            <label class="settings-form-label">阿里百炼 API Key <span class="required">*</span></label>
+            <input class="ui-input" id="configApiKey" type="password" placeholder="sk-...">
+          </div>
+
+          <div class="settings-form-field">
+            <label class="settings-form-label">选择模型</label>
+            <select class="ui-input ui-select-input" id="configModel">
+              <option value="qwen-turbo">qwen-turbo（轻量快速）</option>
+              <option value="qwen-plus">qwen-plus（标准推荐）</option>
+              <option value="qwen-max">qwen-max（最强智能）</option>
+              <option value="qwen-coder-plus">qwen-coder-plus（编程专用）</option>
+              <option value="deepseek-v3">deepseek-v3（深度推理）</option>
+              <option value="deepseek-r1">deepseek-r1（推理增强）</option>
+            </select>
+          </div>
+
+          <div class="settings-form-hint">
+            获取地址：<a href="https://bailian.console.aliyun.com/" target="_blank">阿里百炼控制台</a>
+          </div>
+
+          <button class="ui-btn ui-btn--primary settings-save-btn" onclick="saveAiConfig()">✅ 保存配置</button>
+          <div id="settingsAiStatus" class="settings-status"></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 

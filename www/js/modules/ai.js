@@ -726,13 +726,13 @@ function getConfig() {
   // ============================================================
   function updateProfileAiStatus() {
     const cfg = getConfig();
-    const el = document.getElementById('pseAiStatus');
+    const el = document.getElementById('profileAiStatus');
     if (!el) return;
     if (cfg.apiKey) {
-      el.textContent = 'AI 已配置 ✅';
+      el.textContent = '✨ AI 已配置';
       el.style.color = 'var(--accent)';
     } else {
-      el.textContent = 'AI 未配置';
+      el.textContent = '🤖 AI 未配置';
       el.style.color = 'var(--muted)';
     }
   }
@@ -758,6 +758,17 @@ function getConfig() {
       reminderMethodEl.value = method;
     }
 
+    // 更新 AI 配置摘要
+    const summaryEl = document.getElementById('settingsAiSummary');
+    if (summaryEl) {
+      if (cfg.apiKey) {
+        const modelLabel = MODEL_OPTIONS.find(m => m.value === (cfg.model || DEFAULT_MODEL));
+        summaryEl.textContent = '已配置 · ' + (modelLabel ? modelLabel.label : cfg.model);
+      } else {
+        summaryEl.textContent = '未配置';
+      }
+    }
+
     // 显示配置状态
     const statusEl = document.getElementById('settingsAiStatus');
     if (statusEl) {
@@ -777,6 +788,19 @@ function getConfig() {
     openPanel('settingsPanel');
   }
 
+  function openAiConfigPanel() {
+    // 回填配置到二级页面
+    const cfg = getConfig();
+    const workerEl = document.getElementById('configWorkerUrl');
+    const apiKeyEl = document.getElementById('configApiKey');
+    const modelEl = document.getElementById('configModel');
+    if (workerEl) workerEl.value = cfg.workerUrl || '';
+    if (apiKeyEl) apiKeyEl.value = cfg.apiKey || '';
+    if (modelEl) modelEl.value = cfg.model || DEFAULT_MODEL;
+
+    openPanel('aiConfigPanel');
+  }
+
   // ============================================================
   // 导出模块
   // ============================================================
@@ -786,6 +810,7 @@ function getConfig() {
   App.Modules.AI = {
     openAiChatPanel,
     openSettingsPanel,
+    openAiConfigPanel,
     sendAiMessage,
     clearAiChat,
     saveAiConfig,
@@ -796,6 +821,7 @@ function getConfig() {
   // 全局暴露（兼容 HTML onclick）
   window.openAiChatPanel = openAiChatPanel;
   window.openSettingsPanel = openSettingsPanel;
+  window.openAiConfigPanel = openAiConfigPanel;
   window.sendAiMessage = sendAiMessage;
   window.clearAiChat = clearAiChat;
   window.saveAiConfig = saveAiConfig;

@@ -8,6 +8,9 @@ public class MainActivity extends BridgeActivity {
 
     @Override
     public void onStart() {
+        // 注册通知设置插件
+        registerPlugin(NotificationSettingsPlugin.class);
+
         super.onStart();
         WebView webView = getBridge().getWebView();
         if (webView != null) {

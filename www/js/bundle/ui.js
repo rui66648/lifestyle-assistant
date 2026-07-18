@@ -103,17 +103,15 @@
     const dateEl = document.getElementById('todayDate');
     if (dateEl) dateEl.innerHTML = `<span class="day-num">${d.getDate()}</span><span class="weekday">日 ${d.getMonth()+1}月 · 周${weekDay}</span>`;
 
-    // 农历 + 节气倒计时
+    // 农历 + 节气 + 养生提示
     let dateExtras = `${lunar.monthStr}月${lunar.dayStr}`;
     if (solarTerm) {
       dateExtras += ` · ${solarTerm.emoji} ${esc(solarTerm.name)}`;
-      // 计算节气天数
-      var daysSince = _getDaysSinceTerm(d, solarTerm);
-      if (daysSince === 0) {
-        dateExtras += ' · 今天';
-      } else if (daysSince > 0 && daysSince <= 15) {
-        dateExtras += '后第' + daysSince + '天';
+      if (solarTerm.tip) {
+        dateExtras += ` · ${esc(solarTerm.tip)}`;
       }
+    } else if (pack.tip) {
+      dateExtras += ` · ${esc(pack.tip)}`;
     }
     const lunarEl = document.getElementById('todayLunar');
     if (lunarEl) lunarEl.textContent = dateExtras;
@@ -124,11 +122,6 @@
       const points = getUserPoints();
       badgesEl.innerHTML = `<span class="mini-points-badge" title="累计积分">⭐ ${points} 积分</span>`;
     }
-
-    // 原文引用
-    let tipText = pack.quote || (solarTerm ? solarTerm.tip : pack.tip);
-    const tipEl = document.getElementById('todaySeasonTip');
-    if (tipEl) tipEl.innerHTML = tipText;
 
     refreshQuote();
   }
@@ -1379,7 +1372,6 @@
 
     const plat = window.__PLATFORM__ || 'pwa';
     if (plat === 'pwa') {
-      items.push({ icon:'📥', label:'下载APP', action:'downloadApk' });
     }
 
     grid.innerHTML = items.map((item, i) => `
