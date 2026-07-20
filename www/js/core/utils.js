@@ -136,12 +136,26 @@
     return new Date().getDay();
   }
 
-  function showToast(msg) {
-    const t = document.getElementById('toast');
+  var _toastTimer = null;
+  function showToast(msg, duration, type) {
+    var t = document.getElementById('toast');
     if (!t) return;
+    if (_toastTimer) {
+      clearTimeout(_toastTimer);
+      _toastTimer = null;
+    }
+    t.className = 'toast';
+    if (type === 'success') t.classList.add('toast-success');
+    else if (type === 'error') t.classList.add('toast-error');
+    else if (type === 'warning') t.classList.add('toast-warning');
     t.textContent = msg;
+    void t.offsetWidth;
     t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2500);
+    var dur = duration || 2500;
+    _toastTimer = setTimeout(function() {
+      t.classList.remove('show');
+      _toastTimer = null;
+    }, dur);
   }
 
   // 复用单例 AudioContext，避免每次 new 导致浏览器达到实例上限后音效静默失效
@@ -223,22 +237,51 @@
   }
 
   /* ========== 屏幕闪烁 ========== */
-  function flashScreen() {
+  var _flashOverlay = null;
+  function flashScreen(duration) {
+    if (_flashOverlay) {
+      _flashOverlay.remove();
+      _flashOverlay = null;
+    }
     var overlay = document.createElement('div');
     overlay.className = 'alarm-flash';
     document.body.appendChild(overlay);
-    setTimeout(function() { overlay.remove(); }, 2000);
+    _flashOverlay = overlay;
+    var dur = duration || 2000;
+    setTimeout(function() {
+      if (_flashOverlay === overlay) {
+        overlay.remove();
+        _flashOverlay = null;
+      }
+    }, dur);
   }
 
   /* ========== 报警序列（声音+振动） ========== */
-  function playAlarmSequence() {
-    var count = 0;
-    var interval = setInterval(function() {
+  var _alarmInterval = null;
+  var _alarmCount = 0;
+  function playAlarmSequence(times) {
+    stopAlarmSequence();
+    _alarmCount = 0;
+    var total = times || 3;
+    _alarmInterval = setInterval(function() {
       playSound('alarm');
       if (navigator.vibrate) navigator.vibrate([300, 150, 300]);
-      count++;
-      if (count >= 3) clearInterval(interval);
+      _alarmCount++;
+      if (_alarmCount >= total) {
+        stopAlarmSequence();
+      }
     }, 700);
+  }
+
+  function stopAlarmSequence() {
+    if (_alarmInterval) {
+      clearInterval(_alarmInterval);
+      _alarmInterval = null;
+    }
+    if (_flashOverlay) {
+      _flashOverlay.remove();
+      _flashOverlay = null;
+    }
   }
 
   function _isChecked(habit, rec) {
@@ -378,6 +421,9 @@
   App.Core.Utils = {
     esc,
     markStatsDirty,
+    // 暴露统计缓存函数：供 modules/checkin.js 等外部模块复用同一缓存层
+    // 数据变更时通过 markStatsDirty 自动失效
+    cachedStat: _cachedStat,
     getCurrentShichen,
     getCurrentSolarTerm,
     getCurrentSeason,
@@ -394,6 +440,7 @@
     playSound,
     flashScreen,
     playAlarmSequence,
+    stopAlarmSequence,
     getCurrentStreak,
     getCurrentLevel,
     getNextLevel,

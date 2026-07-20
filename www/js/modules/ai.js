@@ -154,41 +154,78 @@ function getConfig() {
     return '';
   }
 
-  // AI 系统提示词
-  const SYSTEM_PROMPT = `你是一位精通以下9部中医古籍和15部现代养生著作的养生顾问。
+  // AI 系统提示词（CREATE 框架优化版 v2.0）
+  const SYSTEM_PROMPT = `【角色】
+你是「养生小助手」AI 养生顾问，精通中医养生经典与现代健康科学，以「治未病」为核心理念，为用户提供实用、安全、有依据的养生建议。
 
-【古籍经典】
-1.《黄帝内经》（《素问》《灵枢》）——中医养生理论之源，阴阳五行、脏腑经络、治未病
-2.《遵生八笺》明·高濂——四时调摄、起居安乐、饮馔服食
-3.《老老恒言》清·曹庭栋——老年养生，饮食起居导引
-4.《饮膳正要》元·忽思慧——宫廷营养学，食疗配方
-5.《养生论》三国·嵇康——形神相亲、导引吐纳
-6.《寿世青编》清·尤乘——五脏养生，养心为本
-7.《备急千金要方·养性》唐·孙思邈——养性之道，饮食药饵
-8.《抱朴子》晋·葛洪——道家养生，不伤为本
-9.《闲情偶寄》清·李渔——生活美学，颐养之道
+你的说话风格：温和亲切、条理清晰、像一位经验丰富的养生师，不说空话套话，每条建议都具体可操作。
 
-【现代著作】
-10.《你是你吃出来的》夏萌——细胞营养饮食
-11.《九种体质养生全书》王琦——体质分类与调养
-12.《科学休息》亚历克斯·索勇-庞——高效休息科学
-13.《求医不如求己》中里巴人——经络穴位自愈法
-14.《拉伸》鲍勃·安德森——科学拉伸运动
-15.《人体运动生理学》——运动科学基础
-16.《高级运动营养学》——科学运动营养
-17.《力量训练基础》——力量训练方法
-18.《运动医学与康复》——运动损伤与康复
-19.《睡眠革命》Nick Littlehales——R90睡眠方案
-20.《运动改造大脑》John Ratey——运动与脑科学
-21.《正念的奇迹》一行禅师——正念冥想
-22.《抗炎生活》池谷敏郎——慢性炎症预防
-23.《肠子的小心思》朱莉娅·恩德斯——肠道菌群
-24.《深度营养》凯瑟琳·沙纳汉——传统饮食智慧
+---
 
-回答时请结合以上经典理论给出建议，并注明引用出处。回答简洁实用，每次控制在200字以内。
+【核心原则 · 必须遵守】
+1. 安全第一：不提供医疗诊断，不开处方药物，涉及疾病问题务必建议就医
+2. 言必有据：每条养生建议至少标注一个引用出处（典籍或著作名称）
+3. 实用至上：建议要具体到「做什么、做多久、什么时候做」，不泛泛而谈
+4. 因人而异：结合体质、季节、时段给出差异化建议
+5. 简洁高效：回答控制在 200 字以内，重点突出
 
-【MCP 工具上下文】
-如果系统提供了 HowToCook 菜谱、kb-mcp-server 知识库检索结果或 Strava 运动数据，请结合这些结果回答；如果没有提供，请按你的知识回答，不要编造工具结果。`;
+---
+
+【知识范围】
+精通 9 部中医古籍与 15 部现代养生著作，涵盖：
+- 中医基础：阴阳五行、脏腑经络、九种体质、二十四节气
+- 生活方式：饮食营养、运动健身、睡眠调理、情志调养
+- 道家养生：导引吐纳、形神兼养、不伤为本
+- 现代科学：运动生理、营养科学、睡眠医学、正念冥想、肠道健康
+
+主要典籍：《黄帝内经》《遵生八笺》《老老恒言》《饮膳正要》《养生论》《寿世青编》《备急千金要方·养性》《抱朴子》《闲情偶寄》
+现代著作：《你是你吃出来的》《九种体质养生全书》《科学休息》《求医不如求己》《拉伸》《人体运动生理学》《高级运动营养学》《力量训练基础》《运动医学与康复》《睡眠革命》《运动改造大脑》《正念的奇迹》《抗炎生活》《肠子的小心思》《深度营养》
+
+---
+
+【能力边界 · 明确不能做的事】
+- 不诊断疾病、不开药方、不替代专业医疗建议
+- 不推荐具体药物、保健品品牌
+- 对严重症状（持续疼痛、高烧、呼吸困难等）立即建议就医
+- 不确定的知识坦诚说明，不编造理论或引用
+- 不讨论与养生健康无关的话题
+
+---
+
+【回答格式】
+按以下结构组织回答（用简短的小标题，不用 Markdown 标记）：
+
+1. 核心建议（1-2 句点明主旨）
+2. 具体方法（分点列出 2-3 条可操作建议）
+3. 引用出处（标注参考的典籍或著作）
+
+如果问题涉及疾病风险，在末尾加一行：⚠️ 以上建议仅供参考，症状持续请及时就医。
+
+---
+
+【输出前自检清单】
+回答前请逐条检查，不满足的立即修正：
+□ 是否给出了具体可操作的建议（不是空话）
+□ 是否标注了至少一个引用出处
+□ 字数是否控制在 200 字以内
+□ 涉及健康风险是否有免责提醒
+□ 是否超出了能力边界（如涉及医疗诊断）
+
+---
+
+【MCP 工具使用规则】
+如果上下文提供了工具检索结果，请按以下规则使用：
+
+1. HowToCook 菜谱数据：用户问饮食/菜谱时优先结合，推荐具体菜品和做法
+2. 养生知识库检索结果：作为权威引用来源，优先使用检索到的内容
+3. Strava 运动数据：结合用户实际运动数据给出个性化建议，如运动强度调整、恢复建议
+
+工具结果是补充，不是全部。结合你的专业知识整合输出，不要原样堆砌工具返回的数据。如果没有提供工具结果，按你的知识正常回答，不要编造。
+
+---
+
+【最后提醒】
+记住：你是养生顾问，不是医生。安全永远是第一位的。用你的专业知识帮助用户建立健康的生活习惯，这才是「治未病」的真谛。`;
 
   // MCP 上下文提示词（动态插入）
   function buildMcpContextPrompt(howtocookResult, knowledgeResult, stravaResult) {
@@ -207,9 +244,12 @@ function getConfig() {
 
   // 配置参数
   const MAX_INPUT_LENGTH = 500;      // 最大输入长度
-  const MAX_HISTORY = 20;           // 对话历史保留条数
+  const MAX_HISTORY_ROUNDS = 10;     // 对话历史保留轮数（1轮=用户+AI各1条）
+  const MAX_HISTORY = MAX_HISTORY_ROUNDS * 2; // 消息条数（每轮2条）
   const MAX_TOKENS = 500;           // AI 回复最大 token 数
   const TEMPERATURE = 0.7;          // 创造性参数
+  const MAX_RETRIES = 1;            // 网络错误自动重试次数
+  const TYPING_SPEED = 15;          // 打字机效果速度（毫秒/字符）
 
   // 可用模型列表
   const MODEL_OPTIONS = [
@@ -258,6 +298,74 @@ function getConfig() {
   // 状态
   let aiChatHistory = [];
   let isLoading = false;
+  let abortController = null;
+
+  // ============================================================
+  // API 用量监控
+  // ============================================================
+  const USAGE_KEY = 'ai_usage_stats';
+  const USAGE_WARN_THRESHOLD = 50; // 每日提醒阈值（次）
+
+  function loadUsageStats() {
+    try {
+      const saved = localStorage.getItem(USAGE_KEY);
+      if (saved) {
+        const stats = JSON.parse(saved);
+        const today = new Date().toDateString();
+        if (stats.date !== today) {
+          return { date: today, count: 0, totalTokens: 0 };
+        }
+        return stats;
+      }
+    } catch (e) {}
+    return { date: new Date().toDateString(), count: 0, totalTokens: 0 };
+  }
+
+  function saveUsageStats(stats) {
+    try {
+      localStorage.setItem(USAGE_KEY, JSON.stringify(stats));
+    } catch (e) {}
+  }
+
+  function recordApiUsage(tokens = 0) {
+    const stats = loadUsageStats();
+    stats.count++;
+    stats.totalTokens += tokens;
+    saveUsageStats(stats);
+    return stats;
+  }
+
+  function checkUsageWarning() {
+    const stats = loadUsageStats();
+    if (stats.count >= USAGE_WARN_THRESHOLD && stats.count % USAGE_WARN_THRESHOLD === 0) {
+      return `今日已使用 ${stats.count} 次 AI 对话，请注意用量。`;
+    }
+    return null;
+  }
+
+  // ============================================================
+  // 内容安全过滤
+  // ============================================================
+  const UNSAFE_KEYWORDS = [
+    '处方', '开药', '剂量', 'mg', '毫克', '注射',
+    '诊断', '治疗方案', '手术', '化疗', '放疗',
+    '自杀', '自残', '毒品', '违禁'
+  ];
+
+  function filterUnsafeContent(text) {
+    let filtered = text;
+    for (const kw of UNSAFE_KEYWORDS) {
+      const regex = new RegExp(kw, 'gi');
+      filtered = filtered.replace(regex, '***');
+    }
+    return filtered;
+  }
+
+  function hasUnsafeUserInput(text) {
+    const lower = text.toLowerCase();
+    const highRisk = ['自杀', '自残', '毒品'];
+    return highRisk.some(k => lower.includes(k));
+  }
 
   // ============================================================
   // 存储管理
@@ -334,7 +442,7 @@ function getConfig() {
         // 添加日期分隔线
         renderDateDivider();
         // 欢迎语（带特殊样式）
-        renderAiMessage('ai', '你好！我是你的 AI 养生顾问 🌿\n\n精通《黄帝内经》等24部中医经典与现代养生著作，有任何养生问题都可以问我：\n\n• 失眠怎么调理？\n• 夏天应该注意什么？\n• 久坐怎么保护身体？', true);
+        renderAiMessage('ai', '你好！我是你的 AI 养生顾问 🌿\n\n以「治未病」为核心理念，精通24部中医经典与现代养生著作，为你提供实用、安全的养生建议。\n\n试试问我这些问题：\n• 失眠怎么调理？\n• 夏天吃什么好？\n• 久坐族怎么养生？\n• 气虚体质怎么补？', true);
       } else {
         // 渲染历史消息
         renderDateDivider();
@@ -374,12 +482,11 @@ function getConfig() {
 
   function renderAiMessage(role, text, isWelcome = false) {
     const container = document.getElementById('aiChatMessages');
-    if (!container) return;
+    if (!container) return null;
 
     const div = document.createElement('div');
     div.className = 'ai-msg ' + role + (isWelcome ? ' welcome-msg' : '');
 
-    // XSS 安全：使用 textContent 转义用户内容和 AI 回复
     const avatar = role === 'ai' ? '🤖' : '👤';
 
     const avatarEl = document.createElement('div');
@@ -388,18 +495,31 @@ function getConfig() {
 
     const bubbleEl = document.createElement('div');
     bubbleEl.className = 'ai-bubble';
-    // textContent 会自动转义 HTML 标签
     bubbleEl.textContent = text;
-    // 使用 CSS white-space: pre-wrap 处理换行，避免 innerHTML 操作
 
     div.appendChild(avatarEl);
     div.appendChild(bubbleEl);
     container.appendChild(div);
 
-    // 滚动到底部
     setTimeout(() => {
       container.scrollTop = container.scrollHeight;
     }, 50);
+
+    return { div, bubbleEl };
+  }
+
+  function updateAiBubble(bubbleEl, text, isStreaming = false) {
+    if (!bubbleEl) return;
+    bubbleEl.textContent = text;
+    if (isStreaming) {
+      bubbleEl.classList.add('typing');
+    } else {
+      bubbleEl.classList.remove('typing');
+    }
+    const container = document.getElementById('aiChatMessages');
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
   }
 
   function renderAiError(text) {
@@ -451,6 +571,101 @@ function getConfig() {
   }
 
   // ============================================================
+  // SSE 流式响应解析
+  // ============================================================
+  async function parseSSEStream(reader, onChunk, onDone, onError) {
+    const decoder = new TextDecoder('utf-8');
+    let buffer = '';
+
+    try {
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed || !trimmed.startsWith('data:')) continue;
+
+          const dataStr = trimmed.slice(5).trim();
+          if (dataStr === '[DONE]') {
+            onDone && onDone();
+            return;
+          }
+
+          try {
+            const data = JSON.parse(dataStr);
+            const content = data.choices && data.choices[0] &&
+              (data.choices[0].delta && data.choices[0].delta.content ||
+               data.choices[0].message && data.choices[0].message.content);
+            if (content) {
+              onChunk && onChunk(content);
+            }
+          } catch (e) {
+          }
+        }
+      }
+
+      if (buffer.trim()) {
+        const trimmed = buffer.trim();
+        if (trimmed.startsWith('data:')) {
+          const dataStr = trimmed.slice(5).trim();
+          if (dataStr !== '[DONE]') {
+            try {
+              const data = JSON.parse(dataStr);
+              const content = data.choices && data.choices[0] &&
+                (data.choices[0].delta && data.choices[0].delta.content ||
+                 data.choices[0].message && data.choices[0].message.content);
+              if (content) {
+                onChunk && onChunk(content);
+              }
+            } catch (e) {}
+          }
+        }
+      }
+
+      onDone && onDone();
+    } catch (err) {
+      onError && onError(err);
+    }
+  }
+
+  // ============================================================
+  // 打字机效果
+  // ============================================================
+  function typewriterEffect(bubbleEl, fullText, speed = TYPING_SPEED) {
+    return new Promise((resolve) => {
+      let index = 0;
+      const totalLen = fullText.length;
+
+      function typeNext() {
+        if (index < totalLen) {
+          const chunkSize = Math.min(3, totalLen - index);
+          index += chunkSize;
+          updateAiBubble(bubbleEl, fullText.slice(0, index), true);
+          setTimeout(typeNext, speed);
+        } else {
+          updateAiBubble(bubbleEl, fullText, false);
+          resolve();
+        }
+      }
+
+      typeNext();
+    });
+  }
+
+  // ============================================================
+  // 滑动窗口：截断对话上下文（保留最近 N 轮）
+  // ============================================================
+  function trimConversationHistory(history) {
+    if (history.length <= MAX_HISTORY) return history;
+    return history.slice(-MAX_HISTORY);
+  }
+
+  // ============================================================
   // 发送消息
   // ============================================================
   async function sendAiMessage() {
@@ -468,7 +683,6 @@ function getConfig() {
 
     let text = input.value.trim();
 
-    // 检查输入长度
     if (text.length === 0) {
       return;
     }
@@ -478,7 +692,11 @@ function getConfig() {
       return;
     }
 
-    // 清空输入框并禁用按钮
+    if (hasUnsafeUserInput(text)) {
+      renderAiError('您的问题涉及敏感内容，请调整后再试。如有紧急情况，请立即寻求专业帮助。');
+      return;
+    }
+
     input.value = '';
     isLoading = true;
     if (sendBtn) {
@@ -487,18 +705,20 @@ function getConfig() {
       sendBtn.innerHTML = '⏳';
     }
 
-    // 显示用户消息
     renderAiMessage('user', text);
-    aiChatHistory.push({ role: 'user', content: text });
+    aiChatHistory.push({ role: 'user', content: text, timestamp: Date.now() });
 
-    // 显示加载动画
+    const usageWarn = checkUsageWarning();
+
     renderAiLoading();
 
+    let reply = '';
+    let aiBubbleEl = null;
+    let retryCount = 0;
+
     try {
-      let reply;
       const model = currentConfig.model || DEFAULT_MODEL;
 
-      // MCP 增强上下文（仅在使用 Worker 代理时调用）
       let mcpContext = '';
       if (isUsingWorker()) {
         const [howtocookResult, knowledgeResult, stravaResult] = await Promise.all([
@@ -518,161 +738,250 @@ function getConfig() {
         mcpContext = buildMcpContextPrompt(howtocookResult, knowledgeResult, stravaResult);
       }
 
-      const systemContent = mcpContext
-        ? SYSTEM_PROMPT + '\n\n' + mcpContext
-        : SYSTEM_PROMPT;
+      // 体质+季节联动注入（v2.1 增强）
+      const constitution = JSON.parse(localStorage.getItem('constitution_result') || 'null');
+      const ctype = constitution && window.App && App.Data && App.Data.CONSTITUTION_TYPES
+        ? App.Data.CONSTITUTION_TYPES.find(c => c.id === constitution.typeId) : null;
+      const solarTerm = (typeof getCurrentSolarTerm === 'function') ? getCurrentSolarTerm() : null;
+      const season = (typeof getCurrentSeason === 'function') ? getCurrentSeason() : null;
 
-      if (model === 'local') {
-        // 方式0：本地模型（离线运行）
-        const messages = [
-          { role: 'system', content: systemContent },
-          ...aiChatHistory
-        ];
-        reply = await callLocalModel(messages);
-      } else if (isUsingWorker()) {
-        // 方式1：使用 Worker 代理（安全）
-        const workerUrl = getWorkerUrl();
-        const userMessages = [
-          { role: 'system', content: systemContent },
-          ...aiChatHistory
-        ];
+      let userContext = '';
+      if (ctype || solarTerm) {
+        userContext = '\n\n【用户上下文 · 必须融入建议】\n';
+        if (ctype) userContext += '体质：' + ctype.name + '（' + ctype.desc + '）\n调理方向：' + ctype.advice + '\n';
+        if (solarTerm) userContext += '当前节气：' + solarTerm.name + (solarTerm.tip ? '（' + solarTerm.tip + '）' : '') + '\n';
+        if (season) userContext += '季节：' + season + '\n';
+        userContext += '请基于以上用户上下文给出针对性建议，避免泛泛而谈。';
+      }
+      const systemContent = SYSTEM_PROMPT + userContext + (mcpContext ? '\n\n' + mcpContext : '');
 
-        const response = await fetch(workerUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            model: model,
-            messages: userMessages,
-            max_tokens: MAX_TOKENS,
-            temperature: TEMPERATURE
-          })
-        });
+      const trimmedHistory = trimConversationHistory(aiChatHistory);
+      const messagesForApi = [
+        { role: 'system', content: systemContent },
+        ...trimmedHistory.map(m => ({ role: m.role, content: m.content }))
+      ];
 
-        const data = await response.json();
+      const executeRequest = async () => {
+        if (model === 'local') {
+          const result = await callLocalModel(messagesForApi);
+          return { text: result, streamed: false };
+        } else if (isUsingWorker()) {
+          const workerUrl = getWorkerUrl();
+          abortController = new AbortController();
 
-        // 检查业务错误
-        if (data.error) {
-          const errMsg = typeof data.error === 'string' ? data.error : (data.error.message || data.error);
-          throw new Error(errMsg || 'AI 服务返回错误');
+          const response = await fetch(workerUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              model: model,
+              messages: messagesForApi,
+              max_tokens: MAX_TOKENS,
+              temperature: TEMPERATURE,
+              stream: true
+            }),
+            signal: abortController.signal
+          });
+
+          if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            const errMsg = data.error ? (typeof data.error === 'string' ? data.error : (data.error.message || data.error)) : '请求失败';
+            const error = new Error(errMsg || 'AI 服务返回错误');
+            error.status = response.status;
+            throw error;
+          }
+
+          const contentType = response.headers.get('content-type') || '';
+          if (contentType.includes('text/event-stream') && response.body) {
+            const reader = response.body.getReader();
+            let fullText = '';
+
+            removeAiLoading();
+            const rendered = renderAiMessage('ai', '');
+            aiBubbleEl = rendered.bubbleEl;
+            updateAiBubble(aiBubbleEl, '', true);
+
+            await new Promise((resolve, reject) => {
+              parseSSEStream(
+                reader,
+                (chunk) => {
+                  fullText += chunk;
+                  updateAiBubble(aiBubbleEl, fullText, true);
+                },
+                () => resolve(),
+                (err) => reject(err)
+              );
+            });
+
+            return { text: fullText, streamed: true };
+          } else {
+            const data = await response.json();
+            if (data.error) {
+              const errMsg = typeof data.error === 'string' ? data.error : (data.error.message || data.error);
+              throw new Error(errMsg || 'AI 服务返回错误');
+            }
+            const content = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+            if (!content) throw new Error('AI 没有返回有效回答');
+            return { text: content, streamed: false };
+          }
+        } else {
+          const apiKey = getApiKey();
+          abortController = new AbortController();
+
+          const response = await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + apiKey
+            },
+            body: JSON.stringify({
+              model: model,
+              messages: messagesForApi,
+              max_tokens: MAX_TOKENS,
+              temperature: TEMPERATURE,
+              stream: true
+            }),
+            signal: abortController.signal
+          });
+
+          if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            const errMsg = data.error ? data.error.message || 'API 错误' : '请求失败';
+            const error = new Error(errMsg);
+            error.status = response.status;
+            throw error;
+          }
+
+          const contentType = response.headers.get('content-type') || '';
+          if (contentType.includes('text/event-stream') && response.body) {
+            const reader = response.body.getReader();
+            let fullText = '';
+
+            removeAiLoading();
+            const rendered = renderAiMessage('ai', '');
+            aiBubbleEl = rendered.bubbleEl;
+            updateAiBubble(aiBubbleEl, '', true);
+
+            await new Promise((resolve, reject) => {
+              parseSSEStream(
+                reader,
+                (chunk) => {
+                  fullText += chunk;
+                  updateAiBubble(aiBubbleEl, fullText, true);
+                },
+                () => resolve(),
+                (err) => reject(err)
+              );
+            });
+
+            return { text: fullText, streamed: true };
+          } else {
+            const data = await response.json();
+            if (data.error) throw new Error(data.error.message || 'API 错误');
+            const content = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+            if (!content) throw new Error('AI 没有返回有效回答');
+            return { text: content, streamed: false };
+          }
         }
+      };
 
-        // 解析 OpenAI 格式响应
-        reply = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+      while (retryCount <= MAX_RETRIES) {
+        try {
+          const result = await executeRequest();
+          reply = result.text;
 
-        if (!reply) {
-          throw new Error('AI 没有返回有效回答');
-        }
-      } else {
-        // 方式2：直接调用阿里百炼 API
-        const apiKey = getApiKey();
-        const messages = [
-          { role: 'system', content: systemContent },
-          ...aiChatHistory
-        ];
+          if (!result.streamed) {
+            removeAiLoading();
+            const filteredReply = filterUnsafeContent(reply);
+            const rendered = renderAiMessage('ai', '');
+            aiBubbleEl = rendered.bubbleEl;
+            await typewriterEffect(aiBubbleEl, filteredReply);
+            reply = filteredReply;
+          } else {
+            const filteredReply = filterUnsafeContent(reply);
+            if (filteredReply !== reply) {
+              updateAiBubble(aiBubbleEl, filteredReply, false);
+              reply = filteredReply;
+            } else {
+              updateAiBubble(aiBubbleEl, reply, false);
+            }
+          }
 
-        const response = await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + apiKey
-          },
-          body: JSON.stringify({
-            model: model,
-            messages: messages,
-            max_tokens: MAX_TOKENS,
-            temperature: TEMPERATURE
-          })
-        });
-
-        const data = await response.json();
-
-        if (data.error) {
-          throw new Error(data.error.message || 'API 错误');
-        }
-
-        reply = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-
-        if (!reply) {
-          throw new Error('AI 没有返回有效回答');
+          break;
+        } catch (err) {
+          if (retryCount < MAX_RETRIES &&
+              (err.message.includes('Failed to fetch') ||
+               err.message.includes('NetworkError') ||
+               err.message.includes('网络请求失败') ||
+               (err.status && err.status >= 500))) {
+            retryCount++;
+            console.warn('[AI] 第 ' + retryCount + ' 次重试...');
+            await new Promise(r => setTimeout(r, 1000 * retryCount));
+            continue;
+          }
+          throw err;
         }
       }
 
-      removeAiLoading();
-      renderAiMessage('ai', reply);
-      aiChatHistory.push({ role: 'assistant', content: reply });
-
-      // 保存历史
+      aiChatHistory.push({ role: 'assistant', content: reply, timestamp: Date.now() });
       saveHistory();
 
-      // 限制历史长度
-      if (aiChatHistory.length > MAX_HISTORY * 2) {
-        aiChatHistory = aiChatHistory.slice(-MAX_HISTORY * 2);
+      recordApiUsage(Math.round(reply.length / 2));
+
+      if (usageWarn) {
+        setTimeout(() => {
+          renderAiError(usageWarn);
+        }, 500);
       }
 
     } catch (err) {
       removeAiLoading();
+      if (aiBubbleEl) {
+        aiBubbleEl.parentElement && aiBubbleEl.parentElement.remove();
+      }
       console.error('[AI] 请求失败:', err);
 
       let errorMsg = '网络错误，请检查网络连接。';
-      if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+      let showConfigButton = false;
+
+      if (err.name === 'AbortError') {
+        errorMsg = '请求已取消。';
+      } else if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError') || err.message.includes('网络请求失败')) {
         errorMsg = '网络连接失败，请检查网络后重试。';
-      } else if (err.message.includes('429')) {
+      } else if (err.message.includes('429') || err.status === 429) {
         errorMsg = '请求太频繁，请稍后再试。';
-      } else if (err.message.includes('401') || err.message.includes('403')) {
-        errorMsg = 'API 认证失败，请检查配置。';
-      } else if (err.message.includes('500')) {
+      } else if (err.message.includes('401') || err.message.includes('403') || err.status === 401 || err.status === 403) {
+        errorMsg = 'API 认证失败，请检查配置或前往设置重新配置。';
+        showConfigButton = true;
+      } else if (err.message.includes('500') || (err.status && err.status >= 500)) {
         errorMsg = 'AI 服务暂时不可用，请稍后再试。';
       } else if (err.message) {
         errorMsg = err.message;
       }
 
       renderAiError(errorMsg);
+
+      if (showConfigButton) {
+        setTimeout(() => {
+          const container = document.getElementById('aiChatMessages');
+          if (container) {
+            const btnDiv = document.createElement('div');
+            btnDiv.style.textAlign = 'center';
+            btnDiv.style.padding = '8px 0';
+            btnDiv.innerHTML = '<button class="const-btn" onclick="closeAllPanels();openSettingsPanel()">前往设置</button>';
+            container.appendChild(btnDiv);
+            container.scrollTop = container.scrollHeight;
+          }
+        }, 100);
+      }
     } finally {
       isLoading = false;
-      // 恢复发送按钮（使用函数开头已获取的 sendBtn 变量）
+      abortController = null;
       if (sendBtn) {
         sendBtn.disabled = false;
         sendBtn.innerHTML = sendBtn._originalHTML || '➤';
       }
-      // 重新聚焦输入框
       if (input) input.focus();
     }
-  }
-
-  // 滚动到底部
-  function scrollAiToBottom() {
-    const container = document.getElementById('aiChatMessages');
-    if (container) {
-      container.scrollTo({
-        top: container.scrollHeight,
-        behavior: 'smooth'
-      });
-    }
-    // 隐藏滚动按钮
-    const btn = document.getElementById('aiScrollBottom');
-    if (btn) btn.classList.remove('show');
-  }
-
-  // 监听滚动，显示/隐藏"回到底部"按钮
-  function initAiScrollListener() {
-    const container = document.getElementById('aiChatMessages');
-    if (!container) return;
-
-    container.addEventListener('scroll', function() {
-      const btn = document.getElementById('aiScrollBottom');
-      if (!btn) return;
-
-      const threshold = 100;
-      const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
-
-      if (isNearBottom) {
-        btn.classList.remove('show');
-      } else {
-        btn.classList.add('show');
-      }
-    });
   }
 
   // ============================================================
@@ -825,11 +1134,10 @@ function getConfig() {
   window.sendAiMessage = sendAiMessage;
   window.clearAiChat = clearAiChat;
   window.saveAiConfig = saveAiConfig;
-  window.scrollAiToBottom = scrollAiToBottom;
 
-  // 初始化：加载历史记录 + 滚动监听 + 更新状态
+  // 初始化：自动补全配置 + 加载历史记录 + 更新状态
+autoInitConfig();
 loadHistory();
-initAiScrollListener();
 updateProfileAiStatus();
 
   if (App.registerModule) {

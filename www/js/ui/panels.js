@@ -504,60 +504,6 @@
     input.addEventListener('compositionend', () => { clearTimeout(timer); run(); });
   }
 
-  function openReportPanel() {
-    const body = document.getElementById('reportPanelBody');
-    const d = new Date();
-    const dow = d.getDay();
-    const mondayOffset = dow === 0 ? 6 : dow - 1;
-    const monday = new Date(d);
-    monday.setDate(d.getDate() - mondayOffset);
-
-    let totalDone = 0, totalAll = 0;
-    const habitStats = {};
-
-    habitsConfig.forEach(h => {
-      habitStats[h.id] = {done: 0, total: 7, name: h.name, icon: h.icon};
-    });
-
-    for (let i = 0; i < 7; i++) {
-      const day = new Date(monday);
-      day.setDate(monday.getDate() + i);
-      const key = formatDate(day);
-      const rec = checkinRecords[key] || {};
-      habitsConfig.forEach(h => {
-        totalAll++;
-        if (rec[h.id] && rec[h.id].done) {
-          totalDone++;
-          habitStats[h.id].done++;
-        }
-      });
-    }
-
-    const weekRate = totalAll > 0 ? Math.round((totalDone / totalAll) * 100) : 0;
-
-    let best = null, worst = null;
-    habitsConfig.forEach(h => {
-      const s = habitStats[h.id];
-      if (!best || s.done > best.done) best = s;
-      if (!worst || s.done < worst.done) worst = s;
-    });
-
-    body.innerHTML = `
-      <div class="report-card">
-        <div class="report-title">📊 本周总结</div>
-        <div class="report-stat">
-          <div><div class="report-stat-val">${weekRate}%</div><div class="report-stat-label">完成率</div></div>
-          <div><div class="report-stat-val">${totalDone}</div><div class="report-stat-label">总打卡</div></div>
-          <div><div class="report-stat-val">${totalAll}</div><div class="report-stat-label">总任务</div></div>
-        </div>
-        ${best ? `<div class="report-item"><span class="emoji">🌟</span><span class="text">最佳习惯：${esc(best.icon)} ${esc(best.name)}（完成${best.done}天）</span></div>` : ''}
-        ${worst && worst.done < 7 ? `<div class="report-item"><span class="emoji">💪</span><span class="text">需加油：${esc(worst.icon)} ${esc(worst.name)}（完成${worst.done}天）</span></div>` : ''}
-      </div>
-      <div style="font-size:13px;color:var(--muted);text-align:center;margin-top:8px">继续保持，下周会更好！</div>
-    `;
-    openPanel('reportPanel');
-  }
-
   function getPomoTotalStats(since) {
     let count = 0, minutes = 0;
     const d = new Date(since);
@@ -781,6 +727,7 @@
         { id:'rose', name:'桃粉', emoji:'🌸', vars:{accent:'#E07B8C',accent2:'#D4A0B5','accent-light':'#FADBD8','accent2-light':'#F5EEF8',bg:'#FFF5F7',bg2:'#FEF0F3'} },
         { id:'sunset', name:'暖橘', emoji:'🌅', vars:{accent:'#E8913A',accent2:'#E05A4B','accent-light':'#FDEBD0','accent2-light':'#FADBD8',bg:'#FFFBF5',bg2:'#FFF3E6'} },
         { id:'modern', name:'现代简约', emoji:'✨', vars:{accent:'#10B981',accent2:'#F59E0B','accent-light':'#D1FAE5','accent2-light':'#FEF3C7',bg:'#F8FAFC',bg2:'#F1F5F9'} },
+        { id:'zhongshi', name:'中式养生', emoji:'🍵', vars:{accent:'#7CB69D',accent2:'#C8893E','accent-light':'#DCEDE2','accent2-light':'#FAE6CC',bg:'#FDF8F0',bg2:'#F5EFE3'} },
       ]
     },
     {
@@ -901,8 +848,9 @@
       root.style.setProperty('--' + key, val);
     }
     localStorage.setItem('app_skin', skinId);
-    // 现代简约主题添加 body class
+    // 主题 body class 切换（现代简约 / 中式养生）
     document.body.classList.toggle('theme-modern', skinId === 'modern');
+    document.body.classList.toggle('theme-zhongshi', skinId === 'zhongshi');
     // 更新选中态
     document.querySelectorAll('.skin-toggle-row').forEach(el => {
       el.classList.toggle('active', el.querySelector('input')?.checked);
@@ -1089,8 +1037,103 @@
       <button class="const-btn" style="flex:1" onclick="App.UI.Render.openStatsDetailPanel();setTimeout(()=>App.UI.Render.switchStatsPeriod('month',document.querySelector('.sd-tab[data-period=month]')),100)">📅 月度报告</button>
       <button class="const-btn" style="flex:1" onclick="App.UI.Render.openStatsDetailPanel();setTimeout(()=>App.UI.Render.switchStatsPeriod('year',document.querySelector('.sd-tab[data-period=year]')),100)">📆 年度报告</button>
     </div>`;
+
+    if (App.Modules && App.Modules.Recommendation) {
+      const report = App.Modules.Recommendation.generateHealthReport('week');
+      html += renderPersonalizedReportCard(report);
+    }
+
     html += '</div>';
     body.innerHTML = html;
+  }
+
+  function renderPersonalizedReportCard(report) {
+    let html = '<div style="margin-bottom:20px">';
+    html += '<div style="font-size:14px;font-weight:700;margin-bottom:10px">🎯 个性化周报</div>';
+    html += `<div style="background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:16px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div style="font-size:15px;font-weight:700">本周完成率</div>
+        <div style="font-size:22px;font-weight:800;color:var(--accent)">${report.overallRate}%</div>
+      </div>
+      <div style="width:100%;height:8px;background:var(--rule);border-radius:4px;overflow:hidden">
+        <div style="width:${report.overallRate}%;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .6s"></div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-top:6px;text-align:right">${report.trendText}</div>
+    </div>`;
+
+    if (report.bestCategory || report.worstCategory) {
+      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">';
+      if (report.bestCategory) {
+        html += `<div style="background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:12px">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:4px">最佳分类</div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:4px">${report.bestCategory.icon} ${report.bestCategory.name}</div>
+          <div style="font-size:16px;font-weight:800;color:var(--accent)">${report.bestCategory.rate}%</div>
+        </div>`;
+      }
+      if (report.worstCategory) {
+        html += `<div style="background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:12px">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:4px">待加强</div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:4px">${report.worstCategory.icon} ${report.worstCategory.name}</div>
+          <div style="font-size:16px;font-weight:800;color:#E07A5F">${report.worstCategory.rate}%</div>
+        </div>`;
+      }
+      html += '</div>';
+    }
+
+    if (report.constInfo) {
+      html += `<div style="background:linear-gradient(135deg,${report.constInfo.color || '#7CB69D'}15,transparent);border:1px solid var(--rule);border-radius:12px;padding:12px;margin-bottom:12px">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px">🧬 你的体质</div>
+        <div style="font-size:14px;font-weight:700;color:${report.constInfo.color || '#7CB69D'};margin-bottom:4px">${report.constInfo.emoji} ${report.constInfo.name}</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">${report.constInfo.advice}</div>
+      </div>`;
+    }
+
+    if (report.seasonInfo) {
+      html += `<div style="background:linear-gradient(135deg,${report.seasonInfo.color || '#7CB69D'}15,transparent);border:1px solid var(--rule);border-radius:12px;padding:12px;margin-bottom:12px">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px">🌿 当季养生重点</div>
+        <div style="font-size:14px;font-weight:700;color:${report.seasonInfo.color || '#7CB69D'};margin-bottom:4px">${report.seasonInfo.name}季养${report.seasonInfo.organ}</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">${report.seasonInfo.principle}</div>
+      </div>`;
+    }
+
+    if (report.recommendations && report.recommendations.length > 0) {
+      html += '<div style="font-size:14px;font-weight:700;margin:16px 0 10px">💡 为你推荐</div>';
+      html += '<div style="display:flex;flex-direction:column;gap:10px">';
+      report.recommendations.forEach((rec, idx) => {
+        html += `<div style="background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:14px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="font-size:28px">${rec.icon}</div>
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:700">${rec.name}</div>
+              <div style="font-size:11px;color:var(--muted)">${rec.categoryIcon} ${rec.categoryName}</div>
+            </div>
+            <div style="font-size:10px;padding:2px 8px;background:var(--accent-light);color:var(--accent);border-radius:10px;font-weight:600">推荐</div>
+          </div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px">${rec.tip}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+            ${rec.reasons.map(r => `<span style="font-size:10px;padding:2px 8px;background:var(--bg);border:1px solid var(--rule);border-radius:8px">${r}</span>`).join('')}
+          </div>
+          ${rec.alreadyHas
+            ? `<button class="const-btn" style="width:100%;padding:8px;font-size:13px;background:var(--muted);color:#fff">✓ 已添加，继续保持</button>`
+            : `<button class="const-btn" style="width:100%;padding:8px;font-size:13px" onclick="App.UI.Events.addHabitFromLib('${rec.id}');setTimeout(function(){ if (App.UI.Panels.renderHealthReport) App.UI.Panels.renderHealthReport(); }, 200)">＋ 添加到习惯</button>`
+          }
+        </div>`;
+      });
+      html += '</div>';
+    }
+
+    if (report.waterStats) {
+      html += `<div style="background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:14px;margin-top:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div style="font-size:13px;font-weight:700">💧 饮水达标</div>
+          <div style="font-size:14px;font-weight:800;color:#5B8DB8">${Math.round(report.waterStats.reachRate * 100)}%</div>
+        </div>
+        <div style="font-size:11px;color:var(--muted)">近7天平均 ${report.waterStats.avgAmount}ml / 目标 ${report.waterStats.goal}ml</div>
+      </div>`;
+    }
+
+    html += '</div>';
+    return html;
   }
 
   function openDataPanel() {
@@ -1639,7 +1682,6 @@
     openLibraryPanel,
     renderLibraryPanel,
     updateLibCardState,
-    openReportPanel,
     getPomoTotalStats,
     openRefPanel,
     renderRefPanel,
@@ -1688,7 +1730,6 @@
   window.openHabitReminderList = openHabitReminderList;
   window.toggleHabitReminder = toggleHabitReminder;
   window.batchToggleReminders = batchToggleReminders;
-  window.openReportPanel = openReportPanel;
   window.openEmotionPanel = openEmotionPanel;
   window.openRetroactivePanel = openRetroactivePanel;
   // 批量暴露其余函数

@@ -1,20 +1,22 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta http-equiv="Content-Security-Policy-Report-Only" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://dashscope.aliyuncs.com https://*.workers.dev; font-src 'self' data:; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="theme-color" content="#FDF8F0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="习惯打卡">
 <link rel="manifest" href="./manifest.json">
 <title>生活习惯小助手 V2</title>
-<link rel="stylesheet" href="./css/main.min.css?v=20260718a">
-<link rel="stylesheet" href="./css/components.min.css?v=20260718a">
-<link rel="stylesheet" href="./css/skin-targets.min.css?v=20260718a">
-<link rel="stylesheet" href="./css/uiverse-raw.min.css?v=20260718a">
-<link rel="stylesheet" href="./css/sports.min.css?v=20260718a">
-<link rel="stylesheet" href="./css/ui-enhance.min.css?v=20260718a">
+<link rel="stylesheet" href="./css/main.min.css?v=131">
+<link rel="stylesheet" href="./css/components.min.css?v=131">
+<link rel="stylesheet" href="./css/skin-targets.min.css?v=131">
+<link rel="stylesheet" href="./css/uiverse-raw.min.css?v=131">
+<link rel="stylesheet" href="./css/sports.min.css?v=131">
+<link rel="stylesheet" href="./css/ui-enhance.min.css?v=131">
+<link rel="stylesheet" href="./css/theme-zhongshi.min.css?v=131">
 </head>
 <body>
 
@@ -160,8 +162,8 @@
 
 <!-- Manage Section (管理 - 习惯库 + 统计 + 排名) -->
 <div class="section" id="sec-manage">
-  <!-- 统计概览卡片 -->
-  <div class="mg-stats" id="mgStats"></div>
+  <!-- 本周总结（内嵌） -->
+  <div id="mgWeeklyReport"></div>
 
   <!-- 顶部搜索和添加 -->
   <div class="mg-header">
@@ -243,16 +245,6 @@
     <button class="panel-close" onclick="closeAllPanels()">✕</button>
   </div>
   <div class="panel-body" id="libraryPanelBody"></div>
-</div>
-
-<!-- Weekly Report Panel -->
-<div class="panel" id="reportPanel">
-  <div class="panel-handle"></div>
-  <div class="panel-header">
-    <span class="panel-title">📋 本周总结</span>
-    <button class="panel-close" onclick="closeAllPanels()">✕</button>
-  </div>
-  <div class="panel-body" id="reportPanelBody"></div>
 </div>
 
 <!-- Water Settings Panel -->
@@ -341,8 +333,6 @@
   <div class="panel-body panel-body-chat" id="aiChatPanelBody">
     <!-- 消息区域 -->
     <div id="aiChatMessages"></div>
-    <!-- 滚动到底部按钮 -->
-    <div id="aiScrollBottom" onclick="scrollAiToBottom()" title="回到底部">⬇</div>
     <!-- 输入区域 -->
     <div id="aiChatInputArea">
       <input type="text" id="aiChatInput" placeholder="输入养生问题，如：失眠怎么调理？" onkeydown="if(event.key==='Enter')sendAiMessage()">
@@ -838,32 +828,35 @@
 </div>
 
 <!-- ===== 关键JS预加载 ===== -->
-<link rel="preload" href="js/app.js?v=20260714" as="script">
-<link rel="preload" href="js/core/utils.js?v=20260714" as="script">
-<link rel="preload" href="js/bundle/ui.min.js?v=20260714" as="script">
+<link rel="preload" href="js/app.js?v=131" as="script">
+<link rel="preload" href="js/core/utils.js?v=131" as="script">
+<link rel="preload" href="js/bundle/ui.min.js?v=131" as="script">
 
 <!-- ===== 第0层：平台检测（内联消除HTTP请求） ===== -->
 <script>(function(){var p='pwa';try{if(typeof Capacitor!=='undefined'&&Capacitor.getPlatform&&Capacitor.getPlatform()==='android')p='apk';else if(typeof Capacitor!=='undefined'&&Capacitor.Plugins&&Capacitor.Plugins.LocalNotifications)p='apk';}catch(e){}window.__PLATFORM__=p;window.isAPK=function(){return p==='apk';};window.isPWA=function(){return p==='pwa';};})();</script>
 
+<!-- APK 内置云端配置（Gradle 构建时生成；PWA 环境下文件不存在，onerror 静默处理） -->
+<script src="app-config.js?v=131" defer onerror=""></script>
+
 <!-- ===== 第1层：命名空间 + 懒加载 ===== -->
-<script src="js/app.js?v=20260714" defer></script>
-<script src="js/lazy.js?v=20260714" defer></script>
+<script src="js/app.js?v=131" defer></script>
+<script src="js/lazy.js?v=131" defer></script>
 
 <!-- ===== 第1-2层：数据 + 核心 ===== -->
-<script src="js/bundle/data.min.js?v=20260714" defer></script>
-<script src="js/core/utils.js?v=20260714" defer></script>
-<script src="js/core/storage.js?v=20260714" defer></script>
+<script src="js/bundle/data.min.js?v=131" defer></script>
+<script src="js/core/utils.js?v=131" defer></script>
+<script src="js/core/storage.js?v=131" defer></script>
 
 <!-- ===== 第3层：业务模块（合并压缩） ===== -->
-<script src="js/bundle/modules.min.js?v=20260714" defer></script>
+<script src="js/bundle/modules.min.js?v=131" defer></script>
 
 <!-- ===== 第4层：UI层（合并压缩） ===== -->
-<script src="js/bundle/ui.min.js?v=20260714" defer></script>
+<script src="js/bundle/ui.min.js?v=131" defer></script>
 
 <!-- ===== 第5层：兼容层 + 入口 ===== -->
-<script src="js/compat.js?v=20260714" defer></script>
-<script src="js/modules/local-notify.js?v=20260714" defer></script>
-<script src="js/main.js?v=20260714" defer></script>
+<script src="js/compat.js?v=131" defer></script>
+<script src="js/modules/local-notify.js?v=131" defer></script>
+<script src="js/main.js?v=131" defer></script>
 <script>
 (function() {
   var KEY = 'force_refresh_version';

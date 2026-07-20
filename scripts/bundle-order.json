@@ -14,10 +14,13 @@
     "modules/diet.js",
     "modules/sports.js",
     "modules/pomodoro.js",
+    "modules/ai.js",
     "modules/constitution.js",
     "modules/poster.js",
     "modules/notification.js",
-    "modules/guide.js"
+    "modules/guide.js",
+    "modules/update.js",
+    "modules/recommendation.js"
   ],
   "ui": [
     "ui/render.js",

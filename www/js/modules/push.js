@@ -123,10 +123,23 @@
     var offset = -new Date().getTimezoneOffset();
     var url = getWorkerUrl();
     if (!url) throw new Error('请先在推送设置中填写 Worker URL');
+
+    var body = { schedule: schedule, offset: offset };
+    try {
+      var qh = JSON.parse(localStorage.getItem('quiet_hours') || '{}');
+      if (qh && qh.enabled !== false) {
+        body.quietHours = {
+          enabled: true,
+          start: qh.start || 22,
+          end: qh.end || 7
+        };
+      }
+    } catch(e) {}
+
     var res = await fetch(url + '/push/schedule', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ schedule: schedule, offset: offset })
+      body: JSON.stringify(body)
     });
     if (!res.ok) throw new Error('时间表上传失败(' + res.status + ')');
     return res.json();

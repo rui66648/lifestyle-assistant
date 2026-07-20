@@ -496,13 +496,17 @@ select:focus-visible {
   box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35);
 }
 
-/* 8-2. 中心按钮增强 — 保留原有渐变，增加细节 */
+/* 8-2. 中心按钮增强 — 去掉磨砂，保留渐变和高光 */
 .bnav-center {
   box-shadow:
-    0 8px 24px rgba(16, 185, 129, 0.4),
-    0 4px 12px rgba(245, 158, 11, 0.25),
+    0 6px 20px rgba(16, 185, 129, 0.35),
+    0 3px 8px rgba(245, 158, 11, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transition: all 250ms var(--ease);
+}
+
+.bnav-center::before {
+  display: none;
 }
 
 .bnav-center::after {
@@ -557,6 +561,22 @@ select:focus-visible {
   box-shadow:
     0 8px 24px rgba(16, 185, 129, 0.25),
     0 2px 6px rgba(16, 185, 129, 0.1);
+}
+
+/* 错误提示的 toast 变体 — 红色主题 */
+.toast.toast-error {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow:
+    0 8px 24px rgba(239, 68, 68, 0.25),
+    0 2px 6px rgba(239, 68, 68, 0.1);
+}
+
+/* 警告提示的 toast 变体 — 橙色主题 */
+.toast.toast-warning {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  box-shadow:
+    0 8px 24px rgba(245, 158, 11, 0.25),
+    0 2px 6px rgba(245, 158, 11, 0.1);
 }
 
 /* ================================================================
@@ -852,6 +872,14 @@ body.dark .toast.toast-success {
   background: linear-gradient(135deg, var(--accent-700), var(--accent-800));
 }
 
+body.dark .toast.toast-error {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+}
+
+body.dark .toast.toast-warning {
+  background: linear-gradient(135deg, #d97706, #b45309);
+}
+
 /* 13-11. 暗色: 面板把手适配 */
 body.dark .panel-handle {
   background: rgba(255, 255, 255, 0.15);
@@ -897,4 +925,766 @@ body.dark .lib-tab:not(.active):hover {
 @keyframes panelSlideIn {
   from { transform: translateX(-50%) translateY(100%); }
   to { transform: translateX(-50%) translateY(0); }
+}
+
+/* ================================================================
+   15. 记录界面（打卡页）UI 优化
+   ================================================================ */
+
+/* 15-1. 日期导航器增强 — 玻璃态卡片 + 圆形按钮 */
+.date-nav {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 12px;
+  margin: 0 16px 12px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 250ms var(--ease);
+}
+
+.date-nav:hover {
+  box-shadow: var(--shadow);
+}
+
+.date-nav-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--ink2);
+  transition: all 200ms var(--ease);
+}
+
+.date-nav-btn:hover {
+  background: var(--accent-50);
+  color: var(--accent-600);
+  transform: scale(1.1);
+}
+
+.date-nav-btn:active {
+  transform: scale(0.92);
+  background: var(--accent-100);
+}
+
+.date-nav-label {
+  flex: 1;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.3px;
+  min-width: 90px;
+}
+
+.date-nav-home {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-50);
+  padding: 5px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 200ms var(--ease);
+  border: 1px solid var(--accent-100);
+}
+
+.date-nav-home:hover {
+  background: var(--accent-100);
+  transform: scale(1.05);
+}
+
+/* 15-2. 分段切换器增强 — 胶囊滑块效果 */
+.checkin-segmented {
+  position: relative;
+  padding: 4px;
+  background: var(--bg2);
+  border-radius: 14px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.checkin-segment {
+  position: relative;
+  z-index: 1;
+  padding: 9px 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  transition: color 250ms var(--ease);
+}
+
+.checkin-segment.active {
+  color: var(--accent-700);
+  background: var(--bg);
+  box-shadow:
+    var(--shadow-sm),
+    0 0 0 1px rgba(16, 185, 129, 0.1);
+}
+
+.checkin-segment:not(.active):hover {
+  color: var(--ink2);
+}
+
+/* 15-3. 鼓励环增强 — 更大更醒目 */
+.date-nav + div > div[style*="text-align:center;padding:16px"] svg,
+#checkinContent > div > div[style*="text-align:center"] svg {
+  filter: drop-shadow(0 4px 12px rgba(16, 185, 129, 0.2));
+}
+
+/* 15-4. 习惯卡片增强 — 完成态视觉反馈 */
+.habit-card.done-card {
+  opacity: 0.65;
+  background: rgba(16, 185, 129, 0.03);
+}
+
+.habit-card.done-card .name {
+  text-decoration: line-through;
+  text-decoration-color: var(--muted);
+  text-decoration-thickness: 1.5px;
+  color: var(--muted);
+}
+
+.habit-card.done-card .icon {
+  filter: grayscale(0.3);
+}
+
+/* 15-5. 打卡按钮增强 — 更明显的可点击感 */
+.habit-card .checkin-btn.pending {
+  box-shadow:
+    0 3px 10px rgba(16, 185, 129, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: transform 150ms var(--ease),
+              box-shadow 200ms var(--ease);
+}
+
+.habit-card .checkin-btn.pending:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 5px 14px rgba(16, 185, 129, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.habit-card .checkin-btn.pending:active {
+  transform: scale(0.94);
+}
+
+/* 15-6. 状态丝带增强 — 左侧色条更清晰 */
+.status-ribbon {
+  width: 4px;
+  border-radius: 0 3px 3px 0;
+  transition: opacity 200ms var(--ease);
+}
+
+.status-ribbon.done {
+  background: var(--accent);
+  opacity: 0.6;
+}
+
+.status-ribbon.overdue {
+  background: var(--danger);
+  opacity: 0.8;
+}
+
+.status-ribbon.pending {
+  background: var(--accent2);
+  opacity: 0.4;
+}
+
+/* 15-7. 健康贴士气泡增强 */
+.health-tip-inline {
+  margin-top: 6px;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, var(--accent-50), var(--accent2-50));
+  border-radius: 10px;
+  border-left: 3px solid var(--accent);
+  font-size: 11px;
+  color: var(--ink2);
+  line-height: 1.6;
+  transition: all 200ms var(--ease);
+}
+
+.health-tip-inline:hover {
+  transform: translateX(2px);
+  box-shadow: var(--shadow-xs);
+}
+
+/* 15-8. 空状态增强 */
+.mg-empty {
+  padding: 60px 24px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
+  border: 2px dashed var(--rule);
+  margin: 20px 0;
+}
+
+.mg-empty-icon {
+  font-size: 56px;
+  display: block;
+  margin-bottom: 16px;
+  opacity: 0.6;
+  animation: enhanceBreathe 3s ease-in-out infinite;
+}
+
+/* ================================================================
+   16. 管理界面 UI 优化
+   ================================================================ */
+
+/* 16-1. 统计卡片增强 — 渐变背景 + 顶部色带 */
+.mg-stat-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 250ms var(--ease),
+              box-shadow 250ms var(--ease);
+}
+
+.mg-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  opacity: 0.7;
+  transition: opacity 250ms var(--ease);
+}
+
+.mg-stat-card.accent::before {
+  opacity: 1;
+  height: 4px;
+}
+
+.mg-stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.mg-stat-card:hover::before {
+  opacity: 1;
+}
+
+.mg-stat-num {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.mg-stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  margin-top: 8px;
+}
+
+/* 16-2. 本周总结增强 — 更清晰的进度条 + 标签 */
+.mg-weekly-report {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.85));
+  border: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+.mg-weekly-report::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--accent), var(--accent2));
+  opacity: 0.8;
+}
+
+.mg-weekly-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mg-weekly-rate {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.mg-weekly-progress {
+  height: 10px;
+  background: var(--bg2);
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+}
+
+.mg-weekly-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 5px;
+  transition: width 800ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.mg-weekly-progress-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  animation: progressShine 2s ease-in-out infinite;
+}
+
+@keyframes progressShine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.mg-weekly-item {
+  padding: 8px 12px;
+  margin-top: 6px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.5);
+  transition: all 200ms var(--ease);
+}
+
+.mg-weekly-item:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateX(2px);
+}
+
+.mg-weekly-item.best {
+  border-left: 3px solid var(--accent);
+}
+
+.mg-weekly-item.worst {
+  border-left: 3px solid var(--accent2);
+}
+
+/* 16-3. 时段分组卡片增强 — 左侧色带按时段变色 */
+.mg-group {
+  position: relative;
+  overflow: hidden;
+  transition: transform 250ms var(--ease),
+              box-shadow 250ms var(--ease);
+}
+
+.mg-group:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* 根据 id 为不同时段的分组设置不同的左侧色带 */
+.mg-group#mg-group-morning .mg-group-header {
+  border-left-color: var(--accent2);
+}
+
+.mg-group#mg-group-forenoon .mg-group-header {
+  border-left-color: var(--accent);
+}
+
+.mg-group#mg-group-afternoon .mg-group-header {
+  border-left-color: var(--fw-8);
+}
+
+.mg-group#mg-group-evening .mg-group-header {
+  border-left-color: var(--fw-5);
+}
+
+.mg-group-header {
+  padding: 14px 18px;
+  transition: background 200ms var(--ease);
+}
+
+.mg-group-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  font-size: 22px;
+  transition: transform 250ms var(--ease);
+}
+
+.mg-group-header:hover .mg-group-icon {
+  transform: scale(1.08) rotate(-5deg);
+}
+
+.mg-group-count {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 12px;
+  letter-spacing: 0.3px;
+}
+
+.mg-group-arrow {
+  font-size: 14px;
+  transition: transform 300ms var(--ease);
+}
+
+/* 16-4. 管理页习惯项增强 — 更清晰的层次 */
+.mg-item {
+  padding: 14px 18px;
+  transition: all 200ms var(--ease);
+  position: relative;
+}
+
+.mg-item:hover {
+  background: rgba(16, 185, 129, 0.05);
+  transform: translateX(2px);
+}
+
+.mg-item:active {
+  transform: translateX(2px) scale(0.99);
+}
+
+.mg-item-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  font-size: 26px;
+  transition: transform 250ms var(--ease);
+}
+
+.mg-item:hover .mg-item-icon {
+  transform: scale(1.06);
+}
+
+.mg-item-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 5px;
+}
+
+.mg-item-meta {
+  gap: 6px;
+}
+
+.mg-item-type {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 8px;
+  letter-spacing: 0.2px;
+}
+
+/* 16-5. 管理页开关增强 — 更精致 */
+.mg-item-toggle {
+  width: 52px;
+  height: 28px;
+  border-radius: 14px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08);
+  transition: background 300ms var(--ease),
+              box-shadow 300ms var(--ease);
+}
+
+.mg-item-toggle.on {
+  box-shadow:
+    inset 0 1px 3px rgba(16, 185, 129, 0.3),
+    0 0 12px rgba(16, 185, 129, 0.2);
+}
+
+.mg-item-toggle::after {
+  width: 22px;
+  height: 22px;
+  top: 3px;
+  left: 3px;
+  transition: transform 300ms cubic-bezier(0.68, -0.15, 0.265, 1.35),
+              box-shadow 300ms var(--ease);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.mg-item-toggle.on::after {
+  transform: translateX(24px);
+  box-shadow:
+    0 2px 8px rgba(16, 185, 129, 0.35),
+    0 0 0 3px rgba(16, 185, 129, 0.12);
+}
+
+/* 16-6. 搜索框区域增强 */
+.mg-search-wrap {
+  position: relative;
+}
+
+.mg-add-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  font-size: 22px;
+  transition: transform 250ms var(--ease),
+              box-shadow 250ms var(--ease);
+}
+
+.mg-add-btn:hover {
+  transform: scale(1.08) rotate(90deg);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+}
+
+.mg-add-btn:active {
+  transform: scale(0.92) rotate(45deg);
+}
+
+/* ================================================================
+   17. 整体视觉效果优化
+   ================================================================ */
+
+/* 17-1. 滚动条美化 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 3px;
+  transition: background 200ms var(--ease);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.6);
+}
+
+body.dark ::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.4);
+}
+
+body.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.6);
+}
+
+/* 17-2. 文本选择色 */
+::selection {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--ink);
+}
+
+body.dark ::selection {
+  background: rgba(52, 211, 153, 0.25);
+  color: var(--ink);
+}
+
+/* 17-3. 焦点可见性 — 无障碍 */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* 17-4. 链接默认样式 */
+a {
+  color: var(--accent-600);
+  transition: color 150ms var(--ease);
+}
+
+a:hover {
+  color: var(--accent-700);
+}
+
+body.dark a {
+  color: var(--accent-400);
+}
+
+body.dark a:hover {
+  color: var(--accent-300);
+}
+
+/* 17-5. 图片懒加载淡入 */
+img {
+  opacity: 0;
+  transition: opacity 300ms var(--ease);
+}
+
+img.loaded,
+img[loading="eager"] {
+  opacity: 1;
+}
+
+/* 17-6. 减少动画 — 尊重用户偏好 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .mg-weekly-progress-bar::after,
+  .mg-empty-icon {
+    animation: none !important;
+  }
+}
+
+/* 17-7. 深色模式：记录界面适配 */
+body.dark .date-nav {
+  background: rgba(30, 41, 59, 0.85);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+body.dark .date-nav-btn {
+  color: var(--ink2);
+}
+
+body.dark .date-nav-btn:hover {
+  background: rgba(52, 211, 153, 0.1);
+  color: var(--accent);
+}
+
+body.dark .date-nav-home {
+  background: rgba(52, 211, 153, 0.1);
+  border-color: rgba(52, 211, 153, 0.2);
+  color: var(--accent);
+}
+
+body.dark .checkin-segmented {
+  background: var(--bg2);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+body.dark .checkin-segment.active {
+  background: var(--surface);
+  color: var(--accent);
+  box-shadow:
+    var(--shadow-sm),
+    0 0 0 1px rgba(52, 211, 153, 0.15);
+}
+
+body.dark .habit-card.done-card {
+  background: rgba(52, 211, 153, 0.04);
+}
+
+body.dark .health-tip-inline {
+  background: linear-gradient(135deg, rgba(52, 211, 153, 0.08), rgba(251, 191, 36, 0.06));
+  border-left-color: var(--accent);
+}
+
+body.dark .mg-empty {
+  background: rgba(30, 41, 59, 0.5);
+  border-color: var(--rule);
+}
+
+/* 17-8. 深色模式：管理界面适配 */
+body.dark .mg-stat-card {
+  background: rgba(30, 41, 59, 0.85);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+body.dark .mg-stat-card::before {
+  opacity: 0.8;
+}
+
+body.dark .mg-weekly-report {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.85));
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+body.dark .mg-weekly-item {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+body.dark .mg-weekly-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+body.dark .mg-weekly-progress {
+  background: var(--bg2);
+}
+
+body.dark .mg-group-header {
+  background: rgba(51, 65, 85, 0.5);
+}
+
+body.dark .mg-item:hover {
+  background: rgba(52, 211, 153, 0.06);
+}
+
+/* 17-9. 触摸设备优化 — 禁用 hover 效果，避免粘滞 */
+@media (hover: none) and (pointer: coarse) {
+  .habit-card:hover,
+  .mg-stat-card:hover,
+  .mg-group:hover,
+  .mg-item:hover,
+  .mg-weekly-item:hover,
+  .date-nav:hover,
+  .mini-quote:hover,
+  .stat-card:hover,
+  .profile-stat-item:hover {
+    transform: none;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .mg-group-icon:hover,
+  .mg-item-icon:hover,
+  .mg-item:hover .mg-item-icon,
+  .mg-group-header:hover .mg-group-icon {
+    transform: none;
+  }
+
+  .health-tip-inline:hover {
+    transform: none;
+  }
+}
+
+/* 17-10. 加载骨架屏增强 */
+#skeleton {
+  background: linear-gradient(
+    135deg,
+    var(--bg) 0%,
+    var(--bg2) 50%,
+    var(--bg) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes skeletonShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* 17-11. 面板遮罩增强 — 更平滑的过渡 */
+#panelOverlay {
+  transition: opacity 250ms var(--ease);
+}
+
+/* 17-12. 输入框 placeholder 一致性 */
+input::placeholder,
+textarea::placeholder {
+  color: var(--muted);
+  opacity: 0.7;
+  font-weight: 400;
+}
+
+body.dark input::placeholder,
+body.dark textarea::placeholder {
+  color: var(--muted);
+  opacity: 0.6;
+}
+
+/* 17-13. 数字字体优化 — 等宽数字更整齐 */
+.mg-stat-num,
+.mg-weekly-rate,
+.mg-group-count,
+.ps-val,
+.pomo-timer-display {
+  font-variant-numeric: tabular-nums;
+  -webkit-font-variant-numeric: tabular-nums;
 }

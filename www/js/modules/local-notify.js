@@ -28,6 +28,7 @@
   var CHANNEL_HABIT = 'habit_reminders';
   var CHANNEL_INTERVAL = 'interval_reminders';
   var CHANNEL_SYSTEM = 'system';
+  var CHANNEL_ALARM = 'alarm_reminders';
 
   // ============================================================
   // 平台检测
@@ -49,12 +50,38 @@
   // ============================================================
 
   // 请求通知权限
+  // Android 13+（API 33+）流程：
+  //   1) 状态为 prompt → 调用 requestPermissions() 弹出系统授权对话框
+  //   2) 状态为 denied → 系统不再弹窗，引导用户去系统设置手动开启
+  //   3) 状态为 granted → 直接返回 true
   async function requestPermission() {
     // === APK: Capacitor 原生权限 ===
     if (_isCapacitor && _LocalNotifications) {
       try {
+        // 先检查当前状态，避免 Android 13+ 重复请求被忽略
+        var cur = await _LocalNotifications.checkPermissions();
+        if (cur.display === 'granted') {
+          _permissionGranted = true;
+          return true;
+        }
+        if (cur.display === 'denied') {
+          // 用户曾拒绝，系统不再弹窗 → 引导去设置页
+          if (typeof showToast === 'function') {
+            showToast('通知权限已被关闭，请在系统设置中手动开启', 3000);
+          }
+          // 延迟跳转，让 toast 先显示
+          setTimeout(function() {
+            openSystemNotificationSettings();
+          }, 1500);
+          _permissionGranted = false;
+          return false;
+        }
+        // display === 'prompt' → 首次请求
         var result = await _LocalNotifications.requestPermissions();
         _permissionGranted = result.display === 'granted';
+        if (!_permissionGranted && typeof showToast === 'function') {
+          showToast('未授权通知权限，提醒功能将不可用', 2500);
+        }
         return _permissionGranted;
       } catch (e) {
         console.warn('[LocalNotify] APK 请求权限失败:', e);
@@ -68,6 +95,12 @@
       if (Notification.permission === 'granted') {
         _permissionGranted = true;
         return true;
+      }
+      if (Notification.permission === 'denied') {
+        if (typeof showToast === 'function') {
+          showToast('通知权限已被浏览器拦截，请点击地址栏🔒图标修改', 3000);
+        }
+        return false;
       }
       try {
         var perm = await Notification.requestPermission();
@@ -109,10 +142,11 @@
   // ============================================================
 
   /**
-   * 创建三个独立通知渠道，用户可在 Android 系统设置中分别控制
+   * 创建四个独立通知渠道，用户可在 Android 系统设置中分别控制
    * - habit_reminders: 习惯提醒（高重要性，有声）
    * - interval_reminders: 间隔提醒（默认重要性）
    * - system: 系统通知（低重要性，静默）
+   * - alarm_reminders: 强提醒（最高重要性，全屏 intent，响铃+振动+闪光灯）
    */
   async function createNotificationChannels() {
     if (!_isCapacitor || !_LocalNotifications) return;
@@ -149,6 +183,17 @@
             vibration: false,
             lights: false,
             visibility: 0
+          },
+          {
+            id: CHANNEL_ALARM,
+            name: '强提醒',
+            description: '重要事项强提醒（声音+振动+闪光灯）',
+            importance: 5,
+            sound: 'default',
+            vibration: true,
+            lights: true,
+            lightColor: '#ff0000',
+            visibility: 1
           }
         ]
       });
@@ -669,13 +714,25 @@
     openSystemNotificationSettings: openSystemNotificationSettings,
     checkPermission: checkPermission,
     sendNotification: sendNotification,
+    sendAlarmNotification: function(title, body, options) {
+      options = options || {};
+      options.channelId = CHANNEL_ALARM;
+      options.sound = true;
+      return sendNotification(title, body, options);
+    },
     scheduleHabitReminders: scheduleHabitReminders,
     remindInFiveMinutes: remindInFiveMinutes,
     cancelAll: cancelAll,
     rescheduleAll: rescheduleAll,
     markUIReady: markUIReady,
     isCapacitor: function() { return _isCapacitor; },
-    platform: function() { return _platform; }
+    platform: function() { return _platform; },
+    channels: {
+      HABIT: CHANNEL_HABIT,
+      INTERVAL: CHANNEL_INTERVAL,
+      SYSTEM: CHANNEL_SYSTEM,
+      ALARM: CHANNEL_ALARM
+    }
   };
 
   // 自动初始化

@@ -234,24 +234,9 @@
     return items;
   }
 
-  function _renderEncourageRing(doneCount, total, firstHabitId) {
-    const encourageMsgs = [
-      '每一天的坚持，都是对自己最好的投资 💪',
-      '养生不是一蹴而就，而是日积月累的功夫 🌱',
-      '今天又比昨天更健康了一点点 🌟',
-      '你的身体会感谢现在努力的自己 ❤️',
-      '好的习惯是最好的医生，坚持下去 🏥',
-      '法于阴阳，和于术数，食饮有节 📖',
-      '不积跬步，无以至千里 -- 荀子 🚶',
-      '上工治未病，不治已病 --《黄帝内经》🌿',
-      '坚持就是胜利，你已经很棒了 ✨'
-    ];
-    const encourageIdx = Math.floor(Date.now() / 86400000 + doneCount) % encourageMsgs.length;
+  function _renderEncourageRing(doneCount, total) {
     const pct = Math.round((doneCount / total) * 100);
     const r = 52, c = 2 * Math.PI * r, offset = c - (pct / 100) * c;
-    const retroBtn = firstHabitId
-      ? `<div style="margin-top:4px"><button onclick="openRetroactivePanel('${firstHabitId}')" style="font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;font-weight:600">📅 补签过去7天</button></div>`
-      : '';
     return `<div style="text-align:center;padding:16px 16px 6px">
       <svg width="120" height="120" style="display:block;margin:0 auto">
         <circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--rule)" stroke-width="8"/>
@@ -259,8 +244,6 @@
         <text x="60" y="55" text-anchor="middle" font-size="28" font-weight="800" fill="var(--accent)">${pct}%</text>
         <text x="60" y="72" text-anchor="middle" font-size="11" fill="var(--muted)">${doneCount}/${total}</text>
       </svg>
-      <div style="font-size:13px;color:var(--muted);margin-top:6px;line-height:1.6">${encourageMsgs[encourageIdx]}</div>
-      ${retroBtn}
     </div>`;
   }
 
@@ -383,7 +366,6 @@
 
     const viewDate = new Date();
     viewDate.setDate(viewDate.getDate() + viewDateOffset);
-    const dow = viewDate.getDay();
     const viewDateStr = formatDate(viewDate);
 
     let html = '';
@@ -398,11 +380,6 @@
       return;
     }
 
-    // 周日显示周报入口
-    if (dow === 0) {
-      html += '<div class="report-card" style="cursor:pointer" onclick="openReportPanel()"><div class="report-title">📋 点击查看本周总结</div></div>';
-    }
-
     const items = _buildCheckinItems(rec, nowMinutes, viewDateOffset);
     const total = items.length;
     const doneCount = items.filter(x => x.checked).length;
@@ -412,8 +389,7 @@
       : 0;
 
     if (total > 0) {
-      const firstId = (items[0] && items[0].h) ? items[0].h.id : ((habitsConfig[0] && habitsConfig[0].id) || '');
-      html += _renderEncourageRing(doneCount, total, firstId);
+      html += _renderEncourageRing(doneCount, total);
     }
 
     // 所有习惯平铺显示，按 nextTime 排序（已排序）
@@ -544,10 +520,14 @@
       var lv = App.Core.Utils.getHeatmapLevel(ratio);
       var cls = lv > 0 ? 'l' + lv : '';
       var todayCls = key === todayStr ? ' today' : '';
-      html += '<div class="heatmap-cell ' + cls + todayCls + '" title="' + key + ': ' + doneCount + '/' + totalHabits + '"></div>';
+      var futureCls = new Date(year, month, d) > new Date() ? ' future' : '';
+      // 添加 data-* 属性支持点击查看详情
+      html += '<div class="heatmap-cell ' + cls + todayCls + futureCls + '" data-date="' + key + '" data-done="' + doneCount + '" data-total="' + totalHabits + '" title="' + key + ': ' + doneCount + '/' + totalHabits + '"></div>';
     }
 
     gridEl.innerHTML = html;
+    // 绑定点击事件（事件委托）
+    _attachHeatmapCellClick(gridEl);
   }
 
   function renderHeatmap() {
@@ -599,8 +579,8 @@
 
   function renderManage() {
     renderManageStats();
+    renderManageWeeklyReport();
     renderManageGroups();
-    renderRankingSection();
     renderAchievements();
     renderDailyCardPreview();
   }
@@ -608,33 +588,75 @@
   function renderManageStats() {
     const container = document.getElementById('mgStats');
     if (!container) return;
-    const total = habitsConfig.length;
-    const enabled = habitsConfig.filter(h => h.enabled !== false).length;
-    const todayStr = today();
-    const rec = checkinRecords[todayStr] || {};
-    let doneToday = 0;
+    container.innerHTML = '';
+  }
+
+  // 计算本周（周一到周日）打卡统计
+  function _computeWeekStats() {
+    const d = new Date();
+    const dow = d.getDay();
+    const mondayOffset = dow === 0 ? 6 : dow - 1;
+    const monday = new Date(d);
+    monday.setDate(d.getDate() - mondayOffset);
+
+    let totalDone = 0, totalAll = 0;
+    const habitStats = {};
+    habitsConfig.forEach(h => {
+      habitStats[h.id] = {done: 0, total: 7, name: h.name, icon: h.icon, enabled: h.enabled !== false};
+    });
+
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(monday);
+      day.setDate(monday.getDate() + i);
+      const key = formatDate(day);
+      const rec = checkinRecords[key] || {};
+      habitsConfig.forEach(h => {
+        if (h.enabled === false) return;
+        totalAll++;
+        if (rec[h.id] && rec[h.id].done) {
+          totalDone++;
+          habitStats[h.id].done++;
+        }
+      });
+    }
+
+    let best = null, worst = null;
     habitsConfig.forEach(h => {
       if (h.enabled === false) return;
-      if (rec[h.id] && rec[h.id].done) doneToday++;
+      const s = habitStats[h.id];
+      if (!best || s.done > best.done) best = s;
+      if (!worst || s.done < worst.done) worst = s;
     });
-    const activeCount = enabled || 0;
+
+    return {totalDone, totalAll, habitStats, best, worst};
+  }
+
+  function renderManageWeeklyReport() {
+    const container = document.getElementById('mgWeeklyReport');
+    if (!container) return;
+    const data = _computeWeekStats();
+    if (data.totalAll === 0) {
+      container.innerHTML = '';
+      return;
+    }
+    const weekRate = Math.round((data.totalDone / data.totalAll) * 100);
+    const best = data.best;
+    const worst = (data.worst && data.worst.done < 7) ? data.worst : null;
 
     container.innerHTML = `
-      <div class="mg-stat-card">
-        <div class="mg-stat-num">${total}</div>
-        <div class="mg-stat-label">全部习惯</div>
-      </div>
-      <div class="mg-stat-card">
-        <div class="mg-stat-num">${activeCount}</div>
-        <div class="mg-stat-label">已启用</div>
-      </div>
-      <div class="mg-stat-card">
-        <div class="mg-stat-num">${doneToday}</div>
-        <div class="mg-stat-label">今日完成</div>
-      </div>
-      <div class="mg-stat-card">
-        <div class="mg-stat-num">${todayStr.split('-')[2]}日</div>
-        <div class="mg-stat-label">今天</div>
+      <div class="mg-weekly-report">
+        <div class="mg-weekly-header">
+          <span class="mg-weekly-title">📊 本周总结</span>
+          <span class="mg-weekly-rate">${weekRate}%</span>
+        </div>
+        <div class="mg-weekly-progress">
+          <div class="mg-weekly-progress-bar" style="width:${weekRate}%"></div>
+        </div>
+        <div class="mg-weekly-summary">
+          <span>总打卡 <strong>${data.totalDone}</strong>/${data.totalAll}</span>
+        </div>
+        ${best ? `<div class="mg-weekly-item best"><span class="emoji">🌟</span><span class="text">最佳：${esc(best.icon)} ${esc(best.name)}（${best.done}天）</span></div>` : ''}
+        ${worst ? `<div class="mg-weekly-item worst"><span class="emoji">💪</span><span class="text">需加油：${esc(worst.icon)} ${esc(worst.name)}（${worst.done}天）</span></div>` : ''}
       </div>`;
   }
 
@@ -1232,12 +1254,13 @@
   function deleteHabitConfirm(habitId) {
     const idx = habitsConfig.findIndex(h => h.id === habitId);
     if (idx >= 0) {
+      const cleaned = App.Core.Storage.purgeHabitRecords(habitId);
       habitsConfig.splice(idx, 1);
       App.Core.Storage.saveConfig();
       App.UI.Panels.closeAllPanels();
       App.UI.Render.renderManage();
       App.UI.Render.renderCheckin();
-      showToast('已删除习惯');
+      showToast(cleaned > 0 ? `已删除习惯并清理 ${cleaned} 天打卡记录` : '已删除习惯');
     }
   }
 
@@ -1461,6 +1484,97 @@
     return done;
   }
 
+  // ===== 数字递增动画（500~800ms，requestAnimationFrame 驱动，不阻塞交互） =====
+  function _animateNumber(el, target, duration, suffix) {
+    if (!el) return;
+    target = Number(target) || 0;
+    duration = duration || 700;
+    suffix = suffix || '';
+    var start = 0;
+    var startTime = null;
+    // 标记动画中，避免重复触发
+    el._animTarget = target;
+    function step(ts) {
+      if (startTime === null) startTime = ts;
+      var progress = Math.min(1, (ts - startTime) / duration);
+      // easeOutCubic 缓动
+      var eased = 1 - Math.pow(1 - progress, 3);
+      var cur = Math.round(start + (target - start) * eased);
+      el.textContent = cur + suffix;
+      if (progress < 1 && el._animTarget === target) {
+        requestAnimationFrame(step);
+      } else if (el._animTarget === target) {
+        el.textContent = target + suffix;
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  // 批量动画容器内所有 [data-anim-target]
+  function _animateNumbersIn(container) {
+    if (!container) return;
+    var nodes = container.querySelectorAll('[data-anim-target]');
+    nodes.forEach(function(n) {
+      var t = n.getAttribute('data-anim-target');
+      var sfx = n.getAttribute('data-anim-suffix') || '';
+      var dur = Number(n.getAttribute('data-anim-duration')) || 700;
+      _animateNumber(n, t, dur, sfx);
+    });
+  }
+
+  // ===== 热力图格子点击查看详情（事件委托，单次绑定） =====
+  function _attachHeatmapCellClick(gridEl) {
+    if (!gridEl) return;
+    if (gridEl._heatmapBound) return;
+    gridEl._heatmapBound = true;
+    gridEl.addEventListener('click', function(e) {
+      var cell = e.target.closest && e.target.closest('[data-date]');
+      if (!cell) return;
+      if (cell.classList.contains('empty') || cell.classList.contains('yh-empty')) return;
+      var date = cell.getAttribute('data-date');
+      var done = Number(cell.getAttribute('data-done') || 0);
+      var total = Number(cell.getAttribute('data-total') || 0);
+      _showHeatmapTooltip(cell, date, done, total);
+    });
+  }
+
+  // 热力图详情浮层（单例，复用 #heatmapTooltip）
+  function _showHeatmapTooltip(cell, date, done, total) {
+    var tip = document.getElementById('heatmapTooltip');
+    if (!tip) {
+      tip = document.createElement('div');
+      tip.id = 'heatmapTooltip';
+      tip.className = 'heatmap-tooltip';
+      tip.addEventListener('click', function() { tip.style.display = 'none'; });
+      document.body.appendChild(tip);
+    }
+    var pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    var parts = date.split('-');
+    var d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+    var weekDay = ['日','一','二','三','四','五','六'][d.getDay()];
+    var pctColor = pct >= 75 ? 'var(--accent)' : pct >= 50 ? 'var(--accent2)' : 'var(--muted)';
+    tip.innerHTML =
+      '<div class="ht-date">' + parts[1] + '月' + parts[2] + '日 · 周' + weekDay + '</div>' +
+      '<div class="ht-detail">完成 <b style="color:' + pctColor + '">' + done + '</b> / ' + total + ' 项</div>' +
+      '<div class="ht-bar"><div class="ht-bar-fill" style="width:' + pct + '%;background:' + pctColor + '"></div></div>' +
+      '<div class="ht-hint">点击空白处关闭</div>';
+    var rect = cell.getBoundingClientRect();
+    var tipW = 200, tipH = 96;
+    var left = rect.left + rect.width / 2 - tipW / 2;
+    var top = rect.bottom + window.scrollY + 8;
+    if (left + tipW > window.innerWidth - 8) left = window.innerWidth - tipW - 8;
+    if (left < 8) left = 8;
+    // 若下方溢出，则显示在上方
+    if (rect.bottom + tipH + 12 > window.innerHeight) {
+      top = rect.top + window.scrollY - tipH - 8;
+    }
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.display = 'block';
+    clearTimeout(tip._timer);
+    tip._timer = setTimeout(function() { tip.style.display = 'none'; }, 5000);
+  }
+
   function renderSdWeekBarChart() {
     var container = document.getElementById('sdWeekBarChart');
     if (!container) return;
@@ -1469,20 +1583,14 @@
     var today = new Date();
     var todayStr = formatDate(today);
     var totalHabits = habitsConfig.filter(function(h) { return h.enabled !== false; }).length;
-    var maxVal = 1;
 
-    // 第一遍：找最大值
-    for (var i = 0; i < 7; i++) {
-      var d = new Date(today);
-      d.setDate(d.getDate() - today.getDay() + i);
-      var key = formatDate(d);
-      var rec = checkinRecords[key] || {};
-      var done = _countDayDone(rec);
-      if (done > maxVal) maxVal = done;
-    }
+    // 容器高 110px（含上下间距），柱体区域 100px，最高 80px = 80%
+    var BAR_AREA_H = 100;
+    var BAR_MAX_H = 80;
 
-    // 第二遍：渲染
-    var html = '<div style="display:flex;align-items:flex-end;gap:6px;height:120px;padding:8px 0">';
+    // 收集 7 天数据
+    var data = [];
+    var maxDone = 1;
     for (var i = 0; i < 7; i++) {
       var d = new Date(today);
       d.setDate(d.getDate() - today.getDay() + i);
@@ -1490,16 +1598,48 @@
       var rec = checkinRecords[key] || {};
       var done = _countDayDone(rec);
       var pct = totalHabits > 0 ? (done / totalHabits) : 0;
-      var h = Math.max(4, Math.round(pct * 100));
-      var isToday = key === todayStr;
-      html += '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">\
-        <span style="font-size:10px;color:var(--muted);font-weight:700">' + done + '</span>\
-        <div style="width:100%;max-width:32px;height:' + h + 'px;background:' + (isToday ? 'linear-gradient(180deg,var(--accent),var(--accent2))' : 'var(--accent-light)') + ';border-radius:6px 6px 4px 4px;transition:height .5s ease"></div>\
-        <span style="font-size:10px;color:' + (isToday ? 'var(--accent)' : 'var(--muted)') + ';font-weight:' + (isToday ? 700 : 400) + '">' + weekDays[i] + '</span>\
-      </div>';
+      // 柱高 = 完成率 × 最大柱高（确保不超过 80%）
+      var h = Math.max(4, Math.round(pct * BAR_MAX_H));
+      data.push({
+        day: weekDays[i],
+        done: done,
+        total: totalHabits,
+        pct: Math.round(pct * 100),
+        h: h,
+        key: key,
+        isToday: key === todayStr,
+        isFuture: d > today
+      });
+      if (done > maxDone) maxDone = done;
     }
+
+    // 渲染：初始 height:0，下一帧切换到目标高度实现渐进动画
+    var html = '<div class="sd-bar-chart" style="display:flex;align-items:flex-end;gap:6px;height:' + BAR_AREA_H + 'px;padding:8px 0 4px">';
+    data.forEach(function(d) {
+      var barCls = 'sd-bar' + (d.isToday ? ' sd-bar-today' : '');
+      var barBg = d.isFuture
+        ? 'var(--bg2)'
+        : (d.isToday
+            ? 'linear-gradient(180deg,var(--accent),var(--accent2))'
+            : 'linear-gradient(180deg,var(--accent-light),var(--accent))');
+      html += '<div class="sd-bar-col" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px" data-date="' + d.key + '" data-done="' + d.done + '" data-total="' + d.total + '">'
+        + '<span class="sd-bar-num" style="font-size:10px;color:var(--muted);font-weight:700">' + (d.done > 0 ? d.done : '–') + '</span>'
+        + '<div class="' + barCls + '" style="width:100%;max-width:32px;height:0;background:' + barBg + ';border-radius:6px 6px 4px 4px;transition:height .6s var(--ease-out);" data-target-h="' + d.h + '"></div>'
+        + '<span style="font-size:10px;color:' + (d.isToday ? 'var(--accent)' : 'var(--muted)') + ';font-weight:' + (d.isToday ? 700 : 400) + '">' + (d.isToday ? '今天' : d.day) + '</span>'
+        + '</div>';
+    });
     html += '</div>';
     container.innerHTML = html;
+
+    // 触发渐进显示动画：下一帧设置目标高度
+    requestAnimationFrame(function() {
+      var bars = container.querySelectorAll('.sd-bar[data-target-h]');
+      bars.forEach(function(bar, idx) {
+        setTimeout(function() {
+          bar.style.height = bar.getAttribute('data-target-h') + 'px';
+        }, idx * 60);  // 每根柱子依次延迟 60ms
+      });
+    });
   }
 
   function renderSdWaterWeekChart() {
@@ -1521,9 +1661,15 @@
     const weekStart = new Date(today);
     weekStart.setDate(today.getDate() - today.getDay());
 
-    let html = `<div style="text-align:center;font-size:12px;color:var(--muted);margin-bottom:12px">目标：${goal}ml/天</div>`;
-    html += '<div style="display:flex;align-items:flex-end;gap:6px;height:130px;padding:8px 0">';
+    // 容器 100px，柱体最高 80px = 80%
+    const BAR_AREA_H = 100;
+    const BAR_MAX_H = 80;
 
+    let html = `<div style="text-align:center;font-size:12px;color:var(--muted);margin-bottom:12px">目标：${goal}ml/天</div>`;
+    html += `<div style="display:flex;align-items:flex-end;gap:6px;height:${BAR_AREA_H}px;padding:8px 0 4px">`;
+
+    // 第一遍收集数据，第二遍渲染（确保渐进动画初始 height:0）
+    const weekData = [];
     for (let i = 0; i < 7; i++) {
       const d = new Date(weekStart);
       d.setDate(weekStart.getDate() + i);
@@ -1531,21 +1677,49 @@
       const rec = checkinRecords[key] || {};
       const waterRec = rec[waterHabit.id] || {};
       const value = waterRec.value || 0;
-      const pct = Math.min(100, Math.round((value / goal) * 100));
-      const h = Math.max(4, Math.round((value / goal) * 120));
-      const isToday = key === formatDate(today);
-      const isFuture = d > today;
-
-      html += `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
-        <span style="font-size:10px;color:${pct >= 100 ? 'var(--accent)' : 'var(--muted)'};font-weight:700">${value > 0 ? value + 'ml' : '--'}</span>
-        <div style="width:100%;max-width:32px;height:${h}px;background:${isFuture ? 'var(--bg2)' : pct >= 100 ? 'linear-gradient(180deg,var(--accent),var(--accent2))' : pct >= 50 ? 'var(--accent-light)' : 'var(--bg2)'};border-radius:6px 6px 4px 4px;transition:height .5s ease;position:relative">
-          ${pct >= 100 ? '<span style="position:absolute;top:4px;left:0;right:0;text-align:center;font-size:10px">✓</span>' : ''}
-        </div>
-        <span style="font-size:10px;color:${isToday ? 'var(--accent)' : 'var(--muted)'};font-weight:${isToday ? 700 : 400}">${dayNames[i]}</span>
-      </div>`;
+      const pct = Math.min(100, (value / goal));
+      const h = Math.max(4, Math.round(pct * BAR_MAX_H));
+      weekData.push({
+        day: dayNames[i],
+        key,
+        value,
+        pct: Math.round(pct * 100),
+        h,
+        isToday: key === formatDate(today),
+        isFuture: d > today
+      });
     }
+
+    weekData.forEach((d, idx) => {
+      const done = d.pct >= 100;
+      // 水位柱体：双层结构 - 外层渐变背景 + 内层波浪（CSS 伪元素实现）
+      // isFuture：空槽位；done：金绿渐变 + ✓；中间：蓝色水位 + 波浪
+      const barCls = 'water-bar' + (d.isToday ? ' water-bar-today' : '') + (done ? ' water-bar-done' : '');
+      const bgStyle = d.isFuture
+        ? 'background:var(--bg2)'
+        : (done
+            ? 'background:linear-gradient(180deg,var(--accent),var(--accent2))'
+            : 'background:linear-gradient(180deg,rgba(91,141,184,.25),rgba(91,141,184,.55))');
+      html += `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px" data-date="${d.key}" data-done="${d.value}" data-total="${goal}">
+        <span style="font-size:10px;color:${done ? 'var(--accent)' : 'var(--muted)'};font-weight:700">${d.value > 0 ? d.value + 'ml' : '–'}</span>
+        <div class="${barCls}" style="width:100%;max-width:32px;height:0;${bgStyle};border-radius:6px 6px 4px 4px;transition:height .6s var(--ease-out);position:relative;overflow:hidden" data-target-h="${d.h}">
+          ${done ? '<span style="position:absolute;top:4px;left:0;right:0;text-align:center;font-size:11px;color:#fff;z-index:2">✓</span>' : ''}
+        </div>
+        <span style="font-size:10px;color:${d.isToday ? 'var(--accent)' : 'var(--muted)'};font-weight:${d.isToday ? 700 : 400}">${d.isToday ? '今天' : d.day}</span>
+      </div>`;
+    });
     html += '</div>';
     container.innerHTML = html;
+
+    // 渐进显示动画
+    requestAnimationFrame(() => {
+      const bars = container.querySelectorAll('.water-bar[data-target-h]');
+      bars.forEach((bar, idx) => {
+        setTimeout(() => {
+          bar.style.height = bar.getAttribute('data-target-h') + 'px';
+        }, idx * 60);
+      });
+    });
   }
 
   function renderSdRankingList() {
@@ -1586,24 +1760,25 @@
   function renderYearHeatmap() {
     const grid = document.getElementById('yearHeatmapGrid');
     const monthsEl = document.getElementById('yearHeatmapMonths');
+    const wrap = grid ? grid.parentElement : null;
     if (!grid) return;
 
     const fmt = formatDate;
     const today = new Date();
     const endDate = new Date(today);
     const startDate = new Date(today);
-    startDate.setDate(startDate.getDate() - 364); // 过去约52周
+    startDate.setDate(startDate.getDate() - 364);
 
-    // 调整到最近的周一
     const dayOfWeek = startDate.getDay();
     const off = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
     startDate.setDate(startDate.getDate() + off);
 
-    // 收集所有日期数据
     const weeks = [];
     const current = new Date(startDate);
     let currentMonth = -1;
     let monthLabels = [];
+    let totalCheckins = 0;
+    let activeDays = 0;
 
     while (current <= endDate) {
       const week = [];
@@ -1613,7 +1788,6 @@
         const year = current.getFullYear();
         const dayOfMonth = current.getDate();
 
-        // 记录月份标签（每周的第一天如果是月初或新月份）
         if (d === 0 && (month !== currentMonth || dayOfMonth <= 7)) {
           const weekIndex = weeks.length;
           const monthName = `${month + 1}月`;
@@ -1631,15 +1805,22 @@
           if (App.Core.Storage && App.Core.Storage.isHabitChecked && App.Core.Storage.isHabitChecked(h, rec)) doneCount++;
         });
 
+        totalCheckins += doneCount;
+        if (doneCount > 0) activeDays++;
+
         const ratio = total > 0 ? doneCount / total : -1;
         const level = App.Core.Utils.getHeatmapLevel(ratio);
+        const cellDate = new Date(current.getFullYear(), current.getMonth(), current.getDate());
+        const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const isFuture = cellDate > todayDate;
 
         week.push({
           dateStr,
           level,
           doneCount,
           total,
-          isToday: dateStr === fmt(today)
+          isToday: dateStr === fmt(today),
+          isFuture
         });
 
         current.setDate(current.getDate() + 1);
@@ -1647,42 +1828,88 @@
       weeks.push(week);
     }
 
-    // 渲染月份标签
     if (monthsEl) {
-      const cellW = 16; // 13px cell + 3px gap
-      let mHtml = '<div style="position:relative;height:16px;padding-left:32px;margin-bottom:4px">';
+      const cellW = 17;
+      let mHtml = '';
       monthLabels.forEach(m => {
-        mHtml += `<span style="position:absolute;left:${32 + m.weekIndex * cellW}px;font-size:10px;color:var(--muted)">${esc(m.name)}</span>`;
+        mHtml += `<span style="position:absolute;left:${32 + m.weekIndex * cellW}px">${esc(m.name)}</span>`;
       });
-      mHtml += '</div>';
       monthsEl.innerHTML = mHtml;
     }
 
-    // 渲染热力图网格
-    const dayLabels = ['一', '', '三', '', '五', '', ''];
+    const dayLabels = ['一', '', '三', '', '五', '', '日'];
     let html = '<div style="display:flex;gap:3px">';
 
-    // 星期标签列
-    html += '<div style="display:flex;flex-direction:column;gap:3px;padding-right:4px;font-size:9px;color:var(--muted);width:28px;flex-shrink:0">';
+    html += '<div style="display:flex;flex-direction:column;gap:3px;padding-right:6px;font-size:10px;color:var(--muted);width:24px;flex-shrink:0;line-height:14px">';
     for (let d = 0; d < 7; d++) {
-      html += `<div style="height:13px;display:flex;align-items:center;line-height:13px">${dayLabels[d]}</div>`;
+      html += `<div>${dayLabels[d]}</div>`;
     }
     html += '</div>';
 
-    // 热力图格子
-    html += '<div style="display:flex;gap:3px;overflow-x:auto;padding-bottom:4px">';
+    html += '<div style="display:flex;gap:3px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;flex:1">';
     weeks.forEach(week => {
       html += '<div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0">';
       week.forEach(cell => {
-        const title = `${cell.dateStr}: ${cell.doneCount}/${cell.total}`;
-        const extra = cell.isToday ? ' style="outline:2px solid var(--accent);border-radius:2px"' : '';
-        html += `<div class="yh-cell yh-l${cell.level}" title="${title}"${extra}></div>`;
+        const title = `${cell.dateStr}\n完成 ${cell.doneCount}/${cell.total} 个习惯`;
+        const futureCls = cell.isFuture ? ' yh-empty' : '';
+        const todayStyle = cell.isToday ? 'outline:2px solid var(--accent);outline-offset:2px;' : '';
+        const levelCls = cell.level >= 0 ? ` yh-l${cell.level}` : ' yh-empty';
+        html += `<div class="yh-cell${levelCls}${futureCls}" data-date="${cell.dateStr}" data-done="${cell.doneCount}" data-total="${cell.total}" title="${title}" style="${todayStyle}"></div>`;
       });
       html += '</div>';
     });
     html += '</div></div>';
 
     grid.innerHTML = html;
+
+    if (wrap) {
+      let totalHtml = wrap.querySelector('.year-heatmap-total');
+      if (!totalHtml) {
+        totalHtml = document.createElement('div');
+        totalHtml.className = 'year-heatmap-total';
+        wrap.appendChild(totalHtml);
+      }
+      totalHtml.innerHTML = `过去一年共完成 <strong>${totalCheckins}</strong> 次打卡，活跃 <strong>${activeDays}</strong> 天`;
+    }
+
+    _attachHeatmapCellClick(grid);
+    _attachHeatmapHover(grid);
+  }
+
+  function _attachHeatmapHover(grid) {
+    if (!grid) return;
+    const tooltip = document.createElement('div');
+    tooltip.className = 'year-heatmap-tooltip';
+    document.body.appendChild(tooltip);
+
+    grid.addEventListener('mouseover', function(e) {
+      const cell = e.target.closest('.yh-cell');
+      if (!cell || cell.classList.contains('yh-empty')) {
+        tooltip.classList.remove('show');
+        return;
+      }
+      const date = cell.dataset.date;
+      const done = cell.dataset.done;
+      const total = cell.dataset.total;
+      const rect = cell.getBoundingClientRect();
+      tooltip.textContent = `${date}\n完成 ${done}/${total} 个习惯`;
+      tooltip.style.left = rect.left + window.scrollX + 'px';
+      tooltip.style.top = rect.top + window.scrollY - 40 + 'px';
+      tooltip.classList.add('show');
+    });
+
+    grid.addEventListener('mouseout', function() {
+      tooltip.classList.remove('show');
+    });
+
+    grid.addEventListener('touchstart', function(e) {
+      const cell = e.target.closest('.yh-cell');
+      if (!cell || cell.classList.contains('yh-empty')) return;
+      const date = cell.dataset.date;
+      const done = cell.dataset.done;
+      const total = cell.dataset.total;
+      showToast(`${date}: 完成 ${done}/${total} 个习惯`, 2000);
+    });
   }
 
   /* ========== 统计 Panel 中的月度/年度回顾 ========== */
@@ -1746,13 +1973,13 @@
 
     let html = `
       <div style="text-align:center;margin-bottom:16px">
-        <div style="font-size:28px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent">${completionRate}%</div>
+        <div style="font-size:28px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent"><span data-anim-target="${completionRate}" data-anim-suffix="%" data-anim-duration="800">0</span></div>
         <div style="font-size:12px;color:var(--muted)">总完成率</div>
       </div>
       <div class="report-grid" style="grid-template-columns:repeat(3,1fr)">
-        <div class="report-card"><div class="rc-num">${activeDays}/${totalDays}</div><div class="rc-label">活跃天</div></div>
-        <div class="report-card"><div class="rc-num">${maxStreak}</div><div class="rc-label">最长连续</div></div>
-        <div class="report-card"><div class="rc-num">${totalPomo.count}</div><div class="rc-label">番茄数</div></div>
+        <div class="report-card"><div class="rc-num"><span data-anim-target="${activeDays}" data-anim-duration="700">0</span>/${totalDays}</div><div class="rc-label">活跃天</div></div>
+        <div class="report-card"><div class="rc-num"><span data-anim-target="${maxStreak}" data-anim-duration="700">0</span></div><div class="rc-label">最长连续</div></div>
+        <div class="report-card"><div class="rc-num"><span data-anim-target="${totalPomo.count}" data-anim-duration="700">0</span></div><div class="rc-label">番茄数</div></div>
       </div>`;
 
     if (bestHabit) {
@@ -1771,12 +1998,14 @@
       const pct = s.total > 0 ? Math.round((s.done / s.total) * 100) : 0;
       html += `<div class="report-habit-row">
         <span class="report-habit-name">${esc(s.icon)} ${esc(s.name)}</span>
-        <div class="report-habit-bar"><div class="report-habit-fill" style="width:${pct}%;background:var(--accent)"></div></div>
+        <div class="report-habit-bar"><div class="report-habit-fill" style="width:${pct}%;background:var(--accent);transition:width .8s var(--ease-out)"></div></div>
         <span class="report-habit-pct">${pct}%</span>
       </div>`;
     });
 
     container.innerHTML = html;
+    // 触发数字递增动画（500~800ms，rAF 驱动，不阻塞交互）
+    _animateNumbersIn(container);
   }
 
   function renderSdMonthReview() {
@@ -1863,6 +2092,7 @@
     renderAchievements,
     renderManage,
     renderManageStats,
+    renderManageWeeklyReport,
     renderManageGroups,
     toggleMgGroup,
     renderLevelCard,

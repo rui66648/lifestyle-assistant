@@ -18,46 +18,81 @@ const VAPID_PUBLIC_KEY = 'BM-yFa2y8NJ8iob-46qSH2sCjkRxr43gUgGbRAFJkoivKJ076fuXAH
 const VAPID_SUBJECT = 'mailto:admin@lifestyle-assistant.local';
 
 // ============================================================
-// AI 养生顾问系统提示词
+// AI 养生顾问系统提示词（CREATE 框架优化版 v2.0）
+// 优化原则：黄金区域管理 + 自我验证闭环 + 结构化输出契约
 // ============================================================
-const SYSTEM_PROMPT = `你是一位精通以下9部中医古籍和15部现代养生著作的养生顾问。
+const SYSTEM_PROMPT = `【角色】
+你是「养生小助手」AI 养生顾问，精通中医养生经典与现代健康科学，以「治未病」为核心理念，为用户提供实用、安全、有依据的养生建议。
 
-【古籍经典】
-1.《黄帝内经》（《素问》《灵枢》）——中医养生理论之源，阴阳五行、脏腑经络、治未病
-2.《遵生八笺》明·高濂——四时调摄、起居安乐、饮馔服食
-3.《老老恒言》清·曹庭栋——老年养生，饮食起居导引
-4.《饮膳正要》元·忽思慧——宫廷营养学，食疗配方
-5.《养生论》三国·嵇康——形神相亲、导引吐纳
-6.《寿世青编》清·尤乘——五脏养生，养心为本
-7.《备急千金要方·养性》唐·孙思邈——养性之道，饮食药饵
-8.《抱朴子》晋·葛洪——道家养生，不伤为本
-9.《闲情偶寄》清·李渔——生活美学，颐养之道
+你的说话风格：温和亲切、条理清晰、像一位经验丰富的养生师，不说空话套话，每条建议都具体可操作。
 
-【现代著作】
-10.《你是你吃出来的》夏萌——细胞营养饮食
-11.《九种体质养生全书》王琦——体质分类与调养
-12.《科学休息》亚历克斯·索勇-庞——高效休息科学
-13.《求医不如求己》中里巴人——经络穴位自愈法
-14.《拉伸》鲍勃·安德森——科学拉伸运动
-15.《人体运动生理学》——运动科学基础
-16.《高级运动营养学》——科学运动营养
-17.《力量训练基础》——力量训练方法
-18.《运动医学与康复》——运动损伤与康复
-19.《睡眠革命》Nick Littlehalas——R90睡眠方案
-20.《运动改造大脑》John Ratey——运动与脑科学
-21.《正念的奇迹》一行禅师——正念冥想
-22.《抗炎生活》池谷敏郎——慢性炎症预防
-23.《肠子的小心思》朱莉娅·恩德斯——肠道菌群
-24.《深度营养》凯瑟琳·沙纳汉——传统饮食智慧
+---
 
-回答时请结合以上经典理论给出建议，并注明引用出处。回答简洁实用，每次控制在200字以内。`;
+【核心原则 · 必须遵守】
+1. 安全第一：不提供医疗诊断，不开处方药物，涉及疾病问题务必建议就医
+2. 言必有据：每条养生建议至少标注一个引用出处（典籍或著作名称）
+3. 实用至上：建议要具体到「做什么、做多久、什么时候做」，不泛泛而谈
+4. 因人而异：结合体质、季节、时段给出差异化建议
+5. 简洁高效：回答控制在 200 字以内，重点突出
+
+---
+
+【知识范围】
+精通 9 部中医古籍与 15 部现代养生著作，涵盖：
+- 中医基础：阴阳五行、脏腑经络、九种体质、二十四节气
+- 生活方式：饮食营养、运动健身、睡眠调理、情志调养
+- 道家养生：导引吐纳、形神兼养、不伤为本
+- 现代科学：运动生理、营养科学、睡眠医学、正念冥想、肠道健康
+
+主要典籍：《黄帝内经》《遵生八笺》《老老恒言》《饮膳正要》《养生论》《寿世青编》《备急千金要方·养性》《抱朴子》《闲情偶寄》
+现代著作：《你是你吃出来的》《九种体质养生全书》《科学休息》《求医不如求己》《拉伸》《人体运动生理学》《高级运动营养学》《力量训练基础》《运动医学与康复》《睡眠革命》《运动改造大脑》《正念的奇迹》《抗炎生活》《肠子的小心思》《深度营养》
+
+---
+
+【能力边界 · 明确不能做的事】
+- 不诊断疾病、不开药方、不替代专业医疗建议
+- 不推荐具体药物、保健品品牌
+- 对严重症状（持续疼痛、高烧、呼吸困难等）立即建议就医
+- 不确定的知识坦诚说明，不编造理论或引用
+- 不讨论与养生健康无关的话题
+
+---
+
+【回答格式】
+按以下结构组织回答（用简短的小标题，不用 Markdown 标记）：
+
+1. 核心建议（1-2 句点明主旨）
+2. 具体方法（分点列出 2-3 条可操作建议）
+3. 引用出处（标注参考的典籍或著作）
+
+如果问题涉及疾病风险，在末尾加一行：⚠️ 以上建议仅供参考，症状持续请及时就医。
+
+---
+
+【输出前自检清单】
+回答前请逐条检查，不满足的立即修正：
+□ 是否给出了具体可操作的建议（不是空话）
+□ 是否标注了至少一个引用出处
+□ 字数是否控制在 200 字以内
+□ 涉及健康风险是否有免责提醒
+□ 是否超出了能力边界（如涉及医疗诊断）
+
+---
+
+【最后提醒】
+记住：你是养生顾问，不是医生。安全永远是第一位的。用你的专业知识帮助用户建立健康的生活习惯，这才是「治未病」的真谛。`;
 
 // ============================================================
-// 限流配置
+// 限流配置（滑动窗口：每用户每分钟最多 5 次）
+// 注：基于内存 Map 的滑动日志算法，单 isolate 内精确。
+//   Cloudflare Workers 多 isolate 场景下为"尽力而为"策略；
+//   如需全局限流精度，请改用 Durable Object 或 Cloudflare Rate Limiting binding。
 // ============================================================
-const RATE_WINDOW = 60 * 60 * 1000;
-const RATE_LIMIT = 50;
+const RATE_WINDOW_MS = 60 * 1000;   // 窗口大小：1 分钟
+const RATE_LIMIT_DEFAULT = 5;        // 默认阈值：5 次/分钟
 const MAX_MSG_LENGTH = 2000;
+const AI_UPSTREAM_TIMEOUT_MS = 30 * 1000; // 上游 AI 请求超时 30s
+const LOG_LEVEL = 'info'; // 'debug' | 'info' | 'warn' | 'error' | 'none'
 
 // ============================================================
 // 工具函数
@@ -66,6 +101,19 @@ function getClientIP(request){
   return request.headers.get('CF-Connecting-IP') ||
          request.headers.get('X-Forwarded-For') ||
          request.headers.get('X-Real-IP') || 'unknown';
+}
+function genRequestId(){
+  return 'req_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+const LOG_PRIORITY = { debug:10, info:20, warn:30, error:40, none:99 };
+function log(level, tag, message, extra){
+  if (LOG_PRIORITY[level] < LOG_PRIORITY[LOG_LEVEL]) return;
+  const line = JSON.stringify({
+    t: new Date().toISOString(),
+    level, tag, message,
+    ...(extra || {})
+  });
+  if (level === 'error') console.error(line); else if (level === 'warn') console.warn(line); else console.log(line);
 }
 function jsonResponse(data, status = 200, headers = {}){
   return new Response(JSON.stringify(data), {
@@ -87,6 +135,15 @@ function validateRequest(body){
     if (msg.content.length > MAX_MSG_LENGTH) return { valid:false, error:'单条消息内容不能超过 '+MAX_MSG_LENGTH+' 字符' };
   }
   return { valid:true };
+}
+// 把上游错误体安全地转成可读消息（不泄露内部细节给前端）
+function classifyUpstreamError(status, data){
+  if (status === 401 || status === 403) return { msg:'AI 服务认证失败，请检查 API Key 配置', code:'auth_failed' };
+  if (status === 429) return { msg:'AI 服务请求配额已用完，请稍后再试', code:'quota_exhausted' };
+  if (status === 400) return { msg:(data && data.error && data.error.message) || '请求参数错误', code:'bad_request' };
+  if (status >= 500) return { msg:'AI 服务暂时不可用，请稍后重试', code:'upstream_error' };
+  if (data && data.error && data.error.message) return { msg:data.error.message, code:'upstream_error' };
+  return { msg:'AI 服务返回未知错误', code:'unknown' };
 }
 
 // ============================================================
@@ -198,15 +255,35 @@ async function callMcpTool(serverId, toolName, args, env){
   return result.result || result;
 }
 
-const rateLimitMap = new Map();
-function checkRateLimit(ip, limit){
+// ============================================================
+// 滑动窗口限流（Sliding Window Log 算法）
+// 记录每次请求的时间戳，清理窗口外的旧记录，剩余即为当前窗口内请求数。
+// 优点：相比固定窗口，避免边界突发流量；相比令牌桶，无需后台补充。
+// 缺点：内存占用随 QPS 增长（limit 数量级，本场景可忽略）。
+// ============================================================
+const rateLimitMap = new Map(); // key: clientId, value: number[] (时间戳数组)
+const RATE_MAP_MAX_SIZE = 10000; // 防止 Map 无限增长（LRU 式淘汰）
+function checkRateLimit(clientId, limit){
   const now = Date.now();
-  if (!rateLimitMap.has(ip)) rateLimitMap.set(ip, { count:0, windowStart:now });
-  const record = rateLimitMap.get(ip);
-  if (now - record.windowStart > RATE_WINDOW){ record.count = 0; record.windowStart = now; }
-  if (record.count >= limit) return { allowed:false, remaining:0, resetTime:Math.ceil((record.windowStart+RATE_WINDOW-now)/1000) };
-  record.count++;
-  return { allowed:true, remaining:limit-record.count, resetTime:Math.ceil((record.windowStart+RATE_WINDOW-now)/1000) };
+  const windowStart = now - RATE_WINDOW_MS;
+
+  // 简易防溢出：Map 过大时整体重置（生产环境建议改用 LRU）
+  if (rateLimitMap.size > RATE_MAP_MAX_SIZE) rateLimitMap.clear();
+
+  let timestamps = rateLimitMap.get(clientId);
+  if (!timestamps){ timestamps = []; rateLimitMap.set(clientId, timestamps); }
+
+  // 清理过期时间戳
+  while (timestamps.length > 0 && timestamps[0] < windowStart) timestamps.shift();
+
+  if (timestamps.length >= limit){
+    const oldest = timestamps[0];
+    const resetSec = Math.ceil((oldest + RATE_WINDOW_MS - now) / 1000);
+    return { allowed:false, remaining:0, resetTime:Math.max(1, resetSec), window:timestamps.length };
+  }
+
+  timestamps.push(now);
+  return { allowed:true, remaining:limit - timestamps.length, resetTime:Math.ceil(RATE_WINDOW_MS / 1000), window:timestamps.length };
 }
 
 // ============================================================
@@ -322,18 +399,33 @@ async function sendPush(subscription, payloadObj){
 let VAPID_PRIVATE_KEY_SECRET = '';
 
 // ============================================================
-// KV 辅助（PUSH_KV 绑定）
+// KV 数据结构（PUSH_KV 命名空间）
+// ============================================================
+// 任务队列与状态存储 schema：
+//   "subs"             -> PushSubscription[]            // 全部推送订阅
+//   "schedule"         -> { schedule: ScheduleItem[], offset:number, updatedAt:number, quietHours?: QuietHours }
+//   "iv:<endpoint>:<habitId>" -> string(timestamp)     // 间隔提醒上次推送时间
+//   "pd:<endpoint>:<habitId>:<dateStr>:<minute>" -> "1" // 定点提醒当日去重标记（TTL 7200s）
+//   "metrics:push"     -> { ok:number, fail:number, lastRun:number } // 推送指标
+//
+// ScheduleItem 结构：
+//   { id, name, icon, tip,
+//     fixed?:    { time:'HH:MM', extraTimes:['HH:MM'], days:number[] },
+//     interval?: { interval:number(min), startTime:'HH:MM', endTime:'HH:MM', days:number[] } }
+//
+// QuietHours 结构：
+//   { enabled: boolean, start: number(hour), end: number(hour) }
 // ============================================================
 async function kvGetSubs(env){
   try { const raw = await env.PUSH_KV.get('subs'); return raw ? JSON.parse(raw) : []; }
-  catch(e){ return []; }
+  catch(e){ log('warn','kv','subs 解析失败，返回空数组', { err:e.message }); return []; }
 }
 async function kvSaveSubs(env, subs){
   await env.PUSH_KV.put('subs', JSON.stringify(subs));
 }
 async function kvGetSchedule(env){
   try { const raw = await env.PUSH_KV.get('schedule'); return raw ? JSON.parse(raw) : { schedule:[], offset:480 }; }
-  catch(e){ return { schedule:[], offset:480 }; }
+  catch(e){ log('warn','kv','schedule 解析失败', { err:e.message }); return { schedule:[], offset:480 }; }
 }
 async function kvSaveSchedule(env, data){
   await env.PUSH_KV.put('schedule', JSON.stringify(data));
@@ -345,6 +437,15 @@ async function kvGetIntervalTs(env, endpoint, habitId){
 }
 async function kvSetIntervalTs(env, endpoint, habitId, ts){
   await env.PUSH_KV.put('iv:'+endpoint+':'+habitId, String(ts));
+}
+// 推送指标（用于监控）
+async function kvBumpMetrics(env, ok, fail){
+  try {
+    const raw = await env.PUSH_KV.get('metrics:push');
+    const m = raw ? JSON.parse(raw) : { ok:0, fail:0, lastRun:0 };
+    m.ok += ok; m.fail += fail; m.lastRun = Date.now();
+    await env.PUSH_KV.put('metrics:push', JSON.stringify(m));
+  } catch(e){ /* 指标失败不影响主流程 */ }
 }
 
 // ============================================================
@@ -369,8 +470,15 @@ async function handlePushRoute(request, env, path){
       offset: typeof body.offset === 'number' ? body.offset : 480,
       updatedAt: Date.now()
     };
+    if (body.quietHours) {
+      data.quietHours = {
+        enabled: body.quietHours.enabled !== false,
+        start: typeof body.quietHours.start === 'number' ? body.quietHours.start : 22,
+        end: typeof body.quietHours.end === 'number' ? body.quietHours.end : 7
+      };
+    }
     await kvSaveSchedule(env, data);
-    return jsonResponse({ ok:true, count:data.schedule.length });
+    return jsonResponse({ ok:true, count:data.schedule.length, hasQuietHours: !!data.quietHours });
   }
   // 测试推送
   if (path === '/push/test' && request.method === 'POST'){
@@ -388,7 +496,15 @@ async function handlePushRoute(request, env, path){
   if (path === '/push/status' && request.method === 'GET'){
     const subs = await kvGetSubs(env);
     const sch = await kvGetSchedule(env);
-    return jsonResponse({ subs:subs.length, scheduleCount:sch.schedule.length, offset:sch.offset, vapidConfigured: !!VAPID_PRIVATE_KEY_SECRET });
+    let metrics = { ok:0, fail:0, lastRun:0 };
+    try { const raw = await env.PUSH_KV.get('metrics:push'); if (raw) metrics = JSON.parse(raw); } catch(e){}
+    return jsonResponse({
+      subs:subs.length,
+      scheduleCount:sch.schedule.length,
+      offset:sch.offset,
+      vapidConfigured: !!VAPID_PRIVATE_KEY_SECRET,
+      metrics
+    });
   }
   return jsonResponse({ error:'未知推送路由' }, 404);
 }
@@ -497,7 +613,7 @@ async function handleMcpRoute(request, env, path){
 // Cron 定时检查（scheduled）
 // ============================================================
 async function runScheduled(env){
-  if (!VAPID_PRIVATE_KEY_SECRET){ console.log('[cron] 未配置 VAPID_PRIVATE_KEY，跳过'); return; }
+  if (!VAPID_PRIVATE_KEY_SECRET){ log('warn','cron','未配置 VAPID_PRIVATE_KEY，跳过推送'); return; }
   const subs = await kvGetSubs(env);
   if (!subs.length) return;
   const sch = await kvGetSchedule(env);
@@ -513,7 +629,21 @@ async function runScheduled(env){
   const dateStr = local.getFullYear() + '-' + (local.getMonth()+1) + '-' + local.getDate();
   const curMin = hh * 60 + mm;
 
+  // 免打扰时段检查
+  function isQuietHours(){
+    if (!sch.quietHours || !sch.quietHours.enabled) return false;
+    const qStart = sch.quietHours.start || 22;
+    const qEnd = sch.quietHours.end || 7;
+    return hh >= qStart || hh < qEnd;
+  }
+  if (isQuietHours()) {
+    log('info','cron','免打扰时段，跳过推送', { localTime: hh+':'+mm });
+    return;
+  }
+
   const pushed = [];
+  let okCount = 0, failCount = 0;
+
   for (const item of sch.schedule){
     // 定点提醒：精确匹配当前 HH:MM
     if (item.fixed){
@@ -529,15 +659,23 @@ async function runScheduled(env){
             const dedupKey = 'pd:'+sub.endpoint+':'+item.id+':'+dateStr+':'+tMin;
             const seen = await env.PUSH_KV.get(dedupKey);
             if (seen) continue;
-            const r = await sendPush(sub, {
-              title: (item.icon||'⏰') + ' ' + item.name + '时间到了',
-              body: item.tip || '记得完成打卡哦',
-              tag: 'habit-' + item.id,
-              requireInteraction: true,
-              vibrate: [200,100,200,100,300]
-            });
-            await env.PUSH_KV.put(dedupKey, '1', { expirationTtl: 7200 });
-            pushed.push({ id:item.id, time:t, ok:r.ok, status:r.status });
+            try {
+              const r = await sendPush(sub, {
+                title: (item.icon||'⏰') + ' ' + item.name + '时间到了',
+                body: item.tip || '记得完成打卡哦',
+                tag: 'habit-' + item.id,
+                requireInteraction: true,
+                vibrate: [200,100,200,100,300]
+              });
+              await env.PUSH_KV.put(dedupKey, '1', { expirationTtl: 7200 });
+              pushed.push({ id:item.id, time:t, ok:r.ok, status:r.status });
+              if (r.ok) okCount++; else failCount++;
+              // 订阅失效（410 Gone）则记录待清理
+              if (r.status === 410 || r.status === 404) log('warn','cron','订阅失效', { endpoint: sub.endpoint, status:r.status });
+            } catch(err){
+              failCount++;
+              log('error','cron','定点推送失败', { id:item.id, err:err.message, endpoint: sub.endpoint });
+            }
           }
         }
       }
@@ -556,19 +694,189 @@ async function runScheduled(env){
         const last = await kvGetIntervalTs(env, sub.endpoint, item.id);
         const elapsed = last ? Math.floor((Date.now() - last)/60000) : interval;
         if (elapsed >= interval){
-          const r = await sendPush(sub, {
-            title: (item.icon||'⏰') + ' ' + item.name + '提醒',
-            body: item.tip || '该完成啦',
-            tag: 'habit-iv-' + item.id,
-            requireInteraction: true
-          });
-          await kvSetIntervalTs(env, sub.endpoint, item.id, Date.now());
-          pushed.push({ id:item.id, type:'interval', ok:r.ok, status:r.status });
+          try {
+            const r = await sendPush(sub, {
+              title: (item.icon||'⏰') + ' ' + item.name + '提醒',
+              body: item.tip || '该完成啦',
+              tag: 'habit-iv-' + item.id,
+              requireInteraction: true
+            });
+            await kvSetIntervalTs(env, sub.endpoint, item.id, Date.now());
+            pushed.push({ id:item.id, type:'interval', ok:r.ok, status:r.status });
+            if (r.ok) okCount++; else failCount++;
+          } catch(err){
+            failCount++;
+            log('error','cron','间隔推送失败', { id:item.id, err:err.message, endpoint: sub.endpoint });
+          }
         }
       }
     }
   }
-  console.log('[cron] pushed', pushed.length, JSON.stringify(pushed));
+
+  // 上报指标
+  await kvBumpMetrics(env, okCount, failCount);
+  log('info','cron','推送批次完成', { ok:okCount, fail:failCount, total:pushed.length, localTime: hh+':'+mm });
+}
+
+// ============================================================
+// AI 代理主处理（兼容 OpenAI Chat Completions 格式）
+// ============================================================
+// 入参（兼容 OpenAI / 阿里百炼 OpenAI 兼容模式）：
+//   {
+//     model?: 'qwen-turbo' | 'qwen-plus' | 'qwen-max' | 'deepseek-v3' | 'deepseek-r1',
+//     messages: [{ role:'user'|'assistant'|'system', content:string }],
+//     max_tokens?: number,     // 默认 500
+//     temperature?: number,    // 默认 0.7
+//     stream?: boolean         // 默认 false；为 true 时返回 SSE 流
+//   }
+//
+// 出参（非流式）：
+//   成功：直接透传上游响应体（OpenAI 格式 { choices:[{ message:{...} }], usage:{...} }）
+//   失败：{ error:string, code:string, request_id:string }
+//
+// 出参（流式）：
+//   Content-Type: text/event-stream
+//   逐行透传上游 SSE chunk，并以 data: [DONE]\n\n 结尾
+//   上游错误时：data: {"error":"...","code":"..."}\n\n
+// ============================================================
+async function handleAiProxy(request, env, ctx, requestId){
+  const QWEN_API_KEY = env.QWEN_API_KEY;
+  if (!QWEN_API_KEY){
+    log('error','ai','QWEN_API_KEY 未配置', { requestId });
+    return jsonResponse({ error:'Worker 未配置 QWEN_API_KEY', code:'config_missing', request_id:requestId }, 500);
+  }
+
+  // 限流：每用户每分钟 5 次（可通过环境变量 RATE_LIMIT 覆盖）
+  const rateLimit = parseInt(env.RATE_LIMIT) || RATE_LIMIT_DEFAULT;
+  const clientIP = getClientIP(request);
+  const rateCheck = checkRateLimit(clientIP, rateLimit);
+  const rateHeaders = {
+    'X-RateLimit-Limit':rateLimit.toString(),
+    'X-RateLimit-Remaining':rateCheck.remaining.toString(),
+    'X-RateLimit-Reset':rateCheck.resetTime.toString(),
+    'X-Request-Id':requestId
+  };
+  if (!rateCheck.allowed){
+    log('warn','ai','限流触发', { requestId, clientIP, window:rateCheck.window, limit:rateLimit });
+    return jsonResponse({
+      error:'请求过于频繁',
+      message:'已达每分钟 '+rateLimit+' 次请求上限，请稍后再试',
+      code:'rate_limited',
+      retryAfter:rateCheck.resetTime,
+      request_id:requestId
+    }, 429, { ...rateHeaders, 'Retry-After':rateCheck.resetTime.toString() });
+  }
+
+  let body;
+  try { body = await request.json(); }
+  catch(e){ return jsonResponse({ error:'无效的 JSON 请求体', code:'bad_json', request_id:requestId }, 400, rateHeaders); }
+
+  const validation = validateRequest(body);
+  if (!validation.valid) return jsonResponse({ error:validation.error, code:'bad_request', request_id:requestId }, 400, rateHeaders);
+
+  const model = body.model || 'qwen-turbo';
+  const messages = body.messages || [];
+  const maxTokens = body.max_tokens || 500;
+  const temperature = body.temperature ?? 0.7;
+  const stream = body.stream === true;
+  const fullMessages = [{ role:'system', content:SYSTEM_PROMPT }, ...messages];
+
+  log('info','ai','请求', { requestId, model, stream, msgCount:fullMessages.length, ip:clientIP });
+
+  const upstreamBody = { model, messages:fullMessages, max_tokens:maxTokens, temperature, stream };
+  // AbortController 超时控制
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), AI_UPSTREAM_TIMEOUT_MS);
+
+  try {
+    const upstream = await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + QWEN_API_KEY, 'X-DashScope-SSE': stream ? 'enable' : 'disable' },
+      body: JSON.stringify(upstreamBody),
+      signal: controller.signal
+    });
+
+    // 流式：透传 SSE
+    if (stream){
+      if (!upstream.ok || !upstream.body){
+        const errText = await upstream.text().catch(()=>'');
+        const classified = classifyUpstreamError(upstream.status, null);
+        log('error','ai','流式上游错误', { requestId, status:upstream.status, errText:errText.slice(0,200) });
+        const encoder = new TextEncoder();
+        const errChunk = 'data: ' + JSON.stringify({ error:classified.msg, code:classified.code, request_id:requestId }) + '\n\n';
+        clearTimeout(timeoutId);
+        return new Response(errChunk + 'data: [DONE]\n\n', {
+          status: 200,
+          headers: {
+            'Content-Type':'text/event-stream; charset=utf-8',
+            'Cache-Control':'no-cache, no-transform',
+            'Connection':'keep-alive',
+            'Access-Control-Allow-Origin':'*',
+            'X-Request-Id':requestId
+          }
+        });
+      }
+      const reader = upstream.body.getReader();
+      const encoder = new TextEncoder();
+      const streamObj = new ReadableStream({
+        async start(controller){
+          try {
+            while (true){
+              const { done, value } = await reader.read();
+              if (done) break;
+              controller.enqueue(value);
+            }
+            controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+            controller.close();
+          } catch(e){
+            log('error','ai','流式传输中断', { requestId, err:e.message });
+            try {
+              controller.enqueue(encoder.encode('data: ' + JSON.stringify({ error:'流式传输中断', code:'stream_interrupted', request_id:requestId }) + '\n\n'));
+              controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+              controller.close();
+            } catch(_){ /* controller 已关闭 */ }
+          } finally {
+            clearTimeout(timeoutId);
+          }
+        },
+        cancel(reason){ clearTimeout(timeoutId); reader.cancel(reason); }
+      });
+      return new Response(streamObj, {
+        status: 200,
+        headers: {
+          'Content-Type':'text/event-stream; charset=utf-8',
+          'Cache-Control':'no-cache, no-transform',
+          'Connection':'keep-alive',
+          'Access-Control-Allow-Origin':'*',
+          'X-Request-Id':requestId
+        }
+      });
+    }
+
+    // 非流式
+    if (!upstream.ok){
+      // 上游错误响应可能不是合法 JSON（如 500 + "Internal Server Error"），需容错解析
+      let data = null;
+      try { data = await upstream.json(); } catch(e) {}
+      const classified = classifyUpstreamError(upstream.status, data);
+      log('warn','ai','上游错误', { requestId, status:upstream.status, code:classified.code });
+      const status = (upstream.status === 429) ? 429
+                   : (upstream.status === 401 || upstream.status === 403) ? 401
+                   : (upstream.status === 400) ? 400 : 502;
+      return jsonResponse({ error:classified.msg, code:classified.code, request_id:requestId }, status, rateHeaders);
+    }
+    const data = await upstream.json();
+    log('info','ai','响应成功', { requestId, model, usage: data.usage });
+    return jsonResponse(data, 200, rateHeaders);
+  } catch(err){
+    clearTimeout(timeoutId);
+    if (err.name === 'AbortError'){
+      log('error','ai','上游超时', { requestId, timeoutMs:AI_UPSTREAM_TIMEOUT_MS });
+      return jsonResponse({ error:'AI 服务响应超时，请稍后重试', code:'timeout', request_id:requestId }, 504, rateHeaders);
+    }
+    log('error','ai','网络异常', { requestId, err:err.message });
+    return jsonResponse({ error:'网络请求失败', code:'network_error', message:err.message, request_id:requestId }, 500, rateHeaders);
+  }
 }
 
 // ============================================================
@@ -576,6 +884,7 @@ async function runScheduled(env){
 // ============================================================
 export default {
   async fetch(request, env, ctx){
+    const requestId = genRequestId();
     // 注入 VAPID 私钥
     VAPID_PRIVATE_KEY_SECRET = env.VAPID_PRIVATE_KEY || '';
 
@@ -585,7 +894,8 @@ export default {
         headers:{
           'Access-Control-Allow-Origin':'*',
           'Access-Control-Allow-Methods':'POST, OPTIONS, GET',
-          'Access-Control-Allow-Headers':'Content-Type'
+          'Access-Control-Allow-Headers':'Content-Type',
+          'X-Request-Id':requestId
         }
       });
     }
@@ -593,68 +903,44 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname;
 
+    // ===== 健康检查（仅 GET）=====
+    if (request.method === 'GET' && (path === '/health' || path === '/')){
+      return jsonResponse({ ok:true, service:'ai-proxy', version:'2.0', time:new Date().toISOString(), requestId });
+    }
+
     // ===== 推送相关路由 =====
     if (path.startsWith('/push/')){
-      if (!env.PUSH_KV) return jsonResponse({ error:'未绑定 PUSH_KV' }, 500);
+      if (!env.PUSH_KV) return jsonResponse({ error:'未绑定 PUSH_KV', request_id:requestId }, 500);
       try { return await handlePushRoute(request, env, path); }
-      catch(e){ return jsonResponse({ error:'推送路由错误:'+e.message }, 500); }
+      catch(e){
+        log('error','push','路由异常', { requestId, err:e.message, path });
+        return jsonResponse({ error:'推送路由错误:'+e.message, request_id:requestId }, 500);
+      }
     }
 
     // ===== MCP 代理路由 =====
     if (path.startsWith('/mcp/')){
       try { return await handleMcpRoute(request, env, path); }
-      catch(e){ return jsonResponse({ error:'MCP 路由错误:'+e.message }, 500); }
-    }
-
-    // ===== 以下为原 AI 代理逻辑 =====
-    if (request.method !== 'POST'){
-      return new Response('Method not allowed', { status:405, headers:{ 'Access-Control-Allow-Origin':'*' } });
-    }
-    const QWEN_API_KEY = env.QWEN_API_KEY;
-    if (!QWEN_API_KEY){
-      return jsonResponse({ error:'Worker 未配置 QWEN_API_KEY', message:'请在 Worker 设置中添加 QWEN_API_KEY' }, 500);
-    }
-    const rateLimit = parseInt(env.RATE_LIMIT) || RATE_LIMIT;
-    const clientIP = getClientIP(request);
-    const rateCheck = checkRateLimit(clientIP, rateLimit);
-    const rateHeaders = {
-      'X-RateLimit-Limit':rateLimit.toString(),
-      'X-RateLimit-Remaining':rateCheck.remaining.toString(),
-      'X-RateLimit-Reset':rateCheck.resetTime.toString()
-    };
-    if (!rateCheck.allowed){
-      return jsonResponse({ error:'请求过于频繁', message:'已达每小时 '+rateLimit+' 次请求上限', retryAfter:rateCheck.resetTime }, 429, rateHeaders);
-    }
-    let body;
-    try { body = await request.json(); }
-    catch(e){ return jsonResponse({ error:'无效的 JSON 请求体' }, 400, rateHeaders); }
-    const validation = validateRequest(body);
-    if (!validation.valid) return jsonResponse({ error:validation.error }, 400, rateHeaders);
-
-    const model = body.model || 'qwen-turbo';
-    const messages = body.messages || [];
-    const maxTokens = body.max_tokens || 500;
-    const temperature = body.temperature || 0.7;
-    const fullMessages = [{ role:'system', content:SYSTEM_PROMPT }, ...messages];
-
-    try {
-      const response = await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', {
-        method:'POST',
-        headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + QWEN_API_KEY },
-        body: JSON.stringify({ model, messages:fullMessages, max_tokens:maxTokens, temperature, stream:false })
-      });
-      const data = await response.json();
-      if (!response.ok){
-        let errorMsg = 'AI 服务暂时不可用', statusCode = 500;
-        if (response.status === 401 || response.status === 403){ errorMsg='API 认证失败，请检查配置'; statusCode=401; }
-        else if (response.status === 429){ errorMsg='API 请求配额已用完'; statusCode=429; }
-        else if (response.status === 400){ errorMsg=(data.error && data.error.message)||'请求参数错误'; statusCode=400; }
-        else if (data.error && data.error.message){ errorMsg = data.error.message; }
-        return jsonResponse({ error:errorMsg, code:response.status }, statusCode, rateHeaders);
+      catch(e){
+        log('error','mcp','路由异常', { requestId, err:e.message, path });
+        return jsonResponse({ error:'MCP 路由错误:'+e.message, request_id:requestId }, 500);
       }
-      return jsonResponse(data, 200, rateHeaders);
-    } catch(err){
-      return jsonResponse({ error:'网络请求失败', message:err.message }, 500, rateHeaders);
+    }
+
+    // ===== AI 代理路由（兼容 / 、/v1/chat/completions 、/chat/completions 、/ai）=====
+    if (request.method !== 'POST'){
+      return new Response('Method not allowed', { status:405, headers:{ 'Access-Control-Allow-Origin':'*', 'X-Request-Id':requestId } });
+    }
+    const isAiRoute = path === '/' || path === '/v1/chat/completions' || path === '/chat/completions' || path === '/ai';
+    if (!isAiRoute){
+      return jsonResponse({ error:'路由不存在', path, request_id:requestId }, 404);
+    }
+    try {
+      return await handleAiProxy(request, env, ctx, requestId);
+    } catch(e){
+      // 兜底：任何未捕获异常都不让前端崩溃
+      log('error','ai','未捕获异常', { requestId, err:e.message, stack:e.stack });
+      return jsonResponse({ error:'服务器内部错误', code:'internal_error', request_id:requestId }, 500);
     }
   },
 

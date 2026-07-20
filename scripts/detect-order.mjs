@@ -16,12 +16,29 @@ function listFiles(dir) {
 }
 
 function firstWindow(src, len = 200) {
-  // skip leading blank lines / comment-only lines, take a representative window
-  const lines = src.split('\n');
-  let i = 0;
-  while (i < lines.length && lines[i].trim() === '') i++;
-  const rest = lines.slice(i).join('\n');
-  return rest.slice(0, len);
+  // 去除前导空白
+  let s = src.replace(/^\s+/, '');
+  // 去除前导单行注释（// ...）和多行注释（/* ... */）
+  while (true) {
+    if (s.startsWith('//')) {
+      const nl = s.indexOf('\n');
+      if (nl < 0) { s = ''; break; }
+      s = s.slice(nl + 1).replace(/^\s+/, '');
+    } else if (s.startsWith('/*')) {
+      const end = s.indexOf('*/');
+      if (end < 0) { s = ''; break; }
+      s = s.slice(end + 2).replace(/^\s+/, '');
+    } else {
+      break;
+    }
+  }
+  return s.slice(0, len);
+}
+
+// bundle 内的文件分隔注释格式：/* ===== modules/ai.js ===== */
+// 检测时跳过该注释，从实际代码内容开始匹配
+function stripBundleComment(src) {
+  return src.replace(/^\/\*\s*=====\s*[^\n]*=====\s*\*\/\s*/, '');
 }
 
 const groups = [

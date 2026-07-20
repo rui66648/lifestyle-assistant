@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lifestyle-assistant-v46';
+const CACHE_NAME = 'lifestyle-assistant-v75';
 const ASSETS = [
   './',
   './index.html',
@@ -9,6 +9,7 @@ const ASSETS = [
   './css/skin-targets.min.css',
   './css/sports.min.css',
   './css/ui-enhance.min.css',
+  './css/theme-zhongshi.min.css',
   './js/app.js',
   './js/lazy.js',
   './js/main.js',

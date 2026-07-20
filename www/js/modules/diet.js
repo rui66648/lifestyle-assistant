@@ -64,18 +64,81 @@
     return null;
   }
 
+  const SOLAR_TERM_FOODS = {
+    '立春':{foods:['韭菜','豆芽','香椿','春笋','荠菜'],tag:'春'},
+    '雨水':{foods:['山药','薏米','红枣','蜂蜜','南瓜'],tag:'湿'},
+    '惊蛰':{foods:['梨','银耳','百合','莲子','蜂蜜'],tag:'燥'},
+    '春分':{foods:['春笋','菠菜','芹菜','荠菜','枸杞'],tag:'平'},
+    '清明':{foods:['青团','艾草','马兰头','螺蛳','河蚌'],tag:'清'},
+    '谷雨':{foods:['香椿','豆芽','草莓','菠萝','桑葚'],tag:'湿'},
+    '立夏':{foods:['苦瓜','黄瓜','绿豆','西瓜','莲子'],tag:'夏'},
+    '小满':{foods:['苦瓜','绿豆','冬瓜','薏米','丝瓜'],tag:'湿'},
+    '芒种':{foods:['杨梅','青梅','西瓜','绿豆汤','酸梅汤'],tag:'暑'},
+    '夏至':{foods:['西瓜','苦瓜','绿豆','荷叶茶','鸭肉'],tag:'热'},
+    '小暑':{foods:['绿豆','苦瓜','冬瓜','莲子','荷叶'],tag:'暑'},
+    '大暑':{foods:['绿豆','苦瓜','莲子','冬瓜','西瓜'],tag:'热'},
+    '立秋':{foods:['梨','银耳','百合','蜂蜜','柚子'],tag:'燥'},
+    '处暑':{foods:['百合','银耳','莲子','梨','鸭肉'],tag:'润'},
+    '白露':{foods:['山药','红枣','核桃','百合','银耳'],tag:'养'},
+    '秋分':{foods:['秋梨','百合','银耳','蜂蜜','芝麻'],tag:'平'},
+    '寒露':{foods:['芝麻','核桃','山药','红枣','栗子'],tag:'温'},
+    '霜降':{foods:['柿子','栗子','萝卜','牛肉','羊肉'],tag:'补'},
+    '立冬':{foods:['羊肉','牛肉','核桃','栗子','红薯'],tag:'补'},
+    '小雪':{foods:['羊肉','牛肉','白萝卜','山药','核桃'],tag:'温'},
+    '大雪':{foods:['羊肉','牛肉','萝卜','核桃','黑芝麻'],tag:'补'},
+    '冬至':{foods:['饺子','羊肉','汤圆','核桃','黑芝麻'],tag:'补'},
+    '小寒':{foods:['羊肉','牛肉','黑豆','黑芝麻','核桃'],tag:'温'},
+    '大寒':{foods:['羊肉','牛肉','糯米','红枣','桂圆'],tag:'补'}
+  };
+
   function getSeasonalTip() {
-    const month = new Date().getMonth() + 1;
-    const tips = {
-      '春季':{months:[2,3,4],tip:'省酸增甘，以养脾气。多吃甘味食物如红枣、山药、小米。',icon:'🌱'},
-      '夏季':{months:[5,6,7],tip:'清淡为主，适当食苦味清心火。多吃苦瓜、莲子、绿豆。',icon:'☀️'},
-      '秋季':{months:[8,9,10],tip:'省辛增酸，以养肝气。多吃酸味食物如山楂、乌梅、石榴。',icon:'🍂'},
-      '冬季':{months:[11,12,1],tip:'省咸增苦，以养心气。多吃黑色食物如黑豆、黑芝麻、核桃。',icon:'❄️'},
-    };
-    for (const [season, info] of Object.entries(tips)) {
-      if (info.months.includes(month)) return {season,...info};
+    const now = new Date();
+    const month = now.getMonth() + 1;
+    const day = now.getDate();
+    let term = null;
+    let minDiff = Infinity;
+    if (typeof SOLAR_TERMS !== 'undefined' && Array.isArray(SOLAR_TERMS)) {
+      for (const t of SOLAR_TERMS) {
+        const tDate = new Date(now.getFullYear(), t.month - 1, t.day);
+        const diff = Math.abs(tDate - now);
+        if (diff < minDiff) { minDiff = diff; term = t; }
+      }
     }
-    return {season:'四季',tip:'饮食有节，起居有常。',icon:'🌍'};
+    const seasonMap = {spring:'春季',summer:'夏季',autumn:'秋季',winter:'冬季'};
+    const seasonEmojis = {spring:'🌱',summer:'☀️',autumn:'🍂',winter:'❄️'};
+    const seasonTips = {
+      '春季':'省酸增甘，以养脾气。多吃甘味食物如红枣、山药、小米。',
+      '夏季':'清淡为主，适当食苦味清心火。多吃苦瓜、莲子、绿豆。',
+      '秋季':'省辛增酸，以养肝气。多吃酸味食物如山楂、乌梅、石榴。',
+      '冬季':'省咸增苦，以养心气。多吃黑色食物如黑豆、黑芝麻、核桃。'
+    };
+    if (term) {
+      const season = seasonMap[term.season] || '四季';
+      const seasonEmoji = seasonEmojis[term.season] || '🌍';
+      const seasonTip = seasonTips[season] || '饮食有节，起居有常。';
+      const termFoods = SOLAR_TERM_FOODS[term.name] || {foods:[],tag:''};
+      return {
+        season,
+        icon: seasonEmoji,
+        tip: seasonTip,
+        termName: term.name,
+        termEmoji: term.emoji,
+        termTip: term.tip,
+        foods: termFoods.foods,
+        foodTag: termFoods.tag
+      };
+    }
+    const season = month >= 2 && month <= 4 ? '春季' : month >= 5 && month <= 7 ? '夏季' : month >= 8 && month <= 10 ? '秋季' : '冬季';
+    return {
+      season,
+      icon: seasonEmojis[season] || '🌍',
+      tip: seasonTips[season] || '饮食有节，起居有常。',
+      termName: null,
+      termEmoji: null,
+      termTip: null,
+      foods: [],
+      foodTag: ''
+    };
   }
 
   /* ========== 新增：存储管理 ========== */
@@ -344,6 +407,50 @@
     `;
   }
 
+  function renderMealProgress(records) {
+    const mealStats = {};
+    MEAL_OPTIONS.forEach(m => { mealStats[m.id] = { label: m.label, icon: m.icon, count: 0 }; });
+    records.forEach(r => { if (mealStats[r.meal]) mealStats[r.meal].count++; });
+    const total = MEAL_OPTIONS.length;
+    const done = MEAL_OPTIONS.filter(m => mealStats[m.id].count > 0).length;
+
+    return `
+      <div class="diet-meal-progress">
+        <div class="diet-meal-progress-bar">
+          ${MEAL_OPTIONS.map(m => `
+            <div class="diet-meal-seg ${mealStats[m.id].count > 0 ? 'done' : ''}" title="${m.label}">
+              <span class="diet-meal-seg-icon">${m.icon}</span>
+              <span class="diet-meal-seg-label">${m.label}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="diet-meal-progress-info">
+          <span class="diet-meal-progress-text">已记录 ${done}/${total} 餐</span>
+          <span class="diet-meal-progress-count">共 ${records.length} 张</span>
+        </div>
+      </div>
+    `;
+  }
+
+  let _dietDietCollapsed = true;
+  let _dietSportCollapsed = true;
+
+  window.toggleDietKnowledge = function() {
+    _dietDietCollapsed = !_dietDietCollapsed;
+    const content = document.getElementById('dkCollapsibleContent');
+    const arrow = document.getElementById('dkCollapseArrow');
+    if (content) content.style.display = _dietDietCollapsed ? 'none' : 'block';
+    if (arrow) arrow.style.transform = _dietDietCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)';
+  };
+
+  window.toggleDietSport = function() {
+    _dietSportCollapsed = !_dietSportCollapsed;
+    const content = document.getElementById('dkSportContent');
+    const arrow = document.getElementById('dkSportArrow');
+    if (content) content.style.display = _dietSportCollapsed ? 'none' : 'block';
+    if (arrow) arrow.style.transform = _dietSportCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)';
+  };
+
   /* ========== 新增：饮食记录视图 ========== */
   function renderRecordView(targetDate) {
     const date = targetDate || today();
@@ -360,34 +467,37 @@
         <div class="diet-tip-advice-card">
           <div class="diet-tip-advice-header">
             <span class="diet-tip-advice-icon">${esc(mealTip.icon)}</span>
-            <span class="diet-tip-advice-title">${mealTip.title}建议</span>
+            <span class="diet-tip-advice-title">${mealTip.title} · ${mealTip.time}</span>
           </div>
           <div class="diet-tip-advice-text">${esc(mealTip.tips[0])}</div>
+          <div class="diet-tip-advice-tags">
+            ${mealTip.tips.slice(1, 4).map(t => `<span class="diet-tip-tag">${esc(t)}</span>`).join('')}
+          </div>
         </div>
       `;
     } else if (seasonal) {
       tipCard = `
         <div class="diet-tip-advice-card">
           <div class="diet-tip-advice-header">
-            <span class="diet-tip-advice-icon">${esc(seasonal.icon)}</span>
-            <span class="diet-tip-advice-title">${seasonal.season}饮食</span>
+            <span class="diet-tip-advice-icon">${esc(seasonal.termEmoji || seasonal.icon)}</span>
+            <span class="diet-tip-advice-title">${seasonal.termName || seasonal.season}饮食</span>
           </div>
-          <div class="diet-tip-advice-text">${esc(seasonal.tip)}</div>
+          <div class="diet-tip-advice-text">${esc(seasonal.termTip || seasonal.tip)}</div>
         </div>
       `;
     }
 
     return `
       <div class="diet-record-view">
-        <div class="diet-photo-btn-wrap">
+        <div class="diet-photo-hero">
           <input type="file" id="dietPhotoInput" accept="image/*" capture="environment" style="display:none" onchange="handleDietPhotoSelect(this)">
-          <button class="diet-photo-btn" onclick="document.getElementById('dietPhotoInput').click()">
-            <span class="diet-photo-btn-icon">📷</span>
-            <span class="diet-photo-btn-main">
-              <span class="diet-photo-btn-text">拍照记录</span>
-              <span class="diet-photo-btn-hint">记录每一餐，养成健康饮食好习惯</span>
-            </span>
-            <span class="diet-photo-btn-arrow">›</span>
+          <button class="diet-photo-hero-btn" onclick="document.getElementById('dietPhotoInput').click()">
+            <div class="diet-photo-hero-icon">📷</div>
+            <div class="diet-photo-hero-text">
+              <div class="diet-photo-hero-title">拍照记录</div>
+              <div class="diet-photo-hero-sub">记录每一餐 · 养成健康饮食习惯</div>
+            </div>
+            <div class="diet-photo-hero-arrow">›</div>
           </button>
         </div>
 
@@ -397,16 +507,35 @@
 
         <div class="diet-today-card">
           <div class="diet-today-header">
-            <span class="diet-today-title">${date === today() ? '今日' : date}记录</span>
-            <span class="diet-today-count">${todayRecords.length} 餐</span>
+            <span class="diet-today-title">${date === today() ? '今日记录' : date + ' 记录'}</span>
           </div>
-          ${todayRecords.length > 0 ? renderRecordGrid(todayRecords) : '<div class="diet-empty-tip">' + (date === today() ? '今天还没有记录哦，快拍一张吧 📷' : '该日期暂无记录') + '</div>'}
+          ${renderMealProgress(todayRecords)}
+          ${todayRecords.length > 0 ? renderRecordGrid(todayRecords) : '<div class="diet-empty-tip">' + (date === today() ? '今天还没有记录哦，点击上方按钮开始记录 📷' : '该日期暂无记录') + '</div>'}
         </div>
 
         ${renderHistorySection(allDates)}
 
-        ${renderDietKnowledgeCompact(seasonal, mealTip)}
-        ${renderSportsKnowledgeCompact()}
+        <div class="dk-collapse-wrap">
+          <div class="dk-collapse-header" onclick="toggleDietKnowledge()">
+            <span class="dk-collapse-title">🍃 饮食建议</span>
+            <span class="dk-collapse-arrow" id="dkCollapseArrow">›</span>
+          </div>
+          <div class="dk-collapse-content" id="dkCollapsibleContent" style="display:${_dietDietCollapsed ? 'none' : 'block'}">
+            ${renderDietKnowledgeCompact(seasonal, mealTip)}
+          </div>
+        </div>
+
+        <div class="dk-collapse-wrap">
+          <div class="dk-collapse-header" onclick="toggleDietSport()">
+            <span class="dk-collapse-title">🏃 运动养生</span>
+            <span class="dk-collapse-arrow" id="dkSportArrow">›</span>
+          </div>
+          <div class="dk-collapse-content" id="dkSportContent" style="display:${_dietSportCollapsed ? 'none' : 'block'}">
+            ${renderSportsKnowledgeCompact()}
+          </div>
+        </div>
+
+        <div style="height:20px"></div>
       </div>
     `;
   }
@@ -803,8 +932,9 @@
     getCurrentMeal,
     getSeasonalTip,
     switchDietView,
-    loadRecords,
-    saveRecords
+    loadRecords
+    // 注意：saveRecords 不导出，避免与 App.Core.Storage.saveRecords 冲突
+    // （compat.js 会把模块函数暴露到 window，导致 window.saveRecords 被覆盖）
   };
 
   if (App.registerModule) {

@@ -110,8 +110,15 @@
       initPWA();
     }
 
-    // 共享：启动定时提醒检查（前台时每分钟检查一次）
+    // 共享：启动定时提醒检查
+    // - PWA: 优先使用新调度器（setTimeout 链式），旧轮询作为兜底
+    // - APK: 间隔提醒由 Capacitor 系统通知负责，旧轮询仅检查固定时间提醒
     startIntervalReminderCheck();
+    // PWA 环境：初始化统一提醒调度器
+    if (_platform === 'pwa' && App.Modules && App.Modules.Notification && App.Modules.Notification.init) {
+      App.Modules.Notification.init();
+      scheduleRemindersWithScheduler();
+    }
 
     // 启动后自动检查新版本
     if (App.Modules && App.Modules.Update && App.Modules.Update.check) {
@@ -159,6 +166,13 @@
 
     // iOS PWA 通知能力警告
     checkIOSPWANotifyWarning();
+
+    // 注册保存钩子：习惯配置变更后重新调度提醒
+    if (App.Core && App.Core.Storage && App.Core.Storage.registerSaveHook) {
+      App.Core.Storage.registerSaveHook(function() {
+        rescheduleRemindersWithScheduler();
+      });
+    }
   }
 
   // ============================================================
@@ -186,6 +200,32 @@
       try {
         scheduleHabitReminders(habitsConfig);
       } catch(e) { console.warn('[notify] APK 启动注册提醒失败:', e); }
+    }
+  }
+
+  // ============================================================
+  // 统一提醒调度器集成（PWA 专用）
+  // ============================================================
+  function scheduleRemindersWithScheduler() {
+    if (_platform !== 'pwa') return;
+    if (!App.Modules || !App.Modules.Notification || !App.Modules.Notification.scheduleAll) return;
+    if (typeof habitsConfig === 'undefined' || !habitsConfig.length) return;
+    try {
+      App.Modules.Notification.scheduleAll(habitsConfig);
+      console.log('[main] PWA 统一提醒调度器已启动，注册了', habitsConfig.length, '个习惯');
+    } catch(e) {
+      console.warn('[main] 统一提醒调度器启动失败:', e);
+    }
+  }
+
+  function rescheduleRemindersWithScheduler() {
+    if (_platform !== 'pwa') return;
+    if (!App.Modules || !App.Modules.Notification || !App.Modules.Notification.rescheduleAll) return;
+    if (typeof habitsConfig === 'undefined' || !habitsConfig.length) return;
+    try {
+      App.Modules.Notification.rescheduleAll(habitsConfig);
+    } catch(e) {
+      console.warn('[main] 重新调度提醒失败:', e);
     }
   }
 

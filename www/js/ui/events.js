@@ -220,9 +220,11 @@
   }
 
   function deleteHabit(habitId) {
+    // 事务性清理：先清打卡记录再删习惯，任一步失败则回滚
+    const cleaned = App.Core.Storage.purgeHabitRecords(habitId);
     habitsConfig = habitsConfig.filter(h => h.id !== habitId);
     saveConfig();
-    showToast('已删除习惯');
+    showToast(cleaned > 0 ? `已删除习惯并清理 ${cleaned} 天打卡记录` : '已删除习惯');
     render();
   }
 
@@ -263,13 +265,14 @@
   function toggleHabitFromLib(id) {
     const existing = habitsConfig.find(h => h.id === id);
     if (existing) {
-      // 已添加，执行删除
-      if (!confirm('确定要删除这个习惯吗？打卡记录会保留。')) return;
+      // 已添加，执行删除（同时清理打卡记录）
+      if (!confirm('确定要删除这个习惯吗？相关打卡记录将一并清理。')) return;
       const idx = habitsConfig.findIndex(h => h.id === id);
       if (idx >= 0) {
+        const cleaned = App.Core.Storage.purgeHabitRecords(id);
         habitsConfig.splice(idx, 1);
         saveConfig();
-        showToast('已删除习惯');
+        showToast(cleaned > 0 ? `已删除习惯并清理 ${cleaned} 天打卡记录` : '已删除习惯');
         // 只更新卡片状态
         updateLibCardState(id, false);
         render(['manage', 'checkin']);

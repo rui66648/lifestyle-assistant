@@ -51,6 +51,7 @@ _local/
 # Android
 # ============================================================
 android/local.properties
+android/keystore.properties
 android/.gradle/
 android/build/
 android/app/build/

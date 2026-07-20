@@ -1,21 +1,38 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# ============================================================
+# 生活习惯小助手 ProGuard / R8 规则
+# ============================================================
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# --- 保留调试堆栈信息 ---
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# --- WebView JS Interface（Capacitor WebView 桥接）---
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+-keepclassmembers class com.getcapacitor.** { *; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# --- Capacitor 插件保留（反射注册）---
+-keep class com.rui66648.lifestyle.** { *; }
+-keep @com.getcapacitor.annotation.CapacitorPlugin class * { *; }
+-keep class * extends com.getcapacitor.Plugin { *; }
+
+# --- Capacitor Bridge 核心类 ---
+-keep class com.getcapacitor.** { *; }
+-dontwarn com.getcapacitor.**
+
+# --- AndroidX 保留 ---
+-keep class androidx.** { *; }
+-dontwarn androidx.**
+
+# --- Cordova 插件兼容层 ---
+-keep class org.apache.cordova.** { *; }
+-dontwarn org.apache.cordova.**
+
+# --- 保留 WebView 相关 ---
+-keepclassmembers class * extends android.webkit.WebView {
+    public *;
+}
+
+# --- 保留 BuildConfig（供 JS 读取版本号）---
+-keep class com.rui66648.lifestyle.BuildConfig { *; }

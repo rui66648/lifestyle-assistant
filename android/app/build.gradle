@@ -15,6 +15,16 @@ if (localPropsFile.exists()) {
     localPropsFile.withInputStream { stream -> localProps.load(stream) }
 }
 
+// ============================================================
+// 签名配置：从 android/keystore.properties 读取（已 gitignore）
+// 首次使用请复制 keystore.properties.example 为 keystore.properties
+// ============================================================
+def keystoreProps = new Properties()
+def keystorePropsFile = rootProject.file("keystore.properties")
+if (keystorePropsFile.exists()) {
+    keystorePropsFile.withInputStream { stream -> keystoreProps.load(stream) }
+}
+
 android {
     namespace = "com.rui66648.lifestyle"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -38,17 +48,20 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file("release.jks")
-            storePassword "rui66648"
-            keyAlias "release"
-            keyPassword "rui66648"
+            // 优先从 keystore.properties 读取；若文件不存在则回退到环境变量
+            storeFile file(keystoreProps.getProperty("storeFile", "release.jks"))
+            storePassword keystoreProps.getProperty("storePassword", System.getenv("KEYSTORE_PASSWORD") ?: "")
+            keyAlias keystoreProps.getProperty("keyAlias", "release")
+            keyPassword keystoreProps.getProperty("keyPassword", System.getenv("KEY_PASSWORD") ?: "")
         }
     }
     buildTypes {
         release {
-            minifyEnabled false
+            // 开启代码压缩与资源缩减，减小 APK 体积
+            minifyEnabled true
+            shrinkResources true
             signingConfig signingConfigs.release
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
