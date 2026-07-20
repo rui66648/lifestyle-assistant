@@ -451,41 +451,12 @@
     habitsConfig.forEach(h => {
       maxStreakAll = Math.max(maxStreakAll, getMaxStreak(h.id));
     });
-    const rankingList = document.getElementById('rankingList');
-    if (rankingList) {
-      if (habitsConfig.length === 0) {
-        rankingList.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:20px">还没有习惯，点击 + 开始添加吧</div>';
-      } else {
-        const sorted = [...habitsConfig].sort((a, b) => getCompletionRate(b.id, 30) - getCompletionRate(a.id, 30));
-        const rankHtml = sorted.map((h, i) => {
-          const rate = getCompletionRate(h.id, 30);
-          const cls = rate >= 70 ? 'high' : rate >= 40 ? 'mid' : 'low';
-          let rankClass = 'normal';
-          if (i === 0) rankClass = 'gold';
-          else if (i === 1) rankClass = 'silver';
-          else if (i === 2) rankClass = 'bronze';
-          return `<div class="ranking-item">
-            <div class="ranking-rank ${rankClass}">${i+1}</div>
-            <div class="ranking-header"><span class="ranking-name">${esc(h.icon)} ${esc(h.name)}</span><span class="ranking-pct">${rate}%</span></div>
-            <div class="ranking-bar"><div class="ranking-fill ${cls}" style="width:${rate}%"></div></div>
-          </div>`;
-        }).join('');
-        rankingList.innerHTML = rankHtml || '<div style="text-align:center;color:var(--muted);font-size:13px;padding:20px">暂无数据</div>';
-      }
-    }
-
     renderWeekBarChart();
     renderHeatmap();
     renderAchievements();
   }
 
-  function toggleRanking() {
-    const section = document.getElementById('rankingSection');
-    if (section) {
-      section.classList.toggle('collapsed');
-    }
-  }
-  window.toggleRanking = toggleRanking;
+  
 
   // ===== 共享月度热力图渲染（DRY掉 renderHeatmap 和 renderSdHeatmap 的80%重复） =====
   function _renderMonthlyHeatmap(gridEl, monthLabelEl, dateObj, todayStr) {
@@ -544,34 +515,198 @@
     renderHeatmap();
   }
 
-  function renderAchievements() {
-    const container = document.getElementById('achievements');
-    if (!container) return;
-    var svgFlame = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>';
-    var svgStar = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>';
-    var svgTrophy = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>';
+  // ========== 成就徽章系统 ==========
+  var BADGE_SVGS = {
+    flame: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>',
+    star: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>',
+    trophy: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>',
+    heart: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>',
+    calendar: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>',
+    zap: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>',
+    crown: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"></path><polyline points="12 2 12 15"></polyline></svg>',
+    gem: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 6l-4.5 10.5-4.5-10.5L3 13.5l6 3 6-3 6-7.5z"></path></svg>',
+    award: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3"></path><circle cx="12" cy="12" r="10"></circle></svg>',
+    sparkles: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z"></path></svg>',
+    leaf: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"></path><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path></svg>',
+    moon: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>',
+    sun: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>',
+    tree: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>',
+    snow: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path><path d="M12 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"></path><path d="M12 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"></path><path d="M4 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"></path><path d="M20 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"></path><path d="M6.34 6.34a2 2 0 1 0-2.83-2.83 2 2 0 0 0 2.83 2.83z"></path><path d="M17.66 17.66a2 2 0 1 0-2.83-2.83 2 2 0 0 0 2.83 2.83z"></path><path d="M6.34 17.66a2 2 0 1 0-2.83 2.83 2 2 0 0 0 2.83-2.83z"></path><path d="M17.66 6.34a2 2 0 1 0-2.83 2.83 2 2 0 0 0 2.83-2.83z"></path></svg>',
+    flower: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>',
+    book: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>'
+  };
 
-    const badges = [
-      {id:'streak7',label:'7天连续',icon:svgFlame,check: () => habitsConfig.some(h => getMaxStreak(h.id) >= 7)},
-      {id:'streak14',label:'14天连续',icon:svgFlame,check: () => habitsConfig.some(h => getMaxStreak(h.id) >= 14)},
-      {id:'streak30',label:'30天连续',icon:svgStar,check: () => habitsConfig.some(h => getMaxStreak(h.id) >= 30)},
-      {id:'all_done',label:'全部完成',icon:svgTrophy,check: () => {
+  function _getTotalCheckinsCount() {
+    let total = 0;
+    for (const key in checkinRecords) {
+      const rec = checkinRecords[key];
+      for (const hId in rec) {
+        if (rec[hId] && rec[hId].done) total++;
+      }
+    }
+    return total;
+  }
+
+  function _hasConstitutionTest() {
+    return localStorage.getItem('constitution_result') !== null;
+  }
+
+  function _hasPerfectWeek() {
+    const todayDate = new Date();
+    for (let w = 0; w < 4; w++) {
+      let allDaysDone = true;
+      for (let d = 0; d < 7; d++) {
+        const date = new Date(todayDate);
+        date.setDate(date.getDate() - w * 7 - d);
+        const key = date.getFullYear() + '-' + String(date.getMonth()+1).padStart(2,'0') + '-' + String(date.getDate()).padStart(2,'0');
+        const rec = checkinRecords[key] || {};
+        if (!habitsConfig.every(h => App.Core.Storage.isHabitChecked(h, rec))) {
+          allDaysDone = false;
+          break;
+        }
+      }
+      if (allDaysDone) return true;
+    }
+    return false;
+  }
+
+  function _hasPerfectMonth() {
+    const todayDate = new Date();
+    const daysInMonth = new Date(todayDate.getFullYear(), todayDate.getMonth() + 1, 0).getDate();
+    let perfectCount = 0;
+    for (let d = 1; d <= daysInMonth; d++) {
+      const date = new Date(todayDate.getFullYear(), todayDate.getMonth(), d);
+      const key = date.getFullYear() + '-' + String(date.getMonth()+1).padStart(2,'0') + '-' + String(date.getDate()).padStart(2,'0');
+      const rec = checkinRecords[key] || {};
+      if (habitsConfig.length > 0 && habitsConfig.every(h => App.Core.Storage.isHabitChecked(h, rec))) {
+        perfectCount++;
+      }
+    }
+    return perfectCount >= 28;
+  }
+
+  function _getActiveDaysCount() {
+    let count = 0;
+    for (const key in checkinRecords) {
+      const rec = checkinRecords[key];
+      if (Object.keys(rec).some(hId => rec[hId] && rec[hId].done)) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  function _getBadgeList() {
+    var svgs = BADGE_SVGS;
+    return [
+      {id:'streak7',label:'7天连续',icon:svgs.flame,category:'streak',check: () => habitsConfig.some(h => getMaxStreak(h.id) >= 7)},
+      {id:'streak14',label:'14天连续',icon:svgs.flame,category:'streak',check: () => habitsConfig.some(h => getMaxStreak(h.id) >= 14)},
+      {id:'streak30',label:'30天连续',icon:svgs.star,category:'streak',check: () => habitsConfig.some(h => getMaxStreak(h.id) >= 30)},
+      {id:'streak100',label:'百日坚持',icon:svgs.crown,category:'streak',check: () => habitsConfig.some(h => getMaxStreak(h.id) >= 100)},
+      {id:'all_done',label:'今日全勤',icon:svgs.trophy,category:'perfect',check: () => {
         const rec = checkinRecords[today()] || {};
         return habitsConfig.length > 0 && habitsConfig.every(h => App.Core.Storage.isHabitChecked(h, rec));
+      }},
+      {id:'perfect_week',label:'完美一周',icon:svgs.calendar,category:'perfect',check: _hasPerfectWeek},
+      {id:'perfect_month',label:'完美一月',icon:svgs.zap,category:'perfect',check: _hasPerfectMonth},
+      {id:'total_100',label:'百次打卡',icon:svgs.heart,category:'total',check: () => _getTotalCheckinsCount() >= 100},
+      {id:'total_500',label:'五百次',icon:svgs.gem,category:'total',check: () => _getTotalCheckinsCount() >= 500},
+      {id:'total_1000',label:'千次打卡',icon:svgs.award,category:'total',check: () => _getTotalCheckinsCount() >= 1000},
+      {id:'active_30',label:'30天活跃',icon:svgs.sparkles,category:'active',check: () => _getActiveDaysCount() >= 30},
+      {id:'active_90',label:'90天活跃',icon:svgs.sparkles,category:'active',check: () => _getActiveDaysCount() >= 90},
+      {id:'active_180',label:'半年活跃',icon:svgs.sparkles,category:'active',check: () => _getActiveDaysCount() >= 180},
+      {id:'constitution',label:'体质达人',icon:svgs.book,category:'special',check: _hasConstitutionTest},
+      {id:'spring_health',label:'春日养生',icon:svgs.flower,category:'season',check: () => (typeof getCurrentSeason === 'function') ? getCurrentSeason() === 'spring' : false},
+      {id:'summer_health',label:'夏日养生',icon:svgs.sun,category:'season',check: () => (typeof getCurrentSeason === 'function') ? getCurrentSeason() === 'summer' : false},
+      {id:'autumn_health',label:'秋日养生',icon:svgs.tree,category:'season',check: () => (typeof getCurrentSeason === 'function') ? getCurrentSeason() === 'autumn' : false},
+      {id:'winter_health',label:'冬日养生',icon:svgs.snow,category:'season',check: () => (typeof getCurrentSeason === 'function') ? getCurrentSeason() === 'winter' : false},
+      {id:'early_bird',label:'早起达人',icon:svgs.sun,category:'special',check: () => {
+        const h = habitsConfig.find(h => h.id === 'early_rise');
+        return h && getMaxStreak(h.id) >= 21;
+      }},
+      {id:'night_owl',label:'早睡达人',icon:svgs.moon,category:'special',check: () => {
+        const h = habitsConfig.find(h => h.id === 'early_sleep');
+        return h && getMaxStreak(h.id) >= 21;
+      }},
+      {id:'water_master',label:'喝水大师',icon:svgs.leaf,category:'special',check: () => {
+        const h = habitsConfig.find(h => h.id === 'daily_water');
+        return h && getMaxStreak(h.id) >= 30;
       }}
     ];
+  }
 
-    container.innerHTML = badges.map(b => {
-      const unlocked = b.check();
-      return '<div class="badge">' +
-        '<div class="badge-icon ' + (unlocked ? 'unlocked' : 'locked') + '">' + b.icon + '</div>' +
-        '<div class="badge-label ' + (unlocked ? 'unlocked' : '') + '">' + b.label + '</div>' +
+  function _renderBadgeItem(b, size) {
+    const unlocked = b.check();
+    const cls = size === 'mini' ? 'badge-mini' : 'badge';
+    const iconCls = size === 'mini' ? 'badge-mini-icon' : 'badge-icon';
+    const labelCls = size === 'mini' ? 'badge-mini-label' : 'badge-label';
+    const labelHtml = size === 'mini' ? '' : '<div class="' + labelCls + ' ' + (unlocked ? 'unlocked' : '') + '">' + esc(b.label) + '</div>';
+    return '<div class="' + cls + '" title="' + esc(b.label) + '">' +
+      '<div class="' + iconCls + ' ' + (unlocked ? 'unlocked' : 'locked') + '">' + b.icon + '</div>' +
+      labelHtml +
+    '</div>';
+  }
+
+  function renderProfileBadgesMini() {
+    const listEl = document.getElementById('profileBadgesMiniList');
+    const countEl = document.getElementById('profileBadgesMiniCount');
+    if (!listEl || !countEl) return;
+
+    const badges = _getBadgeList();
+    const unlocked = badges.filter(b => b.check());
+    const showBadges = unlocked.length > 0 ? unlocked.slice(0, 5) : badges.slice(0, 5);
+
+    listEl.innerHTML = showBadges.map(b => _renderBadgeItem(b, 'mini')).join('') +
+      '<div class="badge-mini more">+' + Math.max(0, badges.length - 5) + '</div>';
+    countEl.textContent = '已获得 ' + unlocked.length + '/' + badges.length;
+  }
+
+  function renderBadgePanel() {
+    const summaryEl = document.getElementById('badgeSummary');
+    const categoriesEl = document.getElementById('badgeCategories');
+    if (!summaryEl || !categoriesEl) return;
+
+    const badges = _getBadgeList();
+    const unlocked = badges.filter(b => b.check());
+    const categories = [
+      {id:'streak',name:'🔥 连续打卡',desc:'坚持就是力量'},
+      {id:'perfect',name:'✨ 完美记录',desc:'全勤与周期挑战'},
+      {id:'total',name:'💎 累计成就',desc:'点滴积累的结果'},
+      {id:'active',name:'🌟 活跃达人',desc:'持续参与的天数'},
+      {id:'season',name:'🍃 季节养生',desc:'顺应时节调理'},
+      {id:'special',name:'🎯 专项挑战',desc:'特定习惯突破'}
+    ];
+
+    summaryEl.innerHTML = '<div class="badge-progress-ring">' +
+      '<div class="bpr-inner"><div class="bpr-num">' + unlocked.length + '</div><div class="bpr-total">/' + badges.length + '</div></div>' +
+      '</div>' +
+      '<div class="badge-progress-info">' +
+      '<div class="bpi-title">已获得 ' + Math.round(unlocked.length / badges.length * 100) + '% 成就</div>' +
+      '<div class="bpi-desc">继续打卡解锁更多徽章吧</div>' +
+      '</div>';
+
+    categoriesEl.innerHTML = categories.map(cat => {
+      const catBadges = badges.filter(b => b.category === cat.id);
+      if (catBadges.length === 0) return '';
+      const catUnlocked = catBadges.filter(b => b.check()).length;
+      return '<div class="badge-category">' +
+        '<div class="badge-category-header">' +
+          '<div><span class="badge-category-name">' + cat.name + '</span><span class="badge-category-count">' + catUnlocked + '/' + catBadges.length + '</span></div>' +
+          '<div class="badge-category-desc">' + cat.desc + '</div>' +
+        '</div>' +
+        '<div class="badge-category-grid">' + catBadges.map(b => _renderBadgeItem(b, 'normal')).join('') + '</div>' +
       '</div>';
     }).join('');
   }
 
+  function renderAchievements() {
+    renderProfileBadgesMini();
+    renderBadgePanel();
+  }
+
   function renderProfile() {
     renderLevelCard();
+    renderProfileBadgesMini();
     renderProfileStats();
     renderConstitutionSummary();
     renderProfileGrid();
@@ -581,7 +716,6 @@
     renderManageStats();
     renderManageWeeklyReport();
     renderManageGroups();
-    renderAchievements();
     renderDailyCardPreview();
   }
 
@@ -1471,7 +1605,6 @@
   function renderSdWeekContent() {
     renderSdWeekBarChart();
     renderSdWaterWeekChart();
-    renderSdRankingList();
   }
 
   // ===== 共享周柱状图数据获取（DRY掉两处数据收集重复） =====
@@ -1720,26 +1853,6 @@
         }, idx * 60);
       });
     });
-  }
-
-  function renderSdRankingList() {
-    const container = document.getElementById('sdRankingList');
-    if (!container) return;
-
-    const rankHtml = habitsConfig.map((h, i) => {
-      const rate = getCompletionRate(h.id, 30);
-      const cls = rate >= 70 ? 'high' : rate >= 40 ? 'mid' : 'low';
-      let rankClass = 'normal';
-      if (i === 0) rankClass = 'gold';
-      else if (i === 1) rankClass = 'silver';
-      else if (i === 2) rankClass = 'bronze';
-      return `<div class="ranking-item">
-        <div class="ranking-rank ${rankClass}">${i < 3 ? ['🥇','🥈','🥉'][i] : i+1}</div>
-        <div class="ranking-header"><span class="ranking-name">${esc(h.icon)} ${esc(h.name)}</span><span class="ranking-pct">${rate}%</span></div>
-        <div class="ranking-bar"><div class="ranking-fill ${cls}" style="width:${rate}%"></div></div>
-      </div>`;
-    }).join('');
-    container.innerHTML = rankHtml || '<div style="text-align:center;color:var(--muted);font-size:13px;padding:20px">暂无数据</div>';
   }
 
   function renderSdHeatmap() {
@@ -2111,7 +2224,6 @@
     switchStatsPeriod,
     renderSdWeekBarChart,
     renderSdWaterWeekChart,
-    renderSdRankingList,
     renderSdHeatmap,
     sdChangeMonth,
     renderYearHeatmap,

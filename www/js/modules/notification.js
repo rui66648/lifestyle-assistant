@@ -42,24 +42,85 @@
   var _FRIED_KEY_TTL = 24 * 60 * 60 * 1000;
 
   // ============================================================
-  // 免打扰配置
+  // 免打扰配置（v3.1 增强：支持按习惯配置）
   // ============================================================
   function getQuietConfig() {
     try {
       var cfg = JSON.parse(localStorage.getItem('quiet_hours') || '{}');
-      if (cfg.enabled !== false) {
-        return { enabled: true, start: cfg.start || 22, end: cfg.end || 7 };
-      }
-      return { enabled: false, start: 22, end: 7 };
-    } catch(e) { return { enabled: true, start: 22, end: 7 }; }
+      return {
+        enabled: cfg.enabled !== false,
+        start: cfg.start || 22,
+        end: cfg.end || 7,
+        perHabit: cfg.perHabit || {}
+      };
+    } catch(e) { return { enabled: true, start: 22, end: 7, perHabit: {} }; }
   }
 
-  function isInQuietHours(date, method) {
+  function saveQuietConfig(cfg) {
+    try {
+      localStorage.setItem('quiet_hours', JSON.stringify(cfg));
+    } catch(e) {}
+  }
+
+  function isInQuietHours(date, method, habitId) {
     if (method === REMINDER_METHODS.ALARM) return false;
     var qc = getQuietConfig();
-    if (!qc.enabled) return false;
-    var h = date.getHours();
-    return h >= qc.start || h < qc.end;
+    
+    // 先检查全局免打扰
+    if (qc.enabled) {
+      var h = date.getHours();
+      var m = date.getMinutes();
+      var currentMin = h * 60 + m;
+      var startMin = qc.start * 60;
+      var endMin = qc.end * 60;
+      
+      var isQuiet = false;
+      if (startMin < endMin) {
+        isQuiet = currentMin >= startMin && currentMin < endMin;
+      } else {
+        isQuiet = currentMin >= startMin || currentMin < endMin;
+      }
+      
+      if (isQuiet) {
+        // 如果有按习惯配置的免打扰时段，检查是否覆盖全局
+        if (habitId && qc.perHabit[habitId]) {
+          var ph = qc.perHabit[habitId];
+          if (!ph.enabled) return false;
+          if (ph.start !== undefined && ph.end !== undefined) {
+            var phStartMin = ph.start * 60;
+            var phEndMin = ph.end * 60;
+            var isPhQuiet = false;
+            if (phStartMin < phEndMin) {
+              isPhQuiet = currentMin >= phStartMin && currentMin < phEndMin;
+            } else {
+              isPhQuiet = currentMin >= phStartMin || currentMin < phEndMin;
+            }
+            return isPhQuiet;
+          }
+        }
+        return true;
+      }
+    }
+    
+    // 检查按习惯配置的免打扰（即使全局关闭）
+    if (habitId && qc.perHabit[habitId]) {
+      var ph = qc.perHabit[habitId];
+      if (!ph.enabled) return false;
+      if (ph.start !== undefined && ph.end !== undefined) {
+        var h = date.getHours();
+        var m = date.getMinutes();
+        var currentMin = h * 60 + m;
+        var phStartMin = ph.start * 60;
+        var phEndMin = ph.end * 60;
+        if (phStartMin < phEndMin) {
+          return currentMin >= phStartMin && currentMin < phEndMin;
+        } else {
+          return currentMin >= phStartMin || currentMin < phEndMin;
+        }
+      }
+    }
+    
+    return false;
   }
 
   // ============================================================
@@ -167,7 +228,7 @@
     if (method === REMINDER_METHODS.OFF || method === 'none') return;
 
     var now = new Date();
-    if (isInQuietHours(now, rawMethod)) return;
+    if (isInQuietHours(now, rawMethod, habit.id)) return;
 
     var soundOn = habit.reminder ? (habit.reminder.sound !== false) : true;
     var vibrateOn = habit.reminder ? (habit.reminder.vibrate !== false) : true;

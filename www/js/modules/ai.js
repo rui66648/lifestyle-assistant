@@ -738,20 +738,101 @@ function getConfig() {
         mcpContext = buildMcpContextPrompt(howtocookResult, knowledgeResult, stravaResult);
       }
 
-      // 体质+季节联动注入（v2.1 增强）
+      // 体质+季节+打卡数据联动注入（v2.2 增强）
       const constitution = JSON.parse(localStorage.getItem('constitution_result') || 'null');
       const ctype = constitution && window.App && App.Data && App.Data.CONSTITUTION_TYPES
         ? App.Data.CONSTITUTION_TYPES.find(c => c.id === constitution.typeId) : null;
       const solarTerm = (typeof getCurrentSolarTerm === 'function') ? getCurrentSolarTerm() : null;
       const season = (typeof getCurrentSeason === 'function') ? getCurrentSeason() : null;
+      const seasonPack = (typeof getSeasonPack === 'function') ? getSeasonPack(season) : null;
+
+      // 打卡数据统计
+      let streak = 0, totalCheckins = 0, todayDone = 0, todayTotal = 0, levelName = '新手';
+      if (typeof getCurrentStreak === 'function') streak = getCurrentStreak();
+      if (typeof getTotalCheckins === 'function') totalCheckins = getTotalCheckins();
+      if (typeof getTodayDone === 'function') todayDone = getTodayDone();
+      if (typeof getTodayTotal === 'function') todayTotal = getTodayTotal();
+      if (typeof getCurrentLevel === 'function') {
+        const lv = getCurrentLevel();
+        levelName = lv.name;
+      }
+
+      // 最近7天打卡趋势
+      let weeklyTrend = [];
+      try {
+        const today = new Date();
+        for (let i = 6; i >= 0; i--) {
+          const d = new Date(today);
+          d.setDate(today.getDate() - i);
+          const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+          const rec = (typeof checkinRecords !== 'undefined' && checkinRecords[key]) || {};
+          let done = 0, total = 0;
+          if (typeof habitsConfig !== 'undefined' && Array.isArray(habitsConfig)) {
+            habitsConfig.forEach(h => {
+              if (h.enabled === false) return;
+              total++;
+              if (App.Core.Storage && App.Core.Storage.isHabitChecked && App.Core.Storage.isHabitChecked(h, rec)) done++;
+            });
+          }
+          weeklyTrend.push({ date: key, done, total, rate: total > 0 ? Math.round((done/total)*100) : 0 });
+        }
+      } catch(e) {}
+
+      // 习惯分类统计
+      let habitCategories = {};
+      try {
+        if (typeof habitsConfig !== 'undefined' && Array.isArray(habitsConfig)) {
+          habitsConfig.forEach(h => {
+            if (h.enabled === false) return;
+            const cat = h.category || '其他';
+            habitCategories[cat] = (habitCategories[cat] || 0) + 1;
+          });
+        }
+      } catch(e) {}
 
       let userContext = '';
-      if (ctype || solarTerm) {
+      if (ctype || solarTerm || season || streak > 0 || totalCheckins > 0) {
         userContext = '\n\n【用户上下文 · 必须融入建议】\n';
-        if (ctype) userContext += '体质：' + ctype.name + '（' + ctype.desc + '）\n调理方向：' + ctype.advice + '\n';
-        if (solarTerm) userContext += '当前节气：' + solarTerm.name + (solarTerm.tip ? '（' + solarTerm.tip + '）' : '') + '\n';
-        if (season) userContext += '季节：' + season + '\n';
-        userContext += '请基于以上用户上下文给出针对性建议，避免泛泛而谈。';
+        
+        // 体质信息
+        if (ctype) {
+          userContext += '体质：' + ctype.name + '（' + ctype.desc + '）\n';
+          userContext += '体质特征：' + ctype.features + '\n';
+          userContext += '调理方向：' + ctype.advice + '\n';
+          if (ctype.foods) userContext += '宜食食物：' + ctype.foods + '\n';
+          if (ctype.avoid) userContext += '忌食食物：' + ctype.avoid + '\n';
+        }
+        
+        // 季节节气
+        if (seasonPack) userContext += '季节：' + seasonPack.name + seasonPack.emoji + ' · ' + seasonPack.focus + '\n';
+        if (solarTerm) userContext += '当前节气：' + solarTerm.emoji + solarTerm.name + (solarTerm.tip ? ' · ' + solarTerm.tip : '') + '\n';
+        
+        // 打卡数据
+        userContext += '养生等级：' + levelName + '\n';
+        userContext += '连续打卡：' + streak + '天\n';
+        userContext += '累计打卡：' + totalCheckins + '次\n';
+        userContext += '今日进度：' + todayDone + '/' + todayTotal + '（' + (todayTotal > 0 ? Math.round((todayDone/todayTotal)*100) : 0) + '%）\n';
+        
+        // 习惯分类
+        if (Object.keys(habitCategories).length > 0) {
+          userContext += '习惯分类：';
+          Object.keys(habitCategories).forEach(cat => {
+            userContext += cat + '(' + habitCategories[cat] + ')、';
+          });
+          userContext = userContext.slice(0, -1) + '\n';
+        }
+        
+        // 周趋势（如果有数据）
+        if (weeklyTrend.length === 7) {
+          const avgRate = Math.round(weeklyTrend.reduce((sum, d) => sum + d.rate, 0) / 7);
+          const bestDay = weeklyTrend.reduce((best, d) => d.rate > best.rate ? d : best, weeklyTrend[0]);
+          const worstDay = weeklyTrend.reduce((worst, d) => d.rate < worst.rate ? d : worst, weeklyTrend[0]);
+          userContext += '本周平均完成率：' + avgRate + '%\n';
+          userContext += '最佳：' + bestDay.date + '（' + bestDay.rate + '%）\n';
+          if (worstDay.rate < 100) userContext += '需加油：' + worstDay.date + '（' + worstDay.rate + '%）\n';
+        }
+        
+        userContext += '\n请基于以上用户上下文给出针对性建议，结合用户的体质特点、当前季节养生要点和打卡数据，给出个性化的养生指导。';
       }
       const systemContent = SYSTEM_PROMPT + userContext + (mcpContext ? '\n\n' + mcpContext : '');
 

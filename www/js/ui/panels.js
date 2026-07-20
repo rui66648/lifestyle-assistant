@@ -438,6 +438,72 @@
         </div>
       </div>`;
 
+    // ========== 习惯包市场 ==========
+    const packMarket = PACK_MARKET || [];
+    
+    html += `
+      <div class="pack-market" id="packMarket">
+        <div class="pack-market-header" onclick="togglePackMarket()">
+          <div style="display:flex;align-items:center;gap:10px;flex:1">
+            <span style="font-size:28px">📦</span>
+            <div>
+              <div style="font-size:16px;font-weight:700;color:var(--ink)">习惯包市场</div>
+              <div style="font-size:12px;color:var(--muted)">精选体质调理、职场、学生、健身等场景包</div>
+            </div>
+          </div>
+          <span class="pack-market-arrow" id="packMarketArrow">▼</span>
+        </div>
+        <div class="pack-market-body" id="packMarketBody" style="display:none">`;
+    
+    const packCategories = [
+      { type: 'specialty', name: '场景专属', emoji: '🎯' },
+      { type: 'constitution', name: '体质调理', emoji: '🧪' },
+      { type: 'seasonal', name: '季节养生', emoji: '🍃' },
+      { type: 'daily', name: '日常习惯', emoji: '📅' }
+    ];
+    
+    packCategories.forEach(cat => {
+      const packs = packMarket.filter(p => p.type === cat.type);
+      if (packs.length === 0) return;
+      
+      html += `
+          <div class="pack-market-category">
+            <div class="pack-market-category-header">
+              <span style="font-size:18px">${cat.emoji}</span>
+              <span style="font-size:14px;font-weight:600">${cat.name}</span>
+            </div>
+            <div class="pack-market-grid">`;
+      
+      packs.forEach(pack => {
+        const packHabits = pack.pack.habits || [];
+        const packAddedCount = packHabits.filter(ph => myIds.has(ph.id)).length;
+        const packAllAdded = packAddedCount === packHabits.length;
+        
+        html += `
+                <div class="pack-card" id="packCard_${pack.id}">
+                  <div class="pack-card-icon">${pack.emoji}</div>
+                  <div class="pack-card-name">${esc(pack.name)}</div>
+                  <div class="pack-card-desc">${esc(pack.desc)}</div>
+                  <div class="pack-card-count">${packHabits.length}个习惯 · ${packAddedCount}/${packHabits.length}已添加</div>
+                  <button class="pack-card-btn ${packAllAdded ? 'added' : ''}" onclick="addPackById('${pack.id}')">${packAllAdded ? '已添加' : '一键添加'}</button>
+                </div>`;
+      });
+      
+      html += `
+            </div>
+          </div>`;
+    });
+    
+    html += `
+          <div class="pack-market-export" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--rule)">
+            <div style="font-size:13px;font-weight:600;margin-bottom:8px">📤 导出我的习惯包</div>
+            <p style="font-size:12px;color:var(--muted);margin-bottom:8px">将您当前的习惯配置导出分享给好友</p>
+            <button class="pack-export-btn" onclick="exportMyHabitPack()">导出习惯包</button>
+            <button class="pack-import-btn" onclick="openPackImportPanel()">导入习惯包</button>
+          </div>
+        </div>
+      </div>`;
+
     body.innerHTML = html;
     renderLibraryResults(currentLibSearch);
     bindLibrarySearch();

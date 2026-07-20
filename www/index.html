@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -116,6 +116,14 @@
         <span class="profile-progress-pct" id="levelProgressPct">0%</span>
       </div>
       <div class="profile-next" id="levelNext">再打卡 3 天升级为「养生学徒」</div>
+
+      <!-- 成就徽章迷你展示（合并到养生小白卡片） -->
+      <div class="profile-badges-mini" id="profileBadgesMini" onclick="openBadgePanel()">
+        <div class="pbm-label">🏅 成就徽章</div>
+        <div class="pbm-list" id="profileBadgesMiniList"></div>
+        <div class="pbm-count" id="profileBadgesMiniCount">已获得 0/20</div>
+      </div>
+
       <div class="profile-ai-status" id="profileAiStatus"></div>
     </div>
     <div class="profile-settings-btn" onclick="openSettingsPanel()" title="设置">
@@ -175,21 +183,6 @@
 
   <!-- 按时间段分组的习惯列表 -->
   <div id="mgGroups"></div>
-
-  <!-- 习惯排行榜 -->
-  <div class="ranking-section collapsed" id="rankingSection">
-    <div class="section-title" onclick="toggleRanking()" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center">
-      <span>习惯排名</span>
-      <span class="ranking-arrow" id="rankingArrow">▼</span>
-    </div>
-    <div class="ranking-list" id="rankingList"></div>
-  </div>
-
-  <!-- 成就徽章 -->
-  <div class="profile-badges-section">
-    <div class="section-title">成就徽章</div>
-    <div class="achievements" id="achievements"></div>
-  </div>
 
   <!-- 每日卡片收藏入口 -->
   <div class="daily-cards-entry" id="dailyCardsEntry" onclick="openDailyCardCollection()" style="display:none">
@@ -679,10 +672,7 @@
         <div class="sd-section-title">💧 本周饮水趋势</div>
         <div id="sdWaterWeekChart" style="background:#fff;border-radius:var(--radius);padding:16px;margin-bottom:16px;box-shadow:var(--shadow)"></div>
       </div>
-      <div class="sd-section">
-        <div class="sd-section-title">📊 习惯完成率排行（近30天）</div>
-        <div id="sdRankingList"></div>
-      </div>
+      
     </div>
     <!-- 月统计 -->
     <div class="sd-period-content" id="sdMonthContent" style="display:none">
@@ -747,6 +737,19 @@
     <button class="panel-close" onclick="closeAllPanels()">✕</button>
   </div>
   <div class="panel-body" id="achievementPanelBody" style="padding:16px">
+  </div>
+</div>
+
+<!-- 成就徽章墙 Panel -->
+<div class="panel" id="badgePanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title">🏅 成就徽章</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body" id="badgePanelBody" style="padding:16px">
+    <div class="badge-summary" id="badgeSummary"></div>
+    <div class="badge-categories" id="badgeCategories"></div>
   </div>
 </div>
 

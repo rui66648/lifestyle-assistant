@@ -534,6 +534,163 @@
     }
   }
 
+  function togglePackMarket() {
+    const body = document.getElementById('packMarketBody');
+    const arrow = document.getElementById('packMarketArrow');
+    if (!body || !arrow) return;
+    if (body.style.display === 'none') {
+      body.style.display = 'block';
+      arrow.style.transform = 'rotate(180deg)';
+    } else {
+      body.style.display = 'none';
+      arrow.style.transform = 'rotate(0deg)';
+    }
+  }
+
+  function addPackById(packId) {
+    const packMarket = PACK_MARKET || [];
+    const packInfo = packMarket.find(p => p.id === packId);
+    if (!packInfo) return;
+    
+    const pack = packInfo.pack;
+    const myIds = new Set(habitsConfig.map(h => h.id));
+    let addedCount = 0;
+    
+    pack.habits.forEach(ph => {
+      if (myIds.has(ph.id)) return;
+      const lib = HABIT_LIBRARY.find(h => h.id === ph.id);
+      if (!lib) return;
+      
+      const newHabit = {
+        id: lib.id,
+        name: lib.name,
+        icon: lib.icon,
+        category: lib.category,
+        type: lib.type,
+        unit: lib.unit,
+        reminder: {
+          enabled: ph.reminder.enabled,
+          time: ph.reminder.time,
+          days: [0,1,2,3,4,5,6],
+          method: 'in-app'
+        }
+      };
+      
+      if (lib.type === 'water' && lib.waterConfig) {
+        newHabit.waterConfig = JSON.parse(JSON.stringify(lib.waterConfig));
+      }
+      
+      habitsConfig.push(newHabit);
+      myIds.add(ph.id);
+      addedCount++;
+    });
+    
+    if (addedCount > 0) {
+      saveConfig();
+      showToast(`${packInfo.emoji} ${esc(packInfo.name)}：已添加 ${addedCount} 个习惯`);
+      pack.habits.forEach(ph => {
+        updateLibCardState(ph.id, true);
+      });
+      render(['manage', 'checkin']);
+    } else {
+      showToast(`${esc(packInfo.name)}中的习惯已全部添加`);
+    }
+  }
+
+  function exportMyHabitPack() {
+    if (typeof App.Modules.PackMarket !== 'undefined' && App.Modules.PackMarket.exportCurrentHabitPack) {
+      const json = App.Modules.PackMarket.exportCurrentHabitPack();
+      if (json) {
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = '我的习惯包.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('📤 习惯包已导出');
+      }
+    }
+  }
+
+  function openPackImportPanel() {
+    const html = `
+      <div id="packImportPanel" class="panel-overlay" style="display:block">
+        <div class="panel">
+          <div class="panel-header">
+            <div style="font-size:16px;font-weight:700">📥 导入习惯包</div>
+            <button class="panel-close" onclick="closePackImportPanel()">×</button>
+          </div>
+          <div class="panel-body" style="padding:20px">
+            <p style="font-size:13px;color:var(--muted);margin-bottom:16px">将好友分享的习惯包 JSON 文件导入到您的应用中</p>
+            <input type="file" id="packImportFile" accept=".json" onchange="handlePackImportFile(this)" style="display:none">
+            <button class="pack-import-btn" onclick="document.getElementById('packImportFile').click()" style="width:100%;padding:12px;font-size:14px;margin-bottom:12px">选择文件</button>
+            <div style="border:2px dashed var(--rule);border-radius:12px;padding:32px;text-align:center" onclick="document.getElementById('packImportFile').click()">
+              <div style="font-size:32px;margin-bottom:8px">📁</div>
+              <div style="font-size:13px;color:var(--muted)">点击或拖拽文件到此处</div>
+            </div>
+            <div style="margin-top:16px">
+              <textarea id="packImportText" placeholder="或粘贴习惯包 JSON 内容..." style="width:100%;height:120px;padding:12px;border:2px solid var(--rule);border-radius:12px;font-size:13px;font-family:monospace;resize:none;outline:none"></textarea>
+              <button class="pack-import-btn" onclick="handlePackImportText()" style="width:100%;padding:10px;font-size:13px;margin-top:8px">导入</button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    
+    document.body.insertAdjacentHTML('beforeend', html);
+  }
+
+  function closePackImportPanel() {
+    const panel = document.getElementById('packImportPanel');
+    if (panel) panel.remove();
+  }
+
+  function handlePackImportFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const json = e.target.result;
+        const result = App.Modules.PackMarket.importHabitPack(json);
+        if (result.success) {
+          showToast(result.message);
+          closePackImportPanel();
+          render(['manage', 'checkin']);
+        } else {
+          showToast('❌ ' + result.message);
+        }
+      } catch(e) {
+        showToast('❌ 文件解析失败');
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function handlePackImportText() {
+    const text = document.getElementById('packImportText').value.trim();
+    if (!text) {
+      showToast('请输入习惯包内容');
+      return;
+    }
+    
+    try {
+      const result = App.Modules.PackMarket.importHabitPack(text);
+      if (result.success) {
+        showToast(result.message);
+        closePackImportPanel();
+        render(['manage', 'checkin']);
+      } else {
+        showToast('❌ ' + result.message);
+      }
+    } catch(e) {
+      showToast('❌ JSON 格式错误');
+    }
+  }
+
   function toggleHabitEnabled(habitId) {
     const h = habitsConfig.find(x => x.id === habitId);
     if (!h) return;
@@ -707,6 +864,13 @@
     toggleSeasonPack,
     addHealthPack,
     addSeasonalPack,
+    togglePackMarket,
+    addPackById,
+    exportMyHabitPack,
+    openPackImportPanel,
+    closePackImportPanel,
+    handlePackImportFile,
+    handlePackImportText,
     toggleHabitEnabled,
     quickAddWater,
     quickAddWaterFromPanel,

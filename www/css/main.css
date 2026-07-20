@@ -629,28 +629,7 @@ select:focus-visible{
 }
 .stat-label{font-size:12px;color:var(--muted);margin-top:8px;font-weight:600}
 
-/* Ranking */
-.ranking-section.collapsed .ranking-list{display:none}
-.ranking-section.collapsed .ranking-arrow{transform:rotate(-90deg)}
-.ranking-arrow{transition:transform .2s ease;font-size:10px;color:var(--muted)}
-.ranking-item{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.ranking-rank{
-  width:24px;height:24px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:12px;font-weight:700;flex-shrink:0;
-}
-.ranking-rank.gold{background:linear-gradient(135deg,#FFD700,#FFA500);color:#fff}
-.ranking-rank.silver{background:linear-gradient(135deg,#C0C0C0,#A0A0A0);color:#fff}
-.ranking-rank.bronze{background:linear-gradient(135deg,#CD7F32,#A0522D);color:#fff}
-.ranking-rank.normal{background:var(--bg2);color:var(--muted);font-size:11px}
-.ranking-header{flex:1;min-width:0}
-.ranking-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ranking-pct{font-size:12px;font-weight:700;color:var(--accent);margin-top:2px}
-.ranking-bar{height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;margin-top:4px}
-.ranking-fill{height:100%;border-radius:3px;transition:width .6s ease}
-.ranking-fill.high{background:linear-gradient(90deg,var(--accent),var(--accent-light))}
-.ranking-fill.mid{background:linear-gradient(90deg,var(--accent2),var(--accent2-light))}
-.ranking-fill.low{background:var(--rule)}
+
 
 /* Heatmap */
 .heatmap{margin:16px 0}
@@ -1701,6 +1680,32 @@ body.dark .wuse-card,body.dark .emotion-mini-card,body.dark .wulao-mini-card{bac
 .season-tip{background:var(--bg2);border-radius:var(--radius);padding:14px 16px;margin:0 16px 12px;font-size:13px;line-height:1.6;color:var(--muted);display:flex;gap:8px;align-items:flex-start}
 .season-tip .tip-icon{font-size:18px;flex-shrink:0}
 .season-tip .tip-text em{font-style:normal;color:var(--ink);font-weight:600}
+
+/* ========== 习惯包市场 ========== */
+.pack-market{background:linear-gradient(135deg,var(--card),rgba(255,255,255,.8));border-radius:16px;margin:16px 0 12px;box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--rule)}
+.pack-market-header{display:flex;align-items:center;padding:16px;cursor:pointer;user-select:none}
+.pack-market-header:active{opacity:.8}
+.pack-market-arrow{font-size:12px;color:var(--muted);transition:transform .25s;flex-shrink:0}
+.pack-market-body{overflow:hidden;border-top:1px solid var(--rule)}
+.pack-market-category{padding:12px 16px;border-bottom:1px solid rgba(0,0,0,.04)}
+.pack-market-category:last-of-type{border-bottom:none}
+.pack-market-category-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.pack-market-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pack-card{background:var(--bg2);border-radius:12px;padding:12px;text-align:center;cursor:pointer;transition:all .15s}
+.pack-card:active{transform:scale(.97)}
+.pack-card-icon{font-size:28px;margin-bottom:6px}
+.pack-card-name{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.pack-card-desc{font-size:11px;color:var(--muted);margin-bottom:8px;line-height:1.3}
+.pack-card-count{font-size:10px;color:var(--muted);margin-bottom:8px}
+.pack-card-btn{padding:5px 12px;border-radius:12px;font-size:11px;font-weight:600;background:var(--accent);color:#fff;border:none;cursor:pointer;width:100%}
+.pack-card-btn.added{background:var(--rule);color:var(--muted)}
+.pack-card-btn:active{opacity:.8}
+.pack-market-export{text-align:center}
+.pack-export-btn{padding:8px 20px;border-radius:14px;font-size:13px;font-weight:600;background:var(--accent);color:#fff;border:none;cursor:pointer;margin-right:8px}
+.pack-import-btn{padding:8px 20px;border-radius:14px;font-size:13px;font-weight:600;background:var(--bg2);color:var(--ink);border:2px solid var(--rule);cursor:pointer}
+.pack-export-btn:active,.pack-import-btn:active{opacity:.8}
+body.dark .pack-market{background:linear-gradient(135deg,var(--bg2),rgba(255,255,255,.03));border-color:rgba(255,255,255,.08)}
+body.dark .pack-card{background:rgba(255,255,255,.04)}
 
 /* Scrollbar */
 ::-webkit-scrollbar{width:0;height:0}
@@ -3288,7 +3293,7 @@ body.dark .mini-lunar{background:rgba(255,255,255,.05);backdrop-filter:blur(8px)
 body.dark #bottomNav{background:#0f172a;border-top-color:rgba(255,255,255,.06)}
 body.dark .panel{background:rgba(15,23,42,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 body.dark .lib-item{background:var(--bg2)}
-body.dark .ranking-rank.normal{background:var(--bg2)}
+
 body.dark .badge-icon.locked{background:var(--bg2)}
 body.dark .profile-stat-item{background:rgba(30,41,59,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-color:rgba(255,255,255,.06)}
 body.dark .menu-item{background:rgba(30,41,59,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-color:rgba(255,255,255,.06)}

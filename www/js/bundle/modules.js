@@ -2978,20 +2978,101 @@ function getConfig() {
         mcpContext = buildMcpContextPrompt(howtocookResult, knowledgeResult, stravaResult);
       }
 
-      // 体质+季节联动注入（v2.1 增强）
+      // 体质+季节+打卡数据联动注入（v2.2 增强）
       const constitution = JSON.parse(localStorage.getItem('constitution_result') || 'null');
       const ctype = constitution && window.App && App.Data && App.Data.CONSTITUTION_TYPES
         ? App.Data.CONSTITUTION_TYPES.find(c => c.id === constitution.typeId) : null;
       const solarTerm = (typeof getCurrentSolarTerm === 'function') ? getCurrentSolarTerm() : null;
       const season = (typeof getCurrentSeason === 'function') ? getCurrentSeason() : null;
+      const seasonPack = (typeof getSeasonPack === 'function') ? getSeasonPack(season) : null;
+
+      // 打卡数据统计
+      let streak = 0, totalCheckins = 0, todayDone = 0, todayTotal = 0, levelName = '新手';
+      if (typeof getCurrentStreak === 'function') streak = getCurrentStreak();
+      if (typeof getTotalCheckins === 'function') totalCheckins = getTotalCheckins();
+      if (typeof getTodayDone === 'function') todayDone = getTodayDone();
+      if (typeof getTodayTotal === 'function') todayTotal = getTodayTotal();
+      if (typeof getCurrentLevel === 'function') {
+        const lv = getCurrentLevel();
+        levelName = lv.name;
+      }
+
+      // 最近7天打卡趋势
+      let weeklyTrend = [];
+      try {
+        const today = new Date();
+        for (let i = 6; i >= 0; i--) {
+          const d = new Date(today);
+          d.setDate(today.getDate() - i);
+          const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+          const rec = (typeof checkinRecords !== 'undefined' && checkinRecords[key]) || {};
+          let done = 0, total = 0;
+          if (typeof habitsConfig !== 'undefined' && Array.isArray(habitsConfig)) {
+            habitsConfig.forEach(h => {
+              if (h.enabled === false) return;
+              total++;
+              if (App.Core.Storage && App.Core.Storage.isHabitChecked && App.Core.Storage.isHabitChecked(h, rec)) done++;
+            });
+          }
+          weeklyTrend.push({ date: key, done, total, rate: total > 0 ? Math.round((done/total)*100) : 0 });
+        }
+      } catch(e) {}
+
+      // 习惯分类统计
+      let habitCategories = {};
+      try {
+        if (typeof habitsConfig !== 'undefined' && Array.isArray(habitsConfig)) {
+          habitsConfig.forEach(h => {
+            if (h.enabled === false) return;
+            const cat = h.category || '其他';
+            habitCategories[cat] = (habitCategories[cat] || 0) + 1;
+          });
+        }
+      } catch(e) {}
 
       let userContext = '';
-      if (ctype || solarTerm) {
+      if (ctype || solarTerm || season || streak > 0 || totalCheckins > 0) {
         userContext = '\n\n【用户上下文 · 必须融入建议】\n';
-        if (ctype) userContext += '体质：' + ctype.name + '（' + ctype.desc + '）\n调理方向：' + ctype.advice + '\n';
-        if (solarTerm) userContext += '当前节气：' + solarTerm.name + (solarTerm.tip ? '（' + solarTerm.tip + '）' : '') + '\n';
-        if (season) userContext += '季节：' + season + '\n';
-        userContext += '请基于以上用户上下文给出针对性建议，避免泛泛而谈。';
+        
+        // 体质信息
+        if (ctype) {
+          userContext += '体质：' + ctype.name + '（' + ctype.desc + '）\n';
+          userContext += '体质特征：' + ctype.features + '\n';
+          userContext += '调理方向：' + ctype.advice + '\n';
+          if (ctype.foods) userContext += '宜食食物：' + ctype.foods + '\n';
+          if (ctype.avoid) userContext += '忌食食物：' + ctype.avoid + '\n';
+        }
+        
+        // 季节节气
+        if (seasonPack) userContext += '季节：' + seasonPack.name + seasonPack.emoji + ' · ' + seasonPack.focus + '\n';
+        if (solarTerm) userContext += '当前节气：' + solarTerm.emoji + solarTerm.name + (solarTerm.tip ? ' · ' + solarTerm.tip : '') + '\n';
+        
+        // 打卡数据
+        userContext += '养生等级：' + levelName + '\n';
+        userContext += '连续打卡：' + streak + '天\n';
+        userContext += '累计打卡：' + totalCheckins + '次\n';
+        userContext += '今日进度：' + todayDone + '/' + todayTotal + '（' + (todayTotal > 0 ? Math.round((todayDone/todayTotal)*100) : 0) + '%）\n';
+        
+        // 习惯分类
+        if (Object.keys(habitCategories).length > 0) {
+          userContext += '习惯分类：';
+          Object.keys(habitCategories).forEach(cat => {
+            userContext += cat + '(' + habitCategories[cat] + ')、';
+          });
+          userContext = userContext.slice(0, -1) + '\n';
+        }
+        
+        // 周趋势（如果有数据）
+        if (weeklyTrend.length === 7) {
+          const avgRate = Math.round(weeklyTrend.reduce((sum, d) => sum + d.rate, 0) / 7);
+          const bestDay = weeklyTrend.reduce((best, d) => d.rate > best.rate ? d : best, weeklyTrend[0]);
+          const worstDay = weeklyTrend.reduce((worst, d) => d.rate < worst.rate ? d : worst, weeklyTrend[0]);
+          userContext += '本周平均完成率：' + avgRate + '%\n';
+          userContext += '最佳：' + bestDay.date + '（' + bestDay.rate + '%）\n';
+          if (worstDay.rate < 100) userContext += '需加油：' + worstDay.date + '（' + worstDay.rate + '%）\n';
+        }
+        
+        userContext += '\n请基于以上用户上下文给出针对性建议，结合用户的体质特点、当前季节养生要点和打卡数据，给出个性化的养生指导。';
       }
       const systemContent = SYSTEM_PROMPT + userContext + (mcpContext ? '\n\n' + mcpContext : '');
 
@@ -4497,24 +4578,85 @@ updateProfileAiStatus();
   var _FRIED_KEY_TTL = 24 * 60 * 60 * 1000;
 
   // ============================================================
-  // 免打扰配置
+  // 免打扰配置（v3.1 增强：支持按习惯配置）
   // ============================================================
   function getQuietConfig() {
     try {
       var cfg = JSON.parse(localStorage.getItem('quiet_hours') || '{}');
-      if (cfg.enabled !== false) {
-        return { enabled: true, start: cfg.start || 22, end: cfg.end || 7 };
-      }
-      return { enabled: false, start: 22, end: 7 };
-    } catch(e) { return { enabled: true, start: 22, end: 7 }; }
+      return {
+        enabled: cfg.enabled !== false,
+        start: cfg.start || 22,
+        end: cfg.end || 7,
+        perHabit: cfg.perHabit || {}
+      };
+    } catch(e) { return { enabled: true, start: 22, end: 7, perHabit: {} }; }
   }
 
-  function isInQuietHours(date, method) {
+  function saveQuietConfig(cfg) {
+    try {
+      localStorage.setItem('quiet_hours', JSON.stringify(cfg));
+    } catch(e) {}
+  }
+
+  function isInQuietHours(date, method, habitId) {
     if (method === REMINDER_METHODS.ALARM) return false;
     var qc = getQuietConfig();
-    if (!qc.enabled) return false;
-    var h = date.getHours();
-    return h >= qc.start || h < qc.end;
+    
+    // 先检查全局免打扰
+    if (qc.enabled) {
+      var h = date.getHours();
+      var m = date.getMinutes();
+      var currentMin = h * 60 + m;
+      var startMin = qc.start * 60;
+      var endMin = qc.end * 60;
+      
+      var isQuiet = false;
+      if (startMin < endMin) {
+        isQuiet = currentMin >= startMin && currentMin < endMin;
+      } else {
+        isQuiet = currentMin >= startMin || currentMin < endMin;
+      }
+      
+      if (isQuiet) {
+        // 如果有按习惯配置的免打扰时段，检查是否覆盖全局
+        if (habitId && qc.perHabit[habitId]) {
+          var ph = qc.perHabit[habitId];
+          if (!ph.enabled) return false;
+          if (ph.start !== undefined && ph.end !== undefined) {
+            var phStartMin = ph.start * 60;
+            var phEndMin = ph.end * 60;
+            var isPhQuiet = false;
+            if (phStartMin < phEndMin) {
+              isPhQuiet = currentMin >= phStartMin && currentMin < phEndMin;
+            } else {
+              isPhQuiet = currentMin >= phStartMin || currentMin < phEndMin;
+            }
+            return isPhQuiet;
+          }
+        }
+        return true;
+      }
+    }
+    
+    // 检查按习惯配置的免打扰（即使全局关闭）
+    if (habitId && qc.perHabit[habitId]) {
+      var ph = qc.perHabit[habitId];
+      if (!ph.enabled) return false;
+      if (ph.start !== undefined && ph.end !== undefined) {
+        var h = date.getHours();
+        var m = date.getMinutes();
+        var currentMin = h * 60 + m;
+        var phStartMin = ph.start * 60;
+        var phEndMin = ph.end * 60;
+        if (phStartMin < phEndMin) {
+          return currentMin >= phStartMin && currentMin < phEndMin;
+        } else {
+          return currentMin >= phStartMin || currentMin < phEndMin;
+        }
+      }
+    }
+    
+    return false;
   }
 
   // ============================================================
@@ -4622,7 +4764,7 @@ updateProfileAiStatus();
     if (method === REMINDER_METHODS.OFF || method === 'none') return;
 
     var now = new Date();
-    if (isInQuietHours(now, rawMethod)) return;
+    if (isInQuietHours(now, rawMethod, habit.id)) return;
 
     var soundOn = habit.reminder ? (habit.reminder.sound !== false) : true;
     var vibrateOn = habit.reminder ? (habit.reminder.vibrate !== false) : true;
