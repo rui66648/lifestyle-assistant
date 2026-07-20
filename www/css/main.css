@@ -3433,6 +3433,108 @@ body.dark #aiChatInput{background:rgba(30,41,59,.8);border-color:var(--rule);col
 /* 成就徽章区域 */
 .profile-badges-section{margin-top:16px}
 
+/* ---- 我的页面：养生小白卡片内迷你徽章 ---- */
+.profile-badges-mini{
+  margin-top:14px;
+  padding:12px 14px;
+  background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(245,158,11,.06));
+  border-radius:16px;
+  border:1px solid rgba(16,185,129,.12);
+  cursor:pointer;
+  transition:all .25s var(--ease);
+}
+.profile-badges-mini:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(16,185,129,.12)}
+.profile-badges-mini:active{transform:scale(.99)}
+.pbm-label{
+  font-size:12px;font-weight:700;color:var(--ink);margin-bottom:8px;
+  display:flex;align-items:center;gap:4px;
+}
+.pbm-list{
+  display:flex;align-items:center;gap:8px;flex-wrap:nowrap;
+  overflow:hidden;
+}
+.badge-mini{
+  flex-shrink:0;
+  width:34px;height:34px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--surface);
+  box-shadow:0 2px 6px rgba(0,0,0,.06);
+  transition:all .25s var(--ease);
+}
+.badge-mini.more{
+  background:var(--bg2);
+  color:var(--muted);
+  font-size:11px;font-weight:700;
+}
+.badge-mini-icon{
+  width:22px;height:22px;
+  display:flex;align-items:center;justify-content:center;
+}
+.badge-mini-icon svg{width:100%;height:100%}
+.badge-mini-icon.locked{opacity:.35;filter:grayscale(1)}
+.badge-mini-icon.unlocked{color:var(--accent)}
+.pbm-count{
+  margin-top:8px;font-size:11px;color:var(--muted);font-weight:500;
+  display:flex;align-items:center;gap:4px;
+}
+
+/* ---- 成就徽章墙 Panel ---- */
+.badge-summary{
+  display:flex;align-items:center;gap:18px;
+  padding:16px;
+  background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(245,158,11,.06));
+  border-radius:20px;
+  margin-bottom:18px;
+}
+.badge-progress-ring{
+  width:72px;height:72px;border-radius:50%;
+  background:conic-gradient(var(--accent) calc(var(--pct,0) * 1%), var(--bg2) 0);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  position:relative;
+}
+.badge-progress-ring::before{
+  content:'';position:absolute;inset:5px;border-radius:50%;background:var(--surface);
+}
+.bpr-inner{
+  position:relative;z-index:1;
+  display:flex;align-items:baseline;gap:1px;
+}
+.bpr-num{font-size:22px;font-weight:800;color:var(--accent)}
+.bpr-total{font-size:12px;color:var(--muted);font-weight:600}
+.badge-progress-info{flex:1}
+.bpi-title{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.bpi-desc{font-size:12px;color:var(--muted)}
+.badge-categories{display:flex;flex-direction:column;gap:16px}
+.badge-category{
+  background:var(--surface);
+  border-radius:18px;
+  padding:14px;
+  border:1px solid var(--border-light);
+}
+.badge-category-header{margin-bottom:10px}
+.badge-category-name{font-size:14px;font-weight:700;color:var(--ink);margin-right:8px}
+.badge-category-count{
+  font-size:11px;font-weight:600;color:var(--accent);
+  background:var(--accent-light);padding:2px 8px;border-radius:999px;
+}
+.badge-category-desc{font-size:11px;color:var(--muted);margin-top:3px}
+.badge-category-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(64px,1fr));
+  gap:12px 8px;
+}
+
+/* Dark mode overrides for badge panel */
+body.dark .profile-badges-mini{
+  background:rgba(255,255,255,.06);
+  border-color:rgba(255,255,255,.08);
+}
+body.dark .badge-mini{background:var(--surface)}
+body.dark .badge-category{background:var(--surface);border-color:rgba(255,255,255,.06)}
+body.dark .badge-progress-ring::before{background:var(--surface)}
+body.dark .badge-icon.locked{background:var(--bg2)}
+
 /* ========== 皮肤面板 ========== */
 .skin-grid{
   display:grid;grid-template-columns:repeat(3,1fr);gap:12px;

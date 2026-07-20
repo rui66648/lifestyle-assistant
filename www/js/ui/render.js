@@ -677,7 +677,8 @@
       {id:'special',name:'🎯 专项挑战',desc:'特定习惯突破'}
     ];
 
-    summaryEl.innerHTML = '<div class="badge-progress-ring">' +
+    const pct = Math.round(unlocked.length / badges.length * 100);
+    summaryEl.innerHTML = '<div class="badge-progress-ring" style="--pct:' + pct + '">' +
       '<div class="bpr-inner"><div class="bpr-num">' + unlocked.length + '</div><div class="bpr-total">/' + badges.length + '</div></div>' +
       '</div>' +
       '<div class="badge-progress-info">' +
@@ -702,6 +703,13 @@
   function renderAchievements() {
     renderProfileBadgesMini();
     renderBadgePanel();
+  }
+
+  function openBadgePanel() {
+    if (typeof openPanel === 'function') {
+      renderBadgePanel();
+      openPanel('badgePanel');
+    }
   }
 
   function renderProfile() {
@@ -2212,6 +2220,7 @@
     renderDailyCardCollection,
     renderDailyCardPreview,
     openDailyCardCollection,
+    openBadgePanel,
     openHabitEditPanel,
     renderHabitEditPanel,
     selectEditIcon,
