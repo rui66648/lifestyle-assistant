@@ -70,6 +70,7 @@
   // ============================================================
   function initApp() {
     console.log('[main] 平台:', _platform.toUpperCase(), '初始化开始');
+    document.body.classList.add('platform-' + _platform);
 
     checkModules();
     if (App.UI && App.UI.Panels && App.UI.Panels.initAllSkins) {

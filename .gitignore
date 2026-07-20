@@ -26,6 +26,7 @@ node_modules/
 .playwright-cli/
 .codebuddy/
 .trae/
+.trae-html-share-packages/
 .uploads/
 
 # Wrangler 本地缓存

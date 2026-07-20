@@ -1509,6 +1509,7 @@ body.dark .ios-install-close{background:rgba(255,255,255,.1);color:var(--ink,#cc
 .export-row .export-btn{flex:1;width:auto}
 .export-btn{padding:14px;border-radius:14px;background:var(--bg2);font-size:14px;font-weight:600;color:var(--muted)}
 .export-btn:active{background:var(--rule)}
+body.platform-apk .pwa-only{display:none!important}
 
 /* Water Tracker */
 .water-tracker{background:#fff;border-radius:var(--radius);padding:16px;margin-bottom:10px;box-shadow:var(--shadow)}
@@ -2747,7 +2748,7 @@ body.dark .settings-row:active{
 /* ========== Profile (我的) Page ========== */
 /* Profile Card */
 .profile-card{
-  display:flex;align-items:center;gap:16px;
+  display:flex;flex-direction:column;gap:16px;
   background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(245,158,11,.08));
   border-radius:20px;padding:20px;
   margin-bottom:16px;box-shadow:var(--shadow-sm);
@@ -2759,13 +2760,15 @@ body.dark .settings-row:active{
   width:200px;height:200px;border-radius:50%;
   background:radial-gradient(circle,rgba(16,185,129,.08),transparent 70%);
 }
+.profile-card-header{
+  display:flex;align-items:center;gap:14px;position:relative;z-index:1;
+}
 .profile-avatar{
-  width:56px;height:56px;border-radius:50%;
+  width:52px;height:52px;border-radius:50%;
   background:linear-gradient(135deg,var(--accent),var(--accent2));
   display:flex;align-items:center;justify-content:center;
-  font-size:28px;flex-shrink:0;
+  font-size:26px;flex-shrink:0;
   box-shadow:0 4px 12px rgba(16,185,129,.3);
-  position:relative;z-index:1;
 }
 .profile-info{flex:1;min-width:0;position:relative;z-index:1}
 .profile-name{font-size:18px;font-weight:700;color:var(--ink);margin-bottom:2px;display:flex;align-items:center;gap:8px}
@@ -2774,8 +2777,8 @@ body.dark .settings-row:active{
   background:linear-gradient(135deg,var(--accent),var(--accent2));
   color:#fff;
 }
-.profile-desc{font-size:12px;color:var(--muted);margin-bottom:10px}
-.profile-progress{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.profile-desc{font-size:12px;color:var(--muted);margin-bottom:8px}
+.profile-progress{display:flex;align-items:center;gap:8px;margin-bottom:2px}
 .profile-progress-bar{flex:1;height:8px;background:rgba(0,0,0,.06);border-radius:4px;overflow:hidden}
 .profile-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .8s cubic-bezier(.4,0,.2,1)}
 .profile-progress-pct{font-size:11px;color:var(--accent);font-weight:700;white-space:nowrap}
@@ -3435,48 +3438,55 @@ body.dark #aiChatInput{background:rgba(30,41,59,.8);border-color:var(--rule);col
 
 /* ---- 我的页面：养生小白卡片内迷你徽章 ---- */
 .profile-badges-mini{
-  margin-top:14px;
-  padding:12px 14px;
-  background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(245,158,11,.06));
+  padding:14px;
+  background:rgba(255,255,255,.6);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   border-radius:16px;
-  border:1px solid rgba(16,185,129,.12);
+  border:1px solid rgba(255,255,255,.8);
   cursor:pointer;
   transition:all .25s var(--ease);
+  box-shadow:0 2px 10px rgba(16,185,129,.08);
 }
-.profile-badges-mini:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(16,185,129,.12)}
+.profile-badges-mini:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(16,185,129,.15)}
 .profile-badges-mini:active{transform:scale(.99)}
+.pbm-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px;
+}
 .pbm-label{
-  font-size:12px;font-weight:700;color:var(--ink);margin-bottom:8px;
-  display:flex;align-items:center;gap:4px;
+  font-size:13px;font-weight:700;color:var(--ink);
+  display:flex;align-items:center;gap:5px;
+}
+.pbm-count{
+  font-size:11px;color:var(--accent);font-weight:600;
+  background:rgba(16,185,129,.1);padding:3px 8px;border-radius:999px;
 }
 .pbm-list{
-  display:flex;align-items:center;gap:8px;flex-wrap:nowrap;
+  display:flex;align-items:center;gap:10px;flex-wrap:nowrap;
   overflow:hidden;
 }
 .badge-mini{
   flex-shrink:0;
-  width:34px;height:34px;border-radius:10px;
+  width:36px;height:36px;border-radius:12px;
   display:flex;align-items:center;justify-content:center;
-  background:var(--surface);
-  box-shadow:0 2px 6px rgba(0,0,0,.06);
+  background:linear-gradient(135deg,var(--surface),var(--bg2));
+  box-shadow:0 3px 8px rgba(0,0,0,.06);
   transition:all .25s var(--ease);
+  position:relative;
 }
+.badge-mini:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(16,185,129,.18)}
 .badge-mini.more{
-  background:var(--bg2);
-  color:var(--muted);
-  font-size:11px;font-weight:700;
+  background:linear-gradient(135deg,rgba(16,185,129,.15),rgba(245,158,11,.1));
+  color:var(--accent);
+  font-size:12px;font-weight:700;
 }
 .badge-mini-icon{
-  width:22px;height:22px;
+  width:24px;height:24px;
   display:flex;align-items:center;justify-content:center;
 }
 .badge-mini-icon svg{width:100%;height:100%}
 .badge-mini-icon.locked{opacity:.35;filter:grayscale(1)}
 .badge-mini-icon.unlocked{color:var(--accent)}
-.pbm-count{
-  margin-top:8px;font-size:11px;color:var(--muted);font-weight:500;
-  display:flex;align-items:center;gap:4px;
-}
 
 /* ---- 成就徽章墙 Panel ---- */
 .badge-summary{
@@ -3527,10 +3537,12 @@ body.dark #aiChatInput{background:rgba(30,41,59,.8);border-color:var(--rule);col
 
 /* Dark mode overrides for badge panel */
 body.dark .profile-badges-mini{
-  background:rgba(255,255,255,.06);
-  border-color:rgba(255,255,255,.08);
+  background:rgba(0,0,0,.3);
+  border-color:rgba(255,255,255,.1);
 }
-body.dark .badge-mini{background:var(--surface)}
+body.dark .badge-mini{background:var(--bg2)}
+body.dark .badge-mini.more{background:rgba(16,185,129,.15)}
+body.dark .pbm-count{background:rgba(16,185,129,.15)}
 body.dark .badge-category{background:var(--surface);border-color:rgba(255,255,255,.06)}
 body.dark .badge-progress-ring::before{background:var(--surface)}
 body.dark .badge-icon.locked{background:var(--bg2)}

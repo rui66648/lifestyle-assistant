@@ -656,9 +656,11 @@
     const unlocked = badges.filter(b => b.check());
     const showBadges = unlocked.length > 0 ? unlocked.slice(0, 5) : badges.slice(0, 5);
 
-    listEl.innerHTML = showBadges.map(b => _renderBadgeItem(b, 'mini')).join('') +
-      '<div class="badge-mini more">+' + Math.max(0, badges.length - 5) + '</div>';
-    countEl.textContent = '已获得 ' + unlocked.length + '/' + badges.length;
+    const moreCount = Math.max(0, unlocked.length - 5);
+    const moreHtml = moreCount > 0 ? '<div class="badge-mini more">+' + moreCount + '</div>' : '';
+
+    listEl.innerHTML = showBadges.map(b => _renderBadgeItem(b, 'mini')).join('') + moreHtml;
+    countEl.textContent = unlocked.length + '/' + badges.length;
   }
 
   function renderBadgePanel() {
