@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lifestyle-assistant-v86';
+const CACHE_NAME = 'lifestyle-assistant-v112';
 const ASSETS = [
   './',
   './index.html',
@@ -23,8 +23,8 @@ const ASSETS = [
   './js/modules/pomodoro.js',
   './js/modules/ai.js',
   './js/modules/local-notify.js',
-  './assets/icon-192.jpg',
-  './assets/icon-512.jpg',
+  './assets/icon-192.png',
+  './assets/icon-512.png',
 ];
 
 self.addEventListener('install', event => {
@@ -128,8 +128,8 @@ self.addEventListener('push', function(event) {
   
   var options = {
     body: body,
-    icon: './assets/icon-192.jpg',
-    badge: './assets/icon-192.jpg',
+    icon: './assets/icon-192.png',
+    badge: './assets/icon-192.png',
     vibrate: data.vibrate || [200, 100, 200, 100, 300],
     tag: data.tag || 'habit-reminder',
     renotify: data.requireInteraction ? true : false,

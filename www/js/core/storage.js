@@ -290,8 +290,35 @@
         h.intervalReminder = JSON.parse(JSON.stringify(lib.intervalReminder));
         changed = true;
       }
+      // 修复缺失的 timePeriod（一键添加包等旧数据可能未写入）
+      if (!h.timePeriod && lib.timePeriod) {
+        h.timePeriod = lib.timePeriod;
+        changed = true;
+      }
+      // 修复缺失的 reminder 结构：优先使用库中的 defaultReminder
+      if (!h.reminder) {
+        if (lib.defaultReminder) {
+          h.reminder = {
+            enabled: lib.defaultReminder.enabled !== false,
+            time: lib.defaultReminder.time || '08:00',
+            days: lib.defaultReminder.days || [0,1,2,3,4,5,6],
+            method: lib.defaultReminder.method || 'toast',
+            sound: lib.defaultReminder.sound !== false,
+            vibrate: lib.defaultReminder.vibrate !== false
+          };
+        } else {
+          h.reminder = { enabled: false, time: '08:00', days: [0,1,2,3,4,5,6], method: 'toast', sound: true, vibrate: true };
+        }
+        changed = true;
+      }
+      // 修复缺失的 repeat / tip
+      if (!h.repeat) { h.repeat = [0,1,2,3,4,5,6]; changed = true; }
+      if (!h.tip && lib.tip) { h.tip = lib.tip; changed = true; }
     });
-    if (changed) saveConfig();
+    if (changed) {
+      saveConfig();
+      console.log('[Storage] 已自动修复习惯默认字段（timePeriod / reminder / repeat / tip）');
+    }
   }
 
   function exportData() {

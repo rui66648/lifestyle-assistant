@@ -149,7 +149,7 @@
       attempts++;
     }
     const quoteTextEl = document.getElementById('quoteText');
-    const quoteSourceEl = document.getElementById('quoteSource');
+    const quoteSourceEl = document.getElementById('quoteSourceText');
     if (quoteTextEl) quoteTextEl.textContent = qTip.source.split('--')[0];
     if (quoteSourceEl) quoteSourceEl.textContent = '--' + (qTip.source.split('--')[1] || '');
   }

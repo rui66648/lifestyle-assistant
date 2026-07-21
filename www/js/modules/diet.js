@@ -376,7 +376,7 @@
 
         <div class="diet-section-title">📖 推荐阅读</div>
         <div class="diet-books-list">
-          <div class="diet-book-item" onclick="window.open('references/饮膳正要/饮膳正要.html','_blank')">
+          <div class="diet-book-item" onclick="openReference('references/饮膳正要/饮膳正要.html')">
             <span class="diet-book-emoji">🍲</span>
             <div class="diet-book-info">
               <div class="diet-book-name">《饮膳正要》</div>
@@ -384,7 +384,7 @@
             </div>
             <span class="diet-book-arrow">›</span>
           </div>
-          <div class="diet-book-item" onclick="window.open('references/你是你吃出来的/你是你吃出来的.html','_blank')">
+          <div class="diet-book-item" onclick="openReference('references/你是你吃出来的/你是你吃出来的.html')">
             <span class="diet-book-emoji">🥗</span>
             <div class="diet-book-info">
               <div class="diet-book-name">《你是你吃出来的》</div>
@@ -392,7 +392,7 @@
             </div>
             <span class="diet-book-arrow">›</span>
           </div>
-          <div class="diet-book-item" onclick="window.open('references/控糖革命/控糖革命.html','_blank')">
+          <div class="diet-book-item" onclick="openReference('references/控糖革命/控糖革命.html')">
             <span class="diet-book-emoji">🍬</span>
             <div class="diet-book-info">
               <div class="diet-book-name">《控糖革命》</div>

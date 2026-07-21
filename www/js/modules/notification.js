@@ -38,8 +38,21 @@
   // ============================================================
   var _fixedTimers = {};
   var _intervalTimers = {};
-  var _firedKeys = {};
-  var _FRIED_KEY_TTL = 24 * 60 * 60 * 1000;
+  var _FIRED_KEY_STORAGE = 'notify_fired_keys';
+  var _FIRED_KEY_TTL = 24 * 60 * 60 * 1000;
+
+  // 从 sessionStorage 恢复已触发记录，避免页面刷新后重复触发
+  function _loadFiredKeys() {
+    try {
+      return JSON.parse(sessionStorage.getItem(_FIRED_KEY_STORAGE) || '{}');
+    } catch(e) { return {}; }
+  }
+  function _saveFiredKeys(keys) {
+    try {
+      sessionStorage.setItem(_FIRED_KEY_STORAGE, JSON.stringify(keys));
+    } catch(e) {}
+  }
+  var _firedKeys = _loadFiredKeys();
 
   // ============================================================
   // 免打扰配置（v3.1 增强：支持按习惯配置）
@@ -47,13 +60,18 @@
   function getQuietConfig() {
     try {
       var cfg = JSON.parse(localStorage.getItem('quiet_hours') || '{}');
+      // 兼容旧的整点格式（start/end 为小时数）和新的分钟格式（startMin/endMin）
+      var startMin = cfg.startMin != null ? cfg.startMin : (cfg.start || 22) * 60;
+      var endMin = cfg.endMin != null ? cfg.endMin : (cfg.end || 7) * 60;
       return {
         enabled: cfg.enabled !== false,
-        start: cfg.start || 22,
-        end: cfg.end || 7,
+        start: startMin / 60,
+        end: endMin / 60,
+        startMin: startMin,
+        endMin: endMin,
         perHabit: cfg.perHabit || {}
       };
-    } catch(e) { return { enabled: true, start: 22, end: 7, perHabit: {} }; }
+    } catch(e) { return { enabled: true, start: 22, end: 7, startMin: 22*60, endMin: 7*60, perHabit: {} }; }
   }
 
   function saveQuietConfig(cfg) {
@@ -65,35 +83,31 @@
   function isInQuietHours(date, method, habitId) {
     if (method === REMINDER_METHODS.ALARM) return false;
     var qc = getQuietConfig();
-    
+
     // 先检查全局免打扰
     if (qc.enabled) {
-      var h = date.getHours();
-      var m = date.getMinutes();
-      var currentMin = h * 60 + m;
-      var startMin = qc.start * 60;
-      var endMin = qc.end * 60;
-      
+      var currentMin = date.getHours() * 60 + date.getMinutes();
+      var startMin = qc.startMin;
+      var endMin = qc.endMin;
+
       var isQuiet = false;
       if (startMin < endMin) {
         isQuiet = currentMin >= startMin && currentMin < endMin;
       } else {
         isQuiet = currentMin >= startMin || currentMin < endMin;
       }
-      
+
       if (isQuiet) {
         // 如果有按习惯配置的免打扰时段，检查是否覆盖全局
         if (habitId && qc.perHabit[habitId]) {
           var ph = qc.perHabit[habitId];
           if (!ph.enabled) return false;
-          if (ph.start !== undefined && ph.end !== undefined) {
-            var phStartMin = ph.start * 60;
-            var phEndMin = ph.end * 60;
+          if (ph.startMin !== undefined && ph.endMin !== undefined) {
             var isPhQuiet = false;
-            if (phStartMin < phEndMin) {
-              isPhQuiet = currentMin >= phStartMin && currentMin < phEndMin;
+            if (ph.startMin < ph.endMin) {
+              isPhQuiet = currentMin >= ph.startMin && currentMin < ph.endMin;
             } else {
-              isPhQuiet = currentMin >= phStartMin || currentMin < phEndMin;
+              isPhQuiet = currentMin >= ph.startMin || currentMin < ph.endMin;
             }
             return isPhQuiet;
           }
@@ -101,25 +115,21 @@
         return true;
       }
     }
-    
+
     // 检查按习惯配置的免打扰（即使全局关闭）
     if (habitId && qc.perHabit[habitId]) {
       var ph = qc.perHabit[habitId];
       if (!ph.enabled) return false;
-      if (ph.start !== undefined && ph.end !== undefined) {
-        var h = date.getHours();
-        var m = date.getMinutes();
-        var currentMin = h * 60 + m;
-        var phStartMin = ph.start * 60;
-        var phEndMin = ph.end * 60;
-        if (phStartMin < phEndMin) {
-          return currentMin >= phStartMin && currentMin < phEndMin;
+      if (ph.startMin !== undefined && ph.endMin !== undefined) {
+        var currentMin = date.getHours() * 60 + date.getMinutes();
+        if (ph.startMin < ph.endMin) {
+          return currentMin >= ph.startMin && currentMin < ph.endMin;
         } else {
-          return currentMin >= phStartMin || currentMin < phEndMin;
+          return currentMin >= ph.startMin || currentMin < ph.endMin;
         }
       }
     }
-    
+
     return false;
   }
 
@@ -143,21 +153,25 @@
 
   function hasFired(key) {
     if (_firedKeys[key]) {
-      if (Date.now() - _firedKeys[key] < _FRIED_KEY_TTL) return true;
+      if (Date.now() - _firedKeys[key] < _FIRED_KEY_TTL) return true;
       delete _firedKeys[key];
+      _saveFiredKeys(_firedKeys);
     }
     return false;
   }
 
   function markFired(key) {
     _firedKeys[key] = Date.now();
+    _saveFiredKeys(_firedKeys);
   }
 
   function cleanupFiredKeys() {
     var now = Date.now();
+    var changed = false;
     for (var k in _firedKeys) {
-      if (now - _firedKeys[k] >= _FRIED_KEY_TTL) delete _firedKeys[k];
+      if (now - _firedKeys[k] >= _FIRED_KEY_TTL) { delete _firedKeys[k]; changed = true; }
     }
+    if (changed) _saveFiredKeys(_firedKeys);
   }
   setInterval(cleanupFiredKeys, 60 * 60 * 1000);
 
@@ -279,8 +293,8 @@
         try {
           var n = new Notification(title, {
             body: body,
-            icon: './assets/icon-192.jpg',
-            badge: './assets/icon-192.jpg',
+            icon: './assets/icon-192.png',
+            badge: './assets/icon-192.png',
             tag: 'lifestyle-reminder',
             requireInteraction: true,
             renotify: true

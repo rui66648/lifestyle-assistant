@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/rui66648/lifestyle-assistant#readme",
   "dependencies": {
+    "@capacitor/browser": "^8.0.4",
     "acorn": "^8.17.0"
   },
   "devDependencies": {

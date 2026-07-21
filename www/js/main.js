@@ -111,9 +111,9 @@
       initPWA();
     }
 
-    // 共享：启动定时提醒检查
-    // - PWA: 优先使用新调度器（setTimeout 链式），旧轮询作为兜底
-    // - APK: 间隔提醒由 Capacitor 系统通知负责，旧轮询仅检查固定时间提醒
+    // 共享：启动固定时间提醒兜底检查
+    // - 间隔提醒由各平台专用调度器负责（PWA: notification.js / APK: local-notify.js）
+    // - 固定时间提醒保留前台轮询作为兜底（setTimeout 可能因页面刷新丢失）
     startIntervalReminderCheck();
     // PWA 环境：初始化统一提醒调度器
     if (_platform === 'pwa' && App.Modules && App.Modules.Notification && App.Modules.Notification.init) {
@@ -267,6 +267,7 @@
       }
     } catch(e) {}
   }
+  window.focusHabitById = focusHabitById;
 
   function handleHabitUrlParam() {
     if (_platform !== 'pwa') return;
@@ -301,84 +302,34 @@
   }
 
   // ============================================================
-  // 共享：定时提醒检查
+  // 共享：固定时间提醒兜底检查
+  // 间隔提醒已由各平台专用调度器负责：
+  //   PWA: notification.js 的 setTimeout 链式调度
+  //   APK: local-notify.js 的 Capacitor 系统通知预注册
+  // 这里仅保留固定时间提醒的前台轮询作为兜底（setTimeout 可能因页面刷新丢失）
   // ============================================================
 
-  var QUIET_START = 22;
-  var QUIET_END = 7;
-  function getQuietConfig() {
-    try {
-      var cfg = JSON.parse(localStorage.getItem('quiet_hours') || '{}');
-      if (cfg.enabled !== false) {
-        return { enabled: true, start: cfg.start || QUIET_START, end: cfg.end || QUIET_END };
-      }
-      return { enabled: false, start: QUIET_START, end: QUIET_END };
-    } catch(e) { return { enabled: true, start: QUIET_START, end: QUIET_END }; }
-  }
-
   var _intervalReminderTimer = null;
-  var _intervalReminderShown = {};
+  var _FIXED_SHOWN_STORAGE = 'notify_fixed_shown';
+  // 从 sessionStorage 恢复已触发记录，避免页面刷新后重复触发
+  function _loadFixedShown() {
+    try { return JSON.parse(sessionStorage.getItem(_FIXED_SHOWN_STORAGE) || '{}'); }
+    catch(e) { return {}; }
+  }
+  function _saveFixedShown(obj) {
+    try { sessionStorage.setItem(_FIXED_SHOWN_STORAGE, JSON.stringify(obj)); }
+    catch(e) {}
+  }
+  var _fixedReminderShown = _loadFixedShown();
 
   function startIntervalReminderCheck() {
     if (_intervalReminderTimer) clearInterval(_intervalReminderTimer);
     _intervalReminderTimer = setInterval(function() {
-      // APK: 间隔提醒已由 local-notify.js 预调度为系统通知（后台可达），
-      // 前台不再重复检查间隔提醒，避免与系统通知产生重复弹窗。
-      // 固定时间提醒仍保留前台检查作为兜底（toast 方式等）。
-      if (_platform !== 'apk') {
-        checkIntervalReminders();
-      }
       checkFixedReminders();
     }, 60000);
-    // 首次立即执行一次（同样跳过 APK 的间隔检查）
-    if (_platform !== 'apk') {
-      checkIntervalReminders();
-    }
     checkFixedReminders();
   }
 
-  function checkIntervalReminders() {
-    if (typeof habitsConfig === 'undefined' || !habitsConfig.length) return;
-    var now = new Date();
-    var day = now.getDay();
-    var hm = now.getHours() * 60 + now.getMinutes();
-    var todayStr = (typeof today === 'function') ? today() : formatDate(now);
-
-    habitsConfig.forEach(function(h) {
-      var ir = h.intervalReminder;
-      if (!ir || !ir.enabled) return;
-      if (!ir.days || ir.days.indexOf(day) === -1) return;
-
-      var sh = ir.startTime ? ir.startTime.split(':').map(Number) : [0,0];
-      var eh = ir.endTime ? ir.endTime.split(':').map(Number) : [23,59];
-      var startMin = sh[0] * 60 + sh[1];
-      var endMin = eh[0] * 60 + eh[1];
-      // [修复] 跨午夜判断：startMin > endMin 时（如 22:00-08:00），有效窗口是 hm >= startMin 或 hm <= endMin
-      if (startMin > endMin) {
-        if (hm > endMin && hm < startMin) return; // 在无效区间内，跳过
-      } else {
-        if (hm < startMin || hm > endMin) return;
-      }
-
-      if (typeof checkinRecords === 'undefined') window.checkinRecords = {};
-      if (!checkinRecords[todayStr]) checkinRecords[todayStr] = {};
-      var rec = checkinRecords[todayStr];
-      var last = (rec[h.id] && rec[h.id].lastInterval) || (rec[h.id] && rec[h.id].timestamp) || 0;
-      var elapsedMin = last ? Math.floor((Date.now() - last) / 60000) : ir.interval;
-      if (elapsedMin >= ir.interval) {
-        var key = h.id + '_' + todayStr;
-        if (!_intervalReminderShown[key]) {
-          _intervalReminderShown[key] = true;
-          triggerReminder(h);
-          rec[h.id] = rec[h.id] || {};
-          rec[h.id].lastInterval = Date.now();
-          if (typeof saveData === 'function') saveData();
-        }
-      }
-    });
-  }
-
-  var _fixedReminderShown = {};
   function checkFixedReminders() {
     if (typeof habitsConfig === 'undefined' || !habitsConfig.length) return;
     var now = new Date();
@@ -404,51 +355,15 @@
           var key = h.id + '_' + todayStr + '_' + tMin;
           if (!_fixedReminderShown[key]) {
             _fixedReminderShown[key] = true;
-            triggerReminder(h);
+            _saveFixedShown(_fixedReminderShown);
+            // 使用 notification.js 的统一调度器（包含完整免打扰判断、alarm 效果链）
+            if (typeof window.triggerReminder === 'function') {
+              window.triggerReminder(h);
+            }
           }
         }
       });
     });
-  }
-
-  function triggerReminder(habit) {
-    var rawMethod = habit.reminder ? (habit.reminder.method || 'toast') : 'toast';
-    var method = rawMethod;
-    if (rawMethod === 'banner' || rawMethod === 'alarm') method = 'notification';
-    if (rawMethod === 'in-app') method = 'toast';
-    if (method === 'off' || method === 'none') return;
-
-    var qc = getQuietConfig();
-    if (qc.enabled) {
-      var nowH = new Date().getHours();
-      var isQuiet = nowH >= qc.start || nowH < qc.end;
-      if (isQuiet && rawMethod !== 'alarm') {
-        return;
-      }
-    }
-
-    var soundOn = habit.reminder ? (habit.reminder.sound !== false) : true;
-    var vibrateOn = habit.reminder ? (habit.reminder.vibrate !== false) : true;
-
-    if (method === 'notification') {
-      // === 统一通过 sendLocalNotification 发送 ===
-      // APK → Capacitor LocalNotifications
-      // PWA → 浏览器 Notification API
-      if (typeof sendLocalNotification === 'function') {
-        sendLocalNotification(
-          (habit.icon || '') + ' ' + habit.name + '时间到了',
-          habit.tip || '记得完成打卡哦',
-          { extra: { habitId: habit.id }, sound: soundOn }
-        );
-      }
-      if (soundOn && typeof playSound === 'function') playSound('reminder');
-      if (vibrateOn && navigator.vibrate) navigator.vibrate([200, 100, 200]);
-      if (rawMethod === 'alarm' && typeof flashScreen === 'function') flashScreen();
-    } else {
-      var msg = (habit.icon || '') + ' ' + habit.name + '时间到了！' + (habit.tip ? '（' + habit.tip + '）' : '');
-      showToast(msg, 3000);
-      if (soundOn && typeof playSound === 'function') playSound('reminder');
-    }
   }
 
   // ============================================================

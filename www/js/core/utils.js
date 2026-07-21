@@ -415,6 +415,22 @@
     return 4;
   }
 
+  function openReference(url) {
+    if (!url) return;
+    const fullUrl = url.startsWith('http') ? url : new URL(url, window.location.href).href;
+    if (window.Capacitor) {
+      import('@capacitor/browser').then(({ Browser }) => {
+        Browser.open({ url: fullUrl, toolbarColor: '#10B981' }).catch(() => {
+          window.open(fullUrl, '_blank');
+        });
+      }).catch(() => {
+        window.open(fullUrl, '_blank');
+      });
+    } else {
+      window.open(fullUrl, '_blank');
+    }
+  }
+
   if (!window.App) window.App = {};
   if (!App.Core) App.Core = {};
 
@@ -453,7 +469,8 @@
     getUserPoints,
     addPoints,
     checkAllDoneBonus,
-    getHeatmapLevel
+    getHeatmapLevel,
+    openReference
   };
   if (App.registerModule) {
     App.registerModule('core.utils', 'core', null);

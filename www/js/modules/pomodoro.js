@@ -9,6 +9,11 @@
   const POMO_SHORT = 5 * 60;
   const POMO_LONG = 15 * 60;
 
+  function renderPomodoroPage() {
+    populatePomoHabits();
+    updatePomoStats();
+  }
+
   function openPomodoroPanel() {
     // 防御：确保 openPanel 可用
     if (typeof openPanel !== 'function') {
@@ -27,7 +32,7 @@
 
   function populatePomoHabits() {
     const sel = document.getElementById('pomoHabit');
-    sel.innerHTML = '<option value="">-- 选择要专注的习惯 --</option>';
+    sel.innerHTML = '<option value="">选择要专注的习惯</option>';
     habitsConfig.forEach(h => {
       if (h.enabled !== false) {
         sel.innerHTML += `<option value="${h.id}">${esc(h.icon)} ${esc(h.name)}</option>`;
@@ -46,6 +51,13 @@
     const total = pomoMode === 'work' ? POMO_WORK : pomoMode === 'shortBreak' ? POMO_SHORT : POMO_LONG;
     const pct = ((total - pomoSeconds) / total) * 100;
     document.getElementById('pomoProgressBar').style.width = pct + '%';
+    // 更新环形进度条 (周长 2*PI*90 ≈ 565.49)
+    const ring = document.getElementById('pomoRingProgress');
+    if (ring) {
+      const circumference = 565.49;
+      const offset = circumference * (1 - pct / 100);
+      ring.style.strokeDashoffset = offset;
+    }
   }
 
   function startPomodoro() {
@@ -209,6 +221,7 @@
   };
 
   // 直接暴露到 window，确保 HTML onclick 能调用
+  window.renderPomodoroPage = renderPomodoroPage;
   window.openPomodoroPanel = openPomodoroPanel;
   window.startPomodoro = startPomodoro;
   window.pausePomodoro = pausePomodoro;

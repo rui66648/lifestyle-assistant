@@ -23,6 +23,7 @@
   var _uiReady = false;
   var _pendingActions = [];
   var _rescheduleTimer = null;
+  var _lastError = '';
 
   // 通知渠道 ID（与 schedule 调用保持一致）
   var CHANNEL_HABIT = 'habit_reminders';
@@ -209,11 +210,14 @@
   function _getQuietConfig() {
     try {
       var cfg = JSON.parse(localStorage.getItem('quiet_hours') || '{}');
+      // 兼容旧的整点格式和新的分钟格式
+      var startMin = cfg.startMin != null ? cfg.startMin : (cfg.start || 22) * 60;
+      var endMin = cfg.endMin != null ? cfg.endMin : (cfg.end || 7) * 60;
       if (cfg.enabled !== false) {
-        return { enabled: true, start: cfg.start || 22, end: cfg.end || 7 };
+        return { enabled: true, startMin: startMin, endMin: endMin };
       }
-      return { enabled: false, start: 22, end: 7 };
-    } catch(e) { return { enabled: true, start: 22, end: 7 }; }
+      return { enabled: false, startMin: startMin, endMin: endMin };
+    } catch(e) { return { enabled: true, startMin: 22*60, endMin: 7*60 }; }
   }
 
   /**
@@ -226,8 +230,15 @@
     if (method === 'alarm') return false;
     var qc = _getQuietConfig();
     if (!qc.enabled) return false;
-    var h = date.getHours();
-    return h >= qc.start || h < qc.end;
+    // 精确到分钟判断，与 notification.js 的 isInQuietHours 保持一致
+    var currentMin = date.getHours() * 60 + date.getMinutes();
+    var startMin = qc.startMin;
+    var endMin = qc.endMin;
+    if (startMin < endMin) {
+      return currentMin >= startMin && currentMin < endMin;
+    } else {
+      return currentMin >= startMin || currentMin < endMin;
+    }
   }
 
   // ============================================================
@@ -272,8 +283,8 @@
         }
         var n = new Notification(title, {
           body: body,
-          icon: './assets/icon-192.jpg',
-          badge: './assets/icon-192.jpg',
+          icon: './assets/icon-192.png',
+          badge: './assets/icon-192.png',
           tag: options.tag || 'lifestyle-reminder',
           requireInteraction: true,
           renotify: true
@@ -353,15 +364,16 @@
       var now = new Date();
       var notifications = [];
       // 使用高位 ID 段避免碰撞：
-      //   固定提醒: idBase + idx * 100 + tIdx  (idBase ~1.7×10⁹)
+      //   固定提醒: idBase + idx * 1000 + dayOffset * 10 + tIdx  (idBase ~1.7×10⁹)
       //   间隔提醒: intervalBase + idx * 100 + sIdx  (intervalBase ~1.8×10⁹)
       //   即时通知: Date.now() % 2×10⁹
       //   5分钟后:  50000 + random(100000)
-      var idBase = Math.floor(Date.now() / 1000);
-      var intervalBase = idBase + 100000;
+      // 加入随机偏移防止短时间内 reschedule 导致 idBase 相同而碰撞
+      var idBase = Math.floor(Date.now() / 1000) * 1000 + Math.floor(Math.random() * 999);
+      var intervalBase = idBase + 500000;
 
       habits.forEach(function(h, idx) {
-        // ---- 固定时间提醒 ----
+        // ---- 固定时间提醒（注册未来7天内所有匹配的触发点）----
         if (h.reminder && h.reminder.enabled) {
           var times = [];
           if (h.reminder.time) times.push(h.reminder.time);
@@ -372,31 +384,35 @@
             var parts = t.split(':');
             var hH = parseInt(parts[0]) || 0;
             var hM = parseInt(parts[1]) || 0;
-
-            var scheduledTime = new Date();
-            scheduledTime.setHours(hH, hM, 0, 0);
-            if (scheduledTime <= now) {
-              scheduledTime.setDate(scheduledTime.getDate() + 1);
-            }
-
-            // [修复] 检查目标日期的星期，而非当前日期
-            if (h.reminder.days && h.reminder.days.indexOf(scheduledTime.getDay()) === -1) return;
-
-            // [修复] 免打扰时段不注册通知（alarm 类型除外）
             var method = h.reminder.method || 'notification';
-            if (_isInQuietHours(scheduledTime, method)) return;
 
-            notifications.push({
-              title: (h.icon || '') + ' ' + h.name + '时间到了',
-              body: h.tip || '记得完成打卡哦',
-              id: idBase + idx * 100 + tIdx,
-              schedule: { at: scheduledTime },
-              sound: 'default',
-              iconColor: '#ff6b6b',
-              channelId: CHANNEL_HABIT,
-              actionTypeId: 'habit_actions',
-              extra: { habitId: h.id, type: 'habit', time: t }
-            });
+            // 从今天开始，遍历未来7天，注册所有匹配星期的提醒
+            for (var dayOffset = 0; dayOffset < 7; dayOffset++) {
+              var scheduledTime = new Date(now);
+              scheduledTime.setDate(scheduledTime.getDate() + dayOffset);
+              scheduledTime.setHours(hH, hM, 0, 0);
+
+              // 跳过已过去的时间（仅当天可能已过）
+              if (scheduledTime <= now) continue;
+
+              // 检查目标日期的星期是否匹配
+              if (h.reminder.days && h.reminder.days.length && h.reminder.days.indexOf(scheduledTime.getDay()) === -1) continue;
+
+              // 免打扰时段不注册通知（alarm 类型除外）
+              if (_isInQuietHours(scheduledTime, method)) continue;
+
+              notifications.push({
+                title: (h.icon || '') + ' ' + h.name + '时间到了',
+                body: h.tip || '记得完成打卡哦',
+                id: idBase + idx * 1000 + dayOffset * 10 + tIdx,
+                schedule: { at: scheduledTime },
+                sound: 'default',
+                iconColor: '#ff6b6b',
+                channelId: CHANNEL_HABIT,
+                actionTypeId: 'habit_actions',
+                extra: { habitId: h.id, type: 'habit', time: t }
+              });
+            }
           });
         }
 
@@ -514,6 +530,7 @@
         }
       } catch(e) {
         console.warn('[LocalNotify] rescheduleAll 失败:', e);
+        _lastError = 'rescheduleAll: ' + e.message;
       }
     }, 500);
   }
@@ -708,6 +725,36 @@
   if (!window.App) window.App = {};
   if (!App.Modules) App.Modules = {};
 
+  /** 收集通知诊断信息 */
+  function getDiagnostics() {
+    var permState = _permissionGranted ? 'granted' : (typeof Notification !== 'undefined' ? Notification.permission : 'unknown');
+    var info = {
+      platform: _platform,
+      isCapacitor: _isCapacitor,
+      permission: permState,
+      permissionGranted: _permissionGranted,
+      uiReady: _uiReady,
+      pendingCount: 0,
+      quietHours: _getQuietConfig(),
+      lastError: _lastError || '无'
+    };
+    // APK 环境获取待触发通知数量
+    if (_isCapacitor && window.Capacitor) {
+      try {
+        var LocalNotifications = window.Capacitor.Plugins.LocalNotifications;
+        if (LocalNotifications && LocalNotifications.getPending) {
+          LocalNotifications.getPending().then(function(result) {
+            info.pendingCount = (result && result.notifications) ? result.notifications.length : 0;
+            // 更新 DOM（异步）
+            var el = document.getElementById('diagPendingCount');
+            if (el) el.textContent = info.pendingCount;
+          }).catch(function(){});
+        }
+      } catch(e) {}
+    }
+    return info;
+  }
+
   App.Modules.LocalNotify = {
     init: init,
     requestPermission: requestPermission,
@@ -725,6 +772,7 @@
     cancelAll: cancelAll,
     rescheduleAll: rescheduleAll,
     markUIReady: markUIReady,
+    getDiagnostics: getDiagnostics,
     isCapacitor: function() { return _isCapacitor; },
     platform: function() { return _platform; },
     channels: {

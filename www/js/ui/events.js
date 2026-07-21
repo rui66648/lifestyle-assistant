@@ -6,17 +6,28 @@
   }
 
   function switchTab(tab) {
+    if (currentTab === tab) return;
     currentTab = tab;
+    if (typeof closeAllPanels === 'function') closeAllPanels();
     document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
     document.querySelectorAll('.bnav-item').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    document.querySelectorAll('.bnav-center').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.getElementById('sec-' + tab).classList.add('active');
-    // 我的页面隐藏顶部日期卡片，其他页面显示
+    const targetSection = document.getElementById('sec-' + tab);
+    if (targetSection) targetSection.classList.add('active');
     const todayCard = document.getElementById('todayCard');
-    if (todayCard) todayCard.style.display = tab === 'profile' ? 'none' : '';
+    if (todayCard) todayCard.style.display = (tab === 'profile' || tab === 'ai' || tab === 'pomodoro') ? 'none' : '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     if (tab === 'profile') renderProfile();
-    if (tab === 'manage') renderManage();
-    if (tab === 'checkin') renderCheckin();
+    else if (tab === 'manage') renderManage();
+    else if (tab === 'checkin') renderCheckin();
+    else if (tab === 'ai') { LazyLoad('js/modules/ai.js', function() { renderAiPage(); }); }
+    else if (tab === 'pomodoro') { LazyLoad('js/modules/pomodoro.js', function() { renderPomodoroPage(); }); }
+  }
+
+  function handleNavClick(el) {
+    const tab = el.dataset.tab;
+    if (tab) switchTab(tab);
   }
 
   function handleCheckin(habitId) {
@@ -244,11 +255,22 @@
       type: lib.type,
       unit: lib.unit,
       repeat: [0,1,2,3,4,5,6],
+      tip: lib.tip || '',
       reminder: {enabled:false, time:'08:00', days:[0,1,2,3,4,5,6], method:'toast', sound:true, vibrate:true}
     };
+    // 使用库中的默认提醒配置（如果有）
+    if (lib.defaultReminder) {
+      newHabit.reminder = {
+        enabled: lib.defaultReminder.enabled || false,
+        time: lib.defaultReminder.time || '08:00',
+        days: lib.defaultReminder.days || [0,1,2,3,4,5,6],
+        method: lib.defaultReminder.method || 'toast',
+        sound: lib.defaultReminder.sound !== false,
+        vibrate: lib.defaultReminder.vibrate !== false
+      };
+    }
     if (lib.type === 'water' && lib.waterConfig) {
       newHabit.waterConfig = JSON.parse(JSON.stringify(lib.waterConfig));
-      newHabit.reminder = {enabled:true, time:'08:00', days:[0,1,2,3,4,5,6], method:'toast', sound:true, vibrate:true};
     }
     if (lib.intervalReminder) {
       newHabit.intervalReminder = JSON.parse(JSON.stringify(lib.intervalReminder));
@@ -456,8 +478,11 @@
         name: lib.name,
         icon: lib.icon,
         category: lib.category,
+        timePeriod: lib.timePeriod || 'daytime',
         type: lib.type,
         unit: lib.unit,
+        repeat: [0,1,2,3,4,5,6],
+        tip: lib.tip || '',
         reminder: {
           enabled: ph.reminder.enabled,
           time: ph.reminder.time,
@@ -465,16 +490,19 @@
           method: 'in-app'
         }
       };
-      
+
       if (lib.type === 'water' && lib.waterConfig) {
         newHabit.waterConfig = JSON.parse(JSON.stringify(lib.waterConfig));
       }
-      
+      if (lib.intervalReminder) {
+        newHabit.intervalReminder = JSON.parse(JSON.stringify(lib.intervalReminder));
+      }
+
       habitsConfig.push(newHabit);
       myIds.add(ph.id);
       addedCount++;
     });
-    
+
     if (addedCount > 0) {
       saveConfig();
       showToast(`💚 健康生活建议包：已添加 ${addedCount} 个习惯`);
@@ -491,19 +519,22 @@
     if (!pack) return;
     const myIds = new Set(habitsConfig.map(h => h.id));
     let addedCount = 0;
-    
+
     pack.habits.forEach(ph => {
       if (myIds.has(ph.id)) return;
       const lib = HABIT_LIBRARY.find(h => h.id === ph.id);
       if (!lib) return;
-      
+
       const newHabit = {
         id: lib.id,
         name: lib.name,
         icon: lib.icon,
         category: lib.category,
+        timePeriod: lib.timePeriod || 'daytime',
         type: lib.type,
         unit: lib.unit,
+        repeat: [0,1,2,3,4,5,6],
+        tip: lib.tip || '',
         reminder: {
           enabled: ph.reminder.enabled,
           time: ph.reminder.time,
@@ -511,16 +542,19 @@
           method: 'in-app'
         }
       };
-      
+
       if (lib.type === 'water' && lib.waterConfig) {
         newHabit.waterConfig = JSON.parse(JSON.stringify(lib.waterConfig));
       }
-      
+      if (lib.intervalReminder) {
+        newHabit.intervalReminder = JSON.parse(JSON.stringify(lib.intervalReminder));
+      }
+
       habitsConfig.push(newHabit);
       myIds.add(ph.id);
       addedCount++;
     });
-    
+
     if (addedCount > 0) {
       saveConfig();
       showToast(`${pack.emoji} ${esc(pack.name)}：已添加 ${addedCount} 个习惯`);
@@ -551,23 +585,26 @@
     const packMarket = PACK_MARKET || [];
     const packInfo = packMarket.find(p => p.id === packId);
     if (!packInfo) return;
-    
+
     const pack = packInfo.pack;
     const myIds = new Set(habitsConfig.map(h => h.id));
     let addedCount = 0;
-    
+
     pack.habits.forEach(ph => {
       if (myIds.has(ph.id)) return;
       const lib = HABIT_LIBRARY.find(h => h.id === ph.id);
       if (!lib) return;
-      
+
       const newHabit = {
         id: lib.id,
         name: lib.name,
         icon: lib.icon,
         category: lib.category,
+        timePeriod: lib.timePeriod || 'daytime',
         type: lib.type,
         unit: lib.unit,
+        repeat: [0,1,2,3,4,5,6],
+        tip: lib.tip || '',
         reminder: {
           enabled: ph.reminder.enabled,
           time: ph.reminder.time,
@@ -575,11 +612,14 @@
           method: 'in-app'
         }
       };
-      
+
       if (lib.type === 'water' && lib.waterConfig) {
         newHabit.waterConfig = JSON.parse(JSON.stringify(lib.waterConfig));
       }
-      
+      if (lib.intervalReminder) {
+        newHabit.intervalReminder = JSON.parse(JSON.stringify(lib.intervalReminder));
+      }
+
       habitsConfig.push(newHabit);
       myIds.add(ph.id);
       addedCount++;
@@ -840,6 +880,7 @@
 
   App.UI.Events = {
     switchTab,
+    handleNavClick,
     handleCheckin,
     confirmCheckinInput,
     checkLevelUp,
