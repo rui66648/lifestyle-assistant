@@ -1,13 +1,13 @@
 {
-  "versionCode": 3,
-  "versionName": "1.3.1",
+  "versionCode": 4,
+  "versionName": "1.4.0",
   "cacheVersion": 1,
   "apkUrl": "https://rui66648.github.io/lifestyle-assistant/app-release.apk",
   "whatsNew": [
-    "安全加固 - CSP 策略、数据导入校验、XSS 防护",
-    "构建优化 - CSS 真压缩、版本号自动注入、bundle-order 同步",
-    "稳定修复 - 修复管理页 renderRankingSection 错误",
-    "记录界面优化 - 拍照按钮、餐次进度、折叠卡片"
+    "提醒设置优化 - 分段控制器、开关组件、动态文案",
+    "参考文献访问修复 - SW 路径过滤、浮动返回按钮",
+    "APP版下载图标隐藏 - 平台环境检测、CSS条件隐藏",
+    "视觉优化 - 图标对比度、卡片阴影、文字层级"
   ],
-  "publishedAt": "2026-07-19"
+  "publishedAt": "2026-07-21"
 }
