@@ -607,29 +607,29 @@
       <div id="refListAncient">`;
 
     ancient.forEach(b => {
-      html += `<a class="ref-card" href="${b.url}" target="_blank" rel="noopener">
+      html += `<div class="ref-card" onclick="openReference('${b.url}')">
         <div class="ref-icon ancient">${b.emoji}</div>
         <div class="ref-info">
           <div class="ref-name">${esc(b.name)}</div>
           <div class="ref-author">${b.author} · ${b.desc}</div>
         </div>
         <div class="ref-arrow">›</div>
-      </a>`;
+      </div>`;
     });
 
     html += `</div><div id="refListModern" style="display:none">`;
     modern.forEach(b => {
-      html += `<a class="ref-card" href="${b.url}" target="_blank" rel="noopener">
+      html += `<div class="ref-card" onclick="openReference('${b.url}')">
         <div class="ref-icon modern">${b.emoji}</div>
         <div class="ref-info">
           <div class="ref-name">${esc(b.name)}</div>
           <div class="ref-author">${b.author} · ${b.desc}</div>
         </div>
         <div class="ref-arrow">›</div>
-      </a>`;
+      </div>`;
     });
 
-    html += `</div><a class="ref-lib-btn" href="references/养生参考文献文库/index.html" target="_blank" rel="noopener">📖 进入参考文献文库</a>`;
+    html += `</div><div class="ref-lib-btn" onclick="openReference('references/养生参考文献文库/index.html')">📖 进入参考文献文库</div>`;
 
     body.innerHTML = html;
   }
@@ -1267,7 +1267,7 @@
           if (granted) {
             _applyReminderMethod('notification');
           } else {
-            document.getElementById('settingsReminderMethod').value = 'toast';
+            updateReminderSegment('toast');
           }
         });
       } else {
@@ -1276,6 +1276,16 @@
     } else {
       _applyReminderMethod(method);
     }
+  }
+
+  function updateReminderSegment(method) {
+    var segment = document.getElementById('reminderMethodSegment');
+    if (!segment) return;
+    segment.querySelectorAll('.seg-btn').forEach(function(btn) {
+      btn.classList.remove('active');
+    });
+    var activeBtn = segment.querySelector('.seg-' + method);
+    if (activeBtn) activeBtn.classList.add('active');
   }
 
   function _applyReminderMethod(method) {
@@ -1287,6 +1297,7 @@
     });
     saveConfig();
     showToast('提醒设置已更新');
+    updateReminderSegment(method);
     render();
   }
 
@@ -1618,18 +1629,26 @@
 
   function _padTime(n) { return n < 10 ? '0' + n : '' + n; }
 
+  /** 将分钟数转为 HH:MM 字符串 */
+  function _minToTime(min) {
+    var h = Math.floor(min / 60);
+    var m = min % 60;
+    return _padTime(h) + ':' + _padTime(m);
+  }
+
   /** 更新设置面板中的免打扰描述文字和开关状态 */
   function _updateQuietHoursUI() {
     try {
       var cfg = JSON.parse(localStorage.getItem('quiet_hours') || '{}');
       var enabled = cfg.enabled !== false;
-      var start = cfg.start || 22;
-      var end = cfg.end || 7;
+      // 兼容旧的整点格式（number）和新的分钟格式（startMin/endMin）
+      var startMin = cfg.startMin != null ? cfg.startMin : (cfg.start || 22) * 60;
+      var endMin = cfg.endMin != null ? cfg.endMin : (cfg.end || 7) * 60;
       var descEl = document.getElementById('quietHoursDesc');
       var toggleEl = document.getElementById('quietHoursToggle');
       if (descEl) {
         descEl.textContent = enabled
-          ? _padTime(start) + ':00 – ' + _padTime(end) + ':00 · 期间不发送提醒'
+          ? _minToTime(startMin) + ' – ' + _minToTime(endMin) + ' · 期间不发送提醒'
           : '已关闭 · 提醒将全天候发送';
       }
       if (toggleEl) toggleEl.checked = enabled;
@@ -1644,8 +1663,8 @@
     } catch(e) { cfg = {}; }
 
     var enabled = cfg.enabled !== false;
-    var startH = cfg.start || 22;
-    var endH = cfg.end || 7;
+    var startMin = cfg.startMin != null ? cfg.startMin : (cfg.start || 22) * 60;
+    var endMin = cfg.endMin != null ? cfg.endMin : (cfg.end || 7) * 60;
 
     // 设置面板初始值
     var toggle = document.getElementById('qhEnableToggle');
@@ -1655,8 +1674,8 @@
     }
     var startInput = document.getElementById('qhStartTime');
     var endInput = document.getElementById('qhEndTime');
-    if (startInput) startInput.value = _padTime(startH) + ':00';
-    if (endInput) endInput.value = _padTime(endH) + ':00';
+    if (startInput) startInput.value = _minToTime(startMin);
+    if (endInput) endInput.value = _minToTime(endMin);
 
     _updateQHPreview();
     openPanel('quietHoursPanel');
@@ -1715,7 +1734,7 @@
     } catch(e) {}
   }
 
-  /** 保存免打扰面板设置 */
+  /** 保存免打扰面板设置（存储分钟数，兼容旧格式） */
   function saveQuietHours() {
     var toggle = document.getElementById('qhEnableToggle');
     var enabled = toggle && toggle.classList.contains('on');
@@ -1724,11 +1743,19 @@
 
     var sp = startVal.split(':').map(Number);
     var ep = endVal.split(':').map(Number);
+    var startMin = (sp[0] || 22) * 60 + (sp[1] || 0);
+    var endMin = (ep[0] || 7) * 60 + (ep[1] || 0);
+
+    // 校验：开始和结束时间相同则无效
+    if (enabled && startMin === endMin) {
+      showToast('开始和结束时间相同，请调整');
+      return;
+    }
 
     var cfg = {
       enabled: enabled,
-      start: sp[0] || 22,
-      end: ep[0] || 7
+      startMin: startMin,
+      endMin: endMin
     };
     localStorage.setItem('quiet_hours', JSON.stringify(cfg));
 
@@ -1736,6 +1763,75 @@
     if (typeof rescheduleAllNotifications === 'function') rescheduleAllNotifications();
     closeAllPanels();
     showToast('免打扰设置已保存');
+  }
+
+  /** 打开通知诊断面板 */
+  function openNotifyDiagnosticsPanel() {
+    var body = document.getElementById('notifyDiagnosticsBody');
+    if (!body) return;
+    openPanel('notifyDiagnosticsPanel');
+
+    body.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted)">正在收集诊断信息...</div>';
+
+    setTimeout(function() {
+      var info = {};
+      // 平台信息
+      try {
+        if (window.App && App.Modules && App.Modules.LocalNotify) {
+          info = App.Modules.LocalNotify.getDiagnostics() || {};
+        }
+      } catch(e) { info.lastError = e.message; }
+
+      // 统计已配置的习惯提醒
+      var habitCount = 0, enabledCount = 0, intervalCount = 0;
+      try {
+        var habits = JSON.parse(localStorage.getItem('habits') || '[]');
+        habitCount = habits.length;
+        habits.forEach(function(h) {
+          if (h.reminder && h.reminder.enabled) enabledCount++;
+          if (h.intervalReminder && h.intervalReminder.enabled) intervalCount++;
+        });
+      } catch(e) {}
+
+      // 免打扰状态
+      var qh = info.quietHours || {};
+      var qhText = qh.enabled
+        ? '已开启 ' + _minToTime(qh.startMin || 22 * 60) + '–' + _minToTime(qh.endMin || 7 * 60)
+        : '已关闭';
+
+      var platformText = info.isCapacitor ? 'APK (Capacitor)' : 'PWA (浏览器)';
+      var permText = info.permission === 'granted' ? '✅ 已授权' : (info.permission === 'denied' ? '❌ 已拒绝' : '⚠️ 未确认');
+
+      body.innerHTML =
+        '<div style="display:flex;flex-direction:column;gap:12px">' +
+          '<div style="padding:12px;border-radius:8px;background:var(--bg2)">' +
+            '<div style="font-weight:600;margin-bottom:8px">📋 基本信息</div>' +
+            '<div style="font-size:13px;line-height:1.8">' +
+              '<div>运行平台：<strong>' + platformText + '</strong></div>' +
+              '<div>通知权限：' + permText + '</div>' +
+              '<div>UI 就绪：<strong>' + (info.uiReady ? '是' : '否') + '</strong></div>' +
+              '<div>最近错误：<span style="color:' + (info.lastError && info.lastError !== '无' ? '#e74c3c' : 'var(--muted)') + '">' + (info.lastError || '无') + '</span></div>' +
+            '</div>' +
+          '</div>' +
+          '<div style="padding:12px;border-radius:8px;background:var(--bg2)">' +
+            '<div style="font-weight:600;margin-bottom:8px">⏰ 提醒配置</div>' +
+            '<div style="font-size:13px;line-height:1.8">' +
+              '<div>习惯总数：<strong>' + habitCount + '</strong></div>' +
+              '<div>已启用固定提醒：<strong>' + enabledCount + '</strong></div>' +
+              '<div>已启用间隔提醒：<strong>' + intervalCount + '</strong></div>' +
+              '<div>免打扰状态：<strong>' + qhText + '</strong></div>' +
+            '</div>' +
+          '</div>' +
+          '<div style="padding:12px;border-radius:8px;background:var(--bg2)">' +
+            '<div style="font-weight:600;margin-bottom:8px">📡 系统通知</div>' +
+            '<div style="font-size:13px;line-height:1.8">' +
+              '<div>待触发通知数：<strong id="diagPendingCount">' + info.pendingCount + '</strong></div>' +
+              '<div style="font-size:12px;color:var(--muted);margin-top:4px">' + (info.isCapacitor ? '由 Capacitor 系统通知调度' : '由浏览器 setTimeout 调度') + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<button class="const-btn" onclick="openNotifyDiagnosticsPanel()" style="width:100%">🔄 刷新诊断信息</button>' +
+        '</div>';
+    }, 100);
   }
 
   if (!window.App) window.App = {};
@@ -1786,6 +1882,7 @@
     openQuietHoursPanel,
     toggleQuietHours,
     saveQuietHours,
+    openNotifyDiagnosticsPanel,
     updateQuietHoursUI: _updateQuietHoursUI
   };
 
@@ -1793,6 +1890,7 @@
   window.openPanel = openPanel;
   window.closeAllPanels = closeAllPanels;
   window.changeReminderMethod = changeReminderMethod;
+  window.updateReminderSegment = updateReminderSegment;
   window.openHabitReminderList = openHabitReminderList;
   window.toggleHabitReminder = toggleHabitReminder;
   window.batchToggleReminders = batchToggleReminders;

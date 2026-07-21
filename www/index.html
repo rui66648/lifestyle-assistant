@@ -82,9 +82,8 @@
   </div>
   <div class="mini-quote" id="quoteCard">
     <div class="mini-quote-text" id="quoteText"></div>
-    <div class="mini-quote-source" id="quoteSource"></div>
-    <div class="mini-quote-actions">
-<span class="mini-quote-refresh" onclick="event.stopPropagation();refreshQuote()">🔄</span>
+    <div class="mini-quote-source" id="quoteSource">
+      <span class="mini-quote-source-text" id="quoteSourceText"></span>
       <span class="mini-quote-ref" onclick="event.stopPropagation();openRefPanel(event)">📚 参考文献</span>
     </div>
   </div>
@@ -198,8 +197,77 @@
   </div>
 </div>
 
+<!-- AI Section (AI养生顾问) -->
+<div class="section" id="sec-ai">
+  <div class="ai-page-header">
+    <h2>AI 养生顾问</h2>
+    <p class="ai-page-desc">智能健康问答，个性化养生建议</p>
+  </div>
+  <div class="ai-chat-container">
+    <div id="aiChatMessages" class="ai-messages"></div>
+    <div class="ai-input-bar">
+      <input type="text" id="aiChatInput" placeholder="输入养生问题，如：失眠怎么调理？" onkeydown="if(event.key==='Enter')sendAiMessage()">
+      <button id="aiSendBtn" class="ai-send-btn" onclick="sendAiMessage()" title="发送" aria-label="发送"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3.4 20.4l17.45-7.48a1 1 0 0 0 0-1.84L3.4 3.6a.993.993 0 0 0-1.39.91L2 9.12c0 .5.37.93.87.99L17 12 2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91z"/></svg></button>
+    </div>
+  </div>
+  <div id="aiUnconfigured" class="ai-unconfigured-page" style="display:none">
+    <div class="ai-unc-icon">🔒</div>
+    <div class="ai-unc-title">尚未配置 API</div>
+    <div class="ai-unc-desc">请先在设置中配置 AI API Key</div>
+    <button class="const-btn" onclick="openSettingsPanel()">前往设置</button>
+  </div>
+</div>
 
-
+<!-- Pomodoro Section (番茄专注钟) -->
+<div class="section" id="sec-pomodoro">
+  <div class="pomo-page">
+    <div class="pomo-page-header">
+      <div class="pomo-title-icon">🍅</div>
+      <h2>番茄专注钟</h2>
+      <p class="pomo-page-desc">专注25分钟，休息5分钟，循环4次后长休息15分钟</p>
+    </div>
+    <div class="pomo-timer-wrap">
+      <div class="pomo-ring-wrap">
+        <svg class="pomo-ring" viewBox="0 0 200 200">
+          <defs>
+            <linearGradient id="pomoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="var(--accent)"/>
+              <stop offset="100%" stop-color="var(--accent2)"/>
+            </linearGradient>
+          </defs>
+          <circle class="pomo-ring-bg" cx="100" cy="100" r="90"/>
+          <circle class="pomo-ring-progress" id="pomoRingProgress" cx="100" cy="100" r="90"/>
+        </svg>
+        <div class="pomo-ring-content">
+          <div id="pomoTimer" class="pomo-timer-large">25:00</div>
+          <div id="pomoStatus" class="pomo-status-large">准备开始专注</div>
+        </div>
+      </div>
+      <div class="pomo-progress-container">
+        <div id="pomoProgress" class="pomo-progress-track"><div id="pomoProgressBar" class="pomo-progress-fill"></div></div>
+      </div>
+    </div>
+    <div class="pomo-controls">
+      <div class="pomo-habit-row">
+        <select id="pomoHabit" class="pomo-select">
+          <option value="">选择要专注的习惯</option>
+        </select>
+      </div>
+      <div class="pomo-btn-row">
+        <button id="pomoStartBtn" class="pomo-btn pomo-btn-primary" onclick="startPomodoro()">
+          <span class="pomo-btn-icon">▶</span>开始专注
+        </button>
+        <button id="pomoPauseBtn" class="pomo-btn pomo-btn-secondary" onclick="pausePomodoro()" style="display:none">
+          <span class="pomo-btn-icon">⏸</span>暂停
+        </button>
+        <button id="pomoStopBtn" class="pomo-btn pomo-btn-stop" onclick="stopPomodoro()" style="display:none">
+          <span class="pomo-btn-icon">⏹</span>结束
+        </button>
+      </div>
+    </div>
+    <div id="pomoStats" class="pomo-stats-card">今日专注：0 次 · 0 分钟</div>
+  </div>
+</div>
 
 <!-- Panel Overlay -->
 <div class="panel-overlay" id="panelOverlay" onclick="closeAllPanels()"></div>
@@ -320,31 +388,6 @@
   <div class="panel-body"></div>
 </div>
 
-<!-- AI 养生顾问 Panel (Trae Style) -->
-<div class="panel" id="aiChatPanel">
-  <div class="panel-handle"></div>
-  <div class="panel-header" style="position:relative">
-    <span class="panel-title">AI 养生顾问</span>
-    <button class="panel-close" onclick="closeAllPanels()">✕</button>
-  </div>
-  <div class="panel-body panel-body-chat" id="aiChatPanelBody">
-    <!-- 消息区域 -->
-    <div id="aiChatMessages"></div>
-    <!-- 输入区域 -->
-    <div id="aiChatInputArea">
-      <input type="text" id="aiChatInput" placeholder="输入养生问题，如：失眠怎么调理？" onkeydown="if(event.key==='Enter')sendAiMessage()">
-      <button id="aiSendBtn" onclick="sendAiMessage()" title="发送">➤</button>
-    </div>
-    <!-- 未配置提示 -->
-    <div id="aiChatUnconfigured" style="display:none;padding:24px 20px;text-align:center">
-      <div class="ai-unconfigured-icon">🔒</div>
-      <div class="ai-unconfigured-title">尚未配置 API</div>
-      <div class="ai-unconfigured-desc">请先在设置中配置 AI API Key</div>
-      <button class="const-btn" onclick="closeAllPanels();openSettingsPanel()">前往设置</button>
-    </div>
-  </div>
-</div>
-
 <!-- 设置 Panel -->
 <div class="panel" id="settingsPanel">
   <div class="panel-handle"></div>
@@ -413,15 +456,14 @@
             </div>
             <div class="settings-row-text">
               <div class="settings-row-title">提醒方式</div>
-              <div class="settings-row-desc">轻提醒 / 系统通知 / 强提醒</div>
             </div>
           </div>
-          <select class="ui-select" id="settingsReminderMethod" onchange="changeReminderMethod(this.value)">
-            <option value="toast">轻提醒</option>
-            <option value="notification">系统通知</option>
-            <option value="alarm">强提醒</option>
-            <option value="off">关闭</option>
-          </select>
+          <div class="segmented-control" id="reminderMethodSegment">
+            <button class="seg-btn seg-toast" onclick="changeReminderMethod('toast')">轻提醒</button>
+            <button class="seg-btn seg-notification" onclick="changeReminderMethod('notification')">系统通知</button>
+            <button class="seg-btn seg-alarm" onclick="changeReminderMethod('alarm')">强提醒</button>
+            <button class="seg-btn seg-off" onclick="changeReminderMethod('off')">关闭</button>
+          </div>
         </div>
         <div class="settings-row" onclick="openHabitReminderList()">
           <div class="settings-row-left">
@@ -451,6 +493,41 @@
             <div class="settings-row-text">
               <div class="settings-row-title">系统通知权限</div>
               <div class="settings-row-desc" id="pushSettingsStatus">点击前往系统设置开启</div>
+            </div>
+          </div>
+          <div class="settings-row-right">
+            <label class="ui-switch" onclick="toggleNotificationPermission()">
+              <input type="checkbox" id="pushPermissionToggle" class="ui-switch-input">
+              <span class="ui-switch-slider"></span>
+            </label>
+          </div>
+        </div>
+        <div class="settings-row" onclick="openQuietHoursPanel()">
+          <div class="settings-row-left">
+            <div class="settings-row-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+              </svg>
+            </div>
+            <div class="settings-row-text">
+              <div class="settings-row-title">免打扰时段</div>
+              <div class="settings-row-desc" id="quietHoursDesc">22:00 – 07:00 · 期间不发送提醒</div>
+            </div>
+          </div>
+          <span class="settings-row-arrow">›</span>
+        </div>
+        <div class="settings-row" onclick="openNotifyDiagnosticsPanel()">
+          <div class="settings-row-left">
+            <div class="settings-row-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+            </div>
+            <div class="settings-row-text">
+              <div class="settings-row-title">通知诊断</div>
+              <div class="settings-row-desc">查看通知系统运行状态</div>
             </div>
           </div>
           <span class="settings-row-arrow">›</span>
@@ -590,6 +667,46 @@
     <button class="panel-close" onclick="closeAllPanels()">✕</button>
   </div>
   <div class="panel-body panel-body-p0" id="habitReminderBody"></div>
+</div>
+
+<!-- 免打扰设置 Panel -->
+<div class="panel" id="quietHoursPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title">🌙 免打扰时段</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body" style="padding:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div>
+        <div style="font-weight:600">开启免打扰</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">期间不发送提醒（强提醒除外）</div>
+      </div>
+      <div class="toggle-switch on" id="qhEnableToggle" onclick="this.classList.toggle('on')"></div>
+    </div>
+    <div style="display:flex;gap:12px;margin-bottom:16px">
+      <div style="flex:1">
+        <div style="font-size:13px;color:var(--muted);margin-bottom:6px">开始时间</div>
+        <input type="time" id="qhStartTime" value="22:00" style="width:100%;padding:8px;border:1px solid var(--rule);border-radius:8px;font-size:16px;background:var(--card);color:var(--ink)">
+      </div>
+      <div style="flex:1">
+        <div style="font-size:13px;color:var(--muted);margin-bottom:6px">结束时间</div>
+        <input type="time" id="qhEndTime" value="07:00" style="width:100%;padding:8px;border:1px solid var(--rule);border-radius:8px;font-size:16px;background:var(--card);color:var(--ink)">
+      </div>
+    </div>
+    <div id="qhPreview" style="padding:12px;border-radius:8px;background:var(--bg2);font-size:13px;line-height:1.5;margin-bottom:16px"></div>
+    <button class="const-btn" onclick="saveQuietHours()" style="width:100%">保存设置</button>
+  </div>
+</div>
+
+<!-- 通知诊断 Panel -->
+<div class="panel" id="notifyDiagnosticsPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title">🔧 通知诊断</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body" style="padding:16px" id="notifyDiagnosticsBody"></div>
 </div>
 
 <!-- 分享海报 Panel -->
@@ -794,15 +911,15 @@
 </div>
 
 <!-- 底部导航栏 -->
-<div id="bottomNav" style="position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--rule);display:flex;justify-content:space-around;align-items:center;padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom));z-index:100">
-  <button class="bnav-item active" data-tab="checkin" onclick="switchTab('checkin')">
+<div id="bottomNav" class="bottom-nav">
+  <button class="bnav-item active" data-tab="checkin" onclick="handleNavClick(this)">
     <svg class="bnav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <rect x="3" y="3" width="18" height="18" rx="4"/>
       <path d="M9 12l2 2 4-4"/>
     </svg>
     <span class="bnav-label">打卡</span>
   </button>
-  <button class="bnav-item" data-tab="manage" onclick="switchTab('manage')">
+  <button class="bnav-item" data-tab="manage" onclick="handleNavClick(this)">
     <svg class="bnav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <rect x="3" y="3" width="7" height="7" rx="1.5"/>
       <rect x="14" y="3" width="7" height="7" rx="1.5"/>
@@ -811,13 +928,13 @@
     </svg>
     <span class="bnav-label">管理</span>
   </button>
-  <button class="bnav-center" onclick="LazyLoad('js/modules/pomodoro.js',function(){openPomodoroPanel()})">
+  <button class="bnav-center" data-tab="pomodoro" onclick="handleNavClick(this)">
     <svg class="bnav-center-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="9"/>
       <path d="M12 7v5l3 2"/>
     </svg>
   </button>
-  <button class="bnav-item" onclick="LazyLoad('js/modules/ai.js',function(){openAiChatPanel()})">
+  <button class="bnav-item" data-tab="ai" onclick="handleNavClick(this)">
     <svg class="bnav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M9 18h6"/>
       <path d="M10 22h4"/>
@@ -825,7 +942,7 @@
     </svg>
     <span class="bnav-label">AI</span>
   </button>
-  <button class="bnav-item" data-tab="profile" onclick="switchTab('profile')">
+  <button class="bnav-item" data-tab="profile" onclick="handleNavClick(this)">
     <svg class="bnav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
       <circle cx="12" cy="7" r="4"/>

@@ -1085,7 +1085,7 @@
 
         <div class="diet-section-title">📖 推荐阅读</div>
         <div class="diet-books-list">
-          <div class="diet-book-item" onclick="window.open('references/饮膳正要/饮膳正要.html','_blank')">
+          <div class="diet-book-item" onclick="openReference('references/饮膳正要/饮膳正要.html')">
             <span class="diet-book-emoji">🍲</span>
             <div class="diet-book-info">
               <div class="diet-book-name">《饮膳正要》</div>
@@ -1093,7 +1093,7 @@
             </div>
             <span class="diet-book-arrow">›</span>
           </div>
-          <div class="diet-book-item" onclick="window.open('references/你是你吃出来的/你是你吃出来的.html','_blank')">
+          <div class="diet-book-item" onclick="openReference('references/你是你吃出来的/你是你吃出来的.html')">
             <span class="diet-book-emoji">🥗</span>
             <div class="diet-book-info">
               <div class="diet-book-name">《你是你吃出来的》</div>
@@ -1101,7 +1101,7 @@
             </div>
             <span class="diet-book-arrow">›</span>
           </div>
-          <div class="diet-book-item" onclick="window.open('references/控糖革命/控糖革命.html','_blank')">
+          <div class="diet-book-item" onclick="openReference('references/控糖革命/控糖革命.html')">
             <span class="diet-book-emoji">🍬</span>
             <div class="diet-book-info">
               <div class="diet-book-name">《控糖革命》</div>
@@ -2026,6 +2026,11 @@
   const POMO_SHORT = 5 * 60;
   const POMO_LONG = 15 * 60;
 
+  function renderPomodoroPage() {
+    populatePomoHabits();
+    updatePomoStats();
+  }
+
   function openPomodoroPanel() {
     // 防御：确保 openPanel 可用
     if (typeof openPanel !== 'function') {
@@ -2044,7 +2049,7 @@
 
   function populatePomoHabits() {
     const sel = document.getElementById('pomoHabit');
-    sel.innerHTML = '<option value="">-- 选择要专注的习惯 --</option>';
+    sel.innerHTML = '<option value="">选择要专注的习惯</option>';
     habitsConfig.forEach(h => {
       if (h.enabled !== false) {
         sel.innerHTML += `<option value="${h.id}">${esc(h.icon)} ${esc(h.name)}</option>`;
@@ -2063,6 +2068,13 @@
     const total = pomoMode === 'work' ? POMO_WORK : pomoMode === 'shortBreak' ? POMO_SHORT : POMO_LONG;
     const pct = ((total - pomoSeconds) / total) * 100;
     document.getElementById('pomoProgressBar').style.width = pct + '%';
+    // 更新环形进度条 (周长 2*PI*90 ≈ 565.49)
+    const ring = document.getElementById('pomoRingProgress');
+    if (ring) {
+      const circumference = 565.49;
+      const offset = circumference * (1 - pct / 100);
+      ring.style.strokeDashoffset = offset;
+    }
   }
 
   function startPomodoro() {
@@ -2226,6 +2238,7 @@
   };
 
   // 直接暴露到 window，确保 HTML onclick 能调用
+  window.renderPomodoroPage = renderPomodoroPage;
   window.openPomodoroPanel = openPomodoroPanel;
   window.startPomodoro = startPomodoro;
   window.pausePomodoro = pausePomodoro;
@@ -2659,18 +2672,18 @@ function getConfig() {
   // ============================================================
   // UI 渲染（使用 textContent 防止 XSS）
   // ============================================================
-  function openAiChatPanel() {
-    const inputArea = document.getElementById('aiChatInputArea');
-    const unconfiguredArea = document.getElementById('aiChatUnconfigured');
+  function renderAiPage() {
+    const inputBar = document.querySelector('.ai-input-bar');
+    const unconfiguredArea = document.getElementById('aiUnconfigured');
     const msgContainer = document.getElementById('aiChatMessages');
 
     // 检查配置状态
     if (!isConfigured()) {
-      if (inputArea) inputArea.style.display = 'none';
-      if (unconfiguredArea) unconfiguredArea.style.display = 'block';
+      if (inputBar) inputBar.style.display = 'none';
+      if (unconfiguredArea) unconfiguredArea.style.display = 'flex';
       if (msgContainer) msgContainer.innerHTML = '';
     } else {
-      if (inputArea) inputArea.style.display = 'flex';
+      if (inputBar) inputBar.style.display = 'flex';
       if (unconfiguredArea) unconfiguredArea.style.display = 'none';
     }
 
@@ -2691,8 +2704,6 @@ function getConfig() {
         });
       }
     }
-
-    openPanel('aiChatPanel');
 
     // 聚焦输入框
     setTimeout(() => {
@@ -3381,11 +3392,10 @@ function getConfig() {
     if (modelEl) modelEl.value = cfg.model || DEFAULT_MODEL;
 
     // 同步提醒方式
-    const reminderMethodEl = document.getElementById('settingsReminderMethod');
-    if (reminderMethodEl && typeof habitsConfig !== 'undefined' && habitsConfig.length > 0) {
+    if (typeof habitsConfig !== 'undefined' && habitsConfig.length > 0) {
       const firstHabit = habitsConfig[0];
       const method = (firstHabit.reminder && firstHabit.reminder.method) ? firstHabit.reminder.method : 'in-app';
-      reminderMethodEl.value = method;
+      if (window.updateReminderSegment) updateReminderSegment(method);
     }
 
     // 更新 AI 配置摘要
@@ -3438,7 +3448,6 @@ function getConfig() {
   if (!App.Modules) App.Modules = {};
 
   App.Modules.AI = {
-    openAiChatPanel,
     openSettingsPanel,
     openAiConfigPanel,
     sendAiMessage,
@@ -3449,7 +3458,7 @@ function getConfig() {
   };
 
   // 全局暴露（兼容 HTML onclick）
-  window.openAiChatPanel = openAiChatPanel;
+  window.renderAiPage = renderAiPage;
   window.openSettingsPanel = openSettingsPanel;
   window.openAiConfigPanel = openAiConfigPanel;
   window.sendAiMessage = sendAiMessage;
@@ -4574,8 +4583,21 @@ updateProfileAiStatus();
   // ============================================================
   var _fixedTimers = {};
   var _intervalTimers = {};
-  var _firedKeys = {};
-  var _FRIED_KEY_TTL = 24 * 60 * 60 * 1000;
+  var _FIRED_KEY_STORAGE = 'notify_fired_keys';
+  var _FIRED_KEY_TTL = 24 * 60 * 60 * 1000;
+
+  // 从 sessionStorage 恢复已触发记录，避免页面刷新后重复触发
+  function _loadFiredKeys() {
+    try {
+      return JSON.parse(sessionStorage.getItem(_FIRED_KEY_STORAGE) || '{}');
+    } catch(e) { return {}; }
+  }
+  function _saveFiredKeys(keys) {
+    try {
+      sessionStorage.setItem(_FIRED_KEY_STORAGE, JSON.stringify(keys));
+    } catch(e) {}
+  }
+  var _firedKeys = _loadFiredKeys();
 
   // ============================================================
   // 免打扰配置（v3.1 增强：支持按习惯配置）
@@ -4583,13 +4605,18 @@ updateProfileAiStatus();
   function getQuietConfig() {
     try {
       var cfg = JSON.parse(localStorage.getItem('quiet_hours') || '{}');
+      // 兼容旧的整点格式（start/end 为小时数）和新的分钟格式（startMin/endMin）
+      var startMin = cfg.startMin != null ? cfg.startMin : (cfg.start || 22) * 60;
+      var endMin = cfg.endMin != null ? cfg.endMin : (cfg.end || 7) * 60;
       return {
         enabled: cfg.enabled !== false,
-        start: cfg.start || 22,
-        end: cfg.end || 7,
+        start: startMin / 60,
+        end: endMin / 60,
+        startMin: startMin,
+        endMin: endMin,
         perHabit: cfg.perHabit || {}
       };
-    } catch(e) { return { enabled: true, start: 22, end: 7, perHabit: {} }; }
+    } catch(e) { return { enabled: true, start: 22, end: 7, startMin: 22*60, endMin: 7*60, perHabit: {} }; }
   }
 
   function saveQuietConfig(cfg) {
@@ -4601,35 +4628,31 @@ updateProfileAiStatus();
   function isInQuietHours(date, method, habitId) {
     if (method === REMINDER_METHODS.ALARM) return false;
     var qc = getQuietConfig();
-    
+
     // 先检查全局免打扰
     if (qc.enabled) {
-      var h = date.getHours();
-      var m = date.getMinutes();
-      var currentMin = h * 60 + m;
-      var startMin = qc.start * 60;
-      var endMin = qc.end * 60;
-      
+      var currentMin = date.getHours() * 60 + date.getMinutes();
+      var startMin = qc.startMin;
+      var endMin = qc.endMin;
+
       var isQuiet = false;
       if (startMin < endMin) {
         isQuiet = currentMin >= startMin && currentMin < endMin;
       } else {
         isQuiet = currentMin >= startMin || currentMin < endMin;
       }
-      
+
       if (isQuiet) {
         // 如果有按习惯配置的免打扰时段，检查是否覆盖全局
         if (habitId && qc.perHabit[habitId]) {
           var ph = qc.perHabit[habitId];
           if (!ph.enabled) return false;
-          if (ph.start !== undefined && ph.end !== undefined) {
-            var phStartMin = ph.start * 60;
-            var phEndMin = ph.end * 60;
+          if (ph.startMin !== undefined && ph.endMin !== undefined) {
             var isPhQuiet = false;
-            if (phStartMin < phEndMin) {
-              isPhQuiet = currentMin >= phStartMin && currentMin < phEndMin;
+            if (ph.startMin < ph.endMin) {
+              isPhQuiet = currentMin >= ph.startMin && currentMin < ph.endMin;
             } else {
-              isPhQuiet = currentMin >= phStartMin || currentMin < phEndMin;
+              isPhQuiet = currentMin >= ph.startMin || currentMin < ph.endMin;
             }
             return isPhQuiet;
           }
@@ -4637,25 +4660,21 @@ updateProfileAiStatus();
         return true;
       }
     }
-    
+
     // 检查按习惯配置的免打扰（即使全局关闭）
     if (habitId && qc.perHabit[habitId]) {
       var ph = qc.perHabit[habitId];
       if (!ph.enabled) return false;
-      if (ph.start !== undefined && ph.end !== undefined) {
-        var h = date.getHours();
-        var m = date.getMinutes();
-        var currentMin = h * 60 + m;
-        var phStartMin = ph.start * 60;
-        var phEndMin = ph.end * 60;
-        if (phStartMin < phEndMin) {
-          return currentMin >= phStartMin && currentMin < phEndMin;
+      if (ph.startMin !== undefined && ph.endMin !== undefined) {
+        var currentMin = date.getHours() * 60 + date.getMinutes();
+        if (ph.startMin < ph.endMin) {
+          return currentMin >= ph.startMin && currentMin < ph.endMin;
         } else {
-          return currentMin >= phStartMin || currentMin < phEndMin;
+          return currentMin >= ph.startMin || currentMin < ph.endMin;
         }
       }
     }
-    
+
     return false;
   }
 
@@ -4679,21 +4698,25 @@ updateProfileAiStatus();
 
   function hasFired(key) {
     if (_firedKeys[key]) {
-      if (Date.now() - _firedKeys[key] < _FRIED_KEY_TTL) return true;
+      if (Date.now() - _firedKeys[key] < _FIRED_KEY_TTL) return true;
       delete _firedKeys[key];
+      _saveFiredKeys(_firedKeys);
     }
     return false;
   }
 
   function markFired(key) {
     _firedKeys[key] = Date.now();
+    _saveFiredKeys(_firedKeys);
   }
 
   function cleanupFiredKeys() {
     var now = Date.now();
+    var changed = false;
     for (var k in _firedKeys) {
-      if (now - _firedKeys[k] >= _FRIED_KEY_TTL) delete _firedKeys[k];
+      if (now - _firedKeys[k] >= _FIRED_KEY_TTL) { delete _firedKeys[k]; changed = true; }
     }
+    if (changed) _saveFiredKeys(_firedKeys);
   }
   setInterval(cleanupFiredKeys, 60 * 60 * 1000);
 
@@ -4815,8 +4838,8 @@ updateProfileAiStatus();
         try {
           var n = new Notification(title, {
             body: body,
-            icon: './assets/icon-192.jpg',
-            badge: './assets/icon-192.jpg',
+            icon: './assets/icon-192.png',
+            badge: './assets/icon-192.png',
             tag: 'lifestyle-reminder',
             requireInteraction: true,
             renotify: true

@@ -419,18 +419,18 @@ function getConfig() {
   // ============================================================
   // UI 渲染（使用 textContent 防止 XSS）
   // ============================================================
-  function openAiChatPanel() {
-    const inputArea = document.getElementById('aiChatInputArea');
-    const unconfiguredArea = document.getElementById('aiChatUnconfigured');
+  function renderAiPage() {
+    const inputBar = document.querySelector('.ai-input-bar');
+    const unconfiguredArea = document.getElementById('aiUnconfigured');
     const msgContainer = document.getElementById('aiChatMessages');
 
     // 检查配置状态
     if (!isConfigured()) {
-      if (inputArea) inputArea.style.display = 'none';
-      if (unconfiguredArea) unconfiguredArea.style.display = 'block';
+      if (inputBar) inputBar.style.display = 'none';
+      if (unconfiguredArea) unconfiguredArea.style.display = 'flex';
       if (msgContainer) msgContainer.innerHTML = '';
     } else {
-      if (inputArea) inputArea.style.display = 'flex';
+      if (inputBar) inputBar.style.display = 'flex';
       if (unconfiguredArea) unconfiguredArea.style.display = 'none';
     }
 
@@ -451,8 +451,6 @@ function getConfig() {
         });
       }
     }
-
-    openPanel('aiChatPanel');
 
     // 聚焦输入框
     setTimeout(() => {
@@ -1141,11 +1139,10 @@ function getConfig() {
     if (modelEl) modelEl.value = cfg.model || DEFAULT_MODEL;
 
     // 同步提醒方式
-    const reminderMethodEl = document.getElementById('settingsReminderMethod');
-    if (reminderMethodEl && typeof habitsConfig !== 'undefined' && habitsConfig.length > 0) {
+    if (typeof habitsConfig !== 'undefined' && habitsConfig.length > 0) {
       const firstHabit = habitsConfig[0];
       const method = (firstHabit.reminder && firstHabit.reminder.method) ? firstHabit.reminder.method : 'in-app';
-      reminderMethodEl.value = method;
+      if (window.updateReminderSegment) updateReminderSegment(method);
     }
 
     // 更新 AI 配置摘要
@@ -1198,7 +1195,6 @@ function getConfig() {
   if (!App.Modules) App.Modules = {};
 
   App.Modules.AI = {
-    openAiChatPanel,
     openSettingsPanel,
     openAiConfigPanel,
     sendAiMessage,
@@ -1209,7 +1205,7 @@ function getConfig() {
   };
 
   // 全局暴露（兼容 HTML onclick）
-  window.openAiChatPanel = openAiChatPanel;
+  window.renderAiPage = renderAiPage;
   window.openSettingsPanel = openSettingsPanel;
   window.openAiConfigPanel = openAiConfigPanel;
   window.sendAiMessage = sendAiMessage;

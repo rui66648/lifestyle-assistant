@@ -35,7 +35,8 @@
   // ============================================================
 
   var VAPID_PUBLIC_KEY = 'BM-yFa2y8NJ8iob-46qSH2sCjkRxr43gUgGbRAFJkoivKJ076fuXAHohFuCKh5pAp-UtLJYIztN9HU9oU6dJchg';
-  var DEFAULT_WORKER_URL = '';
+  // 从 app-config.js 读取默认 Worker URL，用户也可在设置中手动覆盖
+  var DEFAULT_WORKER_URL = (window.__APP_CONFIG__ && window.__APP_CONFIG__.pushWorkerUrl) || '';
 
   var UPLOAD_THROTTLE = 60 * 1000;
   var _lastUpload = 0;
@@ -128,10 +129,13 @@
     try {
       var qh = JSON.parse(localStorage.getItem('quiet_hours') || '{}');
       if (qh && qh.enabled !== false) {
+        // 兼容旧的整点格式和新的分钟格式
+        var startMin = qh.startMin != null ? qh.startMin : (qh.start || 22) * 60;
+        var endMin = qh.endMin != null ? qh.endMin : (qh.end || 7) * 60;
         body.quietHours = {
           enabled: true,
-          start: qh.start || 22,
-          end: qh.end || 7
+          startMin: startMin,
+          endMin: endMin
         };
       }
     } catch(e) {}
@@ -183,10 +187,37 @@
   }
   function updateEntryStatus(){
     var el = document.getElementById('pushSettingsStatus');
+    var toggle = document.getElementById('pushPermissionToggle');
     if (!el) return;
-    if (Notification.permission === 'granted') el.textContent = '已开启 · 后台提醒已生效';
-    else el.textContent = '未开启 · 点击一键开启';
+    if (Notification.permission === 'granted') {
+      el.textContent = '已开启 · 后台提醒已生效';
+      el.style.color = '#2ecc71';
+    } else {
+      el.textContent = '未开启 · 点击去设置';
+      el.style.color = '#999';
+    }
+    if (toggle) {
+      toggle.checked = Notification.permission === 'granted';
+    }
   }
+
+  window.toggleNotificationPermission = async function() {
+    if (Notification.permission === 'granted') {
+      if (typeof showToast === 'function') {
+        showToast('系统通知权限已开启');
+      }
+      return;
+    }
+    if (typeof openSystemNotificationSettings === 'function') {
+      await openSystemNotificationSettings();
+    } else if ('Notification' in window) {
+      var perm = await Notification.requestPermission();
+      if (perm === 'granted' && typeof showToast === 'function') {
+        showToast('通知权限已开启');
+      }
+    }
+    setTimeout(updateEntryStatus, 500);
+  };
 
   function updateToggleBtn(){
     var btn = document.getElementById('pushToggleBtn');
