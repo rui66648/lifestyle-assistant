@@ -1447,10 +1447,39 @@ function getConfig() {
   window.clearAiChat = clearAiChat;
   window.saveAiConfig = saveAiConfig;
 
+  // ============================================================
+  // 键盘弹出自动滚动
+  // ============================================================
+  function initKeyboardScroll() {
+    const input = document.getElementById('aiChatInput');
+    if (!input) return;
+
+    function scrollToBottom() {
+      const container = document.getElementById('aiChatMessages');
+      if (container) {
+        container.scrollTop = container.scrollHeight;
+      }
+    }
+
+    input.addEventListener('focus', function() {
+      setTimeout(scrollToBottom, 100);
+      setTimeout(scrollToBottom, 300);
+      setTimeout(scrollToBottom, 500);
+    });
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', scrollToBottom);
+      window.visualViewport.addEventListener('scroll', scrollToBottom);
+    }
+
+    window.addEventListener('resize', scrollToBottom);
+  }
+
   // 初始化：自动补全配置 + 加载历史记录 + 更新状态
 autoInitConfig();
 loadHistory();
 updateProfileAiStatus();
+initKeyboardScroll();
 
   if (App.registerModule) {
     App.registerModule('modules.ai', 'modules', null);

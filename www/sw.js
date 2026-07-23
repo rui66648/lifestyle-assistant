@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lifestyle-assistant-v130';
+const CACHE_NAME = 'lifestyle-assistant-v131';
 const ASSETS = [
   './',
   './index.html',
