@@ -1,0 +1,13 @@
+{
+  "versionCode": 4,
+  "versionName": "1.4.0",
+  "cacheVersion": 2,
+  "apkUrl": "https://rui66648.github.io/lifestyle-assistant/app-release.apk",
+  "whatsNew": [
+    "提醒设置优化 - 分段控制器、开关组件、动态文案",
+    "参考文献访问修复 - SW 路径过滤、浮动返回按钮",
+    "APP版下载图标隐藏 - 平台环境检测、CSS条件隐藏",
+    "视觉优化 - 图标对比度、卡片阴影、文字层级"
+  ],
+  "publishedAt": "2026-07-21"
+}
