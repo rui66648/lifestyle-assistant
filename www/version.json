@@ -1,13 +1,13 @@
 {
   "versionCode": 4,
-  "versionName": "1.4.0",
+  "versionName": "1.4.2",
   "cacheVersion": 2,
-  "apkUrl": "https://rui66648.github.io/lifestyle-assistant/app-release.apk",
+  "apkUrl": "https://github.com/rui66648/lifestyle-assistant/releases/download/v1.4.2/app-release.apk",
   "whatsNew": [
-    "提醒设置优化 - 分段控制器、开关组件、动态文案",
-    "参考文献访问修复 - SW 路径过滤、浮动返回按钮",
-    "APP版下载图标隐藏 - 平台环境检测、CSS条件隐藏",
-    "视觉优化 - 图标对比度、卡片阴影、文字层级"
+    "右滑返回与双击退出 - 首页手势退出、弹窗优先关闭",
+    "自动打卡服务 - 亮屏打卡起床、关屏打卡睡觉",
+    "应用名称统一为 PulseBreath",
+    "云端构建修复 - R.drawable 语法、通知图标资源"
   ],
-  "publishedAt": "2026-07-21"
+  "publishedAt": "2026-07-23"
 }
