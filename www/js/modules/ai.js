@@ -1195,6 +1195,234 @@ function getConfig() {
   }
 
   // ============================================================
+  // AI 成长闭环：周报分析引擎
+  // ============================================================
+  const ANALYSIS_SYSTEM_PROMPT = `你是一位专业的习惯养成教练，擅长从数据中发现行为模式并给出实用建议。
+
+【核心原则】
+1. 语气温和，用"我们发现..."代替"你应该..."
+2. 洞察要有数据支撑，不说空话
+3. 建议要可执行，具体到"做什么、什么时候做、做多久"
+4. 优先推荐"调整现有习惯"而非"新增习惯"
+5. 周报最多2条建议，宁缺毋滥
+
+【输出格式】
+必须返回纯JSON格式，不要包含markdown代码块标记：
+
+{
+  "summary": {
+    "overallRate": 72,
+    "trend": "up|down|stable",
+    "trendText": "比上周提升8% 👍",
+    "bestHabit": {"id": "habit_id", "name": "习惯名称", "streak": 21},
+    "weakestHabit": {"id": "habit_id", "name": "习惯名称", "rate": 40}
+  },
+  "insights": [
+    {
+      "id": "ins_001",
+      "type": "correlation|milestone|warning|encouragement",
+      "icon": "emoji",
+      "title": "一句话洞察",
+      "description": "详细说明（含数据支撑）",
+      "confidence": 0.87,
+      "dataSource": ["数据来源1", "数据来源2"]
+    }
+  ],
+  "suggestions": [
+    {
+      "id": "sug_001",
+      "insightId": "ins_001",
+      "type": "adjust_existing|new_habit",
+      "title": "建议标题",
+      "description": "为什么给这个建议",
+      "action": "adjust_habit|create_habit",
+      "targetHabitId": "string|null",
+      "adjustment": {"name": "新名称", "timePeriod": "noon", "reminderTime": "12:30"} | null,
+      "newHabit": {
+        "name": "习惯名称",
+        "icon": "📋",
+        "category": "sport|diet|study|sleep|mind|protect|care|home|social",
+        "frequency": "daily",
+        "timePeriod": "morning|noon|evening|night",
+        "reminderTime": "07:00",
+        "type": "boolean|number|time|water",
+        "tip": "提示文字",
+        "linkedData": ["data_source1", "data_source2"]
+      } | null,
+      "confidence": 0.82,
+      "expectedImpact": "预期效果描述"
+    }
+  ]
+}`;
+
+  async function analyzeWeeklyData(weeklyData, onProgress) {
+    if (!isConfigured()) {
+      return generateFallbackAnalysis(weeklyData);
+    }
+
+    try {
+      onProgress && onProgress('正在分析本周数据...');
+
+      const promptData = {
+        period: weeklyData.periodLabel,
+        dateRange: weeklyData.startDate + ' ~ ' + weeklyData.endDate,
+        summary: weeklyData.summary,
+        userContext: weeklyData.userContext,
+        bestHabit: weeklyData.bestHabit,
+        weakestHabit: weeklyData.weakestHabit,
+        highFailDay: weeklyData.highFailDay,
+        categoryStats: weeklyData.categoryStats,
+        waterStats: weeklyData.waterStats,
+        emotionDist: weeklyData.emotionDist
+      };
+
+      const userPrompt = JSON.stringify(promptData, null, 2);
+
+      const messages = [
+        { role: 'system', content: ANALYSIS_SYSTEM_PROMPT },
+        { role: 'user', content: userPrompt }
+      ];
+
+      onProgress && onProgress('AI正在生成建议...');
+
+      const response = await callAiApi(messages);
+
+      onProgress && onProgress('整理分析结果...');
+
+      return parseAnalysisResponse(response);
+    } catch (err) {
+      console.error('[AI Growth] 分析失败:', err);
+      return generateFallbackAnalysis(weeklyData);
+    }
+  }
+
+  async function callAiApi(messages) {
+    const cfg = getConfig();
+    const model = cfg.model || DEFAULT_MODEL;
+
+    if (model === 'local') {
+      return await callLocalModel(messages);
+    }
+
+    const workerUrl = getWorkerUrl();
+    const response = await fetch(workerUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: model,
+        messages: messages,
+        max_tokens: 1000,
+        temperature: 0.7,
+        stream: false
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('AI服务返回错误: ' + response.status);
+    }
+
+    const data = await response.json();
+    return data.choices && data.choices[0] &&
+      (data.choices[0].message && data.choices[0].message.content ||
+       data.choices[0].text) || '';
+  }
+
+  function parseAnalysisResponse(response) {
+    try {
+      let jsonStr = response.trim();
+      if (jsonStr.startsWith('```json')) {
+        jsonStr = jsonStr.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+      } else if (jsonStr.startsWith('```')) {
+        jsonStr = jsonStr.replace(/^```\s*/, '').replace(/\s*```$/, '');
+      }
+      const result = JSON.parse(jsonStr);
+      return validateAnalysisResult(result);
+    } catch (e) {
+      console.warn('[AI Growth] JSON解析失败，使用fallback:', e);
+      return null;
+    }
+  }
+
+  function validateAnalysisResult(result) {
+    if (!result || typeof result !== 'object') return null;
+
+    const validResult = {
+      summary: result.summary || {},
+      insights: Array.isArray(result.insights) ? result.insights : [],
+      suggestions: Array.isArray(result.suggestions) ? result.suggestions.slice(0, 2) : []
+    };
+
+    validResult.suggestions.forEach((sug, idx) => {
+      if (!sug.id) sug.id = 'sug_' + Date.now() + '_' + idx;
+      if (!sug.insightId && validResult.insights[0]) sug.insightId = validResult.insights[0].id;
+      if (!sug.confidence) sug.confidence = 0.7;
+    });
+
+    return validResult;
+  }
+
+  function generateFallbackAnalysis(weeklyData) {
+    const suggestions = [];
+    const insights = [];
+
+    if (weeklyData.weakestHabit && weeklyData.weakestHabit.rate < 60) {
+      insights.push({
+        id: 'ins_fallback_1',
+        type: 'warning',
+        icon: '⚠️',
+        title: `${weeklyData.weakestHabit.name}完成率偏低`,
+        description: `本周${weeklyData.weakestHabit.name}完成率仅${weeklyData.weakestHabit.rate}%，建议加强这方面的习惯养成`,
+        confidence: 0.85,
+        dataSource: ['本周打卡记录']
+      });
+
+      suggestions.push({
+        id: 'sug_fallback_1',
+        insightId: 'ins_fallback_1',
+        type: 'adjust_existing',
+        title: '调整习惯执行时间',
+        description: `我们发现${weeklyData.weakestHabit.name}完成率偏低，可能是时间安排不太合适。建议尝试调整到更适合的时间段。`,
+        action: 'adjust_habit',
+        targetHabitId: weeklyData.weakestHabit.id,
+        adjustment: { name: weeklyData.weakestHabit.name, timePeriod: 'morning' },
+        newHabit: null,
+        confidence: 0.75,
+        expectedImpact: '预计完成率提升20%'
+      });
+    }
+
+    if (weeklyData.bestHabit && weeklyData.bestHabit.streak >= 7) {
+      insights.push({
+        id: 'ins_fallback_2',
+        type: 'milestone',
+        icon: '🎉',
+        title: `${weeklyData.bestHabit.name}已连续${weeklyData.bestHabit.streak}天`,
+        description: `太棒了！${weeklyData.bestHabit.name}已经形成了稳定的习惯回路`,
+        confidence: 0.95,
+        dataSource: ['打卡记录']
+      });
+    }
+
+    if (weeklyData.highFailDay) {
+      insights.push({
+        id: 'ins_fallback_3',
+        type: 'correlation',
+        icon: '🔍',
+        title: `${weeklyData.highFailDay.dayName}是你的低谷日`,
+        description: `${weeklyData.highFailDay.dayName}的失败率高达${weeklyData.highFailDay.failRate}%，建议在这一天减少任务量或调整计划`,
+        confidence: 0.8,
+        dataSource: ['本周打卡记录']
+      });
+    }
+
+    return {
+      summary: weeklyData.summary || {},
+      insights: insights,
+      suggestions: suggestions.slice(0, 2)
+    };
+  }
+
+  // ============================================================
   // 导出模块
   // ============================================================
   if (!window.App) window.App = {};
@@ -1207,7 +1435,8 @@ function getConfig() {
     clearAiChat,
     saveAiConfig,
     isConfigured,
-    isUsingWorker
+    isUsingWorker,
+    analyzeWeeklyData
   };
 
   // 全局暴露（兼容 HTML onclick）

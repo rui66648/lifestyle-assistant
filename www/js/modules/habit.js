@@ -285,6 +285,42 @@
     if (window.App && App.Core && App.Core.Storage) App.Core.Storage.saveConfig();
   }
 
+  function createHabitFromSuggestion(suggestion) {
+    if (typeof habitsConfig === 'undefined') return null;
+    var newId = 'habit_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+    var categoryMap = {
+      '饮食': 'diet', '运动': 'sports', '睡眠': 'sleep', '情绪': 'emotion',
+      '作息': 'sleep', '养生': 'wulao', '学习': 'pomodoro', '工作': 'pomodoro'
+    };
+    var categoryKey = categoryMap[suggestion.category] || 'wulao';
+    var newHabit = {
+      id: newId,
+      name: suggestion.habit_name,
+      icon: suggestion.icon || '🌱',
+      category: categoryKey,
+      desc: suggestion.description || '',
+      target: suggestion.target || 1,
+      unit: suggestion.unit || '次',
+      freq: suggestion.frequency || 'daily',
+      enabled: true,
+      addedAt: Date.now()
+    };
+    habitsConfig.push(newHabit);
+    if (window.App && App.Core && App.Core.Storage) App.Core.Storage.saveConfig();
+    return newHabit;
+  }
+
+  function adjustHabitFromSuggestion(suggestion) {
+    if (typeof habitsConfig === 'undefined') return null;
+    var h = habitsConfig.find(function(x){ return x.id === suggestion.targetHabitId; });
+    if (!h) return null;
+    if (suggestion.newTarget !== undefined && suggestion.newTarget !== null) h.target = suggestion.newTarget;
+    if (suggestion.newFrequency) h.freq = suggestion.newFrequency;
+    if (suggestion.newName) h.name = suggestion.newName;
+    if (window.App && App.Core && App.Core.Storage) App.Core.Storage.saveConfig();
+    return h;
+  }
+
   // ===== 暴露 =====
   App.Modules.Habit = {
     sortHabits: sortHabits,
@@ -294,6 +330,8 @@
     deleteHabitWithCleanup: deleteHabitWithCleanup,
     touchLastDone: touchLastDone,
     markAddedAt: markAddedAt,
+    createHabitFromSuggestion: createHabitFromSuggestion,
+    adjustHabitFromSuggestion: adjustHabitFromSuggestion,
     // 调试
     _lastDoneTimestamp: _lastDoneTimestamp
   };

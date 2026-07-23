@@ -892,6 +892,18 @@
     return false;
   }
 
+  function handleSuggestionAccept(suggestionId) {
+    if (App.UI && App.UI.Panels && App.UI.Panels.handleSuggestionAccept) {
+      App.UI.Panels.handleSuggestionAccept(suggestionId);
+    }
+  }
+
+  function handleSuggestionReject(suggestionId) {
+    if (App.UI && App.UI.Panels && App.UI.Panels.handleSuggestionReject) {
+      App.UI.Panels.handleSuggestionReject(suggestionId);
+    }
+  }
+
   App.UI.Events = {
     switchTab,
     handleNavClick,
@@ -934,7 +946,9 @@
     confirmWaterInput,
     initTouchSwipe,
     exportCSV,
-    toggleReminderEnabled
+    toggleReminderEnabled,
+    handleSuggestionAccept,
+    handleSuggestionReject
   };
 
   // 暴露到全局，供 HTML onclick 直接使用

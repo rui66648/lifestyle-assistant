@@ -461,6 +461,253 @@
     return tips;
   }
 
+  function _formatDate(date) {
+    return date.getFullYear() + '-' +
+      String(date.getMonth() + 1).padStart(2, '0') + '-' +
+      String(date.getDate()).padStart(2, '0');
+  }
+
+  function _getWeekRange(date) {
+    const d = date || new Date();
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    const monday = new Date(d.setDate(diff));
+    monday.setHours(0, 0, 0, 0);
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+    sunday.setHours(23, 59, 59, 999);
+    return { start: monday, end: sunday };
+  }
+
+  function generateWeeklyAnalysisData(date) {
+    const range = _getWeekRange(date);
+    const thisWeekStart = range.start;
+    const thisWeekEnd = range.end;
+
+    const lastWeekStart = new Date(thisWeekStart);
+    lastWeekStart.setDate(thisWeekStart.getDate() - 7);
+    const lastWeekEnd = new Date(thisWeekEnd);
+    lastWeekEnd.setDate(thisWeekEnd.getDate() - 7);
+
+    const thisWeekDays = [];
+    const d = new Date(thisWeekStart);
+    while (d <= thisWeekEnd) {
+      thisWeekDays.push(_formatDate(d));
+      d.setDate(d.getDate() + 1);
+    }
+
+    const lastWeekDays = [];
+    const ld = new Date(lastWeekStart);
+    while (ld <= lastWeekEnd) {
+      lastWeekDays.push(_formatDate(ld));
+      ld.setDate(ld.getDate() + 1);
+    }
+
+    const weekDayNames = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+
+    let thisWeekDone = 0, thisWeekTotal = 0;
+    let lastWeekDone = 0, lastWeekTotal = 0;
+
+    const dailyStats = [];
+    const habitStats = {};
+    const dayFailStats = {};
+
+    weekDayNames.forEach((name, idx) => {
+      dayFailStats[name] = { fail: 0, total: 0 };
+    });
+
+    habitsConfig.forEach(h => {
+      if (h.enabled === false) return;
+      const id = h.id;
+      habitStats[id] = {
+        name: h.name,
+        icon: h.icon || '📋',
+        category: h.category || 'other',
+        type: h.type || 'boolean',
+        thisWeekDone: 0,
+        thisWeekTotal: 0,
+        lastWeekDone: 0,
+        lastWeekTotal: 0,
+        streak: _getStreak(id),
+        fails: []
+      };
+    });
+
+    thisWeekDays.forEach((dateKey, idx) => {
+      const rec = checkinRecords[dateKey] || {};
+      const dayName = weekDayNames[idx];
+      let dayDone = 0, dayTotal = 0;
+
+      habitsConfig.forEach(h => {
+        if (h.enabled === false) return;
+        dayTotal++;
+        thisWeekTotal++;
+
+        const isChecked = App.Core.Storage.isHabitChecked(h, rec);
+        if (isChecked) {
+          dayDone++;
+          thisWeekDone++;
+          habitStats[h.id].thisWeekDone++;
+        } else {
+          habitStats[h.id].fails.push(dateKey);
+          dayFailStats[dayName].fail++;
+        }
+        habitStats[h.id].thisWeekTotal++;
+        dayFailStats[dayName].total++;
+      });
+
+      dailyStats.push({
+        date: dateKey,
+        dayName: dayName,
+        done: dayDone,
+        total: dayTotal,
+        rate: dayTotal > 0 ? Math.round((dayDone / dayTotal) * 100) : 0
+      });
+    });
+
+    lastWeekDays.forEach(dateKey => {
+      const rec = checkinRecords[dateKey] || {};
+      habitsConfig.forEach(h => {
+        if (h.enabled === false) return;
+        lastWeekTotal++;
+        habitStats[h.id].lastWeekTotal++;
+        if (App.Core.Storage.isHabitChecked(h, rec)) {
+          lastWeekDone++;
+          habitStats[h.id].lastWeekDone++;
+        }
+      });
+    });
+
+    const thisWeekRate = thisWeekTotal > 0 ? Math.round((thisWeekDone / thisWeekTotal) * 100) : 0;
+    const lastWeekRate = lastWeekTotal > 0 ? Math.round((lastWeekDone / lastWeekTotal) * 100) : 0;
+
+    let trend = 'stable';
+    let trendText = '与上周持平';
+    const rateDiff = thisWeekRate - lastWeekRate;
+    if (rateDiff > 5) {
+      trend = 'up';
+      trendText = `比上周提升${rateDiff}% 👍`;
+    } else if (rateDiff < -5) {
+      trend = 'down';
+      trendText = `比上周下降${Math.abs(rateDiff)}% ⚠️`;
+    }
+
+    const habitRateList = [];
+    for (const id in habitStats) {
+      const hs = habitStats[id];
+      const thisRate = hs.thisWeekTotal > 0 ? Math.round((hs.thisWeekDone / hs.thisWeekTotal) * 100) : 0;
+      const lastRate = hs.lastWeekTotal > 0 ? Math.round((hs.lastWeekDone / hs.lastWeekTotal) * 100) : 0;
+      habitRateList.push({
+        id,
+        name: hs.name,
+        icon: hs.icon,
+        category: hs.category,
+        thisWeekRate: thisRate,
+        lastWeekRate: lastRate,
+        streak: hs.streak,
+        fails: hs.fails,
+        failCount: hs.fails.length
+      });
+    }
+
+    habitRateList.sort((a, b) => b.thisWeekRate - a.thisWeekRate);
+
+    const bestHabit = habitRateList.length > 0 ? habitRateList[0] : null;
+    const weakestHabit = habitRateList.length > 0 ? habitRateList[habitRateList.length - 1] : null;
+
+    const failDayList = [];
+    for (const day in dayFailStats) {
+      const stats = dayFailStats[day];
+      if (stats.total > 0) {
+        failDayList.push({
+          dayName: day,
+          failRate: stats.total > 0 ? Math.round((stats.fail / stats.total) * 100) : 0,
+          failCount: stats.fail,
+          total: stats.total
+        });
+      }
+    }
+    failDayList.sort((a, b) => b.failRate - a.failRate);
+
+    const highFailDay = failDayList.length > 0 && failDayList[0].failRate > 50 ? failDayList[0] : null;
+
+    const categoryStats = {};
+    habitsConfig.forEach(h => {
+      if (h.enabled === false) return;
+      const cat = h.category || 'other';
+      if (!categoryStats[cat]) {
+        categoryStats[cat] = {
+          name: (CATEGORY_NAMES[cat] || {}).name || cat,
+          icon: (CATEGORY_NAMES[cat] || {}).icon || '📋',
+          thisWeekDone: 0,
+          thisWeekTotal: 0,
+          lastWeekDone: 0,
+          lastWeekTotal: 0
+        };
+      }
+      const hs = habitStats[h.id];
+      categoryStats[cat].thisWeekDone += hs.thisWeekDone;
+      categoryStats[cat].thisWeekTotal += hs.thisWeekTotal;
+      categoryStats[cat].lastWeekDone += hs.lastWeekDone;
+      categoryStats[cat].lastWeekTotal += hs.lastWeekTotal;
+    });
+
+    for (const cat in categoryStats) {
+      const cs = categoryStats[cat];
+      cs.thisWeekRate = cs.thisWeekTotal > 0 ? Math.round((cs.thisWeekDone / cs.thisWeekTotal) * 100) : 0;
+      cs.lastWeekRate = cs.lastWeekTotal > 0 ? Math.round((cs.lastWeekDone / cs.lastWeekTotal) * 100) : 0;
+    }
+
+    const waterStats = getWaterStats(7);
+    const emotionDist = getEmotionDistribution(7);
+    const constitution = getConstitution();
+    const level = getUserLevel();
+    const season = getCurrentSeason();
+
+    return {
+      period: 'week',
+      periodLabel: '本周',
+      startDate: _formatDate(thisWeekStart),
+      endDate: _formatDate(thisWeekEnd),
+      summary: {
+        overallRate: thisWeekRate,
+        lastWeekRate: lastWeekRate,
+        trend,
+        trendText,
+        totalHabits: habitsConfig.filter(h => h.enabled !== false).length,
+        thisWeekDone,
+        thisWeekTotal
+      },
+      dailyStats,
+      habitStats: habitRateList,
+      bestHabit: bestHabit ? {
+        id: bestHabit.id,
+        name: bestHabit.name,
+        icon: bestHabit.icon,
+        rate: bestHabit.thisWeekRate,
+        streak: bestHabit.streak
+      } : null,
+      weakestHabit: weakestHabit ? {
+        id: weakestHabit.id,
+        name: weakestHabit.name,
+        icon: weakestHabit.icon,
+        rate: weakestHabit.thisWeekRate,
+        failCount: weakestHabit.failCount
+      } : null,
+      highFailDay,
+      categoryStats,
+      waterStats,
+      emotionDist,
+      userContext: {
+        level,
+        season,
+        constitutionType: constitution ? constitution.typeId : null,
+        constitutionName: constitution && constitution.typeName ? constitution.typeName : null
+      },
+      dataSource: ['本周打卡记录', '上周打卡记录', '睡眠记录', '情绪记录']
+    };
+  }
+
   if (!window.App) window.App = {};
   if (!App.Modules) App.Modules = {};
 
@@ -477,7 +724,8 @@
     getEmotionDistribution,
     generateRecommendations,
     generateHealthReport,
-    getDailyTip
+    getDailyTip,
+    generateWeeklyAnalysisData
   };
 
   if (App.registerModule) {

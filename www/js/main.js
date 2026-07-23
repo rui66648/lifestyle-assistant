@@ -125,6 +125,8 @@
     if (App.Modules && App.Modules.Update && App.Modules.Update.check) {
       App.Modules.Update.check(false);
     }
+
+    scheduleWeeklyAnalysis();
   }
 
   // ============================================================
@@ -333,6 +335,21 @@
       checkFixedReminders();
     }, 60000);
     checkFixedReminders();
+  }
+
+  function scheduleWeeklyAnalysis() {
+    var lastAnalysis = localStorage.getItem('last_weekly_analysis');
+    var now = new Date();
+    var today = now.getDay();
+    if (today === 0 || today === 6) {
+      if (!lastAnalysis || (now.getTime() - parseInt(lastAnalysis)) > 86400000) {
+        setTimeout(function() {
+          if (App.UI && App.UI.Panels && App.UI.Panels.openAiGrowthPanel) {
+            App.UI.Panels.openAiGrowthPanel();
+          }
+        }, 3000);
+      }
+    }
   }
 
   function checkFixedReminders() {

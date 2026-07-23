@@ -5920,4 +5920,75 @@ body.dark .report-habit-row{
   border-radius:12px;
 }
 
+/* AI Growth Panel */
+.insight-card{
+  background:#fff;
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:12px;
+  box-shadow:0 2px 12px rgba(0,0,0,.06);
+  opacity:0;
+}
+.suggestion-card{
+  background:#fff;
+  border-radius:16px;
+  margin-bottom:12px;
+  box-shadow:0 4px 16px rgba(0,0,0,.08);
+  overflow:hidden;
+  opacity:0;
+}
+
+@keyframes slideUp{
+  from{
+    opacity:0;
+    transform:translateY(20px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.btn-primary{
+  flex:1;
+  padding:12px 20px;
+  border-radius:12px;
+  font-size:14px;
+  font-weight:700;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;
+  border:none;
+  cursor:pointer;
+  transition:all .2s;
+}
+.btn-primary:active{opacity:.8;transform:scale(.98)}
+
+.btn-secondary{
+  flex:1;
+  padding:12px 20px;
+  border-radius:12px;
+  font-size:14px;
+  font-weight:600;
+  background:var(--bg2);
+  color:var(--ink);
+  border:1px solid var(--border);
+  cursor:pointer;
+  transition:all .2s;
+}
+.btn-secondary:active{background:var(--rule);transform:scale(.98)}
+
+body.dark .insight-card{
+  background:rgba(30,41,59,.85);
+  border:1px solid rgba(255,255,255,.05);
+}
+body.dark .suggestion-card{
+  background:rgba(30,41,59,.85);
+  border:1px solid rgba(255,255,255,.05);
+}
+body.dark .btn-secondary{
+  background:var(--bg2);
+  border-color:var(--border);
+  color:var(--ink);
+}
+
 
