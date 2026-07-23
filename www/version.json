@@ -1,8 +1,8 @@
 {
-  "versionCode": 9,
-  "versionName": "1.4.8",
-  "cacheVersion": 4,
-  "apkUrl": "https://github.com/rui66648/lifestyle-assistant/releases/download/v1.4.8/PulseBreath-1.4.8.apk",
+  "versionCode": 10,
+  "versionName": "1.4.9",
+  "cacheVersion": 5,
+  "apkUrl": "https://github.com/rui66648/lifestyle-assistant/releases/download/v1.4.9/PulseBreath-1.4.9.apk",
   "whatsNew": [
     "更新应用图标 - 使用智能设计生成的矢量图标，树叶+水滴风格",
     "AI对话输入时自动上移 - 软键盘弹出时输入框自动调整位置，避免遮挡",
