@@ -4136,6 +4136,297 @@
   if (!window.App) window.App = {};
   if (!App.UI) App.UI = {};
 
+  // ============================================================
+  // AI 成长闭环面板
+  // ============================================================
+
+  let currentAnalysisResult = null;
+
+  function openAiGrowthPanel() {
+    renderAiGrowthLoading();
+    openPanel('aiGrowthPanel');
+    triggerWeeklyAnalysis();
+  }
+
+  function renderAiGrowthLoading() {
+    const body = document.getElementById('aiGrowthPanelBody');
+    if (!body) return;
+    body.innerHTML = `
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px">
+        <div class="loading-spinner"></div>
+        <div style="margin-top:20px;font-size:14px;color:var(--muted)">AI正在分析你的数据...</div>
+        <div id="aiGrowthProgress" style="margin-top:8px;font-size:12px;color:var(--muted)">正在整理本周记录</div>
+      </div>
+    `;
+  }
+
+  async function triggerWeeklyAnalysis() {
+    try {
+      const data = App.Modules.Recommendation.generateWeeklyAnalysisData();
+      updateAiGrowthProgress('AI正在分析数据...');
+
+      const result = await App.Modules.AI.analyzeWeeklyData(data, updateAiGrowthProgress);
+      updateAiGrowthProgress('整理分析结果...');
+
+      currentAnalysisResult = result;
+      renderAiGrowthPanel(result);
+    } catch (err) {
+      console.error('[AI Growth] 分析失败:', err);
+      renderAiGrowthError();
+    }
+  }
+
+  function updateAiGrowthProgress(text) {
+    const el = document.getElementById('aiGrowthProgress');
+    if (el) el.textContent = text;
+  }
+
+  function renderAiGrowthError() {
+    const body = document.getElementById('aiGrowthPanelBody');
+    if (!body) return;
+    body.innerHTML = `
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center">
+        <div style="font-size:48px;margin-bottom:16px">🤖</div>
+        <div style="font-size:16px;color:var(--ink);font-weight:600;margin-bottom:8px">AI暂时休息中</div>
+        <div style="font-size:14px;color:var(--muted);line-height:1.6">网络连接不稳定，已为你准备了精选建议</div>
+        <button class="const-btn" onclick="triggerWeeklyAnalysis()" style="margin-top:20px">重试</button>
+      </div>
+    `;
+  }
+
+  function renderAiGrowthPanel(result) {
+    const body = document.getElementById('aiGrowthPanelBody');
+    if (!body || !result) return;
+
+    let html = '';
+
+    html += renderGrowthSummary(result.summary);
+
+    if (result.insights && result.insights.length > 0) {
+      html += '<div style="margin-top:24px">';
+      result.insights.forEach((insight, idx) => {
+        html += renderInsightCard(insight, idx);
+      });
+      html += '</div>';
+    }
+
+    if (result.suggestions && result.suggestions.length > 0) {
+      html += '<div style="margin-top:20px">';
+      result.suggestions.forEach((suggestion, idx) => {
+        html += renderSuggestionCard(suggestion, idx);
+      });
+      html += '</div>';
+    }
+
+    html += `
+      <div style="margin-top:24px;padding-bottom:24px;text-align:center">
+        <div style="font-size:12px;color:var(--muted)">数据来源：${result.dataSource ? result.dataSource.join(' · ') : '本周打卡记录'}</div>
+      </div>
+    `;
+
+    body.innerHTML = html;
+  }
+
+  function renderGrowthSummary(summary) {
+    if (!summary) return '';
+
+    const trendColor = summary.trend === 'up' ? '#7CB69D' : summary.trend === 'down' ? '#E07A5F' : '#9CA3AF';
+    const trendIcon = summary.trend === 'up' ? '📈' : summary.trend === 'down' ? '📉' : '📊';
+
+    return `
+      <div style="background:var(--accent-light);border-radius:16px;padding:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div>
+            <div style="font-size:12px;color:var(--muted)">${summary.periodLabel || '本周'}完成率</div>
+            <div style="font-size:32px;font-weight:700;color:var(--ink)">${summary.overallRate || 0}%</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:12px;color:var(--muted)">${trendIcon} 趋势</div>
+            <div style="font-size:14px;font-weight:600;color:${trendColor}">${summary.trendText || '与上周持平'}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px">
+          ${summary.bestHabit ? `
+            <div style="flex:1;background:var(--bg);border-radius:12px;padding:12px">
+              <div style="font-size:10px;color:var(--muted)">最佳习惯</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                <span>${summary.bestHabit.icon || '🌟'}</span>
+                <span style="font-size:13px;font-weight:600;color:var(--ink)">${summary.bestHabit.name || ''}</span>
+              </div>
+              ${summary.bestHabit.streak ? `<div style="font-size:11px;color:#7CB69D;margin-top:4px">🔥 ${summary.bestHabit.streak}天连续</div>` : ''}
+            </div>
+          ` : ''}
+          ${summary.weakestHabit ? `
+            <div style="flex:1;background:var(--bg);border-radius:12px;padding:12px">
+              <div style="font-size:10px;color:var(--muted)">需加油</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                <span>${summary.weakestHabit.icon || '💪'}</span>
+                <span style="font-size:13px;font-weight:600;color:var(--ink)">${summary.weakestHabit.name || ''}</span>
+              </div>
+              <div style="font-size:11px;color:#E07A5F;margin-top:4px">📉 完成率${summary.weakestHabit.rate || 0}%</div>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderInsightCard(insight, index) {
+    const typeColors = {
+      correlation: '#5B8DB8',
+      milestone: '#7CB69D',
+      warning: '#E07A5F',
+      encouragement: '#D4A373'
+    };
+
+    const bgColor = typeColors[insight.type] || '#9CA3AF';
+
+    return `
+      <div class="insight-card" style="animation:slideUp .3s ease ${index * 0.1}s both">
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <div style="width:40px;height:40px;border-radius:12px;background:${bgColor}20;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">
+            ${insight.icon || '💡'}
+          </div>
+          <div style="flex:1">
+            <div style="font-size:14px;font-weight:600;color:var(--ink)">${insight.title}</div>
+            <div style="font-size:13px;color:var(--muted);line-height:1.5;margin-top:4px">${insight.description}</div>
+            ${insight.confidence ? `
+              <div style="display:flex;align-items:center;gap:4px;margin-top:8px">
+                <div style="width:60px;height:4px;background:var(--bg);border-radius:2px;overflow:hidden">
+                  <div style="width:${Math.round(insight.confidence * 100)}%;height:100%;background:${bgColor};border-radius:2px"></div>
+                </div>
+                <span style="font-size:10px;color:var(--muted)">置信度${Math.round(insight.confidence * 100)}%</span>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderSuggestionCard(suggestion, index) {
+    const isNewHabit = suggestion.type === 'new_habit';
+    const habit = suggestion.newHabit || suggestion.adjustment || {};
+
+    return `
+      <div class="suggestion-card" style="animation:slideUp .3s ease ${index * 0.15}s both">
+        <div style="padding:16px 20px">
+          <div style="display:flex;align-items:flex-start;gap:12px">
+            <div style="width:44px;height:44px;border-radius:14px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">
+              ${habit.icon || (isNewHabit ? '✨' : '🔧')}
+            </div>
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:600;color:var(--ink)">💡 ${suggestion.title}</div>
+              <div style="font-size:13px;color:var(--muted);line-height:1.5;margin-top:4px">${suggestion.description}</div>
+            </div>
+          </div>
+
+          ${habit.name ? `
+            <div style="margin-top:16px;padding:12px;background:var(--bg);border-radius:12px;border:1px solid var(--border);cursor:pointer" onclick="editSuggestionHabit('${suggestion.id}')">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div>
+                  <div style="font-size:14px;font-weight:600;color:var(--ink)">${habit.name}</div>
+                  <div style="font-size:12px;color:var(--muted);margin-top:2px">
+                    ${habit.category ? getCategoryName(habit.category) + ' · ' : ''}
+                    ${habit.timePeriod ? getTimePeriodName(habit.timePeriod) + ' · ' : ''}
+                    ${habit.reminderTime ? habit.reminderTime + '提醒' : ''}
+                  </div>
+                </div>
+                <div style="font-size:12px;color:var(--muted)">✏️ 点击编辑</div>
+              </div>
+            </div>
+          ` : ''}
+
+          ${suggestion.expectedImpact ? `
+            <div style="margin-top:12px;font-size:12px;color:#7CB69D">🎯 ${suggestion.expectedImpact}</div>
+          ` : ''}
+
+          <div style="display:flex;gap:12px;margin-top:20px">
+            <button class="btn-secondary" onclick="handleSuggestionReject('${suggestion.id}')">暂不需要</button>
+            <button class="btn-primary" onclick="handleSuggestionAccept('${suggestion.id}')">✅ 采纳并创建</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function getCategoryName(cat) {
+    const map = {
+      sport: '运动健身', diet: '饮食营养', study: '学习成长',
+      sleep: '睡眠作息', mind: '心灵修养', protect: '五劳防护',
+      care: '个人护理', home: '居家生活', social: '社交人际'
+    };
+    return map[cat] || cat;
+  }
+
+  function getTimePeriodName(tp) {
+    const map = {
+      morning: '早晨', noon: '午间', evening: '傍晚', night: '睡前'
+    };
+    return map[tp] || tp;
+  }
+
+  function editSuggestionHabit(suggestionId) {
+    alert('编辑功能将在后续版本中提供，当前直接采纳即可');
+  }
+
+  function handleSuggestionAccept(suggestionId) {
+    if (!currentAnalysisResult) return;
+    const suggestion = currentAnalysisResult.suggestions.find(s => s.id === suggestionId);
+    if (!suggestion) return;
+
+    try {
+      if (suggestion.action === 'create_habit' && suggestion.newHabit) {
+        App.Modules.Habit.createHabitFromSuggestion(suggestion);
+      } else if (suggestion.action === 'adjust_habit' && suggestion.targetHabitId) {
+        App.Modules.Habit.adjustHabitFromSuggestion(suggestion);
+      }
+
+      recordSuggestionFeedback(suggestionId, 'accepted');
+
+      const card = document.querySelector(`.suggestion-card button[onclick*="'${suggestionId}'"]`).closest('.suggestion-card');
+      if (card) {
+        card.innerHTML = `
+          <div style="padding:20px;text-align:center">
+            <div style="font-size:36px;margin-bottom:12px">✅</div>
+            <div style="font-size:16px;font-weight:600;color:var(--ink)">已添加到今日清单</div>
+            <div style="font-size:13px;color:var(--muted);margin-top:8px">快去完成今天的打卡吧！</div>
+            <button class="const-btn" onclick="closeAllPanels();renderHomePage()" style="margin-top:16px">查看详情</button>
+          </div>
+        `;
+      }
+
+      if (typeof App.Modules.Achievement !== 'undefined') App.Modules.Achievement.checkAchievements();
+      if (typeof renderHomePage === 'function') renderHomePage();
+    } catch (err) {
+      console.error('[AI Growth] 采纳建议失败:', err);
+      alert('创建习惯失败，请稍后重试');
+    }
+  }
+
+  function handleSuggestionReject(suggestionId) {
+    recordSuggestionFeedback(suggestionId, 'rejected');
+
+    const card = document.querySelector(`.suggestion-card button[onclick*="'${suggestionId}'"]`).closest('.suggestion-card');
+    if (card) {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(-10px)';
+      setTimeout(() => card.remove(), 300);
+    }
+  }
+
+  function recordSuggestionFeedback(suggestionId, action) {
+    try {
+      const feedback = JSON.parse(localStorage.getItem('ai_growth_feedback') || '[]');
+      feedback.push({
+        suggestionId,
+        action,
+        timestamp: Date.now()
+      });
+      localStorage.setItem('ai_growth_feedback', JSON.stringify(feedback.slice(-50)));
+    } catch (e) {}
+  }
+
   App.UI.Panels = {
     openPanel,
     closeAllPanels,
@@ -4182,7 +4473,9 @@
     toggleQuietHours,
     saveQuietHours,
     openNotifyDiagnosticsPanel,
-    updateQuietHoursUI: _updateQuietHoursUI
+    updateQuietHoursUI: _updateQuietHoursUI,
+    openAiGrowthPanel,
+    renderAiGrowthPanel
   };
 
   // 暴露到全局，供 HTML onclick 直接使用
@@ -4195,6 +4488,10 @@
   window.batchToggleReminders = batchToggleReminders;
   window.openEmotionPanel = openEmotionPanel;
   window.openRetroactivePanel = openRetroactivePanel;
+  window.openAiGrowthPanel = openAiGrowthPanel;
+  window.handleSuggestionAccept = handleSuggestionAccept;
+  window.handleSuggestionReject = handleSuggestionReject;
+  window.editSuggestionHabit = editSuggestionHabit;
   // 批量暴露其余函数
   Object.keys(App.UI.Panels).forEach(function(k) {
     if (typeof App.UI.Panels[k] === 'function' && !window[k]) window[k] = App.UI.Panels[k];
@@ -5355,6 +5652,18 @@
     return false;
   }
 
+  function handleSuggestionAccept(suggestionId) {
+    if (App.UI && App.UI.Panels && App.UI.Panels.handleSuggestionAccept) {
+      App.UI.Panels.handleSuggestionAccept(suggestionId);
+    }
+  }
+
+  function handleSuggestionReject(suggestionId) {
+    if (App.UI && App.UI.Panels && App.UI.Panels.handleSuggestionReject) {
+      App.UI.Panels.handleSuggestionReject(suggestionId);
+    }
+  }
+
   App.UI.Events = {
     switchTab,
     handleNavClick,
@@ -5397,7 +5706,9 @@
     confirmWaterInput,
     initTouchSwipe,
     exportCSV,
-    toggleReminderEnabled
+    toggleReminderEnabled,
+    handleSuggestionAccept,
+    handleSuggestionReject
   };
 
   // 暴露到全局，供 HTML onclick 直接使用

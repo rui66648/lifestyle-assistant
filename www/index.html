@@ -10,13 +10,13 @@
 <meta name="apple-mobile-web-app-title" content="PulseBreath">
 <link rel="manifest" href="./manifest.json">
 <title>PulseBreath</title>
-<link rel="stylesheet" href="./css/main.min.css?v=140">
-<link rel="stylesheet" href="./css/components.min.css?v=140">
-<link rel="stylesheet" href="./css/skin-targets.min.css?v=140">
-<link rel="stylesheet" href="./css/uiverse-raw.min.css?v=140">
-<link rel="stylesheet" href="./css/sports.min.css?v=140">
-<link rel="stylesheet" href="./css/ui-enhance.min.css?v=140">
-<link rel="stylesheet" href="./css/theme-zhongshi.min.css?v=140">
+<link rel="stylesheet" href="./css/main.min.css?v=142">
+<link rel="stylesheet" href="./css/components.min.css?v=142">
+<link rel="stylesheet" href="./css/skin-targets.min.css?v=142">
+<link rel="stylesheet" href="./css/uiverse-raw.min.css?v=142">
+<link rel="stylesheet" href="./css/sports.min.css?v=142">
+<link rel="stylesheet" href="./css/ui-enhance.min.css?v=142">
+<link rel="stylesheet" href="./css/theme-zhongshi.min.css?v=142">
 </head>
 <body>
 
@@ -1147,35 +1147,35 @@
 </div>
 
 <!-- ===== 关键JS预加载 ===== -->
-<link rel="preload" href="js/app.js?v=140" as="script">
-<link rel="preload" href="js/core/utils.js?v=140" as="script">
-<link rel="preload" href="js/bundle/ui.min.js?v=140" as="script">
+<link rel="preload" href="js/app.js?v=142" as="script">
+<link rel="preload" href="js/core/utils.js?v=142" as="script">
+<link rel="preload" href="js/bundle/ui.min.js?v=142" as="script">
 
 <!-- ===== 第0层：平台检测（内联消除HTTP请求） ===== -->
 <script>(function(){var p='pwa';try{if(typeof Capacitor!=='undefined'&&Capacitor.getPlatform&&Capacitor.getPlatform()==='android')p='apk';else if(typeof Capacitor!=='undefined'&&Capacitor.Plugins&&Capacitor.Plugins.LocalNotifications)p='apk';}catch(e){}window.__PLATFORM__=p;window.isAPK=function(){return p==='apk';};window.isPWA=function(){return p==='pwa';};})();</script>
 
 <!-- APK 内置云端配置（Gradle 构建时生成；PWA 环境下文件不存在，onerror 静默处理） -->
-<script src="app-config.js?v=140" defer onerror=""></script>
+<script src="app-config.js?v=142" defer onerror=""></script>
 
 <!-- ===== 第1层：命名空间 + 懒加载 ===== -->
-<script src="js/app.js?v=140" defer></script>
-<script src="js/lazy.js?v=140" defer></script>
+<script src="js/app.js?v=142" defer></script>
+<script src="js/lazy.js?v=142" defer></script>
 
 <!-- ===== 第1-2层：数据 + 核心 ===== -->
-<script src="js/bundle/data.min.js?v=140" defer></script>
-<script src="js/core/utils.js?v=140" defer></script>
-<script src="js/core/storage.js?v=140" defer></script>
+<script src="js/bundle/data.min.js?v=142" defer></script>
+<script src="js/core/utils.js?v=142" defer></script>
+<script src="js/core/storage.js?v=142" defer></script>
 
 <!-- ===== 第3层：业务模块（合并压缩） ===== -->
-<script src="js/bundle/modules.min.js?v=140" defer></script>
+<script src="js/bundle/modules.min.js?v=142" defer></script>
 
 <!-- ===== 第4层：UI层（合并压缩） ===== -->
-<script src="js/bundle/ui.min.js?v=140" defer></script>
+<script src="js/bundle/ui.min.js?v=142" defer></script>
 
 <!-- ===== 第5层：兼容层 + 入口 ===== -->
-<script src="js/compat.js?v=140" defer></script>
-<script src="js/modules/local-notify.js?v=140" defer></script>
-<script src="js/main.js?v=140" defer></script>
+<script src="js/compat.js?v=142" defer></script>
+<script src="js/modules/local-notify.js?v=142" defer></script>
+<script src="js/main.js?v=142" defer></script>
 <script>
 (function() {
   var KEY = 'force_refresh_version';

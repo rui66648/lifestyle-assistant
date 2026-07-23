@@ -534,6 +534,42 @@
     if (window.App && App.Core && App.Core.Storage) App.Core.Storage.saveConfig();
   }
 
+  function createHabitFromSuggestion(suggestion) {
+    if (typeof habitsConfig === 'undefined') return null;
+    var newId = 'habit_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+    var categoryMap = {
+      '饮食': 'diet', '运动': 'sports', '睡眠': 'sleep', '情绪': 'emotion',
+      '作息': 'sleep', '养生': 'wulao', '学习': 'pomodoro', '工作': 'pomodoro'
+    };
+    var categoryKey = categoryMap[suggestion.category] || 'wulao';
+    var newHabit = {
+      id: newId,
+      name: suggestion.habit_name,
+      icon: suggestion.icon || '🌱',
+      category: categoryKey,
+      desc: suggestion.description || '',
+      target: suggestion.target || 1,
+      unit: suggestion.unit || '次',
+      freq: suggestion.frequency || 'daily',
+      enabled: true,
+      addedAt: Date.now()
+    };
+    habitsConfig.push(newHabit);
+    if (window.App && App.Core && App.Core.Storage) App.Core.Storage.saveConfig();
+    return newHabit;
+  }
+
+  function adjustHabitFromSuggestion(suggestion) {
+    if (typeof habitsConfig === 'undefined') return null;
+    var h = habitsConfig.find(function(x){ return x.id === suggestion.targetHabitId; });
+    if (!h) return null;
+    if (suggestion.newTarget !== undefined && suggestion.newTarget !== null) h.target = suggestion.newTarget;
+    if (suggestion.newFrequency) h.freq = suggestion.newFrequency;
+    if (suggestion.newName) h.name = suggestion.newName;
+    if (window.App && App.Core && App.Core.Storage) App.Core.Storage.saveConfig();
+    return h;
+  }
+
   // ===== 暴露 =====
   App.Modules.Habit = {
     sortHabits: sortHabits,
@@ -543,6 +579,8 @@
     deleteHabitWithCleanup: deleteHabitWithCleanup,
     touchLastDone: touchLastDone,
     markAddedAt: markAddedAt,
+    createHabitFromSuggestion: createHabitFromSuggestion,
+    adjustHabitFromSuggestion: adjustHabitFromSuggestion,
     // 调试
     _lastDoneTimestamp: _lastDoneTimestamp
   };
@@ -3428,6 +3466,9 @@ function getConfig() {
     // 更新账号区域（APK 环境）
     if (typeof window.updateAccountUI === 'function') window.updateAccountUI();
 
+    // 更新自动打卡区域（APK 环境）
+    if (typeof window.updateAutoCheckinUI === 'function') window.updateAutoCheckinUI();
+
     openPanel('settingsPanel');
   }
 
@@ -3445,6 +3486,234 @@ function getConfig() {
   }
 
   // ============================================================
+  // AI 成长闭环：周报分析引擎
+  // ============================================================
+  const ANALYSIS_SYSTEM_PROMPT = `你是一位专业的习惯养成教练，擅长从数据中发现行为模式并给出实用建议。
+
+【核心原则】
+1. 语气温和，用"我们发现..."代替"你应该..."
+2. 洞察要有数据支撑，不说空话
+3. 建议要可执行，具体到"做什么、什么时候做、做多久"
+4. 优先推荐"调整现有习惯"而非"新增习惯"
+5. 周报最多2条建议，宁缺毋滥
+
+【输出格式】
+必须返回纯JSON格式，不要包含markdown代码块标记：
+
+{
+  "summary": {
+    "overallRate": 72,
+    "trend": "up|down|stable",
+    "trendText": "比上周提升8% 👍",
+    "bestHabit": {"id": "habit_id", "name": "习惯名称", "streak": 21},
+    "weakestHabit": {"id": "habit_id", "name": "习惯名称", "rate": 40}
+  },
+  "insights": [
+    {
+      "id": "ins_001",
+      "type": "correlation|milestone|warning|encouragement",
+      "icon": "emoji",
+      "title": "一句话洞察",
+      "description": "详细说明（含数据支撑）",
+      "confidence": 0.87,
+      "dataSource": ["数据来源1", "数据来源2"]
+    }
+  ],
+  "suggestions": [
+    {
+      "id": "sug_001",
+      "insightId": "ins_001",
+      "type": "adjust_existing|new_habit",
+      "title": "建议标题",
+      "description": "为什么给这个建议",
+      "action": "adjust_habit|create_habit",
+      "targetHabitId": "string|null",
+      "adjustment": {"name": "新名称", "timePeriod": "noon", "reminderTime": "12:30"} | null,
+      "newHabit": {
+        "name": "习惯名称",
+        "icon": "📋",
+        "category": "sport|diet|study|sleep|mind|protect|care|home|social",
+        "frequency": "daily",
+        "timePeriod": "morning|noon|evening|night",
+        "reminderTime": "07:00",
+        "type": "boolean|number|time|water",
+        "tip": "提示文字",
+        "linkedData": ["data_source1", "data_source2"]
+      } | null,
+      "confidence": 0.82,
+      "expectedImpact": "预期效果描述"
+    }
+  ]
+}`;
+
+  async function analyzeWeeklyData(weeklyData, onProgress) {
+    if (!isConfigured()) {
+      return generateFallbackAnalysis(weeklyData);
+    }
+
+    try {
+      onProgress && onProgress('正在分析本周数据...');
+
+      const promptData = {
+        period: weeklyData.periodLabel,
+        dateRange: weeklyData.startDate + ' ~ ' + weeklyData.endDate,
+        summary: weeklyData.summary,
+        userContext: weeklyData.userContext,
+        bestHabit: weeklyData.bestHabit,
+        weakestHabit: weeklyData.weakestHabit,
+        highFailDay: weeklyData.highFailDay,
+        categoryStats: weeklyData.categoryStats,
+        waterStats: weeklyData.waterStats,
+        emotionDist: weeklyData.emotionDist
+      };
+
+      const userPrompt = JSON.stringify(promptData, null, 2);
+
+      const messages = [
+        { role: 'system', content: ANALYSIS_SYSTEM_PROMPT },
+        { role: 'user', content: userPrompt }
+      ];
+
+      onProgress && onProgress('AI正在生成建议...');
+
+      const response = await callAiApi(messages);
+
+      onProgress && onProgress('整理分析结果...');
+
+      return parseAnalysisResponse(response);
+    } catch (err) {
+      console.error('[AI Growth] 分析失败:', err);
+      return generateFallbackAnalysis(weeklyData);
+    }
+  }
+
+  async function callAiApi(messages) {
+    const cfg = getConfig();
+    const model = cfg.model || DEFAULT_MODEL;
+
+    if (model === 'local') {
+      return await callLocalModel(messages);
+    }
+
+    const workerUrl = getWorkerUrl();
+    const response = await fetch(workerUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: model,
+        messages: messages,
+        max_tokens: 1000,
+        temperature: 0.7,
+        stream: false
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('AI服务返回错误: ' + response.status);
+    }
+
+    const data = await response.json();
+    return data.choices && data.choices[0] &&
+      (data.choices[0].message && data.choices[0].message.content ||
+       data.choices[0].text) || '';
+  }
+
+  function parseAnalysisResponse(response) {
+    try {
+      let jsonStr = response.trim();
+      if (jsonStr.startsWith('```json')) {
+        jsonStr = jsonStr.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+      } else if (jsonStr.startsWith('```')) {
+        jsonStr = jsonStr.replace(/^```\s*/, '').replace(/\s*```$/, '');
+      }
+      const result = JSON.parse(jsonStr);
+      return validateAnalysisResult(result);
+    } catch (e) {
+      console.warn('[AI Growth] JSON解析失败，使用fallback:', e);
+      return null;
+    }
+  }
+
+  function validateAnalysisResult(result) {
+    if (!result || typeof result !== 'object') return null;
+
+    const validResult = {
+      summary: result.summary || {},
+      insights: Array.isArray(result.insights) ? result.insights : [],
+      suggestions: Array.isArray(result.suggestions) ? result.suggestions.slice(0, 2) : []
+    };
+
+    validResult.suggestions.forEach((sug, idx) => {
+      if (!sug.id) sug.id = 'sug_' + Date.now() + '_' + idx;
+      if (!sug.insightId && validResult.insights[0]) sug.insightId = validResult.insights[0].id;
+      if (!sug.confidence) sug.confidence = 0.7;
+    });
+
+    return validResult;
+  }
+
+  function generateFallbackAnalysis(weeklyData) {
+    const suggestions = [];
+    const insights = [];
+
+    if (weeklyData.weakestHabit && weeklyData.weakestHabit.rate < 60) {
+      insights.push({
+        id: 'ins_fallback_1',
+        type: 'warning',
+        icon: '⚠️',
+        title: `${weeklyData.weakestHabit.name}完成率偏低`,
+        description: `本周${weeklyData.weakestHabit.name}完成率仅${weeklyData.weakestHabit.rate}%，建议加强这方面的习惯养成`,
+        confidence: 0.85,
+        dataSource: ['本周打卡记录']
+      });
+
+      suggestions.push({
+        id: 'sug_fallback_1',
+        insightId: 'ins_fallback_1',
+        type: 'adjust_existing',
+        title: '调整习惯执行时间',
+        description: `我们发现${weeklyData.weakestHabit.name}完成率偏低，可能是时间安排不太合适。建议尝试调整到更适合的时间段。`,
+        action: 'adjust_habit',
+        targetHabitId: weeklyData.weakestHabit.id,
+        adjustment: { name: weeklyData.weakestHabit.name, timePeriod: 'morning' },
+        newHabit: null,
+        confidence: 0.75,
+        expectedImpact: '预计完成率提升20%'
+      });
+    }
+
+    if (weeklyData.bestHabit && weeklyData.bestHabit.streak >= 7) {
+      insights.push({
+        id: 'ins_fallback_2',
+        type: 'milestone',
+        icon: '🎉',
+        title: `${weeklyData.bestHabit.name}已连续${weeklyData.bestHabit.streak}天`,
+        description: `太棒了！${weeklyData.bestHabit.name}已经形成了稳定的习惯回路`,
+        confidence: 0.95,
+        dataSource: ['打卡记录']
+      });
+    }
+
+    if (weeklyData.highFailDay) {
+      insights.push({
+        id: 'ins_fallback_3',
+        type: 'correlation',
+        icon: '🔍',
+        title: `${weeklyData.highFailDay.dayName}是你的低谷日`,
+        description: `${weeklyData.highFailDay.dayName}的失败率高达${weeklyData.highFailDay.failRate}%，建议在这一天减少任务量或调整计划`,
+        confidence: 0.8,
+        dataSource: ['本周打卡记录']
+      });
+    }
+
+    return {
+      summary: weeklyData.summary || {},
+      insights: insights,
+      suggestions: suggestions.slice(0, 2)
+    };
+  }
+
+  // ============================================================
   // 导出模块
   // ============================================================
   if (!window.App) window.App = {};
@@ -3457,7 +3726,8 @@ function getConfig() {
     clearAiChat,
     saveAiConfig,
     isConfigured,
-    isUsingWorker
+    isUsingWorker,
+    analyzeWeeklyData
   };
 
   // 全局暴露（兼容 HTML onclick）
@@ -5812,6 +6082,253 @@ updateProfileAiStatus();
     return tips;
   }
 
+  function _formatDate(date) {
+    return date.getFullYear() + '-' +
+      String(date.getMonth() + 1).padStart(2, '0') + '-' +
+      String(date.getDate()).padStart(2, '0');
+  }
+
+  function _getWeekRange(date) {
+    const d = date || new Date();
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    const monday = new Date(d.setDate(diff));
+    monday.setHours(0, 0, 0, 0);
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+    sunday.setHours(23, 59, 59, 999);
+    return { start: monday, end: sunday };
+  }
+
+  function generateWeeklyAnalysisData(date) {
+    const range = _getWeekRange(date);
+    const thisWeekStart = range.start;
+    const thisWeekEnd = range.end;
+
+    const lastWeekStart = new Date(thisWeekStart);
+    lastWeekStart.setDate(thisWeekStart.getDate() - 7);
+    const lastWeekEnd = new Date(thisWeekEnd);
+    lastWeekEnd.setDate(thisWeekEnd.getDate() - 7);
+
+    const thisWeekDays = [];
+    const d = new Date(thisWeekStart);
+    while (d <= thisWeekEnd) {
+      thisWeekDays.push(_formatDate(d));
+      d.setDate(d.getDate() + 1);
+    }
+
+    const lastWeekDays = [];
+    const ld = new Date(lastWeekStart);
+    while (ld <= lastWeekEnd) {
+      lastWeekDays.push(_formatDate(ld));
+      ld.setDate(ld.getDate() + 1);
+    }
+
+    const weekDayNames = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+
+    let thisWeekDone = 0, thisWeekTotal = 0;
+    let lastWeekDone = 0, lastWeekTotal = 0;
+
+    const dailyStats = [];
+    const habitStats = {};
+    const dayFailStats = {};
+
+    weekDayNames.forEach((name, idx) => {
+      dayFailStats[name] = { fail: 0, total: 0 };
+    });
+
+    habitsConfig.forEach(h => {
+      if (h.enabled === false) return;
+      const id = h.id;
+      habitStats[id] = {
+        name: h.name,
+        icon: h.icon || '📋',
+        category: h.category || 'other',
+        type: h.type || 'boolean',
+        thisWeekDone: 0,
+        thisWeekTotal: 0,
+        lastWeekDone: 0,
+        lastWeekTotal: 0,
+        streak: _getStreak(id),
+        fails: []
+      };
+    });
+
+    thisWeekDays.forEach((dateKey, idx) => {
+      const rec = checkinRecords[dateKey] || {};
+      const dayName = weekDayNames[idx];
+      let dayDone = 0, dayTotal = 0;
+
+      habitsConfig.forEach(h => {
+        if (h.enabled === false) return;
+        dayTotal++;
+        thisWeekTotal++;
+
+        const isChecked = App.Core.Storage.isHabitChecked(h, rec);
+        if (isChecked) {
+          dayDone++;
+          thisWeekDone++;
+          habitStats[h.id].thisWeekDone++;
+        } else {
+          habitStats[h.id].fails.push(dateKey);
+          dayFailStats[dayName].fail++;
+        }
+        habitStats[h.id].thisWeekTotal++;
+        dayFailStats[dayName].total++;
+      });
+
+      dailyStats.push({
+        date: dateKey,
+        dayName: dayName,
+        done: dayDone,
+        total: dayTotal,
+        rate: dayTotal > 0 ? Math.round((dayDone / dayTotal) * 100) : 0
+      });
+    });
+
+    lastWeekDays.forEach(dateKey => {
+      const rec = checkinRecords[dateKey] || {};
+      habitsConfig.forEach(h => {
+        if (h.enabled === false) return;
+        lastWeekTotal++;
+        habitStats[h.id].lastWeekTotal++;
+        if (App.Core.Storage.isHabitChecked(h, rec)) {
+          lastWeekDone++;
+          habitStats[h.id].lastWeekDone++;
+        }
+      });
+    });
+
+    const thisWeekRate = thisWeekTotal > 0 ? Math.round((thisWeekDone / thisWeekTotal) * 100) : 0;
+    const lastWeekRate = lastWeekTotal > 0 ? Math.round((lastWeekDone / lastWeekTotal) * 100) : 0;
+
+    let trend = 'stable';
+    let trendText = '与上周持平';
+    const rateDiff = thisWeekRate - lastWeekRate;
+    if (rateDiff > 5) {
+      trend = 'up';
+      trendText = `比上周提升${rateDiff}% 👍`;
+    } else if (rateDiff < -5) {
+      trend = 'down';
+      trendText = `比上周下降${Math.abs(rateDiff)}% ⚠️`;
+    }
+
+    const habitRateList = [];
+    for (const id in habitStats) {
+      const hs = habitStats[id];
+      const thisRate = hs.thisWeekTotal > 0 ? Math.round((hs.thisWeekDone / hs.thisWeekTotal) * 100) : 0;
+      const lastRate = hs.lastWeekTotal > 0 ? Math.round((hs.lastWeekDone / hs.lastWeekTotal) * 100) : 0;
+      habitRateList.push({
+        id,
+        name: hs.name,
+        icon: hs.icon,
+        category: hs.category,
+        thisWeekRate: thisRate,
+        lastWeekRate: lastRate,
+        streak: hs.streak,
+        fails: hs.fails,
+        failCount: hs.fails.length
+      });
+    }
+
+    habitRateList.sort((a, b) => b.thisWeekRate - a.thisWeekRate);
+
+    const bestHabit = habitRateList.length > 0 ? habitRateList[0] : null;
+    const weakestHabit = habitRateList.length > 0 ? habitRateList[habitRateList.length - 1] : null;
+
+    const failDayList = [];
+    for (const day in dayFailStats) {
+      const stats = dayFailStats[day];
+      if (stats.total > 0) {
+        failDayList.push({
+          dayName: day,
+          failRate: stats.total > 0 ? Math.round((stats.fail / stats.total) * 100) : 0,
+          failCount: stats.fail,
+          total: stats.total
+        });
+      }
+    }
+    failDayList.sort((a, b) => b.failRate - a.failRate);
+
+    const highFailDay = failDayList.length > 0 && failDayList[0].failRate > 50 ? failDayList[0] : null;
+
+    const categoryStats = {};
+    habitsConfig.forEach(h => {
+      if (h.enabled === false) return;
+      const cat = h.category || 'other';
+      if (!categoryStats[cat]) {
+        categoryStats[cat] = {
+          name: (CATEGORY_NAMES[cat] || {}).name || cat,
+          icon: (CATEGORY_NAMES[cat] || {}).icon || '📋',
+          thisWeekDone: 0,
+          thisWeekTotal: 0,
+          lastWeekDone: 0,
+          lastWeekTotal: 0
+        };
+      }
+      const hs = habitStats[h.id];
+      categoryStats[cat].thisWeekDone += hs.thisWeekDone;
+      categoryStats[cat].thisWeekTotal += hs.thisWeekTotal;
+      categoryStats[cat].lastWeekDone += hs.lastWeekDone;
+      categoryStats[cat].lastWeekTotal += hs.lastWeekTotal;
+    });
+
+    for (const cat in categoryStats) {
+      const cs = categoryStats[cat];
+      cs.thisWeekRate = cs.thisWeekTotal > 0 ? Math.round((cs.thisWeekDone / cs.thisWeekTotal) * 100) : 0;
+      cs.lastWeekRate = cs.lastWeekTotal > 0 ? Math.round((cs.lastWeekDone / cs.lastWeekTotal) * 100) : 0;
+    }
+
+    const waterStats = getWaterStats(7);
+    const emotionDist = getEmotionDistribution(7);
+    const constitution = getConstitution();
+    const level = getUserLevel();
+    const season = getCurrentSeason();
+
+    return {
+      period: 'week',
+      periodLabel: '本周',
+      startDate: _formatDate(thisWeekStart),
+      endDate: _formatDate(thisWeekEnd),
+      summary: {
+        overallRate: thisWeekRate,
+        lastWeekRate: lastWeekRate,
+        trend,
+        trendText,
+        totalHabits: habitsConfig.filter(h => h.enabled !== false).length,
+        thisWeekDone,
+        thisWeekTotal
+      },
+      dailyStats,
+      habitStats: habitRateList,
+      bestHabit: bestHabit ? {
+        id: bestHabit.id,
+        name: bestHabit.name,
+        icon: bestHabit.icon,
+        rate: bestHabit.thisWeekRate,
+        streak: bestHabit.streak
+      } : null,
+      weakestHabit: weakestHabit ? {
+        id: weakestHabit.id,
+        name: weakestHabit.name,
+        icon: weakestHabit.icon,
+        rate: weakestHabit.thisWeekRate,
+        failCount: weakestHabit.failCount
+      } : null,
+      highFailDay,
+      categoryStats,
+      waterStats,
+      emotionDist,
+      userContext: {
+        level,
+        season,
+        constitutionType: constitution ? constitution.typeId : null,
+        constitutionName: constitution && constitution.typeName ? constitution.typeName : null
+      },
+      dataSource: ['本周打卡记录', '上周打卡记录', '睡眠记录', '情绪记录']
+    };
+  }
+
   if (!window.App) window.App = {};
   if (!App.Modules) App.Modules = {};
 
@@ -5828,7 +6345,8 @@ updateProfileAiStatus();
     getEmotionDistribution,
     generateRecommendations,
     generateHealthReport,
-    getDailyTip
+    getDailyTip,
+    generateWeeklyAnalysisData
   };
 
   if (App.registerModule) {
@@ -6415,4 +6933,476 @@ updateProfileAiStatus();
       setTimeout(() => init().catch(e => console.warn('[Auth] 初始化失败:', e)), 1000);
     });
   }
+})();
+
+/* ===== modules/auto-checkin.js ===== */
+/**
+ * 自动打卡模块（仅 APK 端生效）
+ * 监听屏幕开关事件，自动完成早起/早睡打卡
+ *
+ * 逻辑：
+ *   - 解锁（USER_PRESENT）→ 4:00~12:00 之间首次解锁 → 自动打卡 early_rise
+ *   - 关屏（SCREEN_OFF）→ 20:00~次日2:00 之间关屏 → 10分钟后打卡 early_sleep
+ *   - 10分钟内亮屏 → 取消睡觉打卡
+ *   - 当天已手动打卡则跳过
+ */
+(function() {
+  'use strict';
+
+  var STORAGE_KEY = 'auto_checkin_config';
+  var DEFAULT_CONFIG = {
+    enabled: false,
+    wakeStartHour: 4,
+    wakeEndHour: 12,
+    sleepStartHour: 20,
+    sleepEndHour: 2,
+    sleepDelayMinutes: 10
+  };
+
+  var _config = null;
+  var _initialized = false;
+  var _sleepTimer = null;
+  var _screenWatcher = null;
+
+  /**
+   * 加载配置
+   */
+  function loadConfig() {
+    if (_config) return _config;
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      _config = raw ? JSON.parse(raw) : Object.assign({}, DEFAULT_CONFIG);
+      // 合并缺失字段
+      for (var k in DEFAULT_CONFIG) {
+        if (_config[k] === undefined) _config[k] = DEFAULT_CONFIG[k];
+      }
+    } catch(e) {
+      _config = Object.assign({}, DEFAULT_CONFIG);
+    }
+    return _config;
+  }
+
+  /**
+   * 保存配置
+   */
+  function saveConfig() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(loadConfig()));
+    } catch(e) {}
+  }
+
+  /**
+   * 获取今天的日期 key（YYYY-MM-DD）
+   */
+  function getTodayKey() {
+    var d = new Date();
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1).padStart(2, '0');
+    var day = String(d.getDate()).padStart(2, '0');
+    return y + '-' + m + '-' + day;
+  }
+
+  /**
+   * 检查习惯今天是否已打卡
+   */
+  function isHabitDoneToday(habitId) {
+    var records = window.checkinRecords || {};
+    var todayKey = getTodayKey();
+    var rec = records[todayKey];
+    if (!rec || !rec[habitId]) return false;
+    return !!rec[habitId].done;
+  }
+
+  /**
+   * 执行打卡（boolean 类型习惯）
+   */
+  function doAutoCheckin(habitId) {
+    var habits = window.habitsConfig || [];
+    var h = habits.find(function(x) { return x.id === habitId; });
+    if (!h) return false;
+
+    var records = window.checkinRecords || {};
+    var todayKey = getTodayKey();
+    var rec = records[todayKey] || {};
+
+    // 已打卡则跳过
+    if (rec[habitId] && rec[habitId].done) return false;
+
+    // 执行打卡
+    rec[habitId] = { done: true, value: 1, lastInterval: Date.now(), ts: Date.now() };
+    records[todayKey] = rec;
+    window.checkinRecords = records;
+
+    // 保存
+    if (typeof saveRecords === 'function') {
+      saveRecords();
+    } else if (App.Core && App.Core.Storage && App.Core.Storage.saveRecords) {
+      App.Core.Storage.saveRecords();
+    }
+
+    // 触发积分
+    if (App.Core && App.Core.Utils && typeof App.Core.Utils.addPoints === 'function') {
+      App.Core.Utils.addPoints(5, h.name + ' 自动打卡');
+    }
+
+    // 显示通知
+    if (typeof showToast === 'function') {
+      var emoji = h.icon || '✅';
+      showToast(emoji + ' 自动打卡：' + h.name);
+    }
+
+    // 播放音效
+    if (typeof playSound === 'function') {
+      playSound('checkin');
+    }
+
+    // 触发重新渲染
+    if (typeof render === 'function') {
+      render(['today', 'checkin']);
+    }
+
+    return true;
+  }
+
+  /**
+   * 处理解锁事件（起床打卡）
+   */
+  function onScreenOn() {
+    if (!_config || !_config.enabled) return;
+
+    var hour = new Date().getHours();
+    // 4:00~12:00 之间首次解锁 → 打卡早起
+    if (hour < _config.wakeStartHour || hour >= _config.wakeEndHour) return;
+
+    // 取消待执行的睡觉打卡
+    cancelSleepTimer();
+
+    // 检查是否已打卡
+    if (isHabitDoneToday('early_rise')) return;
+
+    // 执行早起打卡
+    doAutoCheckin('early_rise');
+  }
+
+  /**
+   * 处理关屏事件（睡觉打卡）
+   */
+  function onScreenOff() {
+    if (!_config || !_config.enabled) return;
+
+    var hour = new Date().getHours();
+    // 20:00~次日2:00 之间关屏 → 延迟打卡
+    var inSleepWindow = (hour >= _config.sleepStartHour || hour < _config.sleepEndHour);
+    if (!inSleepWindow) return;
+
+    // 检查是否已打卡
+    if (isHabitDoneToday('early_sleep')) return;
+
+    // 启动延迟计时器
+    cancelSleepTimer();
+    var delay = (_config.sleepDelayMinutes || 10) * 60 * 1000;
+    _sleepTimer = setTimeout(function() {
+      _sleepTimer = null;
+      if (!_config || !_config.enabled) return;
+      if (isHabitDoneToday('early_sleep')) return;
+      doAutoCheckin('early_sleep');
+    }, delay);
+  }
+
+  /**
+   * 取消睡觉打卡计时器
+   */
+  function cancelSleepTimer() {
+    if (_sleepTimer) {
+      clearTimeout(_sleepTimer);
+      _sleepTimer = null;
+    }
+  }
+
+  /**
+   * 初始化模块（仅 APK 环境）
+   */
+  function init() {
+    if (_initialized) return;
+    _initialized = true;
+
+    // 仅 APK 环境
+    if (!window.isAPK || !window.isAPK()) return;
+
+    loadConfig();
+
+    // 获取 Capacitor 插件实例
+    if (typeof Capacitor === 'undefined' || !Capacitor.Plugins || !Capacitor.Plugins.ScreenWatcher) {
+      return;
+    }
+    _screenWatcher = Capacitor.Plugins.ScreenWatcher;
+
+    // 如果已启用，自动启动服务
+    if (_config.enabled) {
+      startService();
+    }
+
+    // 注册事件监听
+    _screenWatcher.addListener('screenWatcherEvent', function(data) {
+      if (!data || !data.type) return;
+      if (data.type === 'screenOn') {
+        onScreenOn();
+      } else if (data.type === 'screenOff') {
+        onScreenOff();
+      }
+    });
+  }
+
+  /**
+   * 启动原生监听服务
+   */
+  function startService() {
+    if (!_screenWatcher) return;
+    _screenWatcher.start().then(function(result) {
+      if (result && result.ok) {
+        if (typeof showToast === 'function') {
+          showToast('🤖 自动打卡已启用');
+        }
+      } else if (result && result.error) {
+        if (typeof showToast === 'function') {
+          showToast('⚠️ ' + result.error);
+        }
+      }
+    }).catch(function(e) {
+      console.error('[AutoCheckin] 启动失败:', e);
+    });
+  }
+
+  /**
+   * 停止原生监听服务
+   */
+  function stopService() {
+    if (!_screenWatcher) return;
+    cancelSleepTimer();
+    _screenWatcher.stop().then(function() {
+      if (typeof showToast === 'function') {
+        showToast('🤖 自动打卡已关闭');
+      }
+    }).catch(function(e) {
+      console.error('[AutoCheckin] 停止失败:', e);
+    });
+  }
+
+  /**
+   * 切换启用状态
+   */
+  function toggle(callback) {
+    if (!window.isAPK || !window.isAPK()) {
+      if (typeof showToast === 'function') {
+        showToast('⚠️ 自动打卡仅支持 App 版');
+      }
+      if (callback) callback(false);
+      return;
+    }
+
+    var cfg = loadConfig();
+    cfg.enabled = !cfg.enabled;
+    saveConfig();
+
+    if (cfg.enabled) {
+      startService();
+      if (callback) callback(true);
+    } else {
+      stopService();
+      if (callback) callback(false);
+    }
+  }
+
+  /**
+   * 更新配置
+   */
+  function updateConfig(newConfig) {
+    var cfg = loadConfig();
+    for (var k in newConfig) {
+      if (cfg[k] !== undefined) cfg[k] = newConfig[k];
+    }
+    saveConfig();
+  }
+
+  /**
+   * 获取配置
+   */
+  function getConfig() {
+    return Object.assign({}, loadConfig());
+  }
+
+  /**
+   * 检查服务运行状态
+   */
+  function checkRunning(callback) {
+    if (!_screenWatcher) {
+      if (callback) callback(false);
+      return;
+    }
+    _screenWatcher.isRunning().then(function(result) {
+      if (callback) callback(result && result.running);
+    }).catch(function() {
+      if (callback) callback(false);
+    });
+  }
+
+  /**
+   * 请求忽略电池优化
+   */
+  function requestIgnoreBatteryOptimization(callback) {
+    if (!_screenWatcher) {
+      if (callback) callback(false);
+      return;
+    }
+    _screenWatcher.requestIgnoreBatteryOptimization().then(function(result) {
+      if (callback) callback(result && result.ok);
+    }).catch(function() {
+      if (callback) callback(false);
+    });
+  }
+
+  /**
+   * 检查电池优化状态
+   */
+  function isBatteryOptimizationIgnored(callback) {
+    if (!_screenWatcher) {
+      if (callback) callback(true);
+      return;
+    }
+    _screenWatcher.isBatteryOptimizationIgnored().then(function(result) {
+      if (callback) callback(result && result.ignored);
+    }).catch(function() {
+      if (callback) callback(true);
+    });
+  }
+
+  // 注册到 App.Modules
+  if (typeof App !== 'undefined' && App.registerModule) {
+    App.registerModule('modules.autoCheckin', 'modules', function() {
+      return {
+        init: init,
+        toggle: toggle,
+        getConfig: getConfig,
+        updateConfig: updateConfig,
+        checkRunning: checkRunning,
+        requestIgnoreBatteryOptimization: requestIgnoreBatteryOptimization,
+        isBatteryOptimizationIgnored: isBatteryOptimizationIgnored,
+        isHabitDoneToday: isHabitDoneToday,
+        doAutoCheckin: doAutoCheckin
+      };
+    });
+  }
+
+  // ---- UI 交互函数（暴露到 window 供 HTML onclick 调用） ----
+
+  /**
+   * 更新自动打卡 UI 状态
+   */
+  function updateAutoCheckinUI() {
+    var isAPK = window.isAPK && window.isAPK();
+    var group = document.getElementById('autoCheckinGroup');
+    if (!group) return;
+
+    if (!isAPK) {
+      group.style.display = 'none';
+      return;
+    }
+
+    group.style.display = '';
+
+    var cfg = getConfig();
+    var toggleEl = document.getElementById('autoCheckinToggle');
+    if (toggleEl) toggleEl.checked = cfg.enabled;
+
+    var descEl = document.getElementById('autoCheckinStatusDesc');
+    if (descEl) {
+      descEl.textContent = cfg.enabled
+        ? '运行中 · 早起 ' + cfg.wakeStartHour + ':00-' + cfg.wakeEndHour + ':00 · 早睡 ' + cfg.sleepStartHour + ':00-' + cfg.sleepEndHour + ':00'
+        : '开屏自动打卡早起，关屏自动打卡早睡';
+    }
+
+    // 检查电池优化状态
+    var batteryRow = document.getElementById('batteryOptRow');
+    if (batteryRow) {
+      isBatteryOptimizationIgnored(function(ignored) {
+        if (ignored) {
+          batteryRow.style.display = 'none';
+        } else {
+          batteryRow.style.display = '';
+          var batteryDesc = document.getElementById('batteryOptDesc');
+          if (batteryDesc) batteryDesc.textContent = '⚠️ 未关闭电池优化，可能影响后台运行';
+        }
+      });
+    }
+  }
+
+  /**
+   * 切换自动打卡开关
+   */
+  function toggleAutoCheckin(checked) {
+    var cfg = loadConfig();
+    var wasEnabled = cfg.enabled;
+    cfg.enabled = checked;
+    saveConfig();
+
+    if (checked && !wasEnabled) {
+      startService();
+    } else if (!checked && wasEnabled) {
+      stopService();
+    }
+
+    // 更新描述
+    var descEl = document.getElementById('autoCheckinStatusDesc');
+    if (descEl) {
+      descEl.textContent = checked
+        ? '运行中 · 早起 ' + cfg.wakeStartHour + ':00-' + cfg.wakeEndHour + ':00 · 早睡 ' + cfg.sleepStartHour + ':00-' + cfg.sleepEndHour + ':00'
+        : '开屏自动打卡早起，关屏自动打卡早睡';
+    }
+
+    // 如果启用，检查电池优化
+    if (checked) {
+      var batteryRow = document.getElementById('batteryOptRow');
+      if (batteryRow) {
+        isBatteryOptimizationIgnored(function(ignored) {
+          batteryRow.style.display = ignored ? 'none' : '';
+        });
+      }
+    }
+  }
+
+  /**
+   * 处理电池优化点击
+   */
+  function handleBatteryOptimization() {
+    requestIgnoreBatteryOptimization(function(ok) {
+      if (ok) {
+        // 延迟检查状态（用户可能需要时间操作）
+        setTimeout(function() {
+          var batteryRow = document.getElementById('batteryOptRow');
+          if (batteryRow) {
+            isBatteryOptimizationIgnored(function(ignored) {
+              batteryRow.style.display = ignored ? 'none' : '';
+              if (!ignored && typeof showToast === 'function') {
+                showToast('⚠️ 仍需在系统设置中允许后台运行');
+              }
+            });
+          }
+        }, 2000);
+      }
+    });
+  }
+
+  // 暴露到 window（供 HTML onclick 调用）
+  window.AutoCheckin = {
+    init: init,
+    toggle: toggle,
+    getConfig: getConfig,
+    updateConfig: updateConfig,
+    checkRunning: checkRunning,
+    requestIgnoreBatteryOptimization: requestIgnoreBatteryOptimization,
+    isBatteryOptimizationIgnored: isBatteryOptimizationIgnored
+  };
+  window.updateAutoCheckinUI = updateAutoCheckinUI;
+  window.toggleAutoCheckin = toggleAutoCheckin;
+  window.handleBatteryOptimization = handleBatteryOptimization;
 })();
