@@ -1,0 +1,13 @@
+{
+  "versionCode": 5,
+  "versionName": "1.4.3",
+  "cacheVersion": 2,
+  "apkUrl": "https://github.com/rui66648/lifestyle-assistant/releases/download/v1.4.3/PulseBreath-1.4.3.apk",
+  "whatsNew": [
+    "修复双击返回退出功能 - 补充缺失的 JS 全局函数和 AndroidManifest 配置",
+    "右滑返回与双击退出 - 首页手势退出、弹窗优先关闭",
+    "自动打卡服务 - 亮屏打卡起床、关屏打卡睡觉",
+    "应用名称统一为 PulseBreath"
+  ],
+  "publishedAt": "2026-07-23"
+}
