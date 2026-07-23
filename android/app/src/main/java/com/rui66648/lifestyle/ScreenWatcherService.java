@@ -98,9 +98,9 @@ public class ScreenWatcherService extends Service {
         } else {
             builder = new Notification.Builder(this);
         }
-        builder.setContentTitle("养生助手运行中")
+        builder.setContentTitle("PulseBreath 运行中")
                .setContentText("自动打卡服务已启用")
-               .setSmallIcon(R.drawable/ic_stat_notify)
+               .setSmallIcon(R.drawable.ic_stat_notify)
                .setOngoing(true)
                .setPriority(Notification.PRIORITY_LOW);
 
