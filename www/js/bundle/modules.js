@@ -3739,16 +3739,27 @@ function getConfig() {
   window.saveAiConfig = saveAiConfig;
 
   // ============================================================
-  // 键盘弹出自动滚动
+  // 键盘弹出自动滚动与输入框上移
   // ============================================================
   function initKeyboardScroll() {
     const input = document.getElementById('aiChatInput');
+    const inputBar = document.querySelector('.ai-input-bar');
+    const container = document.getElementById('aiChatMessages');
     if (!input) return;
 
     function scrollToBottom() {
-      const container = document.getElementById('aiChatMessages');
       if (container) {
         container.scrollTop = container.scrollHeight;
+      }
+    }
+
+    function updateInputBarPosition() {
+      if (!inputBar || !window.visualViewport) return;
+      const keyboardHeight = window.innerHeight - window.visualViewport.height;
+      if (keyboardHeight > 50) {
+        inputBar.style.bottom = (keyboardHeight + 20) + 'px';
+      } else {
+        inputBar.style.bottom = '70px';
       }
     }
 
@@ -3759,11 +3770,17 @@ function getConfig() {
     });
 
     if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', scrollToBottom);
+      window.visualViewport.addEventListener('resize', function() {
+        updateInputBarPosition();
+        scrollToBottom();
+      });
       window.visualViewport.addEventListener('scroll', scrollToBottom);
     }
 
-    window.addEventListener('resize', scrollToBottom);
+    window.addEventListener('resize', function() {
+      updateInputBarPosition();
+      scrollToBottom();
+    });
   }
 
   // 初始化：自动补全配置 + 加载历史记录 + 更新状态
