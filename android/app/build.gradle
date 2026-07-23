@@ -65,6 +65,14 @@ android {
         }
     }
 
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def appName = "PulseBreath"
+            def versionName = variant.versionName
+            output.outputFileName = "${appName}-${versionName}.apk"
+        }
+    }
+
     buildFeatures {
         buildConfig = true
     }
