@@ -73,7 +73,8 @@ jobs:
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleRelease --no-daemon 2>&1 | tail -100
+          ./gradlew assembleRelease --no-daemon 2>&1 | tee gradle_build.log
+          cat gradle_build.log | tail -150
 
       - name: List build outputs
         run: ls -la android/app/build/outputs/apk/release/
