@@ -47,7 +47,8 @@ _local/
 !**/_shared/fonts/*.png
 !**/assets/*.jpg
 !**/assets/*.png
-!android/app/src/main/res/mipmap*/
+# Android launcher icons - use drawable XML instead of PNG to avoid git corruption
+!android/app/src/main/res/mipmap-anydpi*/
 
 # ============================================================
 # Android
