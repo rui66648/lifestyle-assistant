@@ -290,12 +290,12 @@
         h.intervalReminder = JSON.parse(JSON.stringify(lib.intervalReminder));
         changed = true;
       }
-      // 修复缺失的 timePeriod（一键添加包等旧数据可能未写入）
+      // 修复缺失的 timePeriod
       if (!h.timePeriod && lib.timePeriod) {
         h.timePeriod = lib.timePeriod;
         changed = true;
       }
-      // 修复缺失的 reminder 结构：优先使用库中的 defaultReminder
+      // 修复缺失的 reminder 结构
       if (!h.reminder) {
         if (lib.defaultReminder) {
           h.reminder = {
@@ -314,10 +314,22 @@
       // 修复缺失的 repeat / tip
       if (!h.repeat) { h.repeat = [0,1,2,3,4,5,6]; changed = true; }
       if (!h.tip && lib.tip) { h.tip = lib.tip; changed = true; }
+      // 子午流注时间同步：若用户未手动修改过提醒时间，自动更新为库中的默认时间
+      if (lib.defaultReminder && h.reminder && h.reminder.enabled) {
+        var libTime = lib.defaultReminder.time;
+        if (libTime && h.reminder.time !== libTime) {
+          // 仅在用户时间恰好等于旧默认值(12:00/08:00)时自动更新，避免覆盖用户手动设置
+          var oldDefaults = ['12:00', '08:00', '10:30', '15:00'];
+          if (oldDefaults.indexOf(h.reminder.time) !== -1) {
+            h.reminder.time = libTime;
+            changed = true;
+          }
+        }
+      }
     });
     if (changed) {
       saveConfig();
-      console.log('[Storage] 已自动修复习惯默认字段（timePeriod / reminder / repeat / tip）');
+      console.log('[Storage] 已自动修复习惯默认字段（timePeriod / reminder / 子午流注时间）');
     }
   }
 

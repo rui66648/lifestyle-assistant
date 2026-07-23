@@ -28,6 +28,7 @@
   "homepage": "https://github.com/rui66648/lifestyle-assistant#readme",
   "dependencies": {
     "@capacitor/browser": "^8.0.4",
+    "@capacitor/preferences": "^8.0.1",
     "acorn": "^8.17.0"
   },
   "devDependencies": {
@@ -38,6 +39,7 @@
     "@vitest/coverage-v8": "^2.1.8",
     "cssnano": "^8.0.2",
     "jsdom": "^25.0.1",
+    "puppeteer-core": "^25.3.0",
     "terser": "^5.49.0",
     "vitest": "^2.1.8"
   }

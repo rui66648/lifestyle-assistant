@@ -49,7 +49,7 @@
         rec[habitId] = {done: false, failed: true, value: 0};
         showToast(`❌ 今天${esc(h.name)}了，明天加油`);
       } else {
-        rec[habitId] = {done: true, failed: false, value: 1};
+        rec[habitId] = {done: true, failed: false, value: 1, ts: Date.now()};
         const reward = getCheckinReward();
         const pts = App.Core.Utils.addPoints(reward.perHabit, `${esc(h.name)} 克制成功`);
         showToast(`✅ ${esc(h.icon)} 今天没${esc(h.name)}，继续保持！+${reward.perHabit}积分 (总:${pts})`);
@@ -68,7 +68,7 @@
         delete rec[habitId];
         showToast('已撤销打卡');
       } else {
-        rec[habitId] = {done: true, value: 1, lastInterval: Date.now()};
+        rec[habitId] = {done: true, value: 1, lastInterval: Date.now(), ts: Date.now()};
         // 打卡积分奖励
         const reward1 = getCheckinReward();
         const pts = App.Core.Utils.addPoints(reward1.perHabit, `${esc(h.name)} 打卡`);
@@ -115,7 +115,7 @@
       delete rec[habitId];
       showToast('已撤销记录');
     } else {
-      rec[habitId] = {done: true, value: val, lastInterval: Date.now()};
+      rec[habitId] = {done: true, value: val, lastInterval: Date.now(), ts: Date.now()};
       // 打卡积分奖励
       const reward2 = getCheckinReward();
       const pts = App.Core.Utils.addPoints(reward2.perHabit, `${esc(h.name)} 记录`);
@@ -878,9 +878,25 @@
   if (!window.App) window.App = {};
   if (!App.UI) App.UI = {};
 
+  function isOnHomePage() {
+    return currentTab === 'checkin';
+  }
+
+  function hasOpenPanel() {
+    const panels = document.querySelectorAll('.panel');
+    for (const panel of panels) {
+      if (panel.style.display !== 'none' && panel.style.display !== '') {
+        return true;
+      }
+    }
+    return false;
+  }
+
   App.UI.Events = {
     switchTab,
     handleNavClick,
+    isOnHomePage,
+    hasOpenPanel,
     handleCheckin,
     confirmCheckinInput,
     checkLevelUp,

@@ -14,6 +14,7 @@ workers_dev = true
 # Secret 配置（由 deploy.sh 自动设置）
 # - QWEN_API_KEY: 阿里百炼 API Key（AI 功能）
 # - VAPID_PRIVATE_KEY: Web Push 私钥（推送功能）
+# - JWT_SECRET: JWT 签名密钥（用户认证系统）
 
 # KV 命名空间（Web Push 订阅与时间表存储）
 [[kv_namespaces]]
@@ -21,6 +22,13 @@ binding = "PUSH_KV"
 id = "f0f664356b294cb1a8282aed794ffd76"
 # 自动创建方式: npx wrangler kv namespace create PUSH_KV
 # 然后把返回的 id 替换上面的 REPLACE_WITH_KV_NAMESPACE_ID
+
+# D1 数据库（用户系统 + 数据同步）
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "lifestyle-assistant"
+# database_id = "REPLACE_WITH_D1_DATABASE_ID"
+# migrations_dir = "migrations"
 
 # Cron 定时触发器：每分钟检查习惯提醒
 [triggers]

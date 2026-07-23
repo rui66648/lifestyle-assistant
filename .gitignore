@@ -59,6 +59,8 @@ android/app/build/
 android/capacitor-cordova-android-plugins/
 *.keystore
 *.jks
+*.jks.base64.txt
+release.jks.base64.txt
 
 # ============================================================
 # 构建产物
@@ -70,8 +72,10 @@ android/capacitor-cordova-android-plugins/
 # 构建时由 Gradle 从 local.properties 生成的内置云端配置（含 Key，勿提交）
 www/app-config.js
 
-# APK 构建产物（由 GitHub Actions 部署到 Pages，需纳入版本控制）
-# www/*.apk  ← 已移除，确保 app-release.apk 能被部署
+# APK 构建产物（通过 GitHub Releases 分发，不纳入版本控制）
+www/*.apk
+# Android assets 中的 APK 副本
+android/app/src/main/assets/public/*.apk
 
 # ============================================================
 # 系统文件

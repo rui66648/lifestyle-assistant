@@ -20,7 +20,9 @@
     "modules/notification.js",
     "modules/guide.js",
     "modules/update.js",
-    "modules/recommendation.js"
+    "modules/recommendation.js",
+    "modules/auth.js",
+    "modules/auto-checkin.js"
   ],
   "ui": [
     "ui/render.js",

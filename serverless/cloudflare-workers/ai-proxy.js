@@ -880,6 +880,11 @@ async function handleAiProxy(request, env, ctx, requestId){
 }
 
 // ============================================================
+// 导入认证与同步模块
+// ============================================================
+import { handleAuthRoute, handleSyncRoute } from './auth.js';
+
+// ============================================================
 // 主入口（ES Module）
 // ============================================================
 export default {
@@ -924,6 +929,24 @@ export default {
       catch(e){
         log('error','mcp','路由异常', { requestId, err:e.message, path });
         return jsonResponse({ error:'MCP 路由错误:'+e.message, request_id:requestId }, 500);
+      }
+    }
+
+    // ===== 用户认证路由 =====
+    if (path.startsWith('/auth/')){
+      try { return await handleAuthRoute(request, env, path); }
+      catch(e){
+        log('error','auth','路由异常', { requestId, err:e.message, path });
+        return jsonResponse({ error:'认证路由错误:'+e.message, request_id:requestId }, 500);
+      }
+    }
+
+    // ===== 数据同步路由 =====
+    if (path.startsWith('/sync/')){
+      try { return await handleSyncRoute(request, env, path); }
+      catch(e){
+        log('error','sync','路由异常', { requestId, err:e.message, path });
+        return jsonResponse({ error:'同步路由错误:'+e.message, request_id:requestId }, 500);
       }
     }
 

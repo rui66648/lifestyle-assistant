@@ -2,27 +2,32 @@ const HEALTH_PACK = {
   name: '健康生活建议包',
   description: '基于《黄帝内经》与现代医学的一日健康作息方案',
   habits: [
-    // 早晨：早起+喝水+运动+早餐
+    // 卯时 大肠经：早起
     {id:'early_rise',reminder:{time:'06:30',enabled:true}},
-    {id:'daily_water',reminder:{time:'06:40',enabled:true}},
+    // 辰时 胃经：晨起饮水+运动+早餐
+    {id:'daily_water',reminder:{time:'07:00',enabled:true}},
     {id:'morning_run',reminder:{time:'07:00',enabled:true}},
-    {id:'breakfast',reminder:{time:'07:45',enabled:true}},
-    // 上午：护眼+坐姿+起身+深呼吸
-    {id:'eye_rest',reminder:{time:'10:00',enabled:true}},
+    {id:'breakfast',reminder:{time:'07:30',enabled:true}},
+    // 巳时 脾经：坐姿+护眼+深呼吸
     {id:'good_posture',reminder:{time:'09:00',enabled:true}},
-    {id:'sit_protect',reminder:{time:'10:30',enabled:true}},
-    {id:'deep_breath',reminder:{time:'11:00',enabled:true}},
-    // 下午：均衡饮食+散步+蔬果+午休
+    {id:'sit_protect',reminder:{time:'09:00',enabled:true}},
+    {id:'eye_rest',reminder:{time:'10:00',enabled:true}},
+    {id:'deep_breath',reminder:{time:'10:00',enabled:true}},
+    // 午时 心经：饮食+午休
     {id:'healthy_diet',reminder:{time:'12:00',enabled:true}},
-    {id:'evening_walk',reminder:{time:'12:30',enabled:true}},
-    {id:'nap',reminder:{time:'13:00',enabled:true}},
+    {id:'nap',reminder:{time:'12:30',enabled:true}},
+    // 未时 小肠经：蔬果
     {id:'fruits_veggies',reminder:{time:'14:00',enabled:true}},
+    // 申时 膀胱经：茶歇
     {id:'tea_time',reminder:{time:'15:30',enabled:true}},
-    // 晚上：护肤+泡脚+冥想+日记+早睡
-    {id:'skincare',reminder:{time:'21:00',enabled:true}},
-    {id:'foot_bath',reminder:{time:'21:30',enabled:true}},
-    {id:'meditation',reminder:{time:'22:00',enabled:true}},
-    {id:'diary',reminder:{time:'22:15',enabled:true}},
+    // 酉时 肾经：散步
+    {id:'evening_walk',reminder:{time:'18:30',enabled:true}},
+    // 辰时 胃经：晨间护肤
+    {id:'skincare',reminder:{time:'07:00',enabled:true}},
+    // 亥时 三焦经：泡脚+冥想+日记+早睡
+    {id:'foot_bath',reminder:{time:'21:00',enabled:true}},
+    {id:'meditation',reminder:{time:'07:00',enabled:true}},
+    {id:'diary',reminder:{time:'21:00',enabled:true}},
     {id:'early_sleep',reminder:{time:'22:30',enabled:true}}
   ]
 };
@@ -38,23 +43,25 @@ const SEASONAL_PACKS = {
     quote: '',
     tip: '春季养生重在<em>养肝</em>。夜卧早起（不超23点），广步于庭（户外散步舒展），使志生（精神舒展不压抑），省酸增甘（多吃甘味养肝脾）。逆之伤肝。',
     habits: [
-      // 起居：夜卧早起
+      // 卯时 大肠经：起居
       {id:'early_rise',reminder:{time:'06:30',enabled:true}},
       {id:'early_sleep',reminder:{time:'22:30',enabled:true}},
-      // 运动：广步于庭（散步舒展）
-      {id:'evening_walk',reminder:{time:'07:30',enabled:true}},
-      {id:'stretch',reminder:{time:'20:00',enabled:true}},
-      // 饮食：省酸增甘，养肝护脾
+      // 辰时 胃经：运动+饮食
+      {id:'evening_walk',reminder:{time:'18:30',enabled:true}},
+      {id:'stretch',reminder:{time:'18:00',enabled:true}},
       {id:'breakfast',reminder:{time:'07:30',enabled:true}},
+      {id:'daily_water',reminder:{time:'07:00',enabled:true}},
+      // 午时 心经：饮食
       {id:'healthy_diet',reminder:{time:'12:00',enabled:true}},
-      {id:'fruits_veggies',reminder:{time:'12:00',enabled:true}},
       {id:'green_food',reminder:{time:'12:00',enabled:true}},
-      // 情志：使志生（精神舒展，不压抑不发怒）
-      {id:'meditation',reminder:{time:'22:00',enabled:true}},
-      {id:'emotion_check',reminder:{time:'21:00',enabled:true}},
-      // 防护
-      {id:'daily_water',reminder:{time:'06:40',enabled:true}},
-      {id:'eye_rest',reminder:{time:'10:30',enabled:true}}
+      // 未时 小肠经：蔬果
+      {id:'fruits_veggies',reminder:{time:'14:00',enabled:true}},
+      // 巳时 脾经：护眼
+      {id:'eye_rest',reminder:{time:'10:00',enabled:true}},
+      // 辰时 胃经：冥想
+      {id:'meditation',reminder:{time:'07:00',enabled:true}},
+      // 亥时 三焦经：情志
+      {id:'emotion_check',reminder:{time:'21:00',enabled:true}}
     ]
   },
   summer: {
@@ -67,23 +74,26 @@ const SEASONAL_PACKS = {
     quote: '',
     tip: '夏季养生重在<em>养心</em>。夜卧早起，无厌于日（适当晒太阳不出汗），使志无怒（保持心情愉快不郁怒），饮食清淡多食苦（清心火）。逆之伤心。',
     habits: [
-      // 起居：夜卧早起
-      {id:'early_rise',reminder:{time:'06:00',enabled:true}},
+      // 卯时 大肠经：起居
+      {id:'early_rise',reminder:{time:'06:30',enabled:true}},
       {id:'early_sleep',reminder:{time:'22:30',enabled:true}},
-      {id:'nap',reminder:{time:'13:00',enabled:true}},
-      // 运动：无厌于日（适当晒太阳，使气得泄）
+      // 午时 心经：午休
+      {id:'nap',reminder:{time:'12:30',enabled:true}},
+      // 辰时 胃经：运动+饮水
       {id:'morning_run',reminder:{time:'07:00',enabled:true}},
-      {id:'evening_walk',reminder:{time:'16:00',enabled:true}},
-      // 饮食：清淡为主，适当食苦味清心火
+      {id:'daily_water',reminder:{time:'07:00',enabled:true}},
+      // 午时 心经：饮食
       {id:'healthy_diet',reminder:{time:'12:00',enabled:true}},
       {id:'red_food',reminder:{time:'12:00',enabled:true}},
-      {id:'no_sugar_drink',reminder:{time:'14:00',enabled:true}},
-      {id:'tea_time',reminder:{time:'15:00',enabled:true}},
-      // 情志：使志无怒（保持心情愉快）
-      {id:'meditation',reminder:{time:'22:00',enabled:true}},
+      // 申时 膀胱经：饮品
+      {id:'no_sugar_drink',reminder:{time:'15:00',enabled:true}},
+      {id:'tea_time',reminder:{time:'15:30',enabled:true}},
+      // 辰时 胃经：冥想
+      {id:'meditation',reminder:{time:'07:00',enabled:true}},
+      // 亥时 三焦经：感恩
       {id:'gratitude',reminder:{time:'21:00',enabled:true}},
-      // 饮水：夏季多汗，多饮水
-      {id:'daily_water',reminder:{time:'06:10',enabled:true}}
+      // 酉时 肾经：散步
+      {id:'evening_walk',reminder:{time:'18:30',enabled:true}}
     ]
   },
   autumn: {
@@ -96,23 +106,25 @@ const SEASONAL_PACKS = {
     quote: '',
     tip: '秋季养生重在<em>养肺</em>。早卧早起（与鸡俱兴），使志安宁（保持内心宁静），食酸敛肺防秋燥（多吃白色食物）。逆之伤肺。',
     habits: [
-      // 起居：早卧早起，与鸡俱兴
+      // 卯时 大肠经：起居
       {id:'early_rise',reminder:{time:'06:30',enabled:true}},
-      {id:'early_sleep',reminder:{time:'22:00',enabled:true}},
-      // 饮食：食酸敛肺，防秋燥，多吃白色食物
+      {id:'early_sleep',reminder:{time:'22:30',enabled:true}},
+      // 午时 心经：饮食
       {id:'healthy_diet',reminder:{time:'12:00',enabled:true}},
       {id:'white_food',reminder:{time:'12:00',enabled:true}},
+      // 未时 小肠经：蔬果
       {id:'fruits_veggies',reminder:{time:'14:00',enabled:true}},
-      {id:'nuts_intake',reminder:{time:'15:00',enabled:true}},
-      // 护肤：秋季干燥，注意保湿
-      {id:'skincare',reminder:{time:'21:00',enabled:true}},
-      {id:'foot_bath',reminder:{time:'21:30',enabled:true}},
-      // 情志：使志安宁（保持内心宁静）
-      {id:'meditation',reminder:{time:'22:00',enabled:true}},
-      {id:'diary',reminder:{time:'22:15',enabled:true}},
-      // 运动：适度收敛，减少剧烈运动
-      {id:'evening_walk',reminder:{time:'16:00',enabled:true}},
-      {id:'deep_breath',reminder:{time:'10:00',enabled:true}}
+      // 巳时 脾经：坚果+深呼吸
+      {id:'nuts_intake',reminder:{time:'10:00',enabled:true}},
+      {id:'deep_breath',reminder:{time:'10:00',enabled:true}},
+      // 辰时 胃经：护肤
+      {id:'skincare',reminder:{time:'07:00',enabled:true}},
+      // 亥时 三焦经：泡脚+冥想+日记
+      {id:'foot_bath',reminder:{time:'21:00',enabled:true}},
+      {id:'meditation',reminder:{time:'07:00',enabled:true}},
+      {id:'diary',reminder:{time:'21:00',enabled:true}},
+      // 酉时 肾经：散步
+      {id:'evening_walk',reminder:{time:'18:30',enabled:true}}
     ]
   },
   winter: {
@@ -125,22 +137,23 @@ const SEASONAL_PACKS = {
     quote: '',
     tip: '冬季养生重在<em>养肾</em>。早卧晚起（必待日光，等太阳升起再起床），使志若伏若匿（情志内藏不外露），食咸补肾（温补食物），去寒就温（注意保暖），无泄皮肤（减少户外出汗）。逆之伤肾。',
     habits: [
-      // 起居：早卧晚起，必待日光
-      {id:'early_sleep',reminder:{time:'21:30',enabled:true}},
-      {id:'evening_walk',reminder:{time:'10:00',enabled:true}},
-      // 饮食：食咸补肾，温热食物，去寒就温
+      // 亥时 三焦经：早睡
+      {id:'early_sleep',reminder:{time:'22:30',enabled:true}},
+      // 酉时 肾经：散步+拉伸
+      {id:'evening_walk',reminder:{time:'18:30',enabled:true}},
+      {id:'stretch',reminder:{time:'18:00',enabled:true}},
+      // 午时 心经：饮食
       {id:'healthy_diet',reminder:{time:'12:00',enabled:true}},
       {id:'black_food',reminder:{time:'12:00',enabled:true}},
+      // 亥时 三焦经：泡脚
       {id:'foot_bath',reminder:{time:'21:00',enabled:true}},
-      {id:'vitamin',reminder:{time:'20:00',enabled:true}},
-      // 运动：减少户外出汗，无泄皮肤
-      {id:'stretch',reminder:{time:'20:00',enabled:true}},
-      {id:'yoga',reminder:{time:'19:00',enabled:true}},
-      // 情志：使志若伏若匿（情志内藏，不外露）
-      {id:'meditation',reminder:{time:'21:30',enabled:true}},
-      {id:'reading',reminder:{time:'20:00',enabled:true}},
-      // 保暖：去寒就温
-      {id:'daily_water',reminder:{time:'07:00',enabled:true}}
+      // 辰时 胃经：维他命+瑜伽+冥想+饮水
+      {id:'vitamin',reminder:{time:'08:00',enabled:true}},
+      {id:'yoga',reminder:{time:'07:00',enabled:true}},
+      {id:'meditation',reminder:{time:'07:00',enabled:true}},
+      {id:'daily_water',reminder:{time:'07:00',enabled:true}},
+      // 巳时 脾经：阅读
+      {id:'reading',reminder:{time:'09:30',enabled:true}}
     ]
   }
 };
@@ -217,10 +230,10 @@ const CONSTITUTION_PACKS = {
     description: '畏寒怕冷、手脚冰凉，需要温补阳气',
     focus: '温补脾肾，散寒保暖',
     habits: [
-      {id:'early_sleep',reminder:{time:'21:00',enabled:true}},
-      {id:'foot_bath',reminder:{time:'21:30',enabled:true}},
-      {id:'black_food',reminder:{time:'07:00',enabled:true}},
-      {id:'morning_run',reminder:{time:'07:30',enabled:true}},
+      {id:'early_sleep',reminder:{time:'22:30',enabled:true}},
+      {id:'foot_bath',reminder:{time:'21:00',enabled:true}},
+      {id:'black_food',reminder:{time:'12:00',enabled:true}},
+      {id:'morning_run',reminder:{time:'07:00',enabled:true}},
       {id:'winter_warm',reminder:{time:'08:00',enabled:true}},
       {id:'daily_water',reminder:{time:'07:00',enabled:true}},
       {id:'healthy_diet',reminder:{time:'12:00',enabled:true}}
@@ -234,11 +247,11 @@ const CONSTITUTION_PACKS = {
     habits: [
       {id:'white_food',reminder:{time:'12:00',enabled:true}},
       {id:'fruits_veggies',reminder:{time:'14:00',enabled:true}},
-      {id:'tea_time',reminder:{time:'15:00',enabled:true}},
-      {id:'meditation',reminder:{time:'22:00',enabled:true}},
-      {id:'skincare',reminder:{time:'21:00',enabled:true}},
+      {id:'tea_time',reminder:{time:'15:30',enabled:true}},
+      {id:'meditation',reminder:{time:'07:00',enabled:true}},
+      {id:'skincare',reminder:{time:'07:00',enabled:true}},
       {id:'no_spicy',reminder:{time:'12:00',enabled:true}},
-      {id:'early_sleep',reminder:{time:'22:00',enabled:true}}
+      {id:'early_sleep',reminder:{time:'22:30',enabled:true}}
     ]
   },
   phlegm: {
@@ -249,10 +262,10 @@ const CONSTITUTION_PACKS = {
     habits: [
       {id:'morning_run',reminder:{time:'07:00',enabled:true}},
       {id:'healthy_diet',reminder:{time:'12:00',enabled:true}},
-      {id:'no_sugar_drink',reminder:{time:'14:00',enabled:true}},
-      {id:'fruits_veggies',reminder:{time:'12:00',enabled:true}},
+      {id:'no_sugar_drink',reminder:{time:'15:00',enabled:true}},
+      {id:'fruits_veggies',reminder:{time:'14:00',enabled:true}},
       {id:'deep_breath',reminder:{time:'10:00',enabled:true}},
-      {id:'evening_walk',reminder:{time:'18:00',enabled:true}},
+      {id:'evening_walk',reminder:{time:'18:30',enabled:true}},
       {id:'green_food',reminder:{time:'12:00',enabled:true}}
     ]
   },
@@ -263,9 +276,9 @@ const CONSTITUTION_PACKS = {
     focus: '活血化瘀，行气通络',
     habits: [
       {id:'morning_run',reminder:{time:'07:00',enabled:true}},
-      {id:'evening_walk',reminder:{time:'18:00',enabled:true}},
+      {id:'evening_walk',reminder:{time:'18:30',enabled:true}},
       {id:'deep_breath',reminder:{time:'10:00',enabled:true}},
-      {id:'meditation',reminder:{time:'22:00',enabled:true}},
+      {id:'meditation',reminder:{time:'07:00',enabled:true}},
       {id:'healthy_diet',reminder:{time:'12:00',enabled:true}},
       {id:'fruits_veggies',reminder:{time:'14:00',enabled:true}},
       {id:'red_food',reminder:{time:'12:00',enabled:true}}
@@ -277,13 +290,13 @@ const CONSTITUTION_PACKS = {
     description: '情绪抑郁、胸闷叹气，需要疏肝理气',
     focus: '疏肝解郁，畅达情志',
     habits: [
-      {id:'meditation',reminder:{time:'22:00',enabled:true}},
-      {id:'evening_walk',reminder:{time:'18:00',enabled:true}},
+      {id:'meditation',reminder:{time:'07:00',enabled:true}},
+      {id:'evening_walk',reminder:{time:'18:30',enabled:true}},
       {id:'gratitude',reminder:{time:'21:00',enabled:true}},
       {id:'emotion_check',reminder:{time:'21:00',enabled:true}},
-      {id:'diary',reminder:{time:'22:15',enabled:true}},
-      {id:'tea_time',reminder:{time:'15:00',enabled:true}},
-      {id:'stretch',reminder:{time:'20:00',enabled:true}}
+      {id:'diary',reminder:{time:'21:00',enabled:true}},
+      {id:'tea_time',reminder:{time:'15:30',enabled:true}},
+      {id:'stretch',reminder:{time:'18:00',enabled:true}}
     ]
   },
   special: {
@@ -292,12 +305,12 @@ const CONSTITUTION_PACKS = {
     description: '气虚、血虚、湿热、平和体质综合调理',
     focus: '综合调理，因人而异',
     habits: [
-      {id:'yellow_food',reminder:{time:'07:00',enabled:true}},
-      {id:'morning_run',reminder:{time:'07:30',enabled:true}},
+      {id:'yellow_food',reminder:{time:'12:00',enabled:true}},
+      {id:'morning_run',reminder:{time:'07:00',enabled:true}},
       {id:'healthy_diet',reminder:{time:'12:00',enabled:true}},
       {id:'daily_water',reminder:{time:'07:00',enabled:true}},
-      {id:'meditation',reminder:{time:'22:00',enabled:true}},
-      {id:'nap',reminder:{time:'13:00',enabled:true}},
+      {id:'meditation',reminder:{time:'07:00',enabled:true}},
+      {id:'nap',reminder:{time:'12:30',enabled:true}},
       {id:'fruits_veggies',reminder:{time:'14:00',enabled:true}}
     ]
   }
@@ -311,15 +324,15 @@ const WORK_PACK = {
   habits: [
     {id:'good_posture',reminder:{time:'09:00',enabled:true}},
     {id:'eye_rest',reminder:{time:'10:00',enabled:true}},
-    {id:'sit_protect',reminder:{time:'10:30',enabled:true}},
-    {id:'deep_breath',reminder:{time:'11:00',enabled:true}},
+    {id:'sit_protect',reminder:{time:'09:00',enabled:true}},
+    {id:'deep_breath',reminder:{time:'10:00',enabled:true}},
     {id:'healthy_diet',reminder:{time:'12:00',enabled:true}},
-    {id:'evening_walk',reminder:{time:'12:30',enabled:true}},
-    {id:'nap',reminder:{time:'13:00',enabled:true}},
+    {id:'nap',reminder:{time:'12:30',enabled:true}},
     {id:'tea_time',reminder:{time:'15:30',enabled:true}},
-    {id:'stretch',reminder:{time:'16:00',enabled:true}},
-    {id:'skincare',reminder:{time:'21:00',enabled:true}},
-    {id:'meditation',reminder:{time:'22:00',enabled:true}},
+    {id:'stretch',reminder:{time:'18:00',enabled:true}},
+    {id:'skincare',reminder:{time:'07:00',enabled:true}},
+    {id:'meditation',reminder:{time:'07:00',enabled:true}},
+    {id:'evening_walk',reminder:{time:'18:30',enabled:true}},
     {id:'early_sleep',reminder:{time:'22:30',enabled:true}}
   ]
 };
@@ -331,19 +344,19 @@ const STUDENT_PACK = {
   focus: '科学备考，身心健康',
   habits: [
     {id:'early_rise',reminder:{time:'06:30',enabled:true}},
-    {id:'daily_water',reminder:{time:'06:40',enabled:true}},
-    {id:'breakfast',reminder:{time:'07:00',enabled:true}},
+    {id:'daily_water',reminder:{time:'07:00',enabled:true}},
+    {id:'breakfast',reminder:{time:'07:30',enabled:true}},
+    {id:'reading',reminder:{time:'09:30',enabled:true}},
     {id:'eye_rest',reminder:{time:'10:00',enabled:true}},
-    {id:'deep_breath',reminder:{time:'11:00',enabled:true}},
+    {id:'deep_breath',reminder:{time:'10:00',enabled:true}},
     {id:'healthy_diet',reminder:{time:'12:00',enabled:true}},
-    {id:'fruits_veggies',reminder:{time:'12:00',enabled:true}},
-    {id:'nap',reminder:{time:'13:00',enabled:true}},
-    {id:'reading',reminder:{time:'15:00',enabled:true}},
-    {id:'stretch',reminder:{time:'16:00',enabled:true}},
-    {id:'evening_walk',reminder:{time:'17:00',enabled:true}},
-    {id:'meditation',reminder:{time:'21:00',enabled:true}},
-    {id:'diary',reminder:{time:'21:30',enabled:true}},
-    {id:'early_sleep',reminder:{time:'22:00',enabled:true}}
+    {id:'fruits_veggies',reminder:{time:'14:00',enabled:true}},
+    {id:'nap',reminder:{time:'12:30',enabled:true}},
+    {id:'stretch',reminder:{time:'18:00',enabled:true}},
+    {id:'evening_walk',reminder:{time:'18:30',enabled:true}},
+    {id:'meditation',reminder:{time:'07:00',enabled:true}},
+    {id:'diary',reminder:{time:'21:00',enabled:true}},
+    {id:'early_sleep',reminder:{time:'22:30',enabled:true}}
   ]
 };
 
@@ -353,17 +366,17 @@ const FITNESS_PACK = {
   description: '健身爱好者专属：科学训练、营养补充、恢复休息',
   focus: '科学健身，健康增肌',
   habits: [
-    {id:'early_rise',reminder:{time:'06:00',enabled:true}},
-    {id:'morning_run',reminder:{time:'06:30',enabled:true}},
+    {id:'early_rise',reminder:{time:'06:30',enabled:true}},
+    {id:'morning_run',reminder:{time:'07:00',enabled:true}},
     {id:'breakfast',reminder:{time:'07:30',enabled:true}},
     {id:'protein_intake',reminder:{time:'08:00',enabled:true}},
     {id:'healthy_diet',reminder:{time:'12:00',enabled:true}},
-    {id:'fruits_veggies',reminder:{time:'12:00',enabled:true}},
-    {id:'nuts_intake',reminder:{time:'15:00',enabled:true}},
-    {id:'yoga',reminder:{time:'18:00',enabled:true}},
-    {id:'skincare',reminder:{time:'21:00',enabled:true}},
-    {id:'foot_bath',reminder:{time:'21:30',enabled:true}},
-    {id:'early_sleep',reminder:{time:'22:00',enabled:true}}
+    {id:'fruits_veggies',reminder:{time:'14:00',enabled:true}},
+    {id:'nuts_intake',reminder:{time:'10:00',enabled:true}},
+    {id:'yoga',reminder:{time:'07:00',enabled:true}},
+    {id:'skincare',reminder:{time:'07:00',enabled:true}},
+    {id:'foot_bath',reminder:{time:'21:00',enabled:true}},
+    {id:'early_sleep',reminder:{time:'22:30',enabled:true}}
   ]
 };
 

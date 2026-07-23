@@ -1,6 +1,6 @@
 // water.js - 饮水追踪模块
 (function() {
-  function renderWaterTracker(h, rec) {
+  function renderWaterTracker(h, rec, isViewToday) {
     const wc = h.waterConfig || {dailyGoal:2000, perCup:250};
     const goal = wc.dailyGoal || 2000;
     const perCup = wc.perCup || 250;
@@ -22,7 +22,7 @@
     for (let i = 0; i < totalCups; i++) {
       const filled = i < doneCups;
       const isNext = i === doneCups;
-      const clickAttr = filled ? '' : `onclick="quickAddWater('${h.id}',${perCup})"`;
+      const clickAttr = (isViewToday !== false && !filled) ? `onclick="quickAddWater('${h.id}',${perCup})"` : '';
 
       cupsViz += `<div class="water-cup-item">
         <div class="water-cup ${filled ? 'filled' : ''} ${isNext ? 'next' : ''}" ${clickAttr} title="${filled ? '已喝 ✓' : '点击记录一杯'}">
@@ -72,14 +72,14 @@
       <div style="font-size:12px;color:var(--muted);margin-bottom:4px">${remaining > 0 ? `还需 ${remainingCups}杯(${remaining}ml)` : '今日目标已达成！🎉'}</div>
       ${smartTip}
       ${cupsViz}
-      <div class="water-quick-row" style="margin:8px 0">
+      ${isViewToday !== false ? `<div class="water-quick-row" style="margin:8px 0">
         <span class="water-qty-group">
           <button class="water-qty-btn" onclick="quickAddWater('${h.id}',${Math.round(perCup/2)})">${Math.round(perCup/2)}ml</button>
           <button class="water-qty-btn primary" onclick="quickAddWater('${h.id}',${perCup})">${perCup}ml</button>
           <button class="water-qty-btn" onclick="quickAddWater('${h.id}',${perCup*2})">${perCup*2}ml</button>
         </span>
         <button class="water-custom-btn" onclick="openWaterInputPanel('${h.id}')" title="自定义量">✏️ 自定义</button>
-      </div>
+      </div>` : ''}
       ${cupsHtml}
     </div>`;
   }

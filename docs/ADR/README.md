@@ -13,6 +13,7 @@
 | 0004  | 通过 Capacitor 包装 PWA，平台分支在 main.js| Accepted | 2026-07-18  |
 | 0005  | localStorage 单一数据源，无多设备自动同步  | Accepted | 2026-07-18  |
 | 0006  | Serverless 后端：Cloudflare Workers 主 + 阿里云 FC 备 | Accepted | 2026-07-18 |
+| 0007  | App 版用户系统（可选登录 + 云同步）             | Accepted | 2026-07-22  |
 
 ## 状态定义
 

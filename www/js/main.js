@@ -148,6 +148,11 @@
 
     // 启动时重新注册习惯提醒（设备重启后 Capacitor 通知会丢失）
     scheduleHabitRemindersOnStart();
+
+    // 初始化自动打卡模块（仅 APK）
+    if (window.AutoCheckin && window.AutoCheckin.init) {
+      window.AutoCheckin.init();
+    }
   }
 
   // ============================================================

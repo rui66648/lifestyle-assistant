@@ -1,8 +1,14 @@
 /**
  * Android 签名包构建封装
  * 用法：
- *   node scripts/build-android.mjs --release   → 生成签名 APK (app-release.apk)
- *   node scripts/build-android.mjs --aab       → 生成签名 AAB (app-release.aab)
+ *   node scripts/build-android.mjs --release          → 生成签名 APK 并复制到 www/
+ *   node scripts/build-android.mjs --release --no-copy  → 生成签名 APK，不复制到 www/
+ *   node scripts/build-android.mjs --aab              → 生成签名 AAB (app-release.aab)
+ *
+ * 参数：
+ *   --release : 构建 APK（默认）
+ *   --aab     : 构建 AAB（Google Play 上架用）
+ *   --no-copy : 不将 APK 复制到 www/（使用 GitHub Releases 分发时使用）
  *
  * 前置条件：
  *   1. android/keystore.properties 已配置（从 keystore.properties.example 复制）
@@ -19,6 +25,7 @@ const androidDir = join(root, '..', 'android');
 const wwwDir = join(root, '..', 'www');
 
 const mode = process.argv.includes('--aab') ? 'aab' : 'release';
+const noCopy = process.argv.includes('--no-copy');
 const gradleTask = mode === 'aab' ? 'bundleRelease' : 'assembleRelease';
 const outputExt = mode === 'aab' ? '.aab' : '.apk';
 const outputName = 'app-release' + outputExt;
@@ -90,14 +97,18 @@ try {
 const buildOutput = join(androidDir, 'app', 'build', 'outputs', mode === 'aab' ? 'bundle' : 'apk', 'release', outputName);
 if (existsSync(buildOutput)) {
   const sizeMB = (statSync(buildOutput).size / 1024 / 1024).toFixed(2);
-  // APK 复制到 www/ 供 GitHub Pages 分发；AAB 不需要复制
   if (mode === 'release') {
-    const dest = join(wwwDir, outputName);
-    copyFileSync(buildOutput, dest);
     console.log('');
     console.log('✅ APK 构建成功！');
-    console.log('   产物:', dest);
+    console.log('   产物:', buildOutput);
     console.log('   大小:', sizeMB, 'MB');
+    if (!noCopy) {
+      const dest = join(wwwDir, outputName);
+      copyFileSync(buildOutput, dest);
+      console.log('   已复制到:', dest);
+    } else {
+      console.log('   (--no-copy: 未复制到 www/)');
+    }
   } else {
     console.log('');
     console.log('✅ AAB 构建成功！');

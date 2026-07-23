@@ -1,7 +1,10 @@
 {
   "name": "lifestyle-ai-proxy-fc",
-  "version": "1.0.0",
-  "description": "养生助手 AI 代理 - 阿里云函数计算（FC）版",
+  "version": "1.1.0",
+  "description": "养生助手后端（AI 代理 + 用户认证 + 数据同步）- 阿里云函数计算版",
   "main": "index.js",
-  "runtime": "nodejs20"
+  "runtime": "nodejs20",
+  "dependencies": {
+    "mysql2": "^3.10.0"
+  }
 }

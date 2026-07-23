@@ -1,7 +1,7 @@
 {
   "versionCode": 4,
   "versionName": "1.4.0",
-  "cacheVersion": 1,
+  "cacheVersion": 2,
   "apkUrl": "https://rui66648.github.io/lifestyle-assistant/app-release.apk",
   "whatsNew": [
     "提醒设置优化 - 分段控制器、开关组件、动态文案",

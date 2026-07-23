@@ -546,6 +546,9 @@ body.dark .bottom-nav{background:rgba(15,23,42,0.92);border-top-color:rgba(255,2
 .habit-card .meta{font-size:11px;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .habit-card .streak{font-size:10px;color:var(--accent-700);background:var(--accent-light);padding:3px 10px;border-radius:8px;font-weight:700}
 .habit-card .habit-desc{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5;opacity:.8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px}
+.habit-card .history-detail{font-size:12px;color:var(--accent);margin-top:6px;line-height:1.4;display:flex;align-items:center;gap:8px}
+.habit-card .history-checkin-time{display:flex;align-items:center;gap:3px}
+.habit-card .history-checkin-value{font-weight:600}
 .habit-card .checkin-btn{
   padding:8px 16px;border-radius:16px;
   font-size:13px;font-weight:600;

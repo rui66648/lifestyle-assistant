@@ -204,7 +204,7 @@
       return nextMinutes;
     }
     const tp = h.timePeriod || 'daytime';
-    const defaults = {morning:420, forenoon:600, afternoon:840, evening:1260, daytime:720};
+    const defaults = {morning:420, forenoon:570, afternoon:780, evening:1110, daytime:720};
     return defaults[tp] || 720;
   }
 
@@ -220,6 +220,7 @@
       const repeat = h.repeat || [0,1,2,3,4,5,6];
       if (!repeat.includes(viewDow)) return;
       const checked = isChecked(h, rec);
+      if (!isViewToday && !checked) return;
       const nextTime = _getNextTime(h, rec, nowMinutes);
       const overdue = isViewToday && !checked && nextTime < nowMinutes;
       const soon = isViewToday && !checked && !overdue && nextTime <= nowMinutes + 60;
@@ -247,7 +248,7 @@
     </div>`;
   }
 
-  function _renderHabitCardRow(h, checked, overdue, soon, rec, nextTime) {
+  function _renderHabitCardRow(h, checked, overdue, soon, rec, nextTime, isViewToday) {
     const collapsedClass = checked ? 'collapsed' : '';
     const doneCardClass = checked ? 'done-card' : '';
     const ribbonCls = checked ? 'done' : overdue ? 'overdue' : 'pending';
@@ -271,7 +272,7 @@
     }
 
     if (h.type === 'water') {
-      return renderWaterTracker(h, rec).replace('class="water-tracker"', `class="water-tracker ${collapsedClass} ${periodClass}"`);
+      return renderWaterTracker(h, rec, isViewToday).replace('class="water-tracker"', `class="water-tracker ${collapsedClass} ${periodClass}"`);
     }
 
     if (h.type === 'select') {
@@ -279,15 +280,26 @@
       const tipStr2 = h.tip || '';
       const timeHint = overdue ? '<span class="habit-time-hint overdue">已过期</span>' : soon ? '<span class="habit-time-hint soon">即将</span>' : '';
       const emotionPeriod = h.timePeriod && periodMap[h.timePeriod] ? periodMap[h.timePeriod] + '-period' : '';
-      return `<div class="habit-card ${collapsedClass} ${emotionPeriod}" id="card-${h.id}" onclick="openEmotionPanel()">
+      const emotionBtnHtml = isViewToday ? `<button class="checkin-btn ${selected ? 'done' : 'pending'}">${selected ? '✓' : '记录'}</button>` : '';
+
+      let emotionHistoryDetail = '';
+      if (!isViewToday && selected && rec[h.id] && rec[h.id].ts) {
+        const dt = new Date(rec[h.id].ts);
+        const hour = dt.getHours().toString().padStart(2, '0');
+        const minute = dt.getMinutes().toString().padStart(2, '0');
+        emotionHistoryDetail = `<div class="history-detail"><span class="history-checkin-time">🕐 ${hour}:${minute}</span></div>`;
+      }
+
+      return `<div class="habit-card ${collapsedClass} ${emotionPeriod}" id="card-${h.id}" onclick="${isViewToday ? 'openEmotionPanel()' : ''}">
         <span class="status-ribbon ${ribbonCls}"></span>
         <span class="icon">${esc(h.icon)}</span>
         <div class="info">
           <div class="name">${esc(h.name)}${selected ? '：' + selected : ''}</div>
           <div class="meta"><span style="color:var(--accent)">下次提醒 ${nextTimeStr || '点击记录今日情绪'}</span>${timeHint}</div>
           ${tipStr2 ? `<div style="font-size:11px;color:var(--accent);margin-top:3px;line-height:1.4">💡 ${tipStr2}</div>` : ''}
+          ${emotionHistoryDetail}
         </div>
-        <button class="checkin-btn ${selected ? 'done' : 'pending'}">${selected ? '✓' : '记录'}</button>
+        ${emotionBtnHtml}
       </div>`;
     }
 
@@ -301,7 +313,6 @@
     const btnClass = failed ? 'failed' : checked ? 'done' : 'pending';
     const btnText = failed ? '✗ 犯了' : checked ? '✓' : (isNegative ? '没犯' : '打卡');
 
-    // 间隔提醒倒计时
     let intervalHtml = '';
     if (h.intervalReminder && h.intervalReminder.enabled) {
       const ir = h.intervalReminder;
@@ -314,6 +325,26 @@
       intervalHtml = `<span style="font-size:11px;color:${isOverdue ? '#e74c3c' : 'var(--muted)'};background:var(--bg2);padding:2px 6px;border-radius:6px;display:inline-flex;align-items:center;gap:3px"><span style="display:inline-block;width:${pct/5}px;height:6px;background:${isOverdue ? '#e74c3c' : 'var(--accent)'};border-radius:3px"></span>⏰ ${label}</span>`;
     }
 
+    let historyDetailHtml = '';
+    if (!isViewToday && checked && rec[h.id]) {
+      const record = rec[h.id];
+      let checkinTimeStr = '';
+      if (record.ts) {
+        const dt = new Date(record.ts);
+        const hour = dt.getHours().toString().padStart(2, '0');
+        const minute = dt.getMinutes().toString().padStart(2, '0');
+        checkinTimeStr = `<span class="history-checkin-time">🕐 ${hour}:${minute}</span>`;
+      }
+      let checkinValueStr = '';
+      if (h.type !== 'boolean' && record.value) {
+        checkinValueStr = `<span class="history-checkin-value">${record.value}${esc(h.unit)}</span>`;
+      }
+      if (checkinTimeStr || checkinValueStr) {
+        historyDetailHtml = `<div class="history-detail">${checkinTimeStr}${checkinValueStr ? ' · ' + checkinValueStr : ''}</div>`;
+      }
+    }
+
+    const btnHtml = isViewToday ? `<button class="checkin-btn ${btnClass}" onclick="handleCheckin('${h.id}')">${btnText}</button>` : '';
     return `<div class="habit-card ${collapsedClass} ${negClass} ${doneCardClass} ${periodClass}" id="card-${h.id}" style="position:relative">
       <span class="status-ribbon ${ribbonCls}"></span>
       <span class="icon">${isNegative ? '❌' : h.icon}</span>
@@ -326,8 +357,9 @@
           ${timeHint}
         </div>
         ${libTip ? '<div class="habit-desc">' + libTip + '</div>' : ''}
+        ${historyDetailHtml}
       </div>
-      <button class="checkin-btn ${btnClass}" onclick="handleCheckin('${h.id}')">${btnText}</button>
+      ${btnHtml}
     </div>`;
   }
 
@@ -367,6 +399,7 @@
     const viewDate = new Date();
     viewDate.setDate(viewDate.getDate() + viewDateOffset);
     const viewDateStr = formatDate(viewDate);
+    const isViewToday = viewDateOffset === 0;
 
     let html = '';
 
@@ -388,19 +421,23 @@
       ? items.filter(function(x) { return !x.checked && buildRecord(x.h); }).length
       : 0;
 
-    if (total > 0) {
+    if (isViewToday && total > 0) {
       html += _renderEncourageRing(doneCount, total);
     }
 
     // 所有习惯平铺显示，按 nextTime 排序（已排序）
     html += `<div class="time-group">`;
     items.forEach(({h, checked, overdue, soon, nextTime}) => {
-      html += _renderHabitCardRow(h, checked, overdue, soon, rec, nextTime);
+      html += _renderHabitCardRow(h, checked, overdue, soon, rec, nextTime, isViewToday);
     });
     html += `</div>`;
 
     if (items.length === 0) {
-      html = '<div style="text-align:center;padding:40px 20px;color:var(--muted);font-size:14px;">还没有添加习惯<br><br>请先到 <strong style="color:var(--accent);cursor:pointer;" onclick="switchTab(\'manage\')">【管理】</strong> 界面添加习惯</div>';
+      if (isViewToday) {
+        html = '<div style="text-align:center;padding:40px 20px;color:var(--muted);font-size:14px;">还没有添加习惯<br><br>请先到 <strong style="color:var(--accent);cursor:pointer;" onclick="switchTab(\'manage\')">【管理】</strong> 界面添加习惯</div>';
+      } else {
+        html = '<div style="text-align:center;padding:60px 20px;color:var(--muted);font-size:14px;">📅 当天无打卡记录</div>';
+      }
     }
 
     container.innerHTML = html;
@@ -724,7 +761,6 @@
 
   function renderManage() {
     renderManageStats();
-    renderManageWeeklyReport();
     renderManageGroups();
     renderDailyCardPreview();
   }
@@ -819,10 +855,10 @@
 
     // Time period definitions
     const periods = [
-      { id: 'morning', name: '早晨', icon: '🌅', emoji: '🌅', range: [4, 10] },
-      { id: 'forenoon', name: '上午', icon: '🌤️', emoji: '🌤️', range: [10, 12] },
-      { id: 'afternoon', name: '下午', icon: '☀️', emoji: '☀️', range: [12, 18] },
-      { id: 'evening', name: '晚上', icon: '🌙', emoji: '🌙', range: [18, 24] }
+      { id: 'morning', name: '卯辰时', icon: '🌅', emoji: '🌅', range: [5, 9] },
+      { id: 'forenoon', name: '巳时', icon: '🌤️', emoji: '🌤️', range: [9, 11] },
+      { id: 'afternoon', name: '午未申', icon: '☀️', emoji: '☀️', range: [11, 17] },
+      { id: 'evening', name: '酉戌亥', icon: '🌙', emoji: '🌙', range: [17, 24] }
     ];
 
     let html = '';

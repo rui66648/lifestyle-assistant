@@ -1172,6 +1172,12 @@ function getConfig() {
     // 同步免打扰设置 UI
     if (typeof updateQuietHoursUI === 'function') updateQuietHoursUI();
 
+    // 更新账号区域（APK 环境）
+    if (typeof window.updateAccountUI === 'function') window.updateAccountUI();
+
+    // 更新自动打卡区域（APK 环境）
+    if (typeof window.updateAutoCheckinUI === 'function') window.updateAutoCheckinUI();
+
     openPanel('settingsPanel');
   }
 
