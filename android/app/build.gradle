@@ -32,8 +32,8 @@ android {
         applicationId "com.rui66648.lifestyle"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 7
-        versionName "1.4.6"
+        versionCode 8
+        versionName "1.4.7"
         // ---- 云端 AI 配置注入（来自 local.properties）----
         buildConfigField "String", "CLOUD_AI_URL", "\"${localProps.getProperty("CLOUD_AI_URL", "")}\""
         buildConfigField "String", "CLOUD_AI_KEY", "\"${localProps.getProperty("CLOUD_AI_KEY", "")}\""
