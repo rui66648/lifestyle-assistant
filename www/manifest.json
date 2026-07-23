@@ -1,6 +1,6 @@
 {
-  "name": "生活习惯小助手",
-  "short_name": "习惯助手",
+  "name": "PulseBreath",
+  "short_name": "PulseBreath",
   "description": "完全离线的习惯打卡应用，帮助你记录和改善日常健康生活习惯",
   "start_url": "./index.html",
   "display": "standalone",

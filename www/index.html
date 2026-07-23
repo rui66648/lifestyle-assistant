@@ -7,9 +7,9 @@
 <meta name="theme-color" content="#FDF8F0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="习惯打卡">
+<meta name="apple-mobile-web-app-title" content="PulseBreath">
 <link rel="manifest" href="./manifest.json">
-<title>生活习惯小助手 V2</title>
+<title>PulseBreath</title>
 <link rel="stylesheet" href="./css/main.min.css?v=140">
 <link rel="stylesheet" href="./css/components.min.css?v=140">
 <link rel="stylesheet" href="./css/skin-targets.min.css?v=140">
@@ -730,6 +730,16 @@
           </div>
           <span class="settings-row-arrow">›</span>
         </div>
+        <div class="settings-row" onclick="openAiGrowthPanel()">
+          <div class="settings-row-left">
+            <div class="settings-row-icon">📊</div>
+            <div class="settings-row-text">
+              <div class="settings-row-title">AI 成长分析</div>
+              <div class="settings-row-desc">每周自动分析习惯数据，生成个性化建议</div>
+            </div>
+          </div>
+          <span class="settings-row-arrow">›</span>
+        </div>
       </div>
     </div>
 
@@ -1067,6 +1077,17 @@
     <button class="panel-close" onclick="closeAllPanels()">✕</button>
   </div>
   <div class="panel-body" id="habitEditPanelBody" style="padding:16px">
+  </div>
+</div>
+
+<!-- AI 成长分析 Panel -->
+<div class="panel" id="aiGrowthPanel">
+  <div class="panel-handle"></div>
+  <div class="panel-header">
+    <span class="panel-title">🤖 AI 成长分析</span>
+    <button class="panel-close" onclick="closeAllPanels()">✕</button>
+  </div>
+  <div class="panel-body" id="aiGrowthPanelBody" style="padding:16px">
   </div>
 </div>
 
