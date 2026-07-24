@@ -80,11 +80,15 @@ jobs:
 
       - name: List build outputs
         run: |
-          echo "=== APK directory ==="
-          ls -la android/app/build/outputs/apk/release/ || true
-          echo "=== All APKs ==="
-          find android/app/build/outputs -name "*.apk" -type f 2>/dev/null || true
-          if ! find android/app/build/outputs -name "PulseBreath-*.apk" -type f | grep -q .; then
+          echo "=== APK directory contents ==="
+          ls -la android/app/build/outputs/apk/release/ 2>&1 || echo "release dir missing"
+          echo "=== outputs tree ==="
+          find android/app/build/outputs -type f 2>/dev/null | head -50 || echo "no outputs"
+          echo "=== gradle build.log tail ==="
+          if [ -f android/gradle_build.log ]; then
+            tail -50 android/gradle_build.log
+          fi
+          if ! find android/app/build/outputs -name "PulseBreath-*.apk" -type f 2>/dev/null | grep -q .; then
             echo "::error::PulseBreath-*.apk not found in build outputs"
             exit 1
           fi
