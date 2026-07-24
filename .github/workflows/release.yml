@@ -70,7 +70,7 @@ jobs:
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew archiveApk --no-daemon 2>&1 | tee gradle_build.log
+          ./gradlew assembleRelease --no-daemon 2>&1 | tee gradle_build.log
           echo "=== Gradle exit code: ${PIPESTATUS[0]} ==="
           cat gradle_build.log | tail -200
           if [ ${PIPESTATUS[0]} -ne 0 ]; then
@@ -78,14 +78,26 @@ jobs:
             exit 1
           fi
 
+      - name: Archive APK
+        run: |
+          cd android
+          VERSION=$(grep -oE 'versionName "[^"]+"' app/build.gradle | head -1 | sed 's/versionName "//;s/"//')
+          echo "Detected versionName: $VERSION"
+          SRC="app/build/outputs/apk/release/app-release.apk"
+          DST="app/build/outputs/apk/release/PulseBreath-${VERSION}.apk"
+          if [ ! -f "$SRC" ]; then
+            echo "::error::Source APK not found: $SRC"
+            ls -la app/build/outputs/apk/release/ || true
+            exit 1
+          fi
+          cp "$SRC" "$DST"
+          echo "=== Created $DST ==="
+          ls -la app/build/outputs/apk/release/
+
       - name: List build outputs
         run: |
           echo "=== APK directory contents ==="
           ls -la android/app/build/outputs/apk/release/ 2>&1 || echo "release dir missing"
-          echo "=== gradle build.log tail ==="
-          if [ -f android/gradle_build.log ]; then
-            tail -50 android/gradle_build.log
-          fi
           if ! ls android/app/build/outputs/apk/release/PulseBreath-*.apk 2>/dev/null; then
             echo "::error::PulseBreath-*.apk not found in build outputs"
             exit 1
