@@ -69,7 +69,31 @@ android {
         variant.outputs.configureEach { output ->
             def appName = "PulseBreath"
             def versionName = variant.versionName
-            output.outputFileName = "${appName}-${versionName}.apk"
+            def apkName = "${appName}-${versionName}.apk"
+            try {
+                output.outputFileName = apkName
+            } catch (Exception ignored) {
+                // 某些AGP版本不允许改outputFileName，使用归档拷贝
+            }
+        }
+    }
+
+    // 归档任务：把 app-release.apk 改名为 PulseBreath-${versionName}.apk 供CI上传
+    tasks.register("archiveApk") {
+        def versionName = android.defaultConfig.versionName
+        def appName = "PulseBreath"
+        dependsOn "assembleRelease"
+        doLast {
+            def outputDir = file("build/outputs/apk/release")
+            def src = new File(outputDir, "app-release.apk")
+            def dst = new File(outputDir, "${appName}-${versionName}.apk")
+            if (src.exists()) {
+                if (dst.exists()) dst.delete()
+                src.renameTo(dst)
+                logger.lifecycle("[archiveApk] Renamed ${src.name} -> ${dst.name}")
+            } else {
+                logger.warn("[archiveApk] Source APK not found: ${src}")
+            }
         }
     }
 
