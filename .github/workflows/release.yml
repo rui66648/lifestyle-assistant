@@ -71,10 +71,23 @@ jobs:
           cd android
           chmod +x gradlew
           ./gradlew assembleRelease --no-daemon 2>&1 | tee gradle_build.log
-          cat gradle_build.log | tail -150
+          echo "=== Gradle exit code: ${PIPESTATUS[0]} ==="
+          cat gradle_build.log | tail -200
+          if [ ${PIPESTATUS[0]} -ne 0 ]; then
+            echo "::error::Gradle build failed with exit code ${PIPESTATUS[0]}"
+            exit 1
+          fi
 
       - name: List build outputs
-        run: ls -la android/app/build/outputs/apk/release/
+        run: |
+          echo "=== APK directory ==="
+          ls -la android/app/build/outputs/apk/release/ || true
+          echo "=== All APKs ==="
+          find android/app/build/outputs -name "*.apk" -type f 2>/dev/null || true
+          if ! find android/app/build/outputs -name "PulseBreath-*.apk" -type f | grep -q .; then
+            echo "::error::PulseBreath-*.apk not found in build outputs"
+            exit 1
+          fi
 
       - name: Upload APK to Release
         uses: softprops/action-gh-release@v2
