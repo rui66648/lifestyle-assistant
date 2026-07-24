@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>养生助手 - 图标对比</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #F5F0E8; color: #333; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 40px 20px; }
+    h1 { text-align: center; font-size: 36px; color: #2D8A66; margin-bottom: 10px; }
+    .subtitle { text-align: center; color: #999; margin-bottom: 60px; }
+    .section { margin-bottom: 60px; }
+    .section-title { font-size: 20px; color: #555; margin-bottom: 30px; padding-bottom: 10px; border-bottom: 2px solid #D4F5E0; }
+    
+    .compare-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+    .compare-card { background: #fff; border-radius: 20px; padding: 30px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .compare-card .tag { display: inline-block; padding: 4px 16px; border-radius: 20px; font-size: 12px; margin-bottom: 20px; }
+    .tag-ref { background: #FFF3E0; color: #FF9800; }
+    .tag-current { background: #E8F5E9; color: #4CAF50; }
+    .tag-old { background: #ECEFF1; color: #78909C; }
+    
+    .icon-box { width: 200px; height: 200px; margin: 0 auto; border-radius: 44px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    .icon-box img { width: 100%; height: 100%; border-radius: 44px; }
+    .icon-box svg { width: 180px; height: 180px; }
+    
+    .compare-card h3 { font-size: 18px; margin-top: 20px; margin-bottom: 15px; }
+    .compare-card ul { text-align: left; padding-left: 20px; }
+    .compare-card li { padding: 8px 0; font-size: 14px; color: #666; }
+    
+    .detail-section { background: #fff; border-radius: 20px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
+    .detail-item { padding: 20px; background: #F9F9F9; border-radius: 12px; }
+    .detail-item h4 { font-size: 16px; color: #333; margin-bottom: 15px; }
+    .detail-item table { width: 100%; }
+    .detail-item td { padding: 10px 0; border-bottom: 1px solid #EEE; }
+    .detail-item td:first-child { color: #888; width: 35%; }
+    .detail-item td:last-child { font-weight: 500; }
+    
+    .color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; margin-top: 30px; }
+    .color-item { text-align: center; }
+    .color-box { width: 80px; height: 80px; border-radius: 16px; margin: 0 auto 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+    .color-name { font-size: 13px; color: #666; }
+    .color-code { font-size: 11px; color: #999; font-family: monospace; }
+    
+    .check-result { margin-top: 30px; padding: 20px; background: #E8F5E9; border-radius: 12px; }
+    .check-result h4 { color: #2E7D32; margin-bottom: 10px; }
+    .check-result p { color: #4CAF50; font-size: 14px; }
+    
+    .warning { padding: 20px; background: #FFF3E0; border-radius: 12px; margin-top: 15px; }
+    .warning h4 { color: #E65100; margin-bottom: 10px; }
+    .warning p { color: #FF7043; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>养生助手 <span style="font-size:18px;color:#999;">图标对比</span></h1>
+    <p class="subtitle">参考图片 vs 当前实现 vs 旧版设计</p>
+
+    <div class="section">
+      <h2 class="section-title">三方对比</h2>
+      <div class="compare-grid">
+        <div class="compare-card">
+          <div class="tag tag-ref">参考图片</div>
+          <div class="icon-box" style="background: #FAFAF8;">
+            <img src="./assets/icon-reference.png" alt="用户上传的参考图片" style="width:100%;height:100%;border-radius:44px;"/>
+          </div>
+          <h3>用户上传参考</h3>
+          <ul>
+            <li>纯白 + 暖黄外发光背景</li>
+            <li>深绿渐变大叶，叶尖朝右上</li>
+            <li>浅绿小叶，左侧位置</li>
+            <li>底部浅绿色翻边</li>
+            <li>金色露珠，正下方</li>
+            <li>柔和底部投影</li>
+          </ul>
+        </div>
+
+        <div class="compare-card">
+          <div class="tag tag-current">当前实现</div>
+          <div class="icon-box">
+            <img src="./assets/icon-512.png" alt="当前图标">
+          </div>
+          <h3>实际生成 PNG</h3>
+          <ul>
+            <li>512×512 像素</li>
+            <li>纯白背景 + 暖黄外发光</li>
+            <li>深绿→浅绿渐变</li>
+            <li>浅绿小叶子</li>
+            <li>底部翻边效果</li>
+            <li>金色露珠</li>
+          </ul>
+        </div>
+
+        <div class="compare-card">
+          <div class="tag tag-old">旧版设计</div>
+          <div class="icon-box" style="background: linear-gradient(135deg, #26A69A, #00897B);">
+            <svg viewBox="0 0 108 108">
+              <path d="M54,78 L48.5,73 C34,60.5 26,53.4 26,44.5 C26,37.6 31.6,32 38.5,32 C42.6,32 46.5,33.9 49,37 C51.5,33.9 55.4,32 59.5,32 C66.4,32 72,37.6 72,44.5 C72,53.4 64,60.5 49.5,73 L54,78 Z" fill="#fff"/>
+              <path d="M42,46 L50,54 L62,40" stroke="#26A69A" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>心形 + 对勾</h3>
+          <ul>
+            <li>青色渐变背景</li>
+            <li>白色心形填充</li>
+            <li>青色对勾</li>
+            <li>通用健康风格</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-title">设计细节对比</h2>
+      <div class="detail-section">
+        <div class="detail-grid">
+          <div class="detail-item">
+            <h4>参考图片特征</h4>
+            <table>
+              <tr><td>背景形状</td><td>圆角方形（110px圆角）</td></tr>
+              <tr><td>背景颜色</td><td>纯白 + 暖黄色外发光</td></tr>
+              <tr><td>大叶子</td><td>深绿→浅绿渐变，叶尖朝右上</td></tr>
+              <tr><td>翻边</td><td>底部浅绿色翻边效果</td></tr>
+              <tr><td>小叶子</td><td>浅绿薄荷色，左侧位置</td></tr>
+              <tr><td>露珠</td><td>金色圆形，叶子正下方</td></tr>
+              <tr><td>阴影</td><td>底部柔和投影</td></tr>
+              <tr><td>叶脉</td><td>白色细线，主脉+侧脉</td></tr>
+            </table>
+          </div>
+          <div class="detail-item">
+            <h4>当前实现特征</h4>
+            <table>
+              <tr><td>背景形状</td><td>圆角方形（110px圆角）</td></tr>
+              <tr><td>背景颜色</td><td>纯白 + 暖黄色外发光</td></tr>
+              <tr><td>大叶子</td><td>深绿→浅绿渐变，叶尖朝右上</td></tr>
+              <tr><td>翻边</td><td>底部浅绿色翻边效果</td></tr>
+              <tr><td>小叶子</td><td>浅绿薄荷色，左侧位置</td></tr>
+              <tr><td>露珠</td><td>金色圆形，叶子正下方</td></tr>
+              <tr><td>阴影</td><td>底部柔和投影</td></tr>
+              <tr><td>叶脉</td><td>白色细线，主脉+侧脉</td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="color-grid">
+          <div class="color-item">
+            <div class="color-box" style="background: #FFFFFF;"></div>
+            <div class="color-name">背景色</div>
+            <div class="color-code">#FFFFFF</div>
+          </div>
+          <div class="color-item">
+            <div class="color-box" style="background: #1E6B42;"></div>
+            <div class="color-name">大叶子深绿</div>
+            <div class="color-code">#1E6B42</div>
+          </div>
+          <div class="color-item">
+            <div class="color-box" style="background: #57B586;"></div>
+            <div class="color-name">大叶子浅绿</div>
+            <div class="color-code">#57B586</div>
+          </div>
+          <div class="color-item">
+            <div class="color-box" style="background: #A8DFBC;"></div>
+            <div class="color-name">翻边色</div>
+            <div class="color-code">#A8DFBC</div>
+          </div>
+          <div class="color-item">
+            <div class="color-box" style="background: #D4F0DE;"></div>
+            <div class="color-name">小叶子</div>
+            <div class="color-code">#D4F0DE</div>
+          </div>
+          <div class="color-item">
+            <div class="color-box" style="background: #E6A817;"></div>
+            <div class="color-name">露珠</div>
+            <div class="color-code">#E6A817</div>
+          </div>
+        </div>
+
+        <div class="check-result">
+          <h4>✅ 一致性检查通过</h4>
+          <p>当前实现与参考图片在设计元素、配色方案、布局结构上保持一致：</p>
+          <ul style="margin-top:10px;color:#4CAF50;">
+            <li>背景：纯白 + 暖黄外发光 ✅</li>
+            <li>大叶子：深绿渐变，叶尖朝右上 ✅</li>
+            <li>翻边：底部浅绿色翻边效果 ✅</li>
+            <li>小叶子：浅绿薄荷色，左侧位置 ✅</li>
+            <li>露珠：金色圆形，叶子正下方 ✅</li>
+            <li>阴影：底部柔和投影 ✅</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

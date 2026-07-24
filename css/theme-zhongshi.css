@@ -1,0 +1,1111 @@
+/* ================================================================
+   theme-zhongshi.css  —  中式养生主题层
+   ----------------------------------------------------------------
+   设计理念：水墨质感 · 宣纸暖白 · 节气时序 · 传统五色
+   主色：玉色 #7CB69D（养生绿）  背景：宣纸 #FDF8F0（暖白）
+   ----------------------------------------------------------------
+   用法：在 index.html 中置于 ui-enhance.min.css 之后加载
+        <link rel="stylesheet" href="./css/theme-zhongshi.css?v=VER">
+   本文件仅通过 CSS 变量级联覆盖设计令牌并增强组件，
+   保留与旧令牌名（--accent/--space-4 等）的向后兼容别名，
+   不破坏现有 main.css / components.css 的组件规则。
+   ================================================================ */
+
+/* ================================================================
+   一、设计令牌 — 中式养生（亮色 / 宣纸模式）
+   ================================================================ */
+:root{
+  /* ---- 1.1 基础色板 — 宣纸暖白系 ---- */
+  --color-bg:        #FDF8F0;   /* 宣纸暖白 */
+  --color-bg-soft:   #F5EFE3;   /* 淡米黄 */
+  --color-surface:   #FFFBF3;   /* 纸面白 */
+  --color-surface-2: #F5EFE3;   /* 次级纸面 */
+  --color-ink:       #2C2418;   /* 浓墨 */
+  --color-ink-soft:  #5C4F3D;   /* 淡墨 */
+  --color-muted:     #9C8E76;   /* 灰褐 */
+  --color-rule:      #E8DEC8;   /* 米线 */
+  --color-border:    #E8DEC8;
+  --color-border-soft:#F0E8D6;
+
+  /* ---- 1.2 主色阶 — 玉色（养生绿 #7CB69D） ---- */
+  --color-primary-50:  #F0F7F3;
+  --color-primary-100: #DCEDE2;
+  --color-primary-200: #BCDBCA;
+  --color-primary-300: #9CC9B0;
+  --color-primary-400: #7CB69D;  /* 主题色 */
+  --color-primary-500: #5E9E83;
+  --color-primary-600: #4A8469;
+  --color-primary-700: #3A6A55;
+  --color-primary-800: #2D5241;
+  --color-primary-900: #1F3A2D;
+  --color-primary:     var(--color-primary-400);
+  --color-primary-soft:var(--color-primary-100);
+
+  /* ---- 1.3 次色阶 — 赭黄（雄黄/赭石 #C8893E） ---- */
+  --color-secondary-50:  #FDF5E9;
+  --color-secondary-100: #FAE6CC;
+  --color-secondary-200: #F2CB97;
+  --color-secondary-300: #E5A85C;
+  --color-secondary-400: #C8893E;  /* 赭黄 */
+  --color-secondary-500: #A86E2A;
+  --color-secondary-600: #8A5820;
+  --color-secondary-700: #6C4419;
+  --color-secondary-800: #4F3112;
+  --color-secondary-900: #331F0C;
+  --color-secondary:     var(--color-secondary-400);
+  --color-secondary-soft:var(--color-secondary-100);
+
+  /* ---- 1.4 语义色 ---- */
+  --color-success:      #5E9E83;
+  --color-success-soft: #DCEDE2;
+  --color-warning:      #C8893E;
+  --color-warning-soft: #FAE6CC;
+  --color-danger:       #B5482E;   /* 朱砂红 */
+  --color-danger-soft:  #F4D9CC;
+  --color-info:         #6B89A8;   /* 青灰 */
+  --color-info-soft:    #DCE4ED;
+
+  /* ---- 1.5 中医五色（青·赤·黄·白·黑） ---- */
+  --color-wuxing-wood:   #7CB69D;   /* 青 - 春/木 */
+  --color-wuxing-fire:   #B5482E;   /* 赤 - 夏/火 */
+  --color-wuxing-earth:  #C8893E;   /* 黄 - 长夏/土 */
+  --color-wuxing-metal:  #D8C9A8;   /* 白 - 秋/金 */
+  --color-wuxing-water:  #3A4A5C;   /* 黑 - 冬/水 */
+
+  --color-on-primary:    #FFFBF3;
+
+  /* ---- 1.6 间距系统（4px 基准） ---- */
+  --spacing-xs:  4px;
+  --spacing-sm:  8px;
+  --spacing-md:  12px;
+  --spacing-base:16px;
+  --spacing-lg:  20px;
+  --spacing-xl:  24px;
+  --spacing-2xl: 32px;
+  --spacing-3xl: 40px;
+  --spacing-4xl: 48px;
+  --spacing-5xl: 64px;
+
+  /* ---- 1.7 圆角系统 ---- */
+  --radius-xs:   6px;
+  --radius-sm:   10px;
+  --radius-md:   12px;
+  --radius-base: 16px;
+  --radius-lg:   20px;
+  --radius-xl:   28px;
+  --radius-2xl:  32px;
+  --radius-full: 9999px;
+
+  /* ---- 1.8 阴影系统 — 暖墨晕染 ---- */
+  --shadow-xs:   0 1px 2px rgba(60, 45, 20, 0.04);
+  --shadow-sm:   0 2px 8px rgba(60, 45, 20, 0.06);
+  --shadow-base: 0 4px 12px rgba(60, 45, 20, 0.08);
+  --shadow-md:   0 8px 24px rgba(60, 45, 20, 0.10);
+  --shadow-lg:   0 16px 48px rgba(60, 45, 20, 0.12);
+  --shadow-xl:   0 24px 64px rgba(60, 45, 20, 0.15);
+  --shadow-float:0 20px 60px rgba(60, 45, 20, 0.15);
+  /* 玉色辉光 */
+  --shadow-glow-primary: 0 8px 24px rgba(124, 182, 157, 0.25);
+  --shadow-glow-warm:    0 8px 24px rgba(200, 137, 62, 0.22);
+
+  /* ---- 1.9 字体系统 — 思源宋体（标题）+ 苹方（正文） ---- */
+  --font-display: 'Noto Serif SC','Source Han Serif SC','STSong','SimSun',serif;
+  --font-sans:    -apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+  --font-mono:    'GeistMono','SF Mono',monospace;
+
+  --text-xs:   11px;
+  --text-sm:   12px;
+  --text-base: 14px;
+  --text-lg:   16px;
+  --text-xl:   18px;
+  --text-2xl:  20px;
+  --text-3xl:  24px;
+  --text-4xl:  32px;
+
+  --font-normal:   400;
+  --font-medium:   500;
+  --font-semibold: 600;
+  --font-bold:     700;
+
+  --leading-tight:   1.25;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.75;
+
+  /* ---- 1.10 动画系统 ---- */
+  --ease:        cubic-bezier(.4, 0, .2, 1);
+  --ease-out:    cubic-bezier(0, 0, .2, 1);
+  --ease-in:     cubic-bezier(.4, 0, 1, 1);
+  --ease-bounce: cubic-bezier(.68, -.55, .265, 1.55);
+  --ease-spring: cubic-bezier(.34, 1.56, .64, 1);   /* 弹性回弹 */
+  --ease-ink:    cubic-bezier(.65, 0, .35, 1);       /* 水墨晕开 */
+
+  --duration-75:  75ms;
+  --duration-100: 100ms;
+  --duration-150: 150ms;
+  --duration-200: 200ms;
+  --duration-300: 300ms;
+  --duration-400: 400ms;
+  --duration-500: 500ms;
+
+  /* ---- 1.11 层级系统 ---- */
+  --z-base:    0;
+  --z-sticky:  200;
+  --z-fixed:   300;
+  --z-overlay: 100;
+  --z-panel:   101;
+  --z-modal:   400;
+  --z-popover: 500;
+  --z-toast:   600;
+
+  /* ---- 1.12 骨架屏色阶 ---- */
+  --skeleton-base:   #F0E8D6;
+  --skeleton-shine:  #FFFBF3;
+  --skeleton-accent: #E8DEC8;
+
+  /* ---- 1.13 节气主题（默认：当前节气由 JS 切换 body[class]） ---- */
+  --seasonal-accent: var(--color-primary);
+  --seasonal-soft:   var(--color-primary-soft);
+
+  /* ============================================================
+     1.14 向后兼容别名 — 旧令牌名映射到新令牌
+     ============================================================ */
+  --bg:             var(--color-bg);
+  --bg2:            var(--color-bg-soft);
+  --surface:        var(--color-surface);
+  --surface-variant:var(--color-surface-2);
+  --ink:            var(--color-ink);
+  --ink2:           var(--color-ink-soft);
+  --muted:          var(--color-muted);
+  --rule:           var(--color-rule);
+  --border-light:   var(--color-border-soft);
+
+  --accent-50:  var(--color-primary-50);
+  --accent-100: var(--color-primary-100);
+  --accent-200: var(--color-primary-200);
+  --accent-300: var(--color-primary-300);
+  --accent-400: var(--color-primary-400);
+  --accent-500: var(--color-primary-500);
+  --accent-600: var(--color-primary-600);
+  --accent-700: var(--color-primary-700);
+  --accent-800: var(--color-primary-800);
+  --accent-900: var(--color-primary-900);
+  --accent:         var(--color-primary);
+  --accent-light:   var(--color-primary-soft);
+
+  --accent2-50:  var(--color-secondary-50);
+  --accent2-100: var(--color-secondary-100);
+  --accent2-200: var(--color-secondary-200);
+  --accent2-300: var(--color-secondary-300);
+  --accent2-400: var(--color-secondary-400);
+  --accent2-500: var(--color-secondary-500);
+  --accent2-600: var(--color-secondary-600);
+  --accent2-700: var(--color-secondary-700);
+  --accent2-800: var(--color-secondary-800);
+  --accent2-900: var(--color-secondary-900);
+  --accent2:       var(--color-secondary);
+  --accent2-light: var(--color-secondary-soft);
+
+  --success:       var(--color-success);
+  --success-light: var(--color-success-soft);
+  --warning:       var(--color-warning);
+  --warning-light: var(--color-warning-soft);
+  --danger:        var(--color-danger);
+  --danger-light:  var(--color-danger-soft);
+  --info:          var(--color-info);
+  --info-light:    var(--color-info-soft);
+  --on-accent:     var(--color-on-primary);
+
+  --space-1:  var(--spacing-xs);
+  --space-2:  var(--spacing-sm);
+  --space-3:  var(--spacing-md);
+  --space-4:  var(--spacing-base);
+  --space-5:  var(--spacing-lg);
+  --space-6:  var(--spacing-xl);
+  --space-8:  var(--spacing-2xl);
+  --space-10: var(--spacing-3xl);
+  --space-12: var(--spacing-4xl);
+  --space-16: var(--spacing-5xl);
+
+  --radius:    var(--radius-base);
+  --shadow:    var(--shadow-base);
+
+  /* 五行色别名（兼容旧 fw-* 命名） */
+  --fw-1: var(--color-wuxing-wood);
+  --fw-2: var(--color-wuxing-earth);
+  --fw-3: var(--color-wuxing-water);
+  --fw-4: var(--color-wuxing-fire);
+  --fw-5: var(--color-primary-500);
+  --fw-6: var(--color-secondary-300);
+  --fw-7: var(--color-danger);
+  --fw-8: var(--color-primary-300);
+}
+
+/* ================================================================
+   二、节气主题色 — 二十四节气时序配色
+   ----------------------------------------------------------------
+   用法：JS 根据当前日期为 <body> 添加对应 class
+        如 <body class="solar-qingming">
+   ================================================================ */
+/* 春 · 六气 — 嫩绿 / 桃粉 */
+.solar-lichun  { --seasonal-accent:#A8C97F; --seasonal-soft:#E8F0D8; }  /* 立春 嫩芽 */
+.solar-yushui  { --seasonal-accent:#9DBE8C; --seasonal-soft:#E4ECDA; }  /* 雨水 青草 */
+.solar-jingzhe { --seasonal-accent:#8E7CB5; --seasonal-soft:#E2DCEF; }  /* 惊蛰 春雷紫 */
+.solar-chunfen { --seasonal-accent:#7CB69D; --seasonal-soft:#DCEDE2; }  /* 春分 玉色 */
+.solar-qingming{ --seasonal-accent:#6FAE6E; --seasonal-soft:#D8EBC8; }  /* 清明 青团 */
+.solar-guyu    { --seasonal-accent:#C4A96A; --seasonal-soft:#EDE2C8; }  /* 谷雨 麦黄 */
+
+/* 夏 · 六气 — 翠绿 / 朱红 */
+.solar-lixia   { --seasonal-accent:#4A9D5F; --seasonal-soft:#D2E8D8; }  /* 立夏 初夏翠 */
+.solar-xiaoman { --seasonal-accent:#B5A04A; --seasonal-soft:#EDE8C8; }  /* 小满 麦秋黄 */
+.solar-mangzhong{ --seasonal-accent:#D04A3D; --seasonal-soft:#F4D2CD; } /* 芒种 朱红 */
+.solar-xiazhi  { --seasonal-accent:#C8602E; --seasonal-soft:#F4D9CC; }  /* 夏至 赭红 */
+.solar-xiaoshu { --seasonal-accent:#E07B3F; --seasonal-soft:#F8E0CC; }  /* 小暑 落霞 */
+.solar-dashu   { --seasonal-accent:#B33A2E; --seasonal-soft:#F0C8C2; }  /* 大暑 赤朱 */
+
+/* 秋 · 六气 — 赭黄 / 枫红 */
+.solar-liqiu   { --seasonal-accent:#C8893E; --seasonal-soft:#FAE6CC; }  /* 立秋 赭石 */
+.solar-chushu  { --seasonal-accent:#B5824A; --seasonal-soft:#F0E0C8; }  /* 处暑 秋香 */
+.solar-bailu   { --seasonal-accent:#A8B0B5; --seasonal-soft:#E2E6E8; }  /* 白露 月白 */
+.solar-qiufen  { --seasonal-accent:#B5482E; --seasonal-soft:#F4D9CC; }  /* 秋分 枫红 */
+.solar-hanlu   { --seasonal-accent:#D4A03A; --seasonal-soft:#F8E8C8; }  /* 寒露 菊花金 */
+.solar-shuangjiang{ --seasonal-accent:#8C5A3A; --seasonal-soft:#E8D8C8; }/* 霜降 褐红 */
+
+/* 冬 · 六气 — 雪青 / 墨蓝 */
+.solar-lidong  { --seasonal-accent:#5A6B7A; --seasonal-soft:#D8E0E8; }  /* 立冬 雪灰 */
+.solar-xiaoxue { --seasonal-accent:#8B95A9; --seasonal-soft:#E0E4EC; }  /* 小雪 雪青 */
+.solar-daxue   { --seasonal-accent:#6B7B8C; --seasonal-soft:#D8E0E8; }  /* 大雪 寒蓝 */
+.solar-dongzhi { --seasonal-accent:#3A4A5C; --seasonal-soft:#C8D2DC; }  /* 冬至 墨蓝 */
+.solar-xiaohan { --seasonal-accent:#4A4055; --seasonal-soft:#D8D2DC; }  /* 小寒 梅紫 */
+.solar-dahan   { --seasonal-accent:#2C3A4A; --seasonal-soft:#C8D0D8; }  /* 大寒 深墨 */
+
+/* ================================================================
+   三、暗黑模式 — 墨色模式（暖墨深色调，非冷蓝）
+   ----------------------------------------------------------------
+   对比度均满足 WCAG AA >= 4.5:1
+   ================================================================ */
+body.dark{
+  /* ---- 3.1 基础色板 — 暖墨深色 ---- */
+  --color-bg:        #1A1410;   /* 暖墨底 */
+  --color-bg-soft:   #241D16;   /* 淡墨 */
+  --color-surface:   #2A2218;   /* 纸面暗 */
+  --color-surface-2: #332A20;   /* 次级暗面 */
+  --color-ink:       #F5EFE0;   /* 宣纸白（主文本 15.2:1） */
+  --color-ink-soft:  #C8BCA0;   /* 淡米（次文本 8.1:1） */
+  --color-muted:     #948670;   /* 灰褐（辅助文本 5.3:1） */
+  --color-rule:      #3A3024;   /* 暗米线 */
+  --color-border:    #3A3024;
+  --color-border-soft:#2A2218;
+
+  /* ---- 3.2 主色阶 — 玉色提亮（暗色下保证对比度） ---- */
+  --color-primary-50:  #0A1A12;
+  --color-primary-100: #122820;
+  --color-primary-200: #1C3A2C;
+  --color-primary-300: #2D5241;
+  --color-primary-400: #4A8469;
+  --color-primary-500: #6BA88A;   /* 暗色主题色（提亮） */
+  --color-primary-600: #8FC9B0;   /* 暗色高亮 */
+  --color-primary-700: #A8DBBE;
+  --color-primary-800: #C8E8D2;
+  --color-primary-900: #E0F0E4;
+  --color-primary:     var(--color-primary-500);
+  --color-primary-soft:rgba(107, 168, 138, 0.16);
+
+  /* ---- 3.3 次色阶 — 赭黄提亮 ---- */
+  --color-secondary-50:  #2A1E0A;
+  --color-secondary-100: #3A2A12;
+  --color-secondary-200: #4F3818;
+  --color-secondary-300: #6B4820;
+  --color-secondary-400: #8A5820;
+  --color-secondary-500: #C8983E;   /* 暗色赭黄 */
+  --color-secondary-600: #E5B85C;
+  --color-secondary-700: #F2CB7A;
+  --color-secondary-800: #F8E0A8;
+  --color-secondary-900: #FCEFC8;
+  --color-secondary:     var(--color-secondary-500);
+  --color-secondary-soft:rgba(200, 152, 62, 0.14);
+
+  /* ---- 3.4 语义色 ---- */
+  --color-success:      #6BA88A;
+  --color-success-soft: rgba(107, 168, 138, 0.16);
+  --color-warning:      #E5B85C;
+  --color-warning-soft: rgba(229, 184, 92, 0.14);
+  --color-danger:       #E07B5C;
+  --color-danger-soft:  rgba(224, 123, 92, 0.14);
+  --color-info:         #8FA8C8;
+  --color-info-soft:    rgba(143, 168, 200, 0.14);
+
+  --color-on-primary:   #1A1410;
+
+  /* ---- 3.5 阴影 — 暖墨加深 ---- */
+  --shadow-xs:   0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-sm:   0 2px 8px rgba(0, 0, 0, 0.38);
+  --shadow-base: 0 4px 12px rgba(0, 0, 0, 0.45);
+  --shadow-md:   0 8px 24px rgba(0, 0, 0, 0.55);
+  --shadow-lg:   0 16px 48px rgba(0, 0, 0, 0.65);
+  --shadow-xl:   0 24px 64px rgba(0, 0, 0, 0.75);
+  --shadow-float:0 20px 60px rgba(0, 0, 0, 0.70);
+  --shadow-glow-primary: 0 8px 24px rgba(107, 168, 138, 0.30);
+  --shadow-glow-warm:    0 8px 24px rgba(200, 152, 62, 0.28);
+
+  /* ---- 3.6 骨架屏暗色 ---- */
+  --skeleton-base:   #2A2218;
+  --skeleton-shine:  #3A3024;
+  --skeleton-accent: #332A20;
+}
+
+/* 暗色模式全局背景渲染 */
+body.dark{background:var(--color-bg);color:var(--color-ink)}
+body.dark .habit-card{background:rgba(42,34,24,.85);border-color:rgba(245,239,224,.06)}
+body.dark .habit-card:hover{background:rgba(107,168,138,.06)}
+body.dark .stat-card,
+body.dark .mini-quote,
+body.dark .profile-stat-item,
+body.dark .mg-stat-card{
+  background:rgba(42,34,24,.85);
+  border-color:rgba(245,239,224,.06);
+  box-shadow:0 2px 8px rgba(0,0,0,.40),inset 0 1px 0 rgba(245,239,224,.04);
+}
+body.dark .mini-header{background:linear-gradient(180deg,rgba(107,168,138,.08) 0%,transparent 100%)}
+body.dark #bottomNav{
+  background:#1a1410;
+  border-top-color:rgba(245,239,224,.08);
+  box-shadow:0 -4px 24px rgba(0,0,0,.45);
+}
+
+/* ================================================================
+   四、卡片组件增强 — 水墨质感 · 印章 · 纹样
+   ================================================================ */
+
+/* ---- 4.1 通用卡片基底 — 宣纸纹理 + 暖墨阴影 ---- */
+.habit-card,
+.stat-card,
+.mini-quote,
+.profile-stat-item,
+.mg-stat-card,
+.lib-card{
+  background-color:var(--color-surface);
+  background-image:
+    radial-gradient(circle at 20% 0%, rgba(124,182,157,.04) 0%, transparent 50%),
+    radial-gradient(circle at 100% 100%, rgba(200,137,62,.03) 0%, transparent 50%);
+  border:1px solid var(--color-border-soft);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+
+/* ---- 4.2 习惯卡片 — 时段水墨左晕 + 玉色 streak ---- */
+.habit-card{
+  border-radius:var(--radius-base);
+  padding:14px 16px;
+  margin-bottom:6px;
+  position:relative;
+  overflow:hidden;
+  transition:transform var(--duration-200) var(--ease),
+             box-shadow var(--duration-200) var(--ease),
+             background-color var(--duration-200) var(--ease);
+}
+.habit-card::before{
+  content:'';
+  position:absolute;
+  left:0; top:0; bottom:0;
+  width:3px;
+  background:linear-gradient(180deg, var(--color-primary-300), var(--color-primary-500));
+  opacity:0; transition:opacity var(--duration-200) var(--ease);
+}
+.habit-card:hover::before{opacity:1}
+.habit-card:hover{
+  transform:translateY(-1px);
+  box-shadow:var(--shadow-sm);
+}
+.habit-card:active{transform:scale(0.99)}
+.habit-card.done-card{opacity:0.62}
+.habit-card.done-card::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:repeating-linear-gradient(
+    -45deg,
+    transparent 0,
+    transparent 8px,
+    rgba(124,182,157,.04) 8px,
+    rgba(124,182,157,.04) 9px
+  );
+  pointer-events:none;
+}
+
+/* 时段主题色（基于中医子午流注） */
+.habit-card[data-period="morning"],
+.habit-card.morning-period{
+  background-image:linear-gradient(90deg, rgba(200,137,62,.10) 0%, transparent 40%),
+    radial-gradient(circle at 0% 50%, rgba(200,137,62,.06), transparent 50%);
+}
+.habit-card[data-period="morning"]::before,
+.habit-card.morning-period::before{
+  background:linear-gradient(180deg, #E5A85C, #C8893E);
+}
+.habit-card[data-period="afternoon"],
+.habit-card.afternoon-period{
+  background-image:linear-gradient(90deg, rgba(124,182,157,.10) 0%, transparent 40%),
+    radial-gradient(circle at 0% 50%, rgba(124,182,157,.06), transparent 50%);
+}
+.habit-card[data-period="evening"],
+.habit-card.evening-period{
+  background-image:linear-gradient(90deg, rgba(176,72,46,.08) 0%, transparent 40%),
+    radial-gradient(circle at 0% 50%, rgba(176,72,46,.05), transparent 50%);
+}
+.habit-card[data-period="evening"]::before,
+.habit-card.evening-period::before{
+  background:linear-gradient(180deg, #B5482E, #873D1D);
+}
+.habit-card[data-period="night"],
+.habit-card.night-period{
+  background-image:linear-gradient(90deg, rgba(58,74,92,.10) 0%, transparent 40%),
+    radial-gradient(circle at 0% 50%, rgba(58,74,92,.06), transparent 50%);
+}
+.habit-card[data-period="night"]::before,
+.habit-card.night-period::before{
+  background:linear-gradient(180deg, #5A6B7A, #3A4A5C);
+}
+
+.habit-card .icon{
+  background:linear-gradient(135deg, var(--color-primary-soft), var(--color-secondary-soft));
+  box-shadow:0 2px 8px rgba(124,182,157,.18);
+}
+.habit-card .streak{
+  color:var(--color-primary-700);
+  background:var(--color-primary-soft);
+  letter-spacing:.3px;
+}
+.habit-card .checkin-btn.pending{
+  background:linear-gradient(135deg, var(--color-primary-400), var(--color-primary-600));
+  box-shadow:var(--shadow-glow-primary);
+}
+
+/* time-group 内的列表式习惯卡 */
+.time-group .habit-card{
+  border-radius:0 !important;
+  background:transparent !important;
+  background-image:none !important;
+  border:none !important;
+  border-bottom:1px solid var(--color-border-soft) !important;
+  margin-bottom:0 !important;
+}
+.time-group .habit-card::before{display:none}
+.time-group-header{
+  border-left:4px solid var(--seasonal-accent, var(--color-primary));
+  background:rgba(232,222,200,.40);
+}
+.time-group-icon{
+  background:linear-gradient(135deg, var(--color-primary-soft), var(--color-secondary-soft));
+}
+
+/* ---- 4.3 统计卡片 — 顶部节气彩条 + 渐变数字 ---- */
+.stat-card{
+  border-radius:var(--radius-lg);
+  padding:20px 14px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.stat-card::before{
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0;
+  height:3px;
+  background:linear-gradient(90deg, var(--seasonal-accent, var(--color-primary)), var(--color-secondary));
+  opacity:0.7;
+  transition:opacity var(--duration-300) var(--ease);
+}
+.stat-card:hover::before{opacity:1}
+.stat-card:hover{
+  transform:translateY(-3px);
+  box-shadow:var(--shadow-md);
+}
+.stat-val{
+  background:linear-gradient(135deg, var(--color-primary-400), var(--color-primary-600));
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  letter-spacing:-0.5px;
+  font-family:var(--font-display);
+  font-weight:700;
+}
+.stat-card.points-card{
+  background-image:linear-gradient(135deg, rgba(200,137,62,.12), rgba(200,152,62,.04));
+  border-color:rgba(200,137,62,.25);
+}
+.stat-card.points-card::before{
+  background:linear-gradient(90deg, var(--color-secondary-300), var(--color-secondary-500));
+}
+.stat-card.points-card .stat-val{
+  -webkit-text-fill-color:var(--color-secondary-500);
+}
+
+/* ---- 4.4 养生知识卡片 — 古籍引文 + 印章装饰 ---- */
+.mini-quote{
+  border-radius:var(--radius-lg);
+  padding:22px 24px 18px;
+  position:relative;
+  overflow:visible;
+  border:1px solid var(--color-border-soft);
+  background-image:
+    linear-gradient(135deg, rgba(124,182,157,.05), transparent 60%),
+    radial-gradient(circle at 100% 0%, rgba(200,137,62,.05), transparent 50%);
+}
+/* 左上引号 — 玉色水墨 */
+.mini-quote::before{
+  content:'\201C';
+  position:absolute;
+  top:-14px;
+  left:18px;
+  font-size:60px;
+  font-family:Georgia, var(--font-display), serif;
+  font-weight:900;
+  line-height:1;
+  color:var(--color-primary-300);
+  opacity:.55;
+  text-shadow:0 2px 4px rgba(124,182,157,.15);
+}
+.mini-quote-text{
+  font-size:15px;
+  font-weight:500;
+  color:var(--color-ink);
+  line-height:1.85;
+  padding-left:14px;
+  border-left:3px solid var(--seasonal-accent, var(--color-primary-300));
+  font-style:italic;
+}
+.mini-quote-source{
+  font-size:12px;
+  color:var(--seasonal-accent, var(--color-primary-600));
+  font-weight:600;
+  text-align:right;
+  margin-top:10px;
+  opacity:.9;
+  font-family:var(--font-display);
+}
+.mini-quote:hover{
+  box-shadow:var(--shadow-md);
+  transform:translateY(-2px);
+}
+
+/* ---- 4.5 个人页统计项 ---- */
+.profile-stat-item{
+  border-radius:var(--radius-base);
+  position:relative;
+  overflow:hidden;
+  transition:transform var(--duration-200) var(--ease),
+             box-shadow var(--duration-200) var(--ease);
+}
+.profile-stat-item:hover{
+  transform:translateY(-3px);
+  box-shadow:var(--shadow-md);
+}
+.profile-stat-item:active{transform:scale(.96)}
+.profile-stat-item.points-item{
+  background-image:linear-gradient(135deg, rgba(200,137,62,.12), rgba(200,152,62,.04));
+  border-color:rgba(200,137,62,.22);
+}
+
+/* ---- 4.6 底部导航 — 玉色辉光 + 节气指示 ---- */
+#bottomNav{
+  background:#fffbf3;
+  border-top:1px solid rgba(232,222,200,.6);
+  padding-bottom:max(8px, env(safe-area-inset-bottom));
+  box-shadow:0 -4px 24px rgba(60,45,20,.08);
+}
+.bnav-item.active{color:var(--seasonal-accent, var(--color-primary))}
+.bnav-item.active::after{
+  background:linear-gradient(90deg, var(--seasonal-accent, var(--color-primary)), var(--color-secondary));
+  box-shadow:0 2px 6px rgba(124,182,157,.30);
+}
+.bnav-center{
+  background:linear-gradient(135deg, var(--color-primary-400) 0%, var(--color-secondary-400) 100%);
+  box-shadow:0 8px 24px rgba(124,182,157,.40), 0 4px 12px rgba(200,137,62,.28);
+}
+.bnav-center::before{
+  background:linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+}
+.bnav-center:hover{
+  box-shadow:0 12px 32px rgba(124,182,157,.50), 0 6px 16px rgba(200,137,62,.38);
+}
+
+/* ---- 4.7 时段分组图标 — 节气色 ---- */
+.time-group[data-period="morning"]  .time-group-icon,
+.time-group.morning-period  .time-group-icon{background:linear-gradient(135deg,#FAE6CC,#F2CB97)}
+.time-group[data-period="afternoon"] .time-group-icon,
+.time-group.afternoon-period .time-group-icon{background:linear-gradient(135deg,#DCEDE2,#BCDBCA)}
+.time-group[data-period="evening"] .time-group-icon,
+.time-group.evening-period .time-group-icon{background:linear-gradient(135deg,#F4D9CC,#EC9B70)}
+.time-group[data-period="night"] .time-group-icon,
+.time-group.night-period .time-group-icon{background:linear-gradient(135deg,#D8E0E8,#A8B0B5)}
+
+/* ================================================================
+   五、面板（Panel）组件 — 进入/退出动画
+   ----------------------------------------------------------------
+   仅使用 transform/opacity，避免重排，保持 60fps
+   ================================================================ */
+
+/* ---- 5.1 遮罩层 — 水墨晕染 ---- */
+.panel-overlay{
+  position:fixed;
+  inset:0;
+  background:radial-gradient(circle at 50% 100%, rgba(60,45,20,.45), rgba(26,20,16,.55));
+  z-index:var(--z-overlay);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity var(--duration-300) var(--ease);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+}
+.panel-overlay.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* ---- 5.2 面板主体 — 弹性上滑入场 ---- */
+.panel{
+  position:fixed;
+  bottom:0;
+  left:50%;
+  transform:translate3d(-50%, 100%, 0);
+  width:100%;
+  max-width:480px;
+  max-height:85vh;
+  background:var(--color-surface);
+  background-image:linear-gradient(180deg, rgba(124,182,157,.04) 0%, transparent 80px);
+  border-radius:var(--radius-xl) var(--radius-xl) 0 0;
+  z-index:var(--z-panel);
+  visibility:hidden;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  box-shadow:0 -8px 32px rgba(60,45,20,.18);
+  /* GPU 加速 */
+  will-change:transform, opacity;
+  backface-visibility:hidden;
+  /* 退出过渡 */
+  transition:transform var(--duration-300) var(--ease),
+             visibility 0s linear var(--duration-300);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.panel.show{
+  transform:translate3d(-50%, 0, 0);
+  visibility:visible;
+  transition:transform var(--duration-400) var(--ease-spring),
+             visibility 0s;
+  animation:panelIn var(--duration-400) var(--ease-spring);
+}
+@keyframes panelIn{
+  0%   { transform:translate3d(-50%, 100%, 0); opacity:.4; }
+  60%  { transform:translate3d(-50%, -4%, 0);  opacity:1; }   /* 微过冲 */
+  100% { transform:translate3d(-50%, 0, 0);    opacity:1; }
+}
+
+/* ---- 5.3 面板拖把 — 墨滴形态 ---- */
+.panel-handle{
+  width:44px;
+  height:5px;
+  background:var(--color-rule);
+  border-radius:var(--radius-full);
+  margin:12px auto 8px;
+  position:relative;
+  transition:background var(--duration-200) var(--ease),
+             transform var(--duration-200) var(--ease);
+}
+.panel-handle::after{
+  content:'';
+  position:absolute;
+  inset:-6px -10px;
+  border-radius:inherit;
+  background:transparent;
+}
+.panel.show .panel-handle{
+  background:linear-gradient(90deg, var(--color-primary-300), var(--color-secondary-300));
+}
+.panel:hover .panel-handle{transform:scaleX(1.1)}
+
+/* ---- 5.4 面板头部 ---- */
+.panel-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 20px 14px;
+  border-bottom:1px solid var(--color-border-soft);
+  background:linear-gradient(180deg, rgba(124,182,157,.03), transparent);
+}
+.panel-title{
+  font-size:17px;
+  font-weight:700;
+  color:var(--color-ink);
+  font-family:var(--font-display);
+  letter-spacing:.5px;
+}
+.panel-close{
+  width:32px;
+  height:32px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  color:var(--color-muted);
+  border-radius:var(--radius-md);
+  transition:transform var(--duration-200) var(--ease-bounce),
+             background-color var(--duration-200) var(--ease),
+             color var(--duration-200) var(--ease);
+}
+.panel-close:hover{
+  background:var(--color-bg-soft);
+  color:var(--color-ink);
+  transform:rotate(90deg);
+}
+.panel-close:active{
+  background:var(--color-rule);
+  transform:rotate(90deg) scale(.92);
+}
+
+/* ---- 5.5 面板内容区 ---- */
+.panel-body{
+  flex:1;
+  overflow-y:auto;
+  padding:18px 20px;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+}
+.panel-body-p0{padding:0}
+.panel-body-p20{padding:24px}
+.panel-body-p24{text-align:center;padding:28px}
+.panel-body-chat{
+  display:flex;
+  flex-direction:column;
+  height:calc(100vh - 60px);
+  padding:0;
+  position:relative;
+}
+
+/* ---- 5.6 内容入场 — 错峰渐显（仅 opacity/transform） ---- */
+.panel.show .panel-header,
+.panel.show .panel-body > *{
+  animation:panelChildFade var(--duration-300) var(--ease-out) both;
+}
+.panel.show .panel-header{animation-delay:80ms}
+.panel.show .panel-body > *:nth-child(1){animation-delay:120ms}
+.panel.show .panel-body > *:nth-child(2){animation-delay:160ms}
+.panel.show .panel-body > *:nth-child(3){animation-delay:200ms}
+.panel.show .panel-body > *:nth-child(4){animation-delay:240ms}
+.panel.show .panel-body > *:nth-child(5){animation-delay:280ms}
+.panel.show .panel-body > *:nth-child(n+6){animation-delay:320ms}
+@keyframes panelChildFade{
+  from{opacity:0; transform:translateY(8px);}
+  to  {opacity:1; transform:translateY(0);}
+}
+
+/* ================================================================
+   六、骨架屏 — 宣纸 shimmer 加载效果
+   ----------------------------------------------------------------
+   用法：JS 在数据加载前注入 .skeleton 元素，加载后移除
+   ================================================================ */
+
+/* ---- 6.1 shimmer 动画（仅 background-position，无重排） ---- */
+@keyframes skeletonShimmer{
+  0%   { background-position:-200% 0; }
+  100% { background-position:200% 0; }
+}
+
+.skeleton{
+  background:linear-gradient(
+    90deg,
+    var(--skeleton-base) 0%,
+    var(--skeleton-base) 40%,
+    var(--skeleton-shine) 50%,
+    var(--skeleton-base) 60%,
+    var(--skeleton-base) 100%
+  );
+  background-size:200% 100%;
+  animation:skeletonShimmer 1.6s var(--ease-ink) infinite;
+  border-radius:var(--radius-sm);
+  position:relative;
+  overflow:hidden;
+}
+/* 微妙的呼吸光晕 */
+.skeleton::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at 50% 50%, rgba(124,182,157,.06), transparent 70%);
+  pointer-events:none;
+}
+
+/* ---- 6.2 骨架形状变体 ---- */
+.skeleton-text{height:12px;margin-bottom:6px;border-radius:var(--radius-xs)}
+.skeleton-text-sm{height:10px;width:60%}
+.skeleton-text-lg{height:16px;width:80%}
+.skeleton-title{height:18px;width:50%;margin-bottom:10px}
+.skeleton-circle{width:40px;height:40px;border-radius:50%;flex-shrink:0}
+.skeleton-circle-lg{width:56px;height:56px;border-radius:50%}
+.skeleton-block{height:80px;border-radius:var(--radius-base)}
+.skeleton-card{height:100px;border-radius:var(--radius-lg)}
+
+/* ---- 6.3 习惯卡骨架 ---- */
+.skeleton-habit{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:14px 16px;
+  margin-bottom:6px;
+  background:var(--color-surface);
+  border-radius:var(--radius-base);
+  border:1px solid var(--color-border-soft);
+}
+.skeleton-habit .sk-icon{width:40px;height:40px;border-radius:var(--radius-md)}
+.skeleton-habit .sk-body{flex:1}
+.skeleton-habit .sk-body .skeleton-text{margin-bottom:8px}
+
+/* ---- 6.4 统计卡骨架 ---- */
+.skeleton-stat{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  padding:20px 14px;
+  background:var(--color-surface);
+  border-radius:var(--radius-lg);
+  border:1px solid var(--color-border-soft);
+}
+.skeleton-stat .sk-val{width:60px;height:28px}
+.skeleton-stat .sk-lbl{width:40px;height:10px}
+
+/* ---- 6.5 知识卡骨架 ---- */
+.skeleton-quote{
+  padding:22px 24px;
+  background:var(--color-surface);
+  border-radius:var(--radius-lg);
+  border:1px solid var(--color-border-soft);
+}
+.skeleton-quote .skeleton-text{height:13px;margin-bottom:10px;line-height:1.8}
+.skeleton-quote .sk-source{width:30%;height:11px;margin-top:14px;margin-left:auto}
+
+/* ---- 6.6 头部骨架 ---- */
+.skeleton-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:16px;
+}
+.skeleton-header .sk-left{flex:1}
+.skeleton-header .sk-left .skeleton-text{height:14px;margin-bottom:8px}
+.skeleton-header .sk-badge{width:70px;height:24px;border-radius:var(--radius-sm)}
+
+/* ---- 6.7 加载提示器（用于列表底部 / 刷新） ---- */
+.loading-dot{
+  display:inline-block;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--color-primary-400);
+  animation:loadingPulse 1.2s var(--ease) infinite;
+}
+.loading-dot:nth-child(2){animation-delay:.2s}
+.loading-dot:nth-child(3){animation-delay:.4s}
+@keyframes loadingPulse{
+  0%, 80%, 100%{opacity:.3; transform:scale(.8);}
+  40%          {opacity:1;  transform:scale(1);}
+}
+.loading-spinner{
+  width:24px;
+  height:24px;
+  border:2.5px solid var(--color-primary-soft);
+  border-top-color:var(--color-primary-400);
+  border-radius:50%;
+  animation:spin 0.8s linear infinite;
+}
+@keyframes spin{
+  to{transform:rotate(360deg);}
+}
+
+/* ================================================================
+   七、全局微调 — 标题宋体 · 节气彩带 · 安全区
+   ================================================================ */
+
+/* ---- 7.1 标题统一使用宋体显示字 ---- */
+.section-title,
+.panel-title,
+.mini-date .day-num,
+.stat-val,
+.mini-quote-source,
+.time-group-name{
+  font-family:var(--font-display);
+}
+
+/* ---- 7.2 首页头部 — 节气彩带 ---- */
+.mini-header{
+  padding:20px 16px 12px;
+  margin:-20px -16px 0 -16px;
+  background:
+    linear-gradient(180deg, rgba(124,182,157,.10) 0%, transparent 100%);
+  position:relative;
+}
+.mini-header::before{
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0;
+  height:2px;
+  background:linear-gradient(90deg,
+    var(--color-primary-300) 0%,
+    var(--color-secondary-300) 50%,
+    var(--color-wuxing-fire) 100%);
+  opacity:.6;
+}
+.mini-date .day-num{
+  font-size:42px;
+  font-weight:700;
+  color:var(--seasonal-accent, var(--color-primary));
+  line-height:1;
+  letter-spacing:-1px;
+}
+.mini-badge{
+  background:linear-gradient(135deg, var(--color-primary-400), var(--color-secondary-400));
+  box-shadow:0 2px 6px rgba(124,182,157,.25);
+}
+.mini-points-badge{
+  color:var(--color-secondary-600);
+  background:linear-gradient(135deg, var(--color-secondary-100), var(--color-secondary-200));
+  border:1px solid rgba(200,137,62,.30);
+  box-shadow:0 2px 6px rgba(200,137,62,.15);
+}
+
+/* ---- 7.3 安全区适配 ---- */
+.panel,
+#bottomNav{
+  padding-bottom:max(8px, env(safe-area-inset-bottom));
+}
+.panel-header{
+  padding-top:max(12px, env(safe-area-inset-top));
+}
+body{
+  padding-top:env(safe-area-inset-top);
+}
+
+/* ---- 7.4 输入框 / 按钮 — 暖色描边 ---- */
+.lib-search,
+.mg-search,
+.config-input,
+.checkin-input-field,
+.lib-custom-input input,
+.lib-custom-time input[type="time"]{
+  background:var(--color-surface);
+  border-color:var(--color-border);
+  color:var(--color-ink);
+}
+.lib-search:focus,
+.mg-search:focus,
+.config-input:focus,
+.checkin-input-field:focus,
+.lib-custom-input input:focus{
+  border-color:var(--color-primary-400);
+  box-shadow:0 0 0 3px rgba(124,182,157,.15);
+}
+.lib-search-btn,
+.lib-custom-input button,
+.health-pack-btn{
+  background:linear-gradient(135deg, var(--color-primary-400), var(--color-primary-600));
+  box-shadow:var(--shadow-glow-primary);
+}
+.lib-search-btn:active,
+.lib-custom-input button:active{background:var(--color-primary-600)}
+
+.const-btn{
+  background:linear-gradient(135deg, var(--color-primary-400), var(--color-secondary-400));
+  box-shadow:0 4px 16px rgba(124,182,157,.30), 0 2px 4px rgba(124,182,157,.10);
+}
+
+/* ---- 7.5 分段控件 / Tab ---- */
+.checkin-segmented{background:var(--color-bg-soft)}
+.checkin-segment.active{
+  background:var(--color-surface);
+  color:var(--color-primary-600);
+  box-shadow:var(--shadow-sm);
+}
+.lib-tab{background:var(--color-bg-soft); color:var(--color-muted)}
+.lib-tab.active{
+  background:linear-gradient(135deg, var(--color-primary-400), var(--color-primary-500));
+  color:var(--color-on-primary);
+}
+.tab.active{
+  background:linear-gradient(135deg, var(--color-primary-400), var(--color-secondary-400));
+  box-shadow:0 2px 8px rgba(124,182,157,.30);
+}
+
+/* ---- 7.6 热力图 — 玉色阶 ---- */
+:root{
+  --yh-0:#F0E8D6;
+  --yh-1:#DCEDE2;
+  --yh-2:#9CC9B0;
+  --yh-3:#5E9E83;
+  --yh-4:#3A6A55;
+}
+body.dark{
+  --yh-0:#2A2218;
+  --yh-1:#1C3A2C;
+  --yh-2:#2D5241;
+  --yh-3:#4A8469;
+  --yh-4:#6BA88A;
+}
+
+/* ---- 7.7 性能 — GPU 提升 / 减少重排 ---- */
+.habit-card,
+.stat-card,
+.mini-quote,
+.profile-stat-item,
+.panel,
+.skeleton{
+  transform:translateZ(0);
+  backface-visibility:hidden;
+  contain:layout paint;
+}
+
+/* ---- 7.8 可访问性 — 降低动画偏好 ---- */
+@media (prefers-reduced-motion: reduce){
+  *,
+  *::before,
+  *::after{
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+    scroll-behavior:auto !important;
+  }
+  .skeleton{animation:none; background:var(--skeleton-base);}
+}
+
+/* ---- 7.9 移动端宽度兜底（320px - 480px） ---- */
+@media (max-width: 360px){
+  .stat-card{padding:16px 10px}
+  .stat-val{font-size:26px}
+  .mini-quote{padding:18px 18px 14px}
+  .mini-quote::before{font-size:48px; left:14px; top:-12px}
+  .habit-card{padding:12px 14px; gap:10px}
+  .habit-card .icon{width:36px; height:36px}
+  .panel-body{padding:14px 16px}
+  .panel-title{font-size:16px}
+  .lib-grid{grid-template-columns:repeat(2, 1fr); gap:8px}
+}
+@media (min-width: 481px){
+  body{box-shadow:0 0 40px rgba(60,45,20,.08)}
+}
+
+/* ================================================================
+   集成说明
+   ----------------------------------------------------------------
+   1. 在 index.html 中 ui-enhance.min.css 之后追加：
+      <link rel="stylesheet" href="./css/theme-zhongshi.css?v=20260718a">
+   2. （可选）JS 中根据日期切换节气主题：
+      document.body.className = 'solar-qingming';  // 示例
+   3. （可选）骨架屏使用示例：
+      <div class="skeleton-habit">
+        <div class="skeleton sk-icon"></div>
+        <div class="sk-body">
+          <div class="skeleton skeleton-text skeleton-text-lg"></div>
+          <div class="skeleton skeleton-text skeleton-text-sm"></div>
+        </div>
+      </div>
+   ================================================================ */
