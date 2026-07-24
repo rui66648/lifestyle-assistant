@@ -83,16 +83,20 @@ jobs:
           cd android
           VERSION=$(grep -oE 'versionName "[^"]+"' app/build.gradle | head -1 | sed 's/versionName "//;s/"//')
           echo "Detected versionName: $VERSION"
-          SRC="app/build/outputs/apk/release/app-release.apk"
-          DST="app/build/outputs/apk/release/PulseBreath-${VERSION}.apk"
-          if [ ! -f "$SRC" ]; then
-            echo "::error::Source APK not found: $SRC"
-            ls -la app/build/outputs/apk/release/ || true
+          TARGET="app/build/outputs/apk/release/PulseBreath-${VERSION}.apk"
+          # 兼容两种情况：1) 已存在 PulseBreath-*.apk  2) 只有 app-release.apk
+          if ls app/build/outputs/apk/release/PulseBreath-*.apk 2>/dev/null; then
+            echo "PulseBreath APK already exists, no copy needed"
+          elif [ -f "app/build/outputs/apk/release/app-release.apk" ]; then
+            cp "app/build/outputs/apk/release/app-release.apk" "$TARGET"
+            echo "Copied app-release.apk -> $TARGET"
+          else
+            echo "::error::No APK found in app/build/outputs/apk/release/"
+            ls -la app/build/outputs/apk/release/ 2>&1 || echo "release dir missing"
             exit 1
           fi
-          cp "$SRC" "$DST"
-          echo "=== Created $DST ==="
-          ls -la app/build/outputs/apk/release/
+          echo "=== Final APK files ==="
+          ls -la app/build/outputs/apk/release/PulseBreath-*.apk
 
       - name: List build outputs
         run: |
